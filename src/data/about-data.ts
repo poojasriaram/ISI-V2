@@ -28,26 +28,20 @@ export const directorsData = [
         bio: "A highly decorated former Indian Air Force officer and Founder of ISI, widely respected as 'SIR' Vijayakumar. Recipient of the Marusthal Seva Medal for meritorious service in desert terrain. Holds qualifications in Business Management and Law. Founded Security & Intelligence Resources (SIR) in 1994, which later took over ISI, building a professionally managed organisation delivering integrated security, loss-prevention, facilities management, and manpower solutions. An acknowledged industry leader with extensive contributions to security operations, personnel training, SOP development, and disaster management."
     },
     {
-        name: "S. Yuvaraj",
-        role: "CEO",
-        img: "/leaders/Yuvaraj CEO.jpg",
-        bio: "MBA, LLB, a seasoned leader with deep expertise in administration, governance, and statutory compliance. Drives strategic direction with a strong focus on operational integrity, risk management, and regulatory adherence. With prior service in the Indian Air Force and as Assistant Commissioner at EPFO, he brings proven experience in labour laws, audits, and enforcement, strengthening organizational governance and sustainable growth."
-    },
-    {
         name: "Indiradevi",
         role: "Director",
         img: "/leaders/Indirani Director.jpeg",
         bio: "Director of ISI, playing an active role in financial oversight and strategic decision-making. Contributes valuable inputs to the finance function, supporting sound and sustainable business decisions. With a strong commitment to social service and employee welfare, she is an active member of the Inner Wheel Club. Instrumental in conceptualising and establishing ISI's Staff Welfare Corpus Fund, through which numerous employees have benefited, reflecting the organisation's people-centric values."
-    }
-];
-
-export const executiveManagementData = [
+    },
     {
         name: "V. Vishalkumar",
         role: "Director",
         img: "/leaders/Vishal ED.JPG",
         bio: "Director at ISI, representing the next generation of leadership. Brings international corporate experience from Accenture (PMO professional) and Forest Coach Lines, Sydney (Transport Analyst). His multidisciplinary academic foundation includes Computer Engineering, Master's in Logistics & Transport Management (University of Sydney), Law, Human Resources Management, Fire & Industrial Safety, and NEBOSH certification. This unique blend enables him to design robust, compliant, and risk-aware operational frameworks."
-    },
+    }
+];
+
+export const executiveManagementData = [
     {
         name: "V. Varshithkumar",
         role: "Executive Director",
@@ -59,6 +53,12 @@ export const executiveManagementData = [
         role: "Executive Director",
         img: "/leaders/Rajkumar ED.jpeg",
         bio: "Executive Director since 2017, leading strategic growth across manpower solutions, security services, and facility management. Over 25 years of experience in operations, compliance, and global project delivery with clients including Barry-Wehmiller, Henry Schein, and BOC. Holds MBA (ICFAI) in Supply Chain Management & Operations, and Bachelor of Law (BL) focused on Company Law and Labour Legislation. Emphasizes operational excellence, data-driven decision-making, and employee welfare."
+    },
+    {
+        name: "S. Yuvaraj",
+        role: "CEO",
+        img: "/leaders/Yuvaraj CEO.jpg",
+        bio: "MBA, LLB, a seasoned leader with deep expertise in administration, governance, and statutory compliance. Drives strategic direction with a strong focus on operational integrity, risk management, and regulatory adherence. With prior service in the Indian Air Force and as Assistant Commissioner at EPFO, he brings proven experience in labour laws, audits, and enforcement, strengthening organizational governance and sustainable growth."
     }
 ];
 

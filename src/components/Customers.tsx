@@ -1,5 +1,4 @@
 import { Quote, Star } from "lucide-react";
-import { useEffect, useRef } from "react";
 
 const testimonials = [
   {
@@ -26,40 +25,47 @@ const testimonials = [
 ];
 
 const clientLogos = [
-  { name: "State Bank of India", abbr: "SBI", color: "#22409A", image: "/logos/sbi.svg" },
-  { name: "HDFC Bank", abbr: "HDFC", color: "#004C8F", image: "/logos/hdfc.svg" },
-  { name: "Reliance Industries", abbr: "RIL", color: "#0052B4", image: "/logos/ril.png" },
-  { name: "Tata Group", abbr: "TATA", color: "#486AAA", image: "/logos/tata.svg" },
-  { name: "Infosys", abbr: "Infosys", color: "#007CC3", image: "/logos/infosys.svg" },
-  { name: "Wipro", abbr: "Wipro", color: "#341C53", image: "/logos/wipro.svg" },
-  { name: "L&T", abbr: "L&T", color: "#002855", image: "/logos/larsentoubro.png" },
-  { name: "Adani Group", abbr: "Adani", color: "#003087", image: "/logos/adani.png" },
+  { name: "Bosch", abbr: "Bosch", color: "#22409A", image: "/logos/Bosch_Global_Software_Tech._Pvt_Ltd-removebg-preview.png" },
+  { name: "Ramco Group", abbr: "Ramco", color: "#004C8F", image: "/logos/Ramco_Group-removebg-preview.png" },
+  { name: "Ramco Cements Limited", abbr: "Ramco Cements", color: "#0052B4", image: "/logos/Ramco_Cements_Limited-removebg-preview.png" },
+  { name: "Murugappa Group", abbr: "Murugappa", color: "#486AAA", image: "/logos/Murugappa Group.png" },
+  { name: "Tubes Investment of India Limited", abbr: "TII", color: "#007CC3", image: "/logos/Tubes_Investment_ot_India_Limited-removebg-preview.png" },
+  { name: "Carborundum Universal Limited", abbr: "CUMI", color: "#341C53", image: "/logos/Carborundum_UniversalLimited-removebg-preview.png" },
+  { name: "EID Parry (India) Limited", abbr: "EID Parry", color: "#002855", image: "/logos/EID_Parry__India__Limited-removebg-preview.png" },
+  { name: "Zoho", abbr: "Zoho", color: "#003087", image: "/logos/Zoho_Corporation-removebg-preview.png" },
+  { name: "Gofrugal Technologies Private Limited", abbr: "Gofrugal", color: "#F37021", image: "/logos/Gofrugal_Technologies_Private_Limited-removebg-preview.png" },
+  { name: "Aardhraa Technologies", abbr: "Aardhraa", color: "#800000", image: "/logos/Aardhraa_Technologies-removebg-preview.png" },
+  { name: "ITC Limited", abbr: "ITC", color: "#ED1C24", image: "/logos/ITC Limited.png" },
+  { name: "VinFast", abbr: "VinFast", color: "#0066B2", image: "/logos/VInfast.png" },
+  { name: "BYD India Pvt Ltd", abbr: "BYD", color: "#0066B2", image: "/logos/BYD_INDIA_PVT_LTD-removebg-preview.png" },
+  { name: "Britannia Industries Limited", abbr: "Britannia", color: "#ED1C24", image: "/logos/BRITANNIA_INDUSTRIES_LIMITED-removebg-preview.png" },
+  { name: "Taj Group", abbr: "Taj", color: "#ED1C24", image: "/logos/Taj_Group-removebg-preview.png" },
+  { name: "CMC", abbr: "CMC", color: "#E60000", image: "/logos/CMC.png" },
+  { name: "Marriott Bonvoy", abbr: "Marriott", color: "#006838", image: "/logos/Marriott Bonvoy.png" },
+  { name: "HDFC Bank", abbr: "HDFC", color: "#0066B2", image: "/logos/HDFC.png" },
+  { name: "State Bank of India", abbr: "SBI", color: "#000000", image: "/logos/SBI-removebg-preview.png" },
+  { name: "Canara Bank", abbr: "Canara", color: "#0066B2", image: "/logos/Canara Bank.png" },
+  { name: "Indian Bank", abbr: "Indian Bank", color: "#0066B2", image: "/logos/Indian Bank.png" },
+  { name: "MTC Group", abbr: "MTC", color: "#ED1C24", image: "/logos/MTC_GROUP-removebg-preview.png" },
+  { name: "Tata Group", abbr: "TATA", color: "#ED1C24", image: "/logos/TATA.png" },
+  { name: "Sanmar Group", abbr: "Sanmar", color: "#0066B2", image: "/logos/Sanmar_Group-removebg-preview.png" },
+  { name: "Sanmar Matrix Metals Limited", abbr: "Sanmar Matrix", color: "#ED1C24", image: "/logos/Sanmar_Matrix_Metals_Limited-removebg-preview.png" },
+  { name: "XOMOX Sanmar Ltd", abbr: "XOMOX", color: "#0066B2", image: "/logos/XOMOX_Sanmar_Ltd-removebg-preview.png" },
+  { name: "Anderson Greenwood Crosby Sanmar Limited", abbr: "AGC Sanmar", color: "#006838", image: "/logos/Anderson_Green_Wood_Crosby_Sanmar_Limited-removebg-preview.png" },
+  { name: "Intersnack Group", abbr: "Intersnack", color: "#FFD700", image: "/logos/Intersnack Group.png" },
+  { name: "Velammal Institutions", abbr: "Velammal", color: "#0066B2", image: "/logos/Velammal_Medical_College_b_Research_Centre-removebg-preview.png" },
+  { name: "TZMO Global", abbr: "TZMO", color: "#ED1C24", image: "/logos/TZMO-Global-removebg-preview.png" },
+  { name: "LGB Group", abbr: "LGB", color: "#0066B2", image: "/logos/LGB___Brothers_Limited-removebg-preview.png" },
+  { name: "Marico Limited", abbr: "Marico", color: "#006838", image: "/logos/MARICO_LIMITED-removebg-preview.png" },
+  { name: "Chinmaya School", abbr: "Chinmaya", color: "#ED1C24", image: "/logos/CHINMAYA_SCHOOL-removebg-preview.png" },
+  { name: "Thangamayil Jewellery", abbr: "Thangamayil", color: "#0066B2", image: "/logos/Thangamayil_Jewellery-removebg-preview.png" },
+  { name: "Zamil Steels", abbr: "Zamil", color: "#ED1C24", image: "/logos/Zamil Steels.png" },
+  { name: "Vikram Solar", abbr: "Vikram Solar", color: "#0066B2", image: "/logos/Vikram Solar.png" },
+  { name: "Aravind Eye Hospital", abbr: "Aravind", color: "#006838", image: "/logos/Aravind_Eye_Hospital-removebg-preview.png" },
+  { name: "Amar Seva Sangam", abbr: "Amar Seva", color: "#0066B2", image: "/logos/Amar_Seva_Sangam-removebg-preview.png" },
 ];
 
 export const Customers = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer) return;
-
-    let animationId: number;
-    let scrollPosition = 0;
-
-    const scroll = () => {
-      scrollPosition += 0.5;
-      if (scrollPosition >= scrollContainer.scrollWidth / 2) {
-        scrollPosition = 0;
-      }
-      scrollContainer.scrollLeft = scrollPosition;
-      animationId = requestAnimationFrame(scroll);
-    };
-
-    animationId = requestAnimationFrame(scroll);
-
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-
   return (
     <section id="customers" className="py-28 relative overflow-hidden scroll-mt-32">
       {/* Background */}
@@ -114,29 +120,102 @@ export const Customers = () => {
           ))}
         </div>
 
-        {/* Client Logos Carousel */}
+        {/* Client Logos Grid */}
         <div className="text-center">
           <p className="text-sm text-muted-foreground mb-8 font-medium">Trusted by 500+ organizations including</p>
 
-          <div className="relative overflow-hidden py-4">
-            {/* Gradient overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-
-            <div
-              ref={scrollRef}
-              className="flex gap-8 overflow-hidden"
-              style={{ scrollBehavior: 'auto' }}
-            >
-              {[...clientLogos, ...clientLogos].map((logo, index) => (
+          <div className="space-y-6">
+            {/* Row 1 - 7 logos */}
+            <div className="grid grid-cols-4 md:grid-cols-7 gap-6 justify-items-center">
+              {clientLogos.slice(0, 7).map((logo, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 flex items-center justify-center px-8 py-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 min-w-[200px] h-[100px] group cursor-pointer"
+                  className="flex items-center justify-center px-4 py-3 w-full h-[80px]"
                 >
                   <img
                     src={logo.image}
                     alt={logo.name}
-                    className="max-h-[80px] w-auto max-w-[200px] object-contain transition-all duration-500 hover:scale-110"
+                    className="max-h-[60px] w-auto max-w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Row 2 - 7 logos */}
+            <div className="grid grid-cols-4 md:grid-cols-7 gap-6 justify-items-center">
+              {clientLogos.slice(7, 14).map((logo, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center px-4 py-3 w-full h-[80px]"
+                >
+                  <img
+                    src={logo.image}
+                    alt={logo.name}
+                    className="max-h-[60px] w-auto max-w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Row 3 - 6 logos */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
+              {clientLogos.slice(14, 20).map((logo, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center px-4 py-3 w-full h-[80px]"
+                >
+                  <img
+                    src={logo.image}
+                    alt={logo.name}
+                    className="max-h-[60px] w-auto max-w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Row 4 - 6 logos */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
+              {clientLogos.slice(20, 26).map((logo, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center px-4 py-3 w-full h-[80px]"
+                >
+                  <img
+                    src={logo.image}
+                    alt={logo.name}
+                    className="max-h-[60px] w-auto max-w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Row 5 - 6 logos */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
+              {clientLogos.slice(26, 32).map((logo, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center px-4 py-3 w-full h-[80px]"
+                >
+                  <img
+                    src={logo.image}
+                    alt={logo.name}
+                    className="max-h-[60px] w-auto max-w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Row 6 - 6 logos */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
+              {clientLogos.slice(32, 38).map((logo, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center px-4 py-3 w-full h-[80px]"
+                >
+                  <img
+                    src={logo.image}
+                    alt={logo.name}
+                    className="max-h-[60px] w-auto max-w-full object-contain"
                   />
                 </div>
               ))}

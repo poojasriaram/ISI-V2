@@ -5,6 +5,8 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ComprehensiveSolutions } from "./solutions/ComprehensiveSolutions";
+
 
 const solutions = [
   {
@@ -172,7 +174,17 @@ export const Solutions = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
 
+      {/* Comprehensive Solutions Section */}
+      <ComprehensiveSolutions />
+
+      {/* Divider */}
+      <div className="container mx-auto px-4 lg:px-8 py-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      </div>
+
+      {/* Problem-Based Solutions */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
+
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 rounded-full mb-6 border border-primary/20">
             <Lightbulb className="w-3 h-3" />

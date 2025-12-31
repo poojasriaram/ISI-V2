@@ -106,7 +106,7 @@ export const Services = () => {
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Gradient Background */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative z-10 flex flex-col items-center h-full">
                 {/* Icon */}
@@ -121,12 +121,6 @@ export const Services = () => {
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4 text-center">
                   {service.description}
                 </p>
-
-                {/* Arrow Link - Pushed to bottom */}
-                <div className="flex items-center justify-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 mt-auto">
-                  Learn More
-                  <ArrowRight className="w-4 h-4" />
-                </div>
               </div>
 
               {/* Shine Effect */}

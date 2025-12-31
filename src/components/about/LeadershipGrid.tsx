@@ -8,7 +8,7 @@ export const LeadershipGrid = () => {
         <div className="py-24">
             <div className="container mx-auto px-4 lg:px-8">
                 <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Leadership</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold mb-6">Board of Directors</h2>
                     <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                         Meet the experienced professionals guiding ISI's strategic vision and operational excellence.
                     </p>

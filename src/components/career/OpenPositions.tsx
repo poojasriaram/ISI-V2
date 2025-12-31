@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import { Filter, Search, X, MapPin, Briefcase, Clock, ArrowRight } from "lucide-react";
+import { Filter, Search, X, MapPin, Briefcase, Clock, ArrowRight, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobMap } from "../JobMap";
-import { officeLocations, openings } from "@/data/career-data";
+import { officeLocations, openings, JobOpening } from "@/data/career-data";
 import { ApplicationModal } from "./ApplicationModal";
+import { JobDetailsModal } from "./JobDetailsModal";
 
 // Get unique values for filters
 const uniqueLocations = Array.from(new Set(openings.map(job => job.location))).sort();
@@ -19,7 +20,9 @@ export const OpenPositions = () => {
 
     // Modal state
     const [selectedJob, setSelectedJob] = useState<string | null>(null);
+    const [selectedJobDetails, setSelectedJobDetails] = useState<JobOpening | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
     const filteredJobs = useMemo(() => {
         return openings.filter(job => {
@@ -39,6 +42,11 @@ export const OpenPositions = () => {
     const handleApply = (jobTitle: string) => {
         setSelectedJob(jobTitle);
         setIsModalOpen(true);
+    };
+
+    const handleViewDetails = (job: JobOpening) => {
+        setSelectedJobDetails(job);
+        setIsDetailsModalOpen(true);
     };
 
     const activeFiltersCount = [location, department, experience].filter(f => f !== "all").length;
@@ -160,19 +168,22 @@ export const OpenPositions = () => {
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div className="space-y-3">
                                         <div>
-                                            <div className="flex items-center gap-3 mb-1">
+                                            <div className="flex items-center gap-3 mb-2">
                                                 <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
                                                     {job.title}
                                                 </h3>
-                                                {job.urgent && (
-                                                    <span className="flex h-6 items-center px-2 text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-600 rounded-full border border-red-500/20 shadow-sm animate-pulse">
-                                                        Urgent
-                                                    </span>
-                                                )}
                                             </div>
-                                            <p className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
-                                                <MapPin className="w-3.5 h-3.5 text-primary/70" /> {job.location}
-                                            </p>
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                                                    <MapPin className="w-3.5 h-3.5 text-primary/70 mt-0.5 flex-shrink-0" />
+                                                    <span className="font-medium leading-snug">{job.location}</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                    <span className="text-primary font-semibold">
+                                                        {job.openings} {job.openings === 1 ? 'Opening' : 'Openings'}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div className="flex flex-wrap gap-2">
@@ -188,10 +199,17 @@ export const OpenPositions = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex md:flex-col gap-3 md:items-end">
+                                    <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                                        <Button
+                                            onClick={() => handleViewDetails(job)}
+                                            variant="outline"
+                                            className="flex-1 md:w-[140px] h-10 px-6 gap-2 rounded-xl border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all"
+                                        >
+                                            <Eye className="w-4 h-4" /> View Details
+                                        </Button>
                                         <Button
                                             onClick={() => handleApply(job.title)}
-                                            className="w-full md:w-auto h-10 px-6 gap-2 shadow-md group-hover:shadow-primary/20 transition-all rounded-xl"
+                                            className="flex-1 md:w-[140px] h-10 px-6 gap-2 shadow-md group-hover:shadow-primary/20 transition-all rounded-xl"
                                         >
                                             Apply <ArrowRight className="w-4 h-4" />
                                         </Button>
@@ -219,6 +237,12 @@ export const OpenPositions = () => {
                     jobTitle={selectedJob}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                />
+
+                <JobDetailsModal
+                    job={selectedJobDetails}
+                    isOpen={isDetailsModalOpen}
+                    onClose={() => setIsDetailsModalOpen(false)}
                 />
 
             </div>

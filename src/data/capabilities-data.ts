@@ -1,4 +1,4 @@
-import { Shield, Users, Truck, Star, Network, Server, ShieldCheck, AlertTriangle, Leaf, Brain, Globe, Plane } from "lucide-react";
+import { Shield, Users, Truck, Star, Network, Server, ShieldCheck, AlertTriangle, Leaf, Brain, Globe, Plane, Ship, Train, TruckIcon, UserCheck, Users2, Building2, Factory, Radio } from "lucide-react";
 
 export const statsData = [
     {
@@ -639,3 +639,318 @@ export const engagementModels = [
         description: "Customized combinations addressing unique organizational requirements"
     }
 ];
+
+// ============================================================================
+// NEW: Comprehensive Multi-Domain Security Capabilities
+// ============================================================================
+
+export const capabilityPhilosophy = {
+    title: "Our Capability Philosophy",
+    description: "We deliver integrated, intelligence-led, AI-driven private security services designed to protect people, assets, infrastructure, logistics, and reputation across Land, Air, Rail, and Maritime domains. Our operating model seamlessly scales from regional deployments to nationwide and cross-border operations, combining trained security personnel, autonomous systems, drones, analytics, and legal-grade compliance frameworks."
+};
+
+export interface SecurityDomain {
+    icon: any;
+    title: string;
+    description: string;
+    services: {
+        title: string;
+        items: string[];
+    }[];
+}
+
+export const securityDomains: SecurityDomain[] = [
+    {
+        icon: Shield,
+        title: "Surface & Ground Security Operations",
+        description: "Comprehensive protection for urban, industrial, and infrastructure environments with manned guarding, AI-enabled perimeter protection, and mobile response services.",
+        services: [
+            {
+                title: "Manned Guarding & Patrol Services",
+                items: [
+                    "Trained armed and unarmed security personnel",
+                    "Static guarding, mobile patrols, and rapid response units",
+                    "Residential, commercial, industrial, SEZ, and infrastructure security"
+                ]
+            },
+            {
+                title: "AI-Enabled Perimeter Protection",
+                items: [
+                    "Smart CCTV with real-time analytics",
+                    "Intrusion, loitering, and tailgating detection",
+                    "Intelligent access control and visitor management"
+                ]
+            },
+            {
+                title: "Mobile Response & Escort Services",
+                items: [
+                    "Vehicle-mounted security teams",
+                    "Route-secured movement for assets and personnel",
+                    "Incident-based dynamic deployment"
+                ]
+            }
+        ]
+    },
+    {
+        icon: Train,
+        title: "Rail, Metro & Transit Security",
+        description: "Specialized security for railway stations, metro networks, and transit corridors with comprehensive surveillance and crowd management capabilities.",
+        services: [
+            {
+                title: "Station & Yard Security",
+                items: [
+                    "Platform, depot, and yard guarding",
+                    "Passenger flow monitoring and crowd control",
+                    "Theft, vandalism, and sabotage prevention"
+                ]
+            },
+            {
+                title: "Rail Corridor Surveillance",
+                items: [
+                    "Drone-based aerial inspection of tracks and perimeters",
+                    "AI detection of obstructions, trespassers, and anomalies",
+                    "Rapid response coordination with ground teams"
+                ]
+            },
+            {
+                title: "Transit Risk Intelligence",
+                items: [
+                    "Peak-hour risk modeling",
+                    "Event-driven surge deployment",
+                    "Emergency evacuation support"
+                ]
+            }
+        ]
+    },
+    {
+        icon: Ship,
+        title: "Maritime, Port & Ship Security",
+        description: "Complete maritime security solutions for ports, harbors, vessels, and coastal installations with advanced monitoring and threat detection.",
+        services: [
+            {
+                title: "Port & Harbor Security",
+                items: [
+                    "Perimeter and waterside surveillance",
+                    "Access control for cargo yards and terminals",
+                    "Anti-theft, smuggling, and sabotage prevention"
+                ]
+            },
+            {
+                title: "Vessel & Ship Security",
+                items: [
+                    "Armed and unarmed ship security officers",
+                    "Voyage-based risk assessments",
+                    "Onboard surveillance and incident protocols"
+                ]
+            },
+            {
+                title: "Maritime Drone & Sensor Monitoring",
+                items: [
+                    "Coastal and harbor drone patrols",
+                    "Unauthorized vessel detection",
+                    "Integration with AIS and port intelligence systems"
+                ]
+            }
+        ]
+    },
+    {
+        icon: Plane,
+        title: "Airspace, Aviation & Aerial Security",
+        description: "Advanced aerial surveillance and aviation security including autonomous drone operations, counter-drone systems, and airport protection.",
+        services: [
+            {
+                title: "Aerial Surveillance & Monitoring",
+                items: [
+                    "Autonomous drone patrols for large facilities and corridors",
+                    "Real-time video, thermal, and night surveillance",
+                    "Rapid situational awareness for inaccessible areas"
+                ]
+            },
+            {
+                title: "Counter-Drone & Airspace Protection",
+                items: [
+                    "Detection of unauthorized UAVs",
+                    "Risk classification and escalation workflows",
+                    "Integration with counter-UAS systems where permitted"
+                ]
+            },
+            {
+                title: "Aviation Asset Protection",
+                items: [
+                    "Airport perimeter and landside security",
+                    "Hangar, cargo, and ground operations monitoring",
+                    "VIP aviation movement coordination"
+                ]
+            }
+        ]
+    },
+    {
+        icon: TruckIcon,
+        title: "Logistics, Fleet & High-Value Asset Security",
+        description: "Intelligent fleet management and secure logistics operations with real-time tracking, route intelligence, and convoy protection.",
+        services: [
+            {
+                title: "Fleet Security Management",
+                items: [
+                    "Real-time vehicle tracking and route intelligence",
+                    "Driver behavior and vehicle health analytics",
+                    "Geo-fenced route enforcement"
+                ]
+            },
+            {
+                title: "Cash & High-Value Logistics",
+                items: [
+                    "Cash-in-Transit (CIT) operations",
+                    "Escort and convoy security",
+                    "Tamper detection and chain-of-custody assurance"
+                ]
+            },
+            {
+                title: "Drone-Assisted Convoy Protection",
+                items: [
+                    "Aerial overwatch for high-risk routes",
+                    "Threat anticipation and rerouting",
+                    "Incident response coordination"
+                ]
+            }
+        ]
+    },
+    {
+        icon: UserCheck,
+        title: "VIP, Executive & Close Protection",
+        description: "Professional personal protection services for executives, diplomats, and high-profile individuals with comprehensive threat intelligence and secure movement planning.",
+        services: [
+            {
+                title: "Personal Protection Services",
+                items: [
+                    "Close protection officers for executives, diplomats, and dignitaries",
+                    "Residential and workplace security",
+                    "Secure travel planning and movement control"
+                ]
+            },
+            {
+                title: "Threat Intelligence & Advance Work",
+                items: [
+                    "Pre-event and pre-travel reconnaissance",
+                    "Route risk analysis and contingency planning",
+                    "Secure motorcade operations"
+                ]
+            },
+            {
+                title: "Discreet, Professional & Scalable",
+                items: [
+                    "Low-profile protection models",
+                    "International coordination support",
+                    "Event-linked VIP security integration"
+                ]
+            }
+        ]
+    },
+    {
+        icon: Users2,
+        title: "Event, Crowd & Public Gathering Security",
+        description: "Comprehensive event security management with crowd intelligence, access control, and emergency response capabilities for gatherings of all sizes.",
+        services: [
+            {
+                title: "Event Security Planning & Execution",
+                items: [
+                    "Concerts, sports events, political rallies, religious gatherings",
+                    "Crowd flow modeling and access zoning",
+                    "Entry screening and perimeter enforcement"
+                ]
+            },
+            {
+                title: "Crowd Intelligence & Safety",
+                items: [
+                    "Real-time crowd density analytics",
+                    "Drone-based aerial monitoring",
+                    "Early detection of panic, unrest, or stampede risks"
+                ]
+            },
+            {
+                title: "Emergency & Crisis Response",
+                items: [
+                    "Medical and evacuation coordination",
+                    "Incident containment and de-escalation",
+                    "Post-event reporting and compliance documentation"
+                ]
+            }
+        ]
+    },
+    {
+        icon: Factory,
+        title: "Industrial Safety & Labour Unrest Management",
+        description: "Specialized industrial security and safety management including labor dispute handling, hazard detection, and business continuity protection.",
+        services: [
+            {
+                title: "Industrial & Infrastructure Safety",
+                items: [
+                    "Factory, refinery, power plant, and campus security",
+                    "Unsafe behavior and PPE compliance monitoring",
+                    "Hazard detection and emergency response"
+                ]
+            },
+            {
+                title: "Labour Unrest & Dispute Management",
+                items: [
+                    "Early warning indicators for strikes and protests",
+                    "Crowd behavior analysis and containment planning",
+                    "Protection of critical assets during unrest"
+                ]
+            },
+            {
+                title: "Business Continuity Protection",
+                items: [
+                    "Controlled access and phased operations",
+                    "Management escort and safe corridor creation",
+                    "Coordination with legal and compliance teams"
+                ]
+            }
+        ]
+    }
+];
+
+export const commandIntelligence = {
+    title: "Command, Intelligence & Technology Backbone",
+    description: "Unified security operations powered by AI-driven decision support and scalable architecture",
+    features: [
+        {
+            icon: Server,
+            title: "Integrated Security Operations Centers (SOC)",
+            description: "Regional and national command centers with unified view of people, vehicles, drones, and facilities"
+        },
+        {
+            icon: Brain,
+            title: "AI-Driven Decision Support",
+            description: "Predictive risk modeling and automated escalation with response recommendations"
+        },
+        {
+            icon: Network,
+            title: "Scalable & Modular Architecture",
+            description: "Regional → national → cross-border scalability with API-ready integration"
+        }
+    ]
+};
+
+export const valueProposition = {
+    title: "Our Value Proposition",
+    points: [
+        {
+            title: "Technology-First Security",
+            description: "Advanced AI and automation, not just manpower-only guarding"
+        },
+        {
+            title: "Proactive Risk Prevention",
+            description: "Predictive intelligence and prevention, not reactive response"
+        },
+        {
+            title: "Legally Defensible Operations",
+            description: "Court-admissible documentation and auditable security outcomes"
+        },
+        {
+            title: "Seamless Scalability",
+            description: "From single site to national footprint with consistent quality"
+        }
+    ]
+};
+

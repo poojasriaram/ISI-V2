@@ -47,7 +47,7 @@ const verticalsHeroSlides = [
     highlight: "Education",
     titleEnd: "Sector",
     description: "Campus protection with autonomous drone patrols, AI perimeter sensors, POCSO-compliant protocols, and multi-campus management.",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80",
+    image: "/src/assets/education_campus_hero.png",
     overlay: "from-background via-background/95 to-background/60"
   },
   {
