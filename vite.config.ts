@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true, // Enable source maps for better debugging
+    sourcemap: mode === 'development', // Only enable source maps in development
     rollupOptions: {
       output: {
         manualChunks: {

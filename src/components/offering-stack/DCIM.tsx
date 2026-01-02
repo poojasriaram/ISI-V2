@@ -3,10 +3,10 @@ import { dcimData } from "@/data/offerings-data";
 
 export const DCIM = () => {
     return (
-        <section id="dcim" className="py-24 bg-background relative overflow-hidden">
+        <section id="dcim" className="py-12 bg-background relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-                    <div>
+                <div className="flex flex-col items-center justify-center mb-16 gap-8">
+                    <div className="text-center">
                         <div className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-4 bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
                             <Database className="w-4 h-4" />
                             Infrastructure Intelligence
@@ -14,7 +14,7 @@ export const DCIM = () => {
                         <h2 className="text-4xl md:text-5xl font-bold mb-4">
                             DCIM <span className="text-primary">&</span> Optimization
                         </h2>
-                        <p className="text-muted-foreground text-lg max-w-xl">
+                        <p className="text-muted-foreground text-lg max-w-xl mx-auto">
                             Next-gen management for Hyperscalers and Sovereign Clouds, integrated with your security fabric.
                         </p>
                     </div>

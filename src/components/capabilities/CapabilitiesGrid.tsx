@@ -100,7 +100,7 @@ const CapabilityCard = ({ cap }: { cap: CapabilityPillar }) => {
         <>
             <div className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col h-[400px]">
                 {/* Header / Summary Section */}
-                <div className="p-6 pb-5 relative z-10 flex-shrink-0 h-[160px] bg-gradient-to-br from-primary via-primary to-blue-600 text-primary-foreground flex flex-col justify-between">
+                <div className="p-6 pb-5 relative z-10 flex-shrink-0 h-[160px] bg-gradient-to-br from-primary/90 via-primary to-primary/80 text-primary-foreground flex flex-col justify-between">
                     <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shrink-0">
                         <cap.icon className="w-6 h-6 text-white transition-colors" />
                     </div>
@@ -110,7 +110,7 @@ const CapabilityCard = ({ cap }: { cap: CapabilityPillar }) => {
                             {cap.title}
                         </h3>
 
-                        <p className="text-blue-100/90 text-sm leading-relaxed line-clamp-2">
+                        <p className="text-primary-foreground/80 text-sm leading-relaxed line-clamp-2">
                             {cap.punchline}
                         </p>
                     </div>

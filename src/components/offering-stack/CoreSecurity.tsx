@@ -3,17 +3,17 @@ import { coreSecurityData } from "@/data/offerings-data";
 
 export const CoreSecurity = () => {
     return (
-        <section id="core-security" className="py-24 relative bg-secondary/5">
+        <section id="core-security" className="py-12 relative bg-secondary/5">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
-                    <div>
-                        <h2 className="text-4xl md:text-5xl font-bold flex items-center gap-4">
+                <div className="flex flex-col items-center justify-center mb-16 gap-8">
+                    <div className="text-center">
+                        <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4">
                             <span className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
                                 <Shield className="w-6 h-6" />
                             </span>
                             Core Security
                         </h2>
-                        <p className="text-muted-foreground text-lg mt-4 max-w-2xl">
+                        <p className="text-muted-foreground text-lg mt-4 max-w-2xl mx-auto">
                             Integrated physical and digital security layers ensuring comprehensive protection coverage.
                         </p>
                     </div>

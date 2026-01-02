@@ -3,18 +3,18 @@ import { facilityEvolutionData } from "@/data/offerings-data";
 
 export const FacilityEvolution = () => {
     return (
-        <section id="facility-evolution" className="py-24 relative overflow-hidden">
+        <section id="facility-evolution" className="py-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
 
             <div className="container mx-auto px-4 relative z-10">
-                <div className="mb-20">
-                    <h2 className="text-4xl md:text-5xl font-bold flex items-center gap-4 mb-6">
+                <div className="mb-20 text-center">
+                    <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4 mb-6">
                         <span className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
                             <Building className="w-6 h-6" />
                         </span>
                         Facility Evolution
                     </h2>
-                    <p className="text-muted-foreground text-lg max-w-2xl">
+                    <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                         Transforming traditional maintenance into autonomous, AI-driven facility ecosystems.
                     </p>
                 </div>
