@@ -46,18 +46,21 @@
             ]
         }
     ],
-    "routes": [
+    "redirects": [
         {
-            "source": "/.git/(.*)",
-            "status": 404
+            "source": "/.git/:path*",
+            "destination": "/404",
+            "permanent": false
         },
         {
-            "source": "/.env(.*)",
-            "status": 404
+            "source": "/.env:path*",
+            "destination": "/404",
+            "permanent": false
         },
         {
-            "source": "/node_modules/(.*)",
-            "status": 404
+            "source": "/node_modules/:path*",
+            "destination": "/404",
+            "permanent": false
         }
     ],
     "rewrites": [
