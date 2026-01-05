@@ -1,5 +1,9 @@
-import { Handshake, Award, Globe2, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { Handshake, Award, Globe2, Zap, ArrowRight, CheckCircle2, User, Mail, Building2, Phone, MapPinIcon, MessageSquare, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const partnerTypes = [
   {
@@ -38,6 +42,8 @@ const benefits = [
 ];
 
 export const Partners = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
     <section id="partners" className="py-28 bg-background relative overflow-hidden scroll-mt-32">
       {/* Subtle Background */}
@@ -79,10 +85,169 @@ export const Partners = () => {
               ))}
             </div>
 
-            <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
-              Become a Partner
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+            {/* Dialog Trigger Button */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
+                  Become a Partner
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-card/95 backdrop-blur-xl border-border/50">
+                <DialogHeader>
+                  <DialogTitle className="text-3xl font-bold text-center mb-2">
+                    Join Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-cyan-500">Partner Network</span>
+                  </DialogTitle>
+                  <DialogDescription className="text-center text-base">
+                    Fill out the form below and our partnership team will review your application and get back to you within 48 hours
+                  </DialogDescription>
+                </DialogHeader>
+
+                {/* Partner Application Form */}
+                <form className="space-y-6 mt-4">
+                  {/* Row 1: Personal & Company Info */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="name" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <User className="w-4 h-4 text-primary" />
+                        Full Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        placeholder="John Doe"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-primary" />
+                        Corporate Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        placeholder="john@company.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="company" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-primary" />
+                        Company Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="company"
+                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        placeholder="Your Company"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="designation" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <User className="w-4 h-4 text-primary" />
+                        Designation <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="designation"
+                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        placeholder="Your Role"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 2: Contact Details */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="phone" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-primary" />
+                        Contact Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        placeholder="+91 XXXXX XXXXX"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="location" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <MapPinIcon className="w-4 h-4 text-primary" />
+                        Location <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="location"
+                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        placeholder="City, State"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="partner-type" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Handshake className="w-4 h-4 text-primary" />
+                        Partnership Type <span className="text-red-500">*</span>
+                      </label>
+                      <Select>
+                        <SelectTrigger id="partner-type" className="w-full h-11 bg-background/50 border-border/50 rounded-xl hover:border-primary/30 transition-colors">
+                          <SelectValue placeholder="Select Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="technology">Technology Partner</SelectItem>
+                          <SelectItem value="vendor">Certified Vendor</SelectItem>
+                          <SelectItem value="reseller">Reseller</SelectItem>
+                          <SelectItem value="innovation">Innovation Partner</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Message Field */}
+                  <div className="space-y-2">
+                    <label htmlFor="message" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary" />
+                      Tell Us About Your Organization <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={4}
+                      className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none hover:border-primary/30"
+                      placeholder="Describe your organization, services, and why you'd like to partner with us..."
+                    ></textarea>
+                  </div>
+
+                  {/* Privacy Policy */}
+                  <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-xl border border-border/30">
+                    <Checkbox id="privacy" className="mt-0.5" />
+                    <label htmlFor="privacy" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                      I agree to the{" "}
+                      <a href="/privacy-policy" className="text-primary hover:underline font-medium">Privacy Policy</a>
+                      {" "}and{" "}
+                      <a href="/terms-of-service" className="text-primary hover:underline font-medium">Terms & Conditions</a>
+                    </label>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="flex justify-center pt-2">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="px-10 h-12 text-base font-semibold rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90"
+                    >
+                      Become a Partner
+                      <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* Right Content - Benefits Card */}

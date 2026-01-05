@@ -35,8 +35,6 @@ const footerLinks = {
   ],
 };
 
-const certifications = ["ISO 9001:2015", "PSARA Licensed", "RBI Empanelled", "DGCA Approved"];
-
 export const Footer = () => {
   return (
     <footer className="bg-foreground text-background relative overflow-hidden">
@@ -45,7 +43,7 @@ export const Footer = () => {
 
       {/* Newsletter Section */}
       <div className="border-b border-background/10 relative">
-        <div className="container mx-auto px-4 lg:px-8 py-16">
+        <div className="container mx-auto px-4 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="text-center lg:text-left">
               <h3 className="text-2xl lg:text-3xl font-bold text-background mb-2">
@@ -69,16 +67,22 @@ export const Footer = () => {
       </div>
 
       {/* Main Footer */}
-      <div className="container mx-auto px-4 lg:px-8 py-16 relative">
+      <div className="container mx-auto px-4 lg:px-8 pt-8 pb-12 relative">
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
             <img
               src={isiLogo}
               alt="ISI Logo"
-              className="brightness-0 invert mb-6"
+              className="brightness-0 invert mb-4"
               style={{ width: '174.356px', height: '56px' }}
             />
+            <div className="flex items-center gap-2 mb-6">
+              <Shield className="w-4 h-4 text-primary" />
+              <p className="text-background/80 text-sm font-medium tracking-wide italic">
+                Your Trusted Shield Since 1985
+              </p>
+            </div>
             <p className="text-background/70 mb-6 max-w-sm leading-relaxed">
               Industrial Security & Intelligence (I) Pvt. Ltd. - India's trusted partner for
               comprehensive security solutions since 1985.
@@ -107,7 +111,7 @@ export const Footer = () => {
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-8">
               <a
                 href="https://www.youtube.com/@isiguards"
                 target="_blank"
@@ -198,18 +202,6 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-
-        {/* Certifications */}
-        <div className="mt-16 pt-8 border-t border-background/10">
-          <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
-            {certifications.map((cert, index) => (
-              <div key={index} className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/5 border border-background/10">
-                <Shield className="w-4 h-4 text-primary" />
-                <span className="text-xs font-medium text-background/70">{cert}</span>
-              </div>
-            ))}
           </div>
         </div>
 

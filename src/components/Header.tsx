@@ -177,13 +177,16 @@ export const Header = () => {
 
       <nav className="container mx-auto px-4 lg:px-16 max-w-full overflow-hidden">
         <div className="flex items-center justify-between h-20">
-          <Link to="/">
+          <Link to="/" className="flex flex-col items-center gap-1">
             <img
               src={isiLogo}
               alt="ISI Security"
               className="transition-transform duration-300 group-hover:scale-105"
-              style={{ width: '249.08px', height: '80px' }}
+              style={{ width: '180px', height: '58px' }}
             />
+            <p className="text-[11px] text-primary font-medium tracking-wide italic">
+              Your Trusted Shield Since 1985
+            </p>
           </Link>
 
           {/* Desktop Navigation */}

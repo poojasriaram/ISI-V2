@@ -2,6 +2,7 @@ import { Layout } from "@/components/Layout";
 import { Hero } from "@/components/Hero";
 import { HomeStats } from "@/components/HomeStats";
 import { Services } from "@/components/Services";
+import { Certifications } from "@/components/Certifications";
 import { CommandCenters } from "@/components/CommandCenters";
 import { JobMap } from "@/components/JobMap";
 
@@ -24,6 +25,7 @@ const Index = () => {
       <Hero />
       <HomeStats />
       <Services />
+      <Certifications />
       <CommandCenters />
 
       {/* Map Section */}
