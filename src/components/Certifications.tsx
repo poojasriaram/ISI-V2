@@ -4,22 +4,22 @@ const certifications = [
     {
         name: "ISO 9001:2015",
         description: "Quality Management System",
-        image: "/src/assets/certifications/ISO.png",
+        image: "/src/assets/ISO.png",
     },
     {
         name: "PSARA Licensed",
         description: "Private Security Agency",
-        image: "/src/assets/certifications/PSARA.png",
+        image: "/src/assets/PSARA.png",
     },
     {
         name: "RBI Empanelled",
         description: "Reserve Bank of India",
-        image: "/src/assets/certifications/RBI.png",
+        image: "/src/assets/RBI.png",
     },
     {
         name: "DGCA Approved",
         description: "Aviation Security",
-        image: "/src/assets/certifications/DGCA.png",
+        image: "/src/assets/DGCA.png",
     },
 ];
 
