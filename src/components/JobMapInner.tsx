@@ -77,9 +77,12 @@ const JobMapInner = ({ activeCity, locations }: JobMapProps) => {
                             <div className="p-2">
                                 <h3 className="font-bold text-base mb-1">{loc.title}</h3>
                                 <p className="text-xs uppercase font-semibold text-primary mb-2">{loc.city}</p>
-                                <div className="text-xs text-muted-foreground space-y-0.5 mb-2">
+                                <div className="text-xs text-muted-foreground mb-2" style={{ lineHeight: '1' }}>
                                     {loc.address.map((line, i) => (
-                                        <p key={i}>{line}</p>
+                                        <span key={i}>
+                                            {line}
+                                            {i < loc.address.length - 1 && <br />}
+                                        </span>
                                     ))}
                                 </div>
                                 {(loc.phone || loc.email) && (
