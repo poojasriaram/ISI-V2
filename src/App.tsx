@@ -14,7 +14,6 @@ import CustomersPage from "./pages/CustomersPage";
 import PartnersPage from "./pages/PartnersPage";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,13 +24,23 @@ const queryClient = new QueryClient({
   },
 });
 
-// Scroll to top on route change
+// Scroll to top on route change, or to anchor if hash is present
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (hash) {
+      // Wait for the page to render before scrolling to the hash
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
 
   return null;
 };
@@ -42,6 +51,13 @@ import OfferingsPage from "./pages/OfferingsPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
+import CopyrightPolicy from "./pages/CopyrightPolicy";
+import Sitemap from "./pages/Sitemap";
+import VerticalDetailPage from "./pages/VerticalDetailPage";
+import SchoolSafetyLanding from "./pages/SchoolSafetyLanding";
+import CashLogisticsPage from "./pages/CashLogisticsPage";
+import SecureValueLogisticsPage from "./pages/SecureValueLogisticsPage";
+import CommandCenterPage from "./pages/CommandCenterPage";
 
 import { BackToTop } from "./components/BackToTop";
 
@@ -53,6 +69,7 @@ const AppRouter = () => (
       <Route path="/" element={<Index />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/verticals" element={<VerticalsPage />} />
+      <Route path="/verticals/:verticalId" element={<VerticalDetailPage />} />
       <Route path="/career" element={<CareersPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/capabilities" element={<CapabilitiesPage />} />
@@ -63,6 +80,12 @@ const AppRouter = () => (
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/cookie-policy" element={<CookiePolicy />} />
+      <Route path="/copyright-policy" element={<CopyrightPolicy />} />
+      <Route path="/sitemap" element={<Sitemap />} />
+      <Route path="/school-safety" element={<SchoolSafetyLanding />} />
+      <Route path="/cash-logistics" element={<CashLogisticsPage />} />
+      <Route path="/secure-value-logistics" element={<SecureValueLogisticsPage />} />
+      <Route path="/command-center" element={<CommandCenterPage />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
@@ -74,7 +97,6 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <WhatsAppWidget />
       <BrowserRouter
         basename="/"
         future={{

@@ -123,7 +123,7 @@ const smallSectionsRow4 = [
       { name: "Estancia", image: "/logos/Estancia.png" },
     ],
   },
-  
+
 ];
 
 const smallSectionsRow5 = [
@@ -154,40 +154,6 @@ export const Customers = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             From banking giants to industrial leaders, we secure what matters most.
           </p>
-        </div>
-
-        {/* Testimonials */}
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="group relative bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 transform hover:-translate-y-1"
-            >
-              {/* Quote Icon */}
-              <div className="absolute -top-4 left-8">
-                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform duration-500">
-                  <Quote className="w-5 h-5 text-primary-foreground" />
-                </div>
-              </div>
-
-              {/* Rating */}
-              <div className="flex gap-1 mb-4 pt-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-primary text-primary" />
-                ))}
-              </div>
-
-              <p className="text-muted-foreground mb-6 leading-relaxed">"{testimonial.quote}"</p>
-
-              <div className="pt-6 border-t border-border/50">
-                <div className="font-semibold text-foreground">{testimonial.author}</div>
-                <div className="text-sm text-muted-foreground mb-3">{testimonial.company}</div>
-                <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-                  {testimonial.sector}
-                </span>
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* Client Logos by Industry Sector - Masonry Layout */}
@@ -229,7 +195,7 @@ export const Customers = () => {
                       <img
                         src={company.image}
                         alt={company.name}
-                        className="h-14 w-auto object-contain filter grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-105"
+                        className="h-14 w-auto object-contain"
                       />
                     </div>
                   </div>
@@ -261,7 +227,7 @@ export const Customers = () => {
                         <img
                           src={company.image}
                           alt={company.name}
-                          className="h-14 w-auto object-contain filter grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-105"
+                          className="h-14 w-auto object-contain"
                         />
                       </div>
                     </div>
@@ -294,7 +260,7 @@ export const Customers = () => {
                         <img
                           src={company.image}
                           alt={company.name}
-                          className="h-14 w-auto object-contain filter grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-105"
+                          className="h-14 w-auto object-contain"
                         />
                       </div>
                     </div>
@@ -327,7 +293,7 @@ export const Customers = () => {
                         <img
                           src={company.image}
                           alt={company.name}
-                          className="h-14 w-auto object-contain filter grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-105"
+                          className="h-14 w-auto object-contain"
                         />
                       </div>
                     </div>
@@ -360,7 +326,7 @@ export const Customers = () => {
                         <img
                           src={company.image}
                           alt={company.name}
-                          className="h-14 w-auto object-contain filter grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-105"
+                          className="h-14 w-auto object-contain"
                         />
                       </div>
                     </div>
@@ -393,11 +359,53 @@ export const Customers = () => {
                         <img
                           src={company.image}
                           alt={company.name}
-                          className="h-14 w-auto object-contain filter grayscale opacity-70 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-105"
+                          className="h-14 w-auto object-contain"
                         />
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Testimonials - Moved to Bottom */}
+        <div className="mt-20">
+          <div className="text-center mb-12">
+            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+              What Our Customers Say
+            </h3>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary/30 via-primary to-primary/30 mx-auto rounded-full" />
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="group relative bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 transform hover:-translate-y-1"
+              >
+                {/* Quote Icon */}
+                <div className="absolute -top-4 left-8">
+                  <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform duration-500">
+                    <Quote className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                </div>
+
+                {/* Rating */}
+                <div className="flex gap-1 mb-4 pt-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                  ))}
+                </div>
+
+                <p className="text-muted-foreground mb-6 leading-relaxed">"{testimonial.quote}"</p>
+
+                <div className="pt-6 border-t border-border/50">
+                  <div className="font-semibold text-foreground">{testimonial.author}</div>
+                  <div className="text-sm text-muted-foreground mb-3">{testimonial.company}</div>
+                  <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                    {testimonial.sector}
+                  </span>
                 </div>
               </div>
             ))}

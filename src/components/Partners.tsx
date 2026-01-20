@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { PartnerFormData, PartnerFormErrors } from "@/types/partner";
+import { submitPartnerApplication, isValidEmail, isValidPhone } from "@/services/airtable";
 
 const partnerTypes = [
   {
@@ -43,6 +46,116 @@ const benefits = [
 
 export const Partners = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState<PartnerFormData>({
+    name: '',
+    email: '',
+    company: '',
+    designation: '',
+    phone: '',
+    location: '',
+    partnershipType: '',
+    message: '',
+    privacyConsent: false,
+  });
+
+  const [errors, setErrors] = useState<PartnerFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+    if (errors[id as keyof PartnerFormErrors]) {
+      setErrors(prev => ({ ...prev, [id]: undefined }));
+    }
+  };
+
+  // Handle select changes
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field as keyof PartnerFormErrors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  // Handle checkbox change
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData(prev => ({ ...prev, privacyConsent: checked }));
+    if (errors.privacyConsent) {
+      setErrors(prev => ({ ...prev, privacyConsent: undefined }));
+    }
+  };
+
+  // Validate form
+  const validateForm = (): boolean => {
+    const newErrors: PartnerFormErrors = {};
+
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    if (!formData.company.trim()) newErrors.company = 'Company is required';
+    if (!formData.designation.trim()) newErrors.designation = 'Designation is required';
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone is required';
+    } else if (!isValidPhone(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number';
+    }
+    if (!formData.location.trim()) newErrors.location = 'Location is required';
+    if (!formData.partnershipType) newErrors.partnershipType = 'Please select a partnership type';
+    if (!formData.message.trim()) newErrors.message = 'Message is required';
+    if (!formData.privacyConsent) newErrors.privacyConsent = 'You must agree to the privacy policy';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error('Please fill in all required fields correctly');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await submitPartnerApplication(formData);
+
+      toast.success('Application submitted successfully!', {
+        description: 'Our partnership team will review your application and get back to you within 48 hours.',
+        duration: 5000,
+      });
+
+      // Reset form and close dialog
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        designation: '',
+        phone: '',
+        location: '',
+        partnershipType: '',
+        message: '',
+        privacyConsent: false,
+      });
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Partner form submission error:', error);
+      toast.error('Failed to submit application', {
+        description: error instanceof Error ? error.message : 'Please try again later.',
+        duration: 7000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section id="partners" className="py-28 bg-background relative overflow-hidden scroll-mt-32">
@@ -105,7 +218,7 @@ export const Partners = () => {
                 </DialogHeader>
 
                 {/* Partner Application Form */}
-                <form className="space-y-6 mt-4">
+                <form onSubmit={handleSubmit} className="space-y-6 mt-4">
                   {/* Row 1: Personal & Company Info */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -116,9 +229,13 @@ export const Partners = () => {
                       <input
                         type="text"
                         id="name"
-                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.name ? 'border-red-500' : 'border-border/50'}`}
                         placeholder="John Doe"
                       />
+                      {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                     </div>
 
                     <div className="space-y-2">
@@ -129,9 +246,13 @@ export const Partners = () => {
                       <input
                         type="email"
                         id="email"
-                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.email ? 'border-red-500' : 'border-border/50'}`}
                         placeholder="john@company.com"
                       />
+                      {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                     </div>
 
                     <div className="space-y-2">
@@ -142,9 +263,13 @@ export const Partners = () => {
                       <input
                         type="text"
                         id="company"
-                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.company ? 'border-red-500' : 'border-border/50'}`}
                         placeholder="Your Company"
                       />
+                      {errors.company && <p className="text-xs text-red-500">{errors.company}</p>}
                     </div>
 
                     <div className="space-y-2">
@@ -155,9 +280,13 @@ export const Partners = () => {
                       <input
                         type="text"
                         id="designation"
-                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        value={formData.designation}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.designation ? 'border-red-500' : 'border-border/50'}`}
                         placeholder="Your Role"
                       />
+                      {errors.designation && <p className="text-xs text-red-500">{errors.designation}</p>}
                     </div>
                   </div>
 
@@ -171,9 +300,13 @@ export const Partners = () => {
                       <input
                         type="tel"
                         id="phone"
-                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.phone ? 'border-red-500' : 'border-border/50'}`}
                         placeholder="+91 XXXXX XXXXX"
                       />
+                      {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                     </div>
 
                     <div className="space-y-2">
@@ -184,9 +317,13 @@ export const Partners = () => {
                       <input
                         type="text"
                         id="location"
-                        className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.location ? 'border-red-500' : 'border-border/50'}`}
                         placeholder="City, State"
                       />
+                      {errors.location && <p className="text-xs text-red-500">{errors.location}</p>}
                     </div>
 
                     <div className="space-y-2">
@@ -194,18 +331,19 @@ export const Partners = () => {
                         <Handshake className="w-4 h-4 text-primary" />
                         Partnership Type <span className="text-red-500">*</span>
                       </label>
-                      <Select>
-                        <SelectTrigger id="partner-type" className="w-full h-11 bg-background/50 border-border/50 rounded-xl hover:border-primary/30 transition-colors">
+                      <Select value={formData.partnershipType} onValueChange={(value) => handleSelectChange('partnershipType', value)} disabled={isSubmitting}>
+                        <SelectTrigger id="partner-type" className={`w-full h-11 bg-background/50 border rounded-xl hover:border-primary/30 transition-colors ${errors.partnershipType ? 'border-red-500' : 'border-border/50'}`}>
                           <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="technology">Technology Partner</SelectItem>
-                          <SelectItem value="vendor">Certified Vendor</SelectItem>
-                          <SelectItem value="reseller">Reseller</SelectItem>
-                          <SelectItem value="innovation">Innovation Partner</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="Technology Partner">Technology Partner</SelectItem>
+                          <SelectItem value="Certified Vendor">Certified Vendor</SelectItem>
+                          <SelectItem value="Reseller">Reseller</SelectItem>
+                          <SelectItem value="Innovation Partner">Innovation Partner</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
+                      {errors.partnershipType && <p className="text-xs text-red-500">{errors.partnershipType}</p>}
                     </div>
                   </div>
 
@@ -218,20 +356,26 @@ export const Partners = () => {
                     <textarea
                       id="message"
                       rows={4}
-                      className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none hover:border-primary/30"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full px-4 py-2.5 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none hover:border-primary/30 ${errors.message ? 'border-red-500' : 'border-border/50'}`}
                       placeholder="Describe your organization, services, and why you'd like to partner with us..."
                     ></textarea>
+                    {errors.message && <p className="text-xs text-red-500">{errors.message}</p>}
                   </div>
 
-                  {/* Privacy Policy */}
-                  <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-xl border border-border/30">
-                    <Checkbox id="privacy" className="mt-0.5" />
-                    <label htmlFor="privacy" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                      I agree to the{" "}
-                      <a href="/privacy-policy" className="text-primary hover:underline font-medium">Privacy Policy</a>
-                      {" "}and{" "}
-                      <a href="/terms-of-service" className="text-primary hover:underline font-medium">Terms & Conditions</a>
-                    </label>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-xl border border-border/30">
+                      <Checkbox id="privacy" checked={formData.privacyConsent} onCheckedChange={handleCheckboxChange} disabled={isSubmitting} className="mt-0.5" />
+                      <label htmlFor="privacy" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                        I agree to the{" "}
+                        <a href="/privacy-policy" className="text-primary hover:underline font-medium">Privacy Policy</a>
+                        {" "}and{" "}
+                        <a href="/terms-of-service" className="text-primary hover:underline font-medium">Terms & Conditions</a>
+                      </label>
+                    </div>
+                    {errors.privacyConsent && <p className="text-xs text-red-500">{errors.privacyConsent}</p>}
                   </div>
 
                   {/* Submit Button */}
@@ -239,9 +383,10 @@ export const Partners = () => {
                     <Button
                       type="submit"
                       size="lg"
-                      className="px-10 h-12 text-base font-semibold rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90"
+                      disabled={isSubmitting}
+                      className="px-10 h-12 text-base font-semibold rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Become a Partner
+                      {isSubmitting ? 'Submitting...' : 'Become a Partner'}
                       <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>

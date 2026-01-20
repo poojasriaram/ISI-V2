@@ -183,7 +183,7 @@ export const Solutions = () => {
       </div>
 
       {/* Problem-Based Solutions */}
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
+      <div id="tailored-solutions" className="container mx-auto px-4 lg:px-8 relative z-10 scroll-mt-32">
 
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 rounded-full mb-6 border border-primary/20">
@@ -200,12 +200,12 @@ export const Solutions = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {solutions.map((solution, index) => (
-            <Card key={index} className="flex flex-col h-[420px] bg-card/40 backdrop-blur-md border-border/40 hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 group relative overflow-hidden">
+            <Card key={index} className="flex flex-col h-[280px] bg-card/40 backdrop-blur-md border-border/40 hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 group relative overflow-hidden">
               {/* Top Accent Line */}
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
               {/* Hover Overlay with Details */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/90 to-blue-600/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-700 z-10 p-6 flex flex-col justify-between overflow-y-auto">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/90 to-blue-600/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-700 z-10 p-6 flex flex-col justify-between overflow-hidden">
                 <div className="space-y-4">
                   <div className="flex items-start justify-between">
                     <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
@@ -235,17 +235,6 @@ export const Solutions = () => {
                     ))}
                   </ul>
                 </div>
-
-                <div className="pt-4 mt-4 border-t border-white/20 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider mb-1.5">Target For</p>
-                    <p className="text-xs font-semibold text-white leading-snug">{solution.segments}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider mb-1.5">Growth</p>
-                    <p className="text-xs font-semibold text-white leading-snug">{solution.growth}</p>
-                  </div>
-                </div>
               </div>
 
               {/* Default Card Content */}
@@ -271,26 +260,6 @@ export const Solutions = () => {
                   <p className="text-sm font-medium text-foreground/90 italic relative z-10 pl-2 line-clamp-4">
                     {solution.problem}
                   </p>
-                </div>
-
-                {/* Quick Preview */}
-                <div className="mt-4 pt-4 border-t border-border/50 space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Key Features Preview
-                  </p>
-                  <ul className="space-y-1.5">
-                    {solution.features.slice(0, 3).map((feature, i) => (
-                      <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
-                        <div className="w-1 h-1 rounded-full bg-primary/60 mt-1.5 flex-shrink-0" />
-                        <span className="line-clamp-1">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {solution.features.length > 3 && (
-                    <p className="text-xs text-primary/70 font-medium pt-1">
-                      +{solution.features.length - 3} more features
-                    </p>
-                  )}
                 </div>
               </CardContent>
             </Card>

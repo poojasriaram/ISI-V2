@@ -15,8 +15,8 @@ export const officeLocations = [
         region: "south",
         lat: 13.0350,
         lng: 80.2131,
-        address: ["No. 9, First Floor, Kamarajar Salai,", "Ashok Nagar, Chennai – 600 083"],
-        phone: "+91 77088 87878 / 77088 86868",
+        address: ["No. 9, First Floor, Kamarajar Salai, Ashok Nagar", "Chennai – 600 083"],
+        phone: "+91 77088 87878",
         email: "info@isisecurity.in"
     },
     {
@@ -26,7 +26,7 @@ export const officeLocations = [
         region: "south",
         lat: 9.9252,
         lng: 78.1198,
-        address: ["12-9, Santhosh Raj Plaza,", "Gandhi Nagar, Madurai – 625 020"],
+        address: ["12-9, Santhosh Raj Plaza, Gandhi Nagar", "Madurai – 625 020"],
         phone: "+91 98949 99955 / 95009 59004",
         email: "mdu@isisecurity.in"
     },
@@ -37,28 +37,31 @@ export const officeLocations = [
         region: "north",
         lat: 28.5714,
         lng: 77.3820,
-        address: ["Flat no. B-702, Grand Ajnara Heritage,", "Sector-74, Noida, New Delhi"],
-        phone: "+91 96555 99988"
+        address: ["Flat no. B-702, Grand Ajnara Heritage, Sector-74", "Noida, New Delhi"],
+        phone: "+91 96555 99988",
+        email: "info@isisecurity.in"
     },
     {
         id: "ap",
         title: "Andhra Pradesh Branch",
-        city: "Nagari",
+        city: "Chittoor",
         region: "south",
         lat: 13.3150,
         lng: 79.5854,
-        address: ["No 2 Akn Layout, Chennai – Tirupathi Bye Pass Road,", "Bharath Petrol Bunk Side, Nagari, Chittoor – 517590"],
-        phone: "+91 99444 99988"
+        address: ["No 2 Akn Layout, Chennai – Tirupathi Bye Pass Road", "Bharath Petrol Bunk Side, Nagari, Chittoor – 517590"],
+        phone: "+91 95919 08593",
+        email: "info@isisecurity.in"
     },
     {
         id: "bangalore",
         title: "Karnataka Branch",
-        city: "Bangalore",
+        city: "Bengaluru",
         region: "south",
         lat: 12.9060,
         lng: 77.6253,
-        address: ["No. 36, First Main Road,", "Kodichikkanahalli Main Road, Bangalore – 560 076"],
-        phone: "+91 99803 41711 / 78929 22511"
+        address: ["No. 36, First Main Road, Kodichikkanahalli Main Road", "Bangalore – 560 076"],
+        phone: "+91 73388 55588",
+        email: "info@isisecurity.in"
     },
     {
         id: "hyderabad",
@@ -67,8 +70,8 @@ export const officeLocations = [
         region: "south",
         lat: 17.3457,
         lng: 78.5522,
-        address: ["H.No. B-1228, NGO Colony,", "Vanasthalipuram, Hyderabad – 500 070"],
-        phone: "+91 77088 87878 / 77088 86868",
+        address: ["H.No. B-1228, NGO Colony, Vanasthalipuram", "Hyderabad – 500 070"],
+        phone: "+91 95919 08593",
         email: "info@isisecurity.in"
     },
     {
@@ -78,18 +81,9 @@ export const officeLocations = [
         region: "south",
         lat: 11.8745,
         lng: 75.3704,
-        address: ["No.12/498, K.V. Building,", "Kannur post, Kannur – 670 005"],
-        phone: "+91 99947 31166"
-    },
-    {
-        id: "thoothukudi",
-        title: "Thoothukudi Branch",
-        city: "Thoothukudi",
-        region: "south",
-        lat: 8.7642,
-        lng: 78.1348,
-        address: ["No. 16J/3, Third Floor, JP Dhanam Complex", "Jeyalani Colony, Thoothukudi – 628 008"],
-        phone: "+91 98949 99955 / 98949 99422"
+        address: ["No.12/498, K.V. Building, Kannur post", "Kannur – 670 005"],
+        phone: "+91 78789 95500",
+        email: "info@isisecurity.in"
     },
     {
         id: "coimbatore",
@@ -98,8 +92,9 @@ export const officeLocations = [
         region: "south",
         lat: 11.0018,
         lng: 77.0270,
-        address: ["No: 5, Kakkan Nagar,", "4th street, Singanallur, Coimbatore – 641005"],
-        phone: "+91 98949 99488 / 73388 55544"
+        address: ["No: 5, Kakkan Nagar, 4th street, Singanallur", "Coimbatore – 641005"],
+        phone: "+91 99944 88855",
+        email: "info@isisecurity.in"
     },
     {
         id: "puducherry",
@@ -108,8 +103,31 @@ export const officeLocations = [
         region: "south",
         lat: 10.9254,
         lng: 79.8380,
-        address: ["No. 43, Ambuthital Thirupattinam,", "Polagam, Karaikal, Puducherry – 609606"],
-        phone: "+91 73587 99937 / 73388 55577"
+        address: ["No. 43, Ambuthital Thirupattinam, Polagam, Karaikal", "Puducherry – 609606"],
+        phone: "+91 96555 99988",
+        email: "info@isisecurity.in"
+    },
+    {
+        id: "odisha",
+        title: "Odisha Branch",
+        city: "Bhubaneswar",
+        region: "east",
+        lat: 20.2961,
+        lng: 85.8245,
+        address: ["Plot no - 3761, URJA BHAWAN, GGP Enclave", "Rasulgarh, Bhubaneshwar - 751025"],
+        phone: "+91 95919 08593",
+        email: "info@isisecurity.in"
+    },
+    {
+        id: "andaman",
+        title: "Andaman and Nicobar Islands Branch",
+        city: "Sri Vijaya Puram",
+        region: "islands",
+        lat: 11.6234,
+        lng: 92.7265,
+        address: ["Survey no 1364, RNK water supply, Kamraj nagar", "Sri Vijaya puram - 744105"],
+        phone: "+91 96555 99988",
+        email: "info@isisecurity.in"
     }
 ];
 

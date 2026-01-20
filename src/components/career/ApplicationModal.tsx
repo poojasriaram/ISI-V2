@@ -11,6 +11,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { CareerFormData, CareerFormErrors } from "@/types/career";
+import { submitCareerApplication, isValidEmail, isValidPhone } from "@/services/airtable";
 
 interface ApplicationModalProps {
     jobTitle: string | null;
@@ -23,29 +26,86 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
     const [submitted, setSubmitted] = useState(false);
 
     // Form states
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
+    const [formData, setFormData] = useState<CareerFormData>({
+        name: '',
+        email: '',
+        phone: '',
+        jobTitle: jobTitle || '',
+        coverLetter: '',
+        resumeFileName: '',
+    });
+    const [errors, setErrors] = useState<CareerFormErrors>({});
     const [resume, setResume] = useState<File | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation
+        const newErrors: CareerFormErrors = {};
+        if (!formData.name.trim()) newErrors.name = 'Name is required';
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!isValidEmail(formData.email)) {
+            newErrors.email = 'Please enter a valid email';
+        }
+        if (!formData.phone.trim()) {
+            newErrors.phone = 'Phone is required';
+        } else if (!isValidPhone(formData.phone)) {
+            newErrors.phone = 'Please enter a valid phone number';
+        }
+        if (!resume) {
+            newErrors.resume = 'Resume is required';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error('Please fill all required fields correctly');
+            return;
+        }
+
         setIsSubmitting(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
+        try {
+            // Submit to Airtable with resume filename
+            const submissionData: CareerFormData = {
+                ...formData,
+                resumeFileName: resume?.name || '',
+                jobTitle: jobTitle || formData.jobTitle,
+            };
+
+            await submitCareerApplication(submissionData);
+
+            toast.success('Application submitted successfully!', {
+                description: 'We\'ll review your application and get back to you soon.',
+                duration: 5000,
+            });
+
             setSubmitted(true);
             setTimeout(() => {
                 setSubmitted(false);
                 onClose();
                 // Reset form
-                setName("");
-                setEmail("");
-                setPhone("");
+                setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    jobTitle: '',
+                    coverLetter: '',
+                    resumeFileName: '',
+                });
                 setResume(null);
+                setErrors({});
             }, 2000);
-        }, 1500);
+        } catch (error) {
+            console.error('Career application error:', error);
+            toast.error('Failed to submit application', {
+                description: error instanceof Error ? error.message : 'Please try again later.',
+                duration: 7000,
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -64,33 +124,39 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
                                 <Label htmlFor="name">Full Name</Label>
                                 <Input
                                     id="name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    value={formData.name}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                                     placeholder="John Doe"
-                                    required
+                                    disabled={isSubmitting}
+                                    className={errors.name ? 'border-red-500' : ''}
                                 />
+                                {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.email}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                                     placeholder="john@example.com"
-                                    required
+                                    disabled={isSubmitting}
+                                    className={errors.email ? 'border-red-500' : ''}
                                 />
+                                {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="phone">Phone</Label>
                                 <Input
                                     id="phone"
                                     type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                                     placeholder="+91 98765 43210"
-                                    required
+                                    disabled={isSubmitting}
+                                    className={errors.phone ? 'border-red-500' : ''}
                                 />
+                                {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="resume">Resume/CV</Label>
@@ -99,16 +165,20 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
                                     type="file"
                                     accept=".pdf,.doc,.docx"
                                     onChange={(e) => setResume(e.target.files ? e.target.files[0] : null)}
-                                    className="cursor-pointer"
-                                    required
+                                    className={`cursor-pointer ${errors.resume ? 'border-red-500' : ''}`}
+                                    disabled={isSubmitting}
                                 />
+                                {errors.resume && <p className="text-xs text-red-500">{errors.resume}</p>}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="cover-letter">Cover Letter (Optional)</Label>
                                 <Textarea
                                     id="cover-letter"
+                                    value={formData.coverLetter}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, coverLetter: e.target.value }))}
                                     placeholder="Tell us why you're a good fit..."
                                     className="h-24"
+                                    disabled={isSubmitting}
                                 />
                             </div>
                         </div>

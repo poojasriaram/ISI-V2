@@ -953,4 +953,3 @@ export const valueProposition = {
         }
     ]
 };
-

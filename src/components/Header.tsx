@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, Phone, ArrowRight, MessageCircle } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -169,7 +169,7 @@ export const Header = () => {
             </div>
             <div className="flex items-center gap-2 text-black">
               <Phone className="w-3 h-3" />
-              <span>+91 77088 86868 </span>
+              <span> +91 99444 99988 </span>
             </div>
           </div>
         </div>
@@ -237,6 +237,15 @@ export const Header = () => {
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
+            <a
+              href="https://wa.me/919944499988?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-md shadow-lg shadow-green-600/20 transition-colors text-sm font-medium"
+            >
+              <MessageCircle className="w-4 h-4" />
+              WhatsApp
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -280,6 +289,18 @@ export const Header = () => {
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
+                <a
+                  href="https://wa.me/919944499988?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Button size="sm" className="w-full gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white">
+                    <MessageCircle className="w-4 h-4" />
+                    WhatsApp
+                  </Button>
+                </a>
               </div>
             </div>
           </div>

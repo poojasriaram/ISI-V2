@@ -20,9 +20,10 @@ interface TopicModalProps {
 const TopicModal = ({ topic, isOpen, onClose, pillarTitle, pillarIcon: Icon }: TopicModalProps) => {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
-                <DialogHeader>
-                    <div className="flex items-start gap-4 mb-4">
+            <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col p-0">
+                {/* Static Header */}
+                <DialogHeader className="p-6 pb-4 border-b border-border">
+                    <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                             <Icon className="w-6 h-6 text-primary" />
                         </div>
@@ -37,56 +38,59 @@ const TopicModal = ({ topic, isOpen, onClose, pillarTitle, pillarIcon: Icon }: T
                     </div>
                 </DialogHeader>
 
-                <div className="space-y-8 pt-4">
-                    {/* Advanced Capabilities */}
-                    {topic.capabilities && topic.capabilities.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-1 h-6 bg-gradient-to-b from-primary to-blue-600 rounded-full" />
-                                <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">
-                                    Advanced Capabilities
-                                </h4>
+                {/* Scrollable Content */}
+                <div className="overflow-y-auto flex-1 p-6 pt-4">
+                    <div className="space-y-8">
+                        {/* Advanced Capabilities */}
+                        {topic.capabilities && topic.capabilities.length > 0 && (
+                            <div>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-1 h-6 bg-gradient-to-b from-primary to-blue-600 rounded-full" />
+                                    <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                                        Advanced Capabilities
+                                    </h4>
+                                </div>
+                                <div className="grid gap-3">
+                                    {topic.capabilities.map((item, itemIdx) => (
+                                        <div
+                                            key={itemIdx}
+                                            className="group flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border border-transparent hover:border-primary/20"
+                                        >
+                                            <div className="mt-1 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                            <p className="text-sm text-foreground/90 leading-relaxed flex-1">
+                                                {item}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="grid gap-3">
-                                {topic.capabilities.map((item, itemIdx) => (
-                                    <div
-                                        key={itemIdx}
-                                        className="group flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border border-transparent hover:border-primary/20"
-                                    >
-                                        <div className="mt-1 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                                        <p className="text-sm text-foreground/90 leading-relaxed flex-1">
-                                            {item}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* Critical Deployment Scenarios */}
-                    {topic.scenarios && topic.scenarios.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-1 h-6 bg-gradient-to-b from-red-500 to-orange-500 rounded-full" />
-                                <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">
-                                    Critical Deployment Scenarios
-                                </h4>
+                        {/* Critical Deployment Scenarios */}
+                        {topic.scenarios && topic.scenarios.length > 0 && (
+                            <div>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-1 h-6 bg-gradient-to-b from-red-500 to-orange-500 rounded-full" />
+                                    <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                                        Critical Deployment Scenarios
+                                    </h4>
+                                </div>
+                                <div className="grid gap-3">
+                                    {topic.scenarios.map((item, itemIdx) => (
+                                        <div
+                                            key={itemIdx}
+                                            className="group flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border border-transparent hover:border-primary/20"
+                                        >
+                                            <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                            <p className="text-sm text-foreground/90 leading-relaxed flex-1">
+                                                {item}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="grid gap-3">
-                                {topic.scenarios.map((item, itemIdx) => (
-                                    <div
-                                        key={itemIdx}
-                                        className="group flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border border-transparent hover:border-primary/20"
-                                    >
-                                        <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                        <p className="text-sm text-foreground/90 leading-relaxed flex-1">
-                                            {item}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

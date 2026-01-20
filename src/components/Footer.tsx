@@ -25,13 +25,19 @@ const footerLinks = {
     { name: "Drone Services", href: "/verticals#drones" },
   ],
   services: [
-    { name: "Guarding & On-Site Security", href: "/offerings#core-security" },
-    { name: "Electronic Security Systems", href: "/offerings#core-security" },
-    { name: "Remote Monitoring & SOC", href: "/offerings#core-security" },
-    { name: "Cyber-Physical Security", href: "/offerings#core-security" },
-    { name: "Secure Logistics", href: "/offerings#core-security" },
-    { name: "Risk Consulting", href: "/offerings#core-security" },
-    { name: "Background Verification", href: "/offerings#core-security" },
+    { name: "Core Security", href: "/offerings#core-security" },
+    { name: "Facility Evolution", href: "/offerings#facility-evolution" },
+    { name: "DCIM & Optimization", href: "/offerings#dcim" },
+  ],
+  solutions: [
+    { name: "Integrated Security & Technology-Driven Protection", href: "/solutions" },
+    { name: "Tailored Solutions", href: "/solutions#tailored-solutions" },
+  ],
+  landingPages: [
+    { name: "School Safety Solutions", href: "/school-safety" },
+    { name: "Cash Logistics Platform", href: "/cash-logistics" },
+    { name: "Secure Value Logistics", href: "/secure-value-logistics" },
+    { name: "Command Center Platform", href: "/command-center" },
   ],
   company: [
     { name: "About Us", href: "/about" },
@@ -56,7 +62,7 @@ export const Footer = () => {
 
       {/* Main Footer */}
       <div className="container mx-auto px-4 lg:px-8 py-8 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-10">
           {/* Industry Verticals */}
           <div>
             <h4 className="font-bold text-background mb-6 text-lg">
@@ -73,13 +79,39 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Services & Solutions Combined */}
           <div>
             <h4 className="font-bold text-background mb-6 text-lg">
               Services
             </h4>
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
+                <li key={link.name}>
+                  <a href={link.href} className="text-sm text-background/60 hover:text-background hover:translate-x-1 transition-all inline-block">
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <h4 className="font-bold text-background mb-4 mt-8 text-lg">
+              Solutions
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.solutions.map((link) => (
+                <li key={link.name}>
+                  <a href={link.href} className="text-sm text-background/60 hover:text-background hover:translate-x-1 transition-all inline-block">
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <h4 className="font-bold text-background mb-4 mt-8 text-lg">
+              Landing Pages
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.landingPages.map((link) => (
                 <li key={link.name}>
                   <a href={link.href} className="text-sm text-background/60 hover:text-background hover:translate-x-1 transition-all inline-block">
                     {link.name}
@@ -121,6 +153,18 @@ export const Footer = () => {
                   </a>
                 </li>
               ))}
+            </ul>
+
+            {/* Sitemap */}
+            <h4 className="font-bold text-background mb-4 mt-8 text-lg">
+              Sitemap
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <a href="/sitemap" className="text-sm text-background/60 hover:text-background hover:translate-x-1 transition-all inline-block">
+                  Sitemap
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -209,9 +253,10 @@ export const Footer = () => {
             © {new Date().getFullYear()} Industrial Security & Intelligence (I) Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm text-background/50">
-            <a href="/privacy-policy" className="hover:text-background transition-colors">Privacy Policy</a>
             <a href="/terms-of-service" className="hover:text-background transition-colors">Terms of Service</a>
+            <a href="/privacy-policy" className="hover:text-background transition-colors">Privacy Policy</a>
             <a href="/cookie-policy" className="hover:text-background transition-colors">Cookie Policy</a>
+            <a href="/copyright-policy" className="hover:text-background transition-colors">Copyright Policy</a>
           </div>
         </div>
       </div>
