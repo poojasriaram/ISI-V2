@@ -114,8 +114,8 @@ const CommandCenterPage = () => {
                                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-full mb-8 animate-fade-in">
                                     <span className="text-sm font-medium text-primary">{commandCenterHero.badge}</span>
                                 </div>
-                                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-foreground leading-tight mb-6 animate-fade-in">{commandCenterHero.title}</h1>
-                                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 animate-fade-in">{commandCenterHero.subtitle}</p>
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-4 md:mb-6 animate-fade-in">{commandCenterHero.title}</h1>
+                                <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in">{commandCenterHero.subtitle}</p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-12">
                                     <Link to="/contact"><Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">Schedule a Demo<ArrowRight className="w-5 h-5" /></Button></Link>
                                     <Link to="#value-proposition"><Button variant="outline" size="lg" className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary hover:text-primary-foreground transition-all duration-300">Explore Platform</Button></Link>

@@ -49,7 +49,7 @@ export interface CashLogisticsSection {
 export const cashLogisticsHero = {
     badge: "Cash Logistics Platform",
     title: "AI-Driven, Zero-Loss Cash Movement & Control",
-    subtitle: "An enterprise-grade cash logistics platform designed for banks, retailers, and high-cash businesses to manage cash-in-transit, ATM replenishment, cash collection, cheque logistics, and reverse cash flows with real-time visibility, AI risk intelligence, and audit-ready compliance."
+    subtitle: "Enterprise-grade cash logistics platform for banks, retailers, and high-cash businesses with real-time visibility and AI risk intelligence."
 };
 
 // ============================================================================

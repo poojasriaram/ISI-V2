@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { EbookFormData, ConsultationFormData } from "@/types/schoolSafety";
@@ -258,39 +259,24 @@ export default function SchoolSafetyLanding() {
                                     </div>
 
                                     {/* Main Heading */}
-                                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-foreground leading-tight mb-6 animate-fade-in">
+                                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-4 md:mb-6 animate-fade-in">
                                         Designing Schools Where <br className="hidden md:block" />
                                         Safety, Dignity & Trust Co-Exist
                                     </h1>
 
                                     {/* Subheading */}
-                                    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 animate-fade-in">
-                                        ISI India delivers an intelligence-led, privacy-first School Safety
-                                        Ecosystem integrating certified guarding, ethical AI, and 24/7
-                                        command intelligence — trusted by 500+ schools across India.
+                                    <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in">
+                                        Intelligence-led, privacy-first School Safety Ecosystem trusted by 500+ schools across India.
                                     </p>
 
                                     {/* CTA Buttons */}
                                     <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                                        <button className="gap-2 text-base px-8 py-6 bg-primary text-primary-foreground rounded-lg font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition">
-                                            Get Free 15-Day Risk Assessment
-                                        </button>
-                                        <button className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border border-border rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                                            Download Safety Blueprint
-                                        </button>
-                                    </div>
-
-                                    {/* Trust Indicators */}
-                                    <div className="flex flex-wrap gap-8 text-sm text-muted-foreground">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">500+ Schools Secured</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">Zero Major Incidents</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">100% Compliance</span>
-                                        </div>
+                                        <Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">
+                                            Get Free Risk Assessment
+                                        </Button>
+                                        <Button variant="outline" size="lg" className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                                            Download Blueprint
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

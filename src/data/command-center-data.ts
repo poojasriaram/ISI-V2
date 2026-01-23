@@ -48,7 +48,7 @@ export interface CommandCenterSection {
 export const commandCenterHero = {
     badge: "Centralized Command Center",
     title: "Mission-Critical Intelligence. Quantum-Safe. Autonomous.",
-    subtitle: "A unified, AI-native Command Center that integrates IoT sensors, autonomous drones, video analytics, workflows, and quantum-resilient security into a single operational brain—enabling real-time visibility, predictive control, and assured outcomes across distributed operations."
+    subtitle: "Unified, AI-native Command Center integrating IoT sensors, autonomous drones, and video analytics with quantum-resilient security for real-time visibility and predictive control."
 };
 
 // ============================================================================
