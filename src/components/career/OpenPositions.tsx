@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobMap } from "../JobMap";
 import { officeLocations, openings, JobOpening } from "@/data/career-data";
+import { homeLocations } from "@/data/locations-data";
 import { ApplicationModal } from "./ApplicationModal";
 import { JobDetailsModal } from "./JobDetailsModal";
 
@@ -53,12 +54,17 @@ export const OpenPositions = () => {
 
     return (
         <div className="grid lg:grid-cols-12 gap-8 items-start">
-
             {/* Left Column: Map (2/5 = 40% roughly, using col-span-5) */}
             <div className="lg:col-span-5 h-[500px] lg:h-[700px] bg-card border border-border/50 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 sticky top-28 transition-all duration-500 hover:shadow-primary/5">
+                <div className="absolute top-6 left-6 z-20 p-5 bg-white/95 backdrop-blur-md border border-primary/10 rounded-2xl shadow-xl max-w-[220px] pointer-events-none transition-all duration-300 group-hover:scale-[1.03]">
+                    <h3 className="text-base font-[900] mb-2 text-[#003B95]">Next-Gen PAN India</h3>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed font-bold uppercase tracking-tight">
+                        Our strategic tech hubs cover every major region, delivering rapid AI-driven security response across the entire sub-continent.
+                    </p>
+                </div>
                 <JobMap
                     activeCity={location === "all" ? null : location}
-                    locations={officeLocations}
+                    locations={homeLocations}
                 />
             </div>
 

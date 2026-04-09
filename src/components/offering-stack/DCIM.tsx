@@ -5,7 +5,7 @@ export const DCIM = () => {
     return (
         <section id="dcim" className="py-12 bg-background relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="flex flex-col items-center justify-center mb-16 gap-8">
+                <div className="flex flex-col items-center justify-center mb-8 gap-8">
                     <div className="text-center">
                         <div className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-4 bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
                             <Database className="w-4 h-4" />

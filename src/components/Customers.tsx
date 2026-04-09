@@ -137,14 +137,14 @@ const smallSectionsRow5 = [
 
 export const Customers = () => {
   return (
-    <section id="customers" className="py-28 relative overflow-hidden scroll-mt-32">
+    <section id="customers" className="py-8 relative overflow-hidden scroll-mt-10">
       {/* Background */}
       <div className="absolute inset-0 bg-[var(--section-gradient)]" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[150px]" />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-10">
           <span className="inline-block px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 rounded-full mb-4">
             Our Customers
           </span>
@@ -371,7 +371,7 @@ export const Customers = () => {
         </div>
 
         {/* Testimonials - Moved to Bottom */}
-        <div className="mt-20">
+        <div className="mt-10">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               What Our Customers Say

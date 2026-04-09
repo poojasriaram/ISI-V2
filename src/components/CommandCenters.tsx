@@ -231,7 +231,7 @@ export const CommandCenters = () => {
     };
 
     return (
-        <section id="command-centers" className="relative overflow-hidden scroll-mt-32">
+        <section id="command-centers" className="relative overflow-hidden scroll-mt-10">
             {/* ===== HERO SECTION ===== */}
             <div className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
                 {/* Animated Background Grid */}
@@ -249,7 +249,7 @@ export const CommandCenters = () => {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[150px]" />
 
                 {/* Content */}
-                <div className="container mx-auto px-4 lg:px-8 relative z-10 text-center py-20">
+                <div className="container mx-auto px-4 lg:px-8 relative z-10 text-center py-10">
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-8 animate-fade-in">
                         <Sparkles className="w-4 h-4 text-cyan-400" />
@@ -308,14 +308,14 @@ export const CommandCenters = () => {
             </div>
 
             {/* ===== SPECIALIZED COMMAND CENTER SOLUTIONS ===== */}
-            <div className="py-24 bg-muted/30 relative">
+            <div className="py-12 bg-muted/30 relative">
                 {/* Background Elements */}
                 <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] -translate-x-1/2" />
                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] translate-x-1/3" />
 
                 <div className="container mx-auto px-4 lg:px-8 relative z-10">
                     {/* Section Header */}
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-8">
                         <Badge variant="outline" className="px-4 py-1.5 text-xs font-bold uppercase tracking-widest bg-primary/10 border-primary/20 text-primary mb-6">
                             <Satellite className="w-3 h-3 mr-2" />
                             Industry Solutions
@@ -385,7 +385,7 @@ export const CommandCenters = () => {
             </div>
 
             {/* ===== PLATFORM ASSURANCE SECTION ===== */}
-            <div className="py-24 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div className="py-12 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                 {/* Background Effects */}
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute inset-0" style={{
@@ -396,7 +396,7 @@ export const CommandCenters = () => {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/10 rounded-full blur-[150px]" />
 
                 <div className="container mx-auto px-4 lg:px-8 relative z-10">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-8">
                         <Badge variant="outline" className="px-4 py-1.5 text-xs font-bold uppercase tracking-widest bg-white/10 border-white/20 text-white mb-6">
                             <ShieldCheck className="w-3 h-3 mr-2" />
                             Platform Assurance
@@ -407,7 +407,7 @@ export const CommandCenters = () => {
                     </div>
 
                     {/* Assurance Features */}
-                    <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
+                    <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
                         {platformAssurance.map((feature, index) => (
                             <div
                                 key={index}
@@ -439,13 +439,13 @@ export const CommandCenters = () => {
             </div>
 
             {/* ===== CORE TECHNOLOGY STACK SECTION ===== */}
-            <div className="py-24 bg-background relative">
+            <div className="py-12 bg-background relative">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
 
                 <div className="container mx-auto px-4 lg:px-8 relative z-10">
                     {/* Section Header */}
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-8">
                         <Badge variant="outline" className="px-4 py-1.5 text-xs font-bold uppercase tracking-widest bg-primary/10 border-primary/20 text-primary mb-6">
                             <CircuitBoard className="w-3 h-3 mr-2" />
                             Technology Foundation

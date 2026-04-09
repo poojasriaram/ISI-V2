@@ -63,22 +63,22 @@ export const section1_IntelligentCIT: CashLogisticsSection = {
     subtitle: "Smart, Secure & Predictive Cash-in-Transit Operations. AI-orchestrated cash movement that replaces static routes, manual controls, and reactive security with real-time intelligence and predictive risk prevention.",
     statistics: [
         {
-            value: "45",
+            value: "45%",
             label: "reduction in transit risk incidents",
             icon: Shield
         },
         {
-            value: "99.98",
+            value: "99.98%",
             label: "route adherence accuracy",
             icon: Target
         },
         {
-            value: "30",
+            value: "30%",
             label: "faster delivery cycle times",
             icon: Zap
         },
         {
-            value: "100",
+            value: "100%",
             label: "digitally traceable custody chain",
             icon: CheckCircle2
         }
@@ -108,19 +108,19 @@ export const section1_IntelligentCIT: CashLogisticsSection = {
     verticalTabs: [
         {
             title: "Banking",
-            description: "Branch-to-vault & inter-branch cash movement with real-time tracking, automated reconciliation, and RBI-compliant documentation for secure banking operations."
+            description: "Branch-to-vault & inter-branch cash movement with real-time tracking, automated reconciliation, and RBI-compliant documentation for secure banking operations. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Retail",
-            description: "Daily store pickups & event-based cash movement with flexible scheduling, multi-location support, and instant settlement for retail chains and franchises."
+            description: "Daily store pickups & event-based cash movement with flexible scheduling, multi-location support, and instant settlement for retail chains and franchises. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Government / PSU",
-            description: "Secure movement of public funds with enhanced security protocols, audit trails, and compliance with government regulations for transparent operations."
+            description: "Secure movement of public funds with enhanced security protocols, audit trails, and compliance with government regulations for transparent operations. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "High-Value Enterprises",
-            description: "Corporate cash transfers & escrow movement with discreet transport, armed escorts, and comprehensive insurance coverage for high-value transactions."
+            description: "Corporate cash transfers & escrow movement with discreet transport, armed escorts, and comprehensive insurance coverage for high-value transactions. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         }
     ],
     cta: {
@@ -141,17 +141,17 @@ export const section2_RetailCollection: CashLogisticsSection = {
     subtitle: "Faster, Safer & Fully Reconciled Cash Collection. Digitize retail and enterprise cash pickups with real-time validation, AI reconciliation, and zero-dispute settlement.",
     statistics: [
         {
-            value: "60",
+            value: "60%",
             label: "reduction in reconciliation time",
             icon: Clock
         },
         {
-            value: "90",
+            value: "90%",
             label: "fewer cash variance disputes",
             icon: CheckCircle2
         },
         {
-            value: "35",
+            value: "35%",
             label: "faster credit to bank accounts",
             icon: TrendingUp
         },
@@ -186,19 +186,19 @@ export const section2_RetailCollection: CashLogisticsSection = {
     verticalTabs: [
         {
             title: "Retail Chains",
-            description: "Multi-store cash pickup & consolidation with centralized dashboard, store-level tracking, and automated variance reporting for seamless retail operations."
+            description: "Multi-store cash pickup & consolidation with centralized dashboard, store-level tracking, and automated variance reporting for seamless retail operations. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "QSR & FMCG",
-            description: "High-frequency, low-latency collections with same-day pickup, quick reconciliation, and minimal operational disruption for fast-paced businesses."
+            description: "High-frequency, low-latency collections with same-day pickup, quick reconciliation, and minimal operational disruption for fast-paced businesses. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Hospitals & Education",
-            description: "Secure institutional cash handling with scheduled collections, department-wise tracking, and compliance with institutional audit requirements."
+            description: "Secure institutional cash handling with scheduled collections, department-wise tracking, and compliance with institutional audit requirements. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Enterprises",
-            description: "Corporate collections & settlements with flexible scheduling, multi-location support, and integration with corporate treasury systems."
+            description: "Corporate collections & settlements with flexible scheduling, multi-location support, and integration with corporate treasury systems. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         }
     ],
     cta: {
@@ -219,17 +219,17 @@ export const section3_ATMReplenishment: CashLogisticsSection = {
     subtitle: "Predictive ATM Replenishment & Smart Reverse Cash Flow. AI-powered ATM operations that forecast demand, reduce downtime, and automate surplus cash returns.",
     statistics: [
         {
-            value: "40",
+            value: "40%",
             label: "reduction in ATM downtime",
             icon: Activity
         },
         {
-            value: "25",
+            value: "25%",
             label: "lower idle cash at ATMs",
             icon: TrendingUp
         },
         {
-            value: "50",
+            value: "50%",
             label: "faster reverse cash reconciliation",
             icon: Clock
         },
@@ -264,19 +264,19 @@ export const section3_ATMReplenishment: CashLogisticsSection = {
     verticalTabs: [
         {
             title: "Public Sector Banks",
-            description: "High-volume ATM networks with predictive cash management, optimized replenishment schedules, and comprehensive reporting for large-scale operations."
+            description: "High-volume ATM networks with predictive cash management, optimized replenishment schedules, and comprehensive reporting for large-scale operations. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Private Banks",
-            description: "Urban & semi-urban ATM optimization with location-specific forecasting, dynamic scheduling, and cost-efficient cash circulation strategies."
+            description: "Urban & semi-urban ATM optimization with location-specific forecasting, dynamic scheduling, and cost-efficient cash circulation strategies. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "White-Label ATM Operators",
-            description: "Multi-bank ATM servicing with unified dashboard, cross-bank reconciliation, and optimized cash deployment across diverse networks."
+            description: "Multi-bank ATM servicing with unified dashboard, cross-bank reconciliation, and optimized cash deployment across diverse networks. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Cooperative Banks",
-            description: "Cost-efficient cash circulation with shared resources, optimized routes, and collaborative cash management for regional banking networks."
+            description: "Cost-efficient cash circulation with shared resources, optimized routes, and collaborative cash management for regional banking networks. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         }
     ],
     cta: {
@@ -297,12 +297,12 @@ export const section4_ChequeLogistics: CashLogisticsSection = {
     subtitle: "Fully Traceable Cheque & Instrument Movement. Secure, SLA-driven logistics for cheques and negotiable instruments with end-to-end digital custody and clearing visibility.",
     statistics: [
         {
-            value: "70",
+            value: "70%",
             label: "reduction in lost instruments",
             icon: Shield
         },
         {
-            value: "50",
+            value: "50%",
             label: "faster clearing cycle",
             icon: Zap
         },
@@ -342,19 +342,19 @@ export const section4_ChequeLogistics: CashLogisticsSection = {
     verticalTabs: [
         {
             title: "Banks",
-            description: "Inter-branch cheque movement with automated tracking, clearing house coordination, and comprehensive audit trails for banking operations."
+            description: "Inter-branch cheque movement with automated tracking, clearing house coordination, and comprehensive audit trails for banking operations. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "NBFCs",
-            description: "Loan & repayment instruments with secure handling, digital tracking, and integration with loan management systems for financial institutions."
+            description: "Loan & repayment instruments with secure handling, digital tracking, and integration with loan management systems for financial institutions. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Corporate Treasuries",
-            description: "Bulk cheque handling with batch processing, priority routing, and real-time visibility for corporate financial operations."
+            description: "Bulk cheque handling with batch processing, priority routing, and real-time visibility for corporate financial operations. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Legal & Escrow",
-            description: "Sensitive document movement with enhanced security, legal compliance, and tamper-proof custody chains for legal transactions."
+            description: "Sensitive document movement with enhanced security, legal compliance, and tamper-proof custody chains for legal transactions. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         }
     ],
     cta: {
@@ -380,7 +380,7 @@ export const section5_AICommandCenter: CashLogisticsSection = {
             icon: Zap
         },
         {
-            value: "60",
+            value: "60%",
             label: "fewer security escalations",
             icon: Shield
         },
@@ -390,7 +390,7 @@ export const section5_AICommandCenter: CashLogisticsSection = {
             icon: Eye
         },
         {
-            value: "24",
+            value: "24×",
             label: "7 live monitoring",
             icon: MonitorDot
         }
@@ -420,19 +420,19 @@ export const section5_AICommandCenter: CashLogisticsSection = {
     verticalTabs: [
         {
             title: "Banking Command Center",
-            description: "ATM, branch & vault intelligence with unified monitoring, predictive analytics, and real-time decision support for banking networks."
+            description: "ATM, branch & vault intelligence with unified monitoring, predictive analytics, and real-time decision support for banking networks. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Retail Ops Center",
-            description: "Multi-store cash visibility with centralized oversight, store-level analytics, and operational intelligence for retail operations."
+            description: "Multi-store cash visibility with centralized oversight, store-level analytics, and operational intelligence for retail operations. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Enterprise Security",
-            description: "Corporate cash risk monitoring with threat detection, incident management, and comprehensive security analytics for enterprises."
+            description: "Corporate cash risk monitoring with threat detection, incident management, and comprehensive security analytics for enterprises. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Regulatory View",
-            description: "Audit & compliance dashboards with automated reporting, regulatory compliance tracking, and transparent operations for stakeholders."
+            description: "Audit & compliance dashboards with automated reporting, regulatory compliance tracking, and transparent operations for stakeholders. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         }
     ],
     cta: {

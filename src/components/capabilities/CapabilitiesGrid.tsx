@@ -171,7 +171,7 @@ export const CapabilitiesGrid = () => {
                 <div className="w-20 h-1 bg-primary mx-auto rounded-full" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 {capabilityPillars.map((cap, index) => (
                     <CapabilityCard key={index} cap={cap} />
                 ))}

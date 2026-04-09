@@ -12,6 +12,7 @@ export const officeLocations = [
         id: "chennai",
         title: "Corporate Office",
         city: "Chennai",
+        state: "Tamil Nadu",
         region: "south",
         lat: 13.0350,
         lng: 80.2131,
@@ -23,6 +24,7 @@ export const officeLocations = [
         id: "madurai",
         title: "Administrative Office",
         city: "Madurai",
+        state: "Tamil Nadu",
         region: "south",
         lat: 9.9252,
         lng: 78.1198,
@@ -34,6 +36,7 @@ export const officeLocations = [
         id: "delhi",
         title: "Delhi Branch",
         city: "Noida",
+        state: "Uttar Pradesh",
         region: "north",
         lat: 28.5714,
         lng: 77.3820,
@@ -45,6 +48,7 @@ export const officeLocations = [
         id: "ap",
         title: "Andhra Pradesh Branch",
         city: "Chittoor",
+        state: "Andhra Pradesh",
         region: "south",
         lat: 13.3150,
         lng: 79.5854,
@@ -56,6 +60,7 @@ export const officeLocations = [
         id: "bangalore",
         title: "Karnataka Branch",
         city: "Bengaluru",
+        state: "Karnataka",
         region: "south",
         lat: 12.9060,
         lng: 77.6253,
@@ -67,6 +72,7 @@ export const officeLocations = [
         id: "hyderabad",
         title: "Telangana Branch",
         city: "Hyderabad",
+        state: "Telangana",
         region: "south",
         lat: 17.3457,
         lng: 78.5522,
@@ -78,6 +84,7 @@ export const officeLocations = [
         id: "kerala",
         title: "Kerala Branch",
         city: "Kannur",
+        state: "Kerala",
         region: "south",
         lat: 11.8745,
         lng: 75.3704,
@@ -89,6 +96,7 @@ export const officeLocations = [
         id: "coimbatore",
         title: "Coimbatore Branch",
         city: "Coimbatore",
+        state: "Tamil Nadu",
         region: "south",
         lat: 11.0018,
         lng: 77.0270,
@@ -100,6 +108,7 @@ export const officeLocations = [
         id: "puducherry",
         title: "Puducherry Branch",
         city: "Karaikal",
+        state: "Puducherry",
         region: "south",
         lat: 10.9254,
         lng: 79.8380,
@@ -111,6 +120,7 @@ export const officeLocations = [
         id: "odisha",
         title: "Odisha Branch",
         city: "Bhubaneswar",
+        state: "Odisha",
         region: "east",
         lat: 20.2961,
         lng: 85.8245,
@@ -122,6 +132,7 @@ export const officeLocations = [
         id: "andaman",
         title: "Andaman and Nicobar Islands Branch",
         city: "Sri Vijaya Puram",
+        state: "Andaman and Nicobar",
         region: "islands",
         lat: 11.6234,
         lng: 92.7265,
@@ -155,6 +166,40 @@ export interface JobOpening {
 export const openings: JobOpening[] = [
     {
         id: 1,
+        title: "AI Engineer – Agentic AI Full-Stack Developer",
+        location: "Tamil Nadu / Karnataka",
+        department: "AI Engineering",
+        experience: "12–18 Months",
+        urgent: true,
+        type: "Full-time",
+        openings: 4,
+        description: "Industrial Security & Intelligence (India) Pvt. Ltd. (ISI) is transforming traditional security operations into AI-driven intelligent security platforms. We are seeking a highly motivated AI Engineer to help build the next generation of AI-powered platforms and intelligent security systems, combining structured and unstructured intelligence, data engineering, and automation. Applications Close: 20 March 2025.",
+        responsibilities: [
+            "Design and develop machine learning and deep learning models for predictive analytics and intelligent monitoring",
+            "Build LLM-powered applications and natural language interfaces for security analytics and operational intelligence",
+            "Develop AI agents and automation workflows capable of multi-step reasoning and task execution",
+            "Build AI-powered applications and dashboards that enable interaction with data and AI models",
+            "Design and build data pipelines for ingestion, processing, and analysis from multiple data sources",
+            "Develop backend systems and services that integrate AI capabilities into operational platforms",
+            "Collaborate with stakeholders to rapidly convert ideas into working AI prototypes and MVP platforms"
+        ],
+        requirements: [
+            "Bachelor’s Degree in Computer Science, IT, AI, or related field (M.Tech preferred)",
+            "Minimum 1+ year experience (including internships, projects, or startup work) in AI/ML, Data Engineering, or Full Stack Development",
+            "Strong proficiency in Python, JavaScript, and SQL",
+            "Experience with AI/ML frameworks, Generative AI, LLM tools, and RAG",
+            "Modern web application development using AI-assisted or prompt-driven development",
+            "Working with databases: MySQL, PostgreSQL, MongoDB, Neo4j (Graph Database)",
+            "Ability to build AI-driven automation systems and intelligent monitoring systems",
+            "Passion for building real-world AI products in a high-intensity startup environment",
+            "Excellent commitment, consistency, ownership, and confidence"
+        ],
+        salary: "Competitive; Based on experience and performance",
+        applicationEmail: "rajkumar.s@isisecurity.in",
+        applicationSubject: "Application – AI Engineer (Agentic AI Full-Stack Developer)"
+    },
+    {
+        id: 2,
         title: "Tele Caller – Operations, Client Coordination & Recruitment",
         location: "Chinmaya Nagar Stage I, Chennai",
         department: "Operations",
@@ -192,7 +237,7 @@ export const openings: JobOpening[] = [
         applicationSubject: "Application – Tele Caller (Operations & Client Coordination)"
     },
     {
-        id: 2,
+        id: 3,
         title: "Checking Officer (Field Operations – Security & Housekeeping)",
         location: "Chennai Region – OMR IT corridor, Chennai South, Oragadam & Guduvanchery",
         department: "Operations",
@@ -227,7 +272,7 @@ export const openings: JobOpening[] = [
         applicationSubject: "Application – Trainee: Checking Officer (Chennai Region)"
     },
     {
-        id: 3,
+        id: 4,
         title: "Control Room Operator – Command Centre",
         location: "Chennai (Central Command Centre)",
         department: "Operations",
@@ -267,7 +312,7 @@ export const openings: JobOpening[] = [
         applicationSubject: "Application – Control Room Operator (Command Centre)"
     },
     {
-        id: 4,
+        id: 5,
         title: "Management Trainee – Special Projects of Governance",
         location: "Chennai (Corporate Office – Head Office)",
         department: "Management",
@@ -308,7 +353,7 @@ export const openings: JobOpening[] = [
         applicationSubject: "Application – Management Trainee (Special Project on Governance)"
     },
     {
-        id: 5,
+        id: 6,
         title: "Data Entry Operator – Tally & Inventory Management",
         location: "Chinmaya Nagar Stage I, Chennai",
         department: "Finance",
@@ -350,7 +395,7 @@ export const openings: JobOpening[] = [
         applicationSubject: "Application – Data Entry Operator (Tally & Inventory Management)"
     },
     {
-        id: 6,
+        id: 7,
         title: "Accounts Manager – Internal Audit",
         location: "Chinmaya Nagar Stage I, Chennai",
         department: "Finance",
@@ -389,5 +434,66 @@ export const openings: JobOpening[] = [
         ],
         applicationEmail: "careers@isisecurity.in",
         applicationSubject: "Application – Accounts Manager (Internal Audit)"
+    },
+    {
+        id: 8,
+        title: "CCTV Systems Consultant",
+        location: "Madurai / Coimbatore / South India",
+        department: "Security Systems",
+        experience: "3-8 Years",
+        urgent: true,
+        type: "Full-time",
+        openings: 4,
+        description: "Industrial Security & Intelligence (India) Pvt. Ltd. (ISI) is expanding its technical consultancy wing. We are looking for an experienced CCTV System Consultant to design, plan, and oversee the implementation of advanced surveillance solutions across our key regions in Tamil Nadu, including Madurai and Coimbatore.",
+        responsibilities: [
+            "Conduct comprehensive site surveys and security audits for diverse environments (Industrial, Commercial, Residential)",
+            "Design end-to-end CCTV and surveillance architectures (IP-based, Cloud, Hybrid)",
+            "Prepare Bill of Quantities (BoQ) and technical specifications for projects",
+            "Evaluate and recommend surveillance equipment (Cameras, NVRs, VMS, Analytics)",
+            "Oversee system installation and ensure alignment with design specifications and quality standards",
+            "Provide expert advice on integrating CCTV with other security systems (Access Control, Fire Alarms, AI Analytics)",
+            "Manage relationships with vendors and contractors"
+        ],
+        requirements: [
+            "Any Technical Degree (BE/B.Tech preferred) or Diploma in Electronics/Communication/IT",
+            "3–8 years of experience in Electronic Security Systems / CCTV industry",
+            "Deep knowledge of IP surveillance, video management software (VMS), and networking protocols",
+            "Proficiency in AutoCAD or similar design tools for security layouts",
+            "Excellent communication and presentation skills in Tamil and English",
+            "Willingness to travel across Madurai, Coimbatore, and surrounding regions for site assessments"
+        ],
+        salary: "Competitive; Based on experience and technical expertise",
+        applicationEmail: "careers@isisecurity.in",
+        applicationSubject: "Application – CCTV Systems Consultant (Madurai/Coimbatore)"
+    },
+    {
+        id: 9,
+        title: "CCTV Systems Expert",
+        location: "Chennai / Madurai / Coimbatore",
+        department: "Security Systems",
+        experience: "2-5 Years",
+        urgent: true,
+        type: "Full-time",
+        openings: 4,
+        description: "We are seeking CCTV Systems Experts to join our technical operations team. The ideal candidate will have hands-on experience in the installation, configuration, and troubleshooting of modern surveillance systems, ensuring our clients receive top-tier security support.",
+        responsibilities: [
+            "Install, configure, and maintain IP and Analog CCTV systems at various client locations",
+            "Troubleshoot hardware and software issues related to cameras, NVRs, and storage systems",
+            "Ensure network connectivity and optimize bitrate/bandwidth usage for surveillance streams",
+            "Perform preventive maintenance and periodic health checks of installed systems",
+            "Train client personnel on how to operate monitoring stations and VMS interfaces",
+            "Maintain accurate documentation of installation logs and service reports"
+        ],
+        requirements: [
+            "Diploma or ITI in Electronics/Computer Hardware/Networking",
+            "2–5 years of hands-on experience in CCTV installation and commissioning",
+            "Strong understanding of networking concepts (IP Addressing, PoE, Switches)",
+            "Familiarity with leading CCTV brands (Hikvision, CP Plus, Dahua, AXIS, etc.)",
+            "Disciplined approach and willingness to work flexible hours for field support",
+            "Valid two-wheeler license and own vehicle preferred"
+        ],
+        salary: "Market standard; Commensurate with skills and experience",
+        applicationEmail: "careers@isisecurity.in",
+        applicationSubject: "Application – CCTV Systems Expert"
     }
 ];

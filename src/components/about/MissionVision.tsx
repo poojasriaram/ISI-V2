@@ -2,9 +2,9 @@ import { missionVisionValues } from "@/data/about-data";
 
 export const MissionVision = () => {
     return (
-        <div className="py-24 relative">
+        <div className="py-8 relative">
             <div className="container mx-auto px-4 lg:px-8">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
                     <div className="space-y-12">
                         <div className="relative pl-8 border-l-2 border-primary/30 space-y-4">
                             <h2 className="text-4xl font-bold text-foreground">Our Mission</h2>

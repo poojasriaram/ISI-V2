@@ -108,7 +108,7 @@ const CashLogisticsPage = () => {
                             ))}
                         </div>
                     </div>
-                    <div className="absolute inset-0 flex items-start md:items-center pt-40 md:pt-32">
+                    <div className="absolute inset-0 flex items-start md:items-center pt-48 md:pt-32">
                         <div className="container mx-auto px-4 lg:px-8 relative z-10">
                             <div className="max-w-4xl">
                                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-full mb-8 animate-fade-in">
@@ -123,8 +123,6 @@ const CashLogisticsPage = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute bottom-1/2 translate-y-1/2 left-4 lg:left-8 z-20"><button onClick={scrollPrev} className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all" aria-label="Previous slide"><ChevronLeft className="w-5 h-5" /></button></div>
-                    <div className="absolute bottom-1/2 translate-y-1/2 right-4 lg:right-8 z-20"><button onClick={scrollNext} className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all" aria-label="Next slide"><ChevronRight className="w-5 h-5" /></button></div>
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
                         {heroSlides.map((_, index) => (<button key={index} onClick={() => scrollTo(index)} className={`relative h-2 rounded-full transition-all duration-300 ${selectedIndex === index ? "w-10 bg-primary" : "w-2 bg-muted-foreground/40 hover:bg-muted-foreground/60"}`} aria-label={`Go to slide ${index + 1}`}>{selectedIndex === index && <span className="absolute inset-0 rounded-full bg-primary animate-pulse" />}</button>))}
                     </div>
@@ -137,7 +135,7 @@ const CashLogisticsPage = () => {
                 ))}
 
                 {/* Final CTA Section */}
-                <section className="py-20 relative overflow-hidden bg-gradient-to-b from-background to-primary/5">
+                <section className="py-10 relative overflow-hidden bg-gradient-to-b from-background to-primary/5">
                     <div className="absolute inset-0 bg-[var(--section-gradient)]" />
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px]" />
                     <div className="container mx-auto px-4 lg:px-8 relative z-10">

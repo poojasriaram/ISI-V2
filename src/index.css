@@ -118,6 +118,13 @@
     overflow-x: hidden;
   }
 
+  input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
   ::selection {
     background: hsl(var(--primary) / 0.2);
     color: hsl(var(--primary));
@@ -175,6 +182,12 @@
     background-color: hsl(var(--muted-foreground) / 0.4);
   }
 
+  .modal-open {
+    overflow: hidden !important;
+    height: 100vh !important;
+    position: relative !important;
+  }
+
   @keyframes jump-vibrate {
     0% {
       transform: translateY(0) scale(1);
@@ -224,4 +237,22 @@
   .animate-jump-vibrate {
     animation: jump-vibrate 4s ease-in-out infinite;
   }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+
 }

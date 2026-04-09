@@ -49,7 +49,7 @@ const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: string; s
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    let start = 0;
+                    const start = 0;
                     const duration = 2000;
                     const startTime = Date.now();
 

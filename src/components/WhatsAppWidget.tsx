@@ -4,7 +4,7 @@ import { MessageCircle, X, MessageSquare } from 'lucide-react';
 export const WhatsAppWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const phoneNumber = '919944499988'; // WhatsApp number with country code (India +91)
+  const phoneNumber = '917708887878'; // WhatsApp number with country code (India +91)
   const defaultMessage = 'Hello! I would like to know more about your security solutions.';
 
   // Add a slight delay before showing the widget for a smoother initial load

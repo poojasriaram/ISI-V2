@@ -7,7 +7,7 @@ export const FacilityEvolution = () => {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
 
             <div className="container mx-auto px-4 relative z-10">
-                <div className="mb-20 text-center">
+                <div className="mb-10 text-center">
                     <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4 mb-6">
                         <span className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
                             <Building className="w-6 h-6" />

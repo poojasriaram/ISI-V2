@@ -1,12 +1,14 @@
 import { Layout } from "@/components/Layout";
+import { useContentProtection } from "@/hooks/useContentProtection";
 import { Shield, Lock, FileText, Eye, Database, Server, Users, Globe, AlertCircle, Mail } from "lucide-react";
 
 const PrivacyPolicy = () => {
+    useContentProtection();
     return (
         <Layout>
             <div className="bg-background min-h-screen">
                 {/* Header */}
-                <div className="relative py-20 bg-slate-900 overflow-hidden">
+                <div className="relative py-10 bg-slate-900 overflow-hidden">
                     <div className="container mx-auto px-4 relative z-10 text-center">
                         <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Privacy Policy</h1>
                         <p className="text-lg text-slate-300 max-w-2xl mx-auto">
@@ -16,7 +18,7 @@ const PrivacyPolicy = () => {
                 </div>
 
                 {/* Content */}
-                <div className="container mx-auto px-4 py-16 max-w-4xl">
+                <div className="container mx-auto px-4 py-8 max-w-4xl">
                     <div className="prose prose-slate max-w-none dark:prose-invert">
                         {/* Introduction */}
                         <div className="flex items-start gap-4 mb-8">
@@ -26,7 +28,7 @@ const PrivacyPolicy = () => {
                             <div>
                                 <h2 className="text-2xl font-bold mb-2 text-foreground">Introduction</h2>
                                 <p className="text-muted-foreground">
-                                    Welcome to ISI (the "Company," "we," "us," or "our"). We operate the website located at <a href="https://isi-demo.vercel.app/" className="text-primary hover:underline">https://isi-demo.vercel.app/</a> (the "Website").
+                                    Welcome to ISI (the "Company," "we," "us," or "our"). We operate the website located at <a href="https://www.isisecurity.in/" className="text-primary hover:underline">https://www.isisecurity.in/</a> (the "Website").
                                 </p>
                                 <p className="text-muted-foreground mt-2">
                                     This Privacy Policy explains how we collect, use, disclose, and protect your information when you visit our Website, submit enquiries, register as a partner, or otherwise interact with our services. We are committed to protecting your privacy and handling your personal information responsibly.
@@ -183,7 +185,7 @@ const PrivacyPolicy = () => {
                             <div>
                                 <h2 className="text-2xl font-bold mb-2 text-foreground">International Data Transfers</h2>
                                 <p className="text-muted-foreground">
-                                    The Website is hosted on Vercel (United States). If you access the Website from outside the US, your information may be transferred to and processed in the US or other countries.
+                                    The Website is hosted on secure cloud infrastructure. If you access the Website from outside the host country, your information may be transferred to and processed in that country.
                                 </p>
                             </div>
                         </div>

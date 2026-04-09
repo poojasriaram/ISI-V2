@@ -145,25 +145,6 @@ export const PageHero = ({ slides, autoplayDelay = 5000 }: PageHeroProps) => {
                 </div>
             </div>
 
-            {/* Navigation Arrows */}
-            <div className="absolute bottom-1/2 translate-y-1/2 left-4 lg:left-8 z-20">
-                <button
-                    onClick={scrollPrev}
-                    className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all"
-                    aria-label="Previous slide"
-                >
-                    <ChevronLeft className="w-5 h-5" />
-                </button>
-            </div>
-            <div className="absolute bottom-1/2 translate-y-1/2 right-4 lg:right-8 z-20">
-                <button
-                    onClick={scrollNext}
-                    className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all"
-                    aria-label="Next slide"
-                >
-                    <ChevronRight className="w-5 h-5" />
-                </button>
-            </div>
 
             {/* Slide Indicators */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">

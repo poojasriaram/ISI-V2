@@ -5,16 +5,16 @@ export const LeadershipGrid = () => {
     const allLeaders = [...directorsData, ...executiveManagementData];
 
     return (
-        <div className="py-24">
+        <div className="py-8">
             <div className="container mx-auto px-4 lg:px-8">
-                <div className="text-center mb-20">
+                <div className="text-center mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold mb-6">Board of Directors</h2>
                     <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                         Meet the experienced professionals guiding ISI's strategic vision and operational excellence.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                     {allLeaders.map((leader, idx) => (
                         <div key={idx} className="group relative overflow-hidden rounded-3xl aspect-[3/4] shadow-xl">
                             <img src={leader.img} alt={leader.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />

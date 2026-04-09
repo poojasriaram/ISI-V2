@@ -1,7 +1,7 @@
 import {
   Users, Target, Radio, Search, Building2, ShoppingBag,
   Globe, Activity, UserCheck, Truck, Siren, Stethoscope,
-  ArrowRight, Quote, Lightbulb, Check
+  ArrowRight, Quote, Lightbulb, Check, Home
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -164,18 +164,33 @@ const solutions = [
     ],
     segments: "Healthcare & Pharma (L3–L4)",
     growth: "18–22% — very high"
+  },
+  {
+    icon: Home,
+    problem: "“I need discreet, intelligent security for my luxury home or small branch office.”",
+    title: "Modern Living & Business Suite",
+    features: [
+      "AI-driven fall & intrusion detection",
+      "Discreet facial recognition for VIPs",
+      "24/7 SOC remote lifestyle monitoring",
+      "ChatOps & Voice command integration"
+    ],
+    segments: "HNI Residential, SOHO, Aged Care",
+    growth: "25–30% — emerging high-premium"
   }
 ];
 
 export const Solutions = () => {
   return (
-    <section id="solutions" className="py-28 relative overflow-hidden bg-background scroll-mt-32">
+    <section id="solutions" className="pt-12 pb-8 relative overflow-hidden bg-background scroll-mt-10">
       {/* Dynamic Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
 
       {/* Comprehensive Solutions Section */}
-      <ComprehensiveSolutions />
+      <div id="solutions-comprehensive" className="scroll-mt-10">
+        <ComprehensiveSolutions />
+      </div>
 
       {/* Divider */}
       <div className="container mx-auto px-4 lg:px-8 py-4">
@@ -183,9 +198,9 @@ export const Solutions = () => {
       </div>
 
       {/* Problem-Based Solutions */}
-      <div id="tailored-solutions" className="container mx-auto px-4 lg:px-8 relative z-10 scroll-mt-32">
+      <div id="tailored-solutions" className="container mx-auto px-4 lg:px-8 relative z-10 scroll-mt-10">
 
-        <div className="text-center mb-20 max-w-3xl mx-auto">
+        <div className="text-center mb-10 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 rounded-full mb-6 border border-primary/20">
             <Lightbulb className="w-3 h-3" />
             Tailored Solutions
@@ -205,36 +220,36 @@ export const Solutions = () => {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
               {/* Card Header */}
-              <CardHeader className="space-y-4 pb-3 relative z-0">
-                <div className="flex justify-between items-start">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-300 shadow-sm">
+              <CardHeader className="space-y-4 pb-3 relative z-0 flex flex-col items-center text-center">
+                <div className="flex justify-center items-center">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-300 shadow-sm mx-auto">
                     <solution.icon className="w-7 h-7" />
                   </div>
                 </div>
 
-                <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors pr-4">
+                <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors text-center w-full">
                   {solution.title}
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="flex flex-col flex-1 pt-2 relative z-0 space-y-4">
+              <CardContent className="flex flex-col flex-1 pt-2 relative z-0 space-y-4 items-center text-center">
                 {/* Problem Statement Box */}
-                <div className="bg-secondary/30 rounded-xl p-4 relative group-hover:bg-secondary/50 transition-colors">
-                  <Quote className="w-8 h-8 text-primary/10 absolute -top-3 -left-2 transform -scale-x-100" />
-                  <p className="text-sm font-medium text-foreground/90 italic relative z-10 pl-2 line-clamp-3">
+                <div className="bg-secondary/30 rounded-xl p-4 relative group-hover:bg-secondary/50 transition-colors w-full">
+                  <Quote className="w-8 h-8 text-primary/10 absolute -top-3 left-1/2 -translate-x-1/2 transform -scale-x-100" />
+                  <p className="text-sm font-medium text-foreground/90 italic relative z-10 line-clamp-3">
                     {solution.problem}
                   </p>
                 </div>
 
                 {/* Features Section - Always Visible */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-primary/80 font-bold text-xs uppercase tracking-wider">
-                    <div className="h-px flex-1 bg-border" />
+                <div className="space-y-3 w-full">
+                  <div className="flex items-center gap-2 text-primary/80 font-bold text-xs uppercase tracking-wider justify-center">
+                    <div className="h-px w-8 bg-border" />
                     <span>Features</span>
-                    <div className="h-px flex-1 bg-border" />
+                    <div className="h-px w-8 bg-border" />
                   </div>
 
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 pl-6">
                     {solution.features.map((feature, i) => (
                       <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
                         <Check className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />

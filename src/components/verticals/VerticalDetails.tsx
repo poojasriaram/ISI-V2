@@ -7,7 +7,7 @@ interface VerticalDetailsProps {
 
 export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(({ activeData }, ref) => {
     return (
-        <div ref={ref} className="mt-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <div ref={ref} className="mt-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="relative bg-card border border-border rounded-3xl overflow-hidden shadow-2xl">
 
                 <div className="grid lg:grid-cols-2 gap-0">
@@ -58,8 +58,8 @@ export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(
 
                 <div className="p-8 lg:p-12 space-y-24 bg-background/50">
                     {activeData.sections.map((section: any, idx: number) => (
-                        <div key={idx} className="scroll-mt-24">
-                            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
+                        <div key={idx} className="scroll-mt-12">
+                            <div className="flex flex-col lg:flex-row gap-8 lg:gap-8 items-start">
                                 <div className="lg:w-1/3 space-y-6 sticky top-24">
                                     <div className="relative rounded-2xl overflow-hidden shadow-2xl group/image">
                                         <img
@@ -93,7 +93,7 @@ export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(
                                 </div>
                             </div>
                             {idx !== activeData.sections.length - 1 && (
-                                <div className="h-px bg-border/50 w-full mt-24" />
+                                <div className="h-px bg-border/50 w-full mt-12" />
                             )}
                         </div>
                     ))}

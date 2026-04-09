@@ -1,6 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { ContentProtection } from "@/components/ContentProtection";
+
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -13,11 +13,11 @@ interface LayoutProps {
 export const Layout = ({ children, className, noPadding = false }: LayoutProps) => {
     return (
         <div className="min-h-screen bg-background flex flex-col overflow-x-hidden w-full max-w-[100vw]">
-            <ContentProtection />
+
             <Header />
             <main className={cn(
                 "flex-grow overflow-x-hidden w-full",
-                !noPadding && "pt-32", // Default top padding for fixed header
+                !noPadding && "pt-32", // Default top padding for fixed header (approx 120px)
                 className
             )}>
                 {children}

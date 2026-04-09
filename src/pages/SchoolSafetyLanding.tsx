@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { EbookFormData, ConsultationFormData } from "@/types/schoolSafety";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 import schoolSafety1 from "../assets/school_safety_1.jpg";
 import schoolSafety2 from "../assets/school_safety_2.jpg";
@@ -41,10 +42,8 @@ const heroSlides = [
     }
 ];
 
-import { useContentProtection } from "@/hooks/useContentProtection";
-
 export default function SchoolSafetyLanding() {
-    useContentProtection();
+    const { trackFormSubmission } = useAnalytics();
     // E-Book form state
     const [ebookForm, setEbookForm] = useState<EbookFormData>({
         schoolName: '',
@@ -144,27 +143,29 @@ export default function SchoolSafetyLanding() {
         };
     }, [isEbookWidgetOpen]);
 
+
     // E-Book form handler
     const handleEbookSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setEbookSubmitting(true);
         try {
-            // Log form data (Airtable integration removed)
-            console.log('E-Book Download Request:', ebookForm);
-
-            // Simulate submission delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Track submission to Google Sheets
+            trackFormSubmission('EbookDownloads', {
+                ...ebookForm,
+                followUpStatus: 'New',
+                source: 'School Safety Landing'
+            });
 
             toast.success('E-Book request submitted!', {
                 description: 'Check your email for the School Safety Blueprint e-book.',
                 duration: 5000,
             });
             setEbookForm({ schoolName: '', role: '', email: '', phone: '' });
-            setIsEbookWidgetOpen(false); // Close widget on success
+            setIsEbookWidgetOpen(false);
         } catch (error) {
             console.error('E-Book form error:', error);
             toast.error('Failed to submit request', {
-                description: 'Please try again later.',
+                description: error instanceof Error ? error.message : 'Please try again later.',
                 duration: 7000,
             });
         } finally {
@@ -177,11 +178,11 @@ export default function SchoolSafetyLanding() {
         e.preventDefault();
         setConsultationSubmitting(true);
         try {
-            // Log form data (Airtable integration removed)
-            console.log('Consultation Request:', consultationForm);
-
-            // Simulate submission delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Track submission to Google Sheets
+            trackFormSubmission('ConsultationReqs', {
+                ...consultationForm,
+                status: 'New'
+            });
 
             toast.success('Consultation request submitted!', {
                 description: 'Our school safety team will contact you within 24 hours.',
@@ -200,7 +201,7 @@ export default function SchoolSafetyLanding() {
         } catch (error) {
             console.error('Consultation form error:', error);
             toast.error('Failed to submit request', {
-                description: 'Please try again later.',
+                description: error instanceof Error ? error.message : 'Please try again later.',
                 duration: 7000,
             });
         } finally {
@@ -213,6 +214,7 @@ export default function SchoolSafetyLanding() {
             <Header />
             <main className="flex-grow overflow-x-hidden">
                 <div className="font-sans text-gray-900 bg-gray-50">
+
 
                     {/* ================= HERO SECTION WITH CAROUSEL ================= */}
                     <section className="relative min-h-screen overflow-hidden" id="hero">
@@ -250,7 +252,7 @@ export default function SchoolSafetyLanding() {
                         </div>
 
                         {/* Content Overlay */}
-                        <div className="absolute inset-0 flex items-start md:items-center pt-40 md:pt-32">
+                        <div className="absolute inset-0 flex items-start md:items-center pt-48 md:pt-32">
                             <div className="container mx-auto px-4 lg:px-8 relative z-10">
                                 <div className="max-w-4xl">
                                     {/* Badge */}
@@ -259,14 +261,15 @@ export default function SchoolSafetyLanding() {
                                     </div>
 
                                     {/* Main Heading */}
-                                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-4 md:mb-6 animate-fade-in">
+                                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-foreground leading-tight mb-6 animate-fade-in">
                                         Designing Schools Where <br className="hidden md:block" />
                                         Safety, Dignity & Trust Co-Exist
                                     </h1>
 
                                     {/* Subheading */}
-                                    <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in">
+                                    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 animate-fade-in">
                                         Intelligence-led, privacy-first School Safety Ecosystem trusted by 500+ schools across India.
+
                                     </p>
 
                                     {/* CTA Buttons */}
@@ -278,29 +281,23 @@ export default function SchoolSafetyLanding() {
                                             Download Blueprint
                                         </Button>
                                     </div>
+
+                                    {/* Trust Indicators */}
+                                    <div className="flex flex-wrap gap-8 text-sm text-muted-foreground">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">500+ Schools Secured</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">Zero Major Incidents</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">100% Compliance</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Navigation Arrows */}
-                        <div className="absolute bottom-1/2 translate-y-1/2 left-4 lg:left-8 z-20">
-                            <button
-                                onClick={scrollPrev}
-                                className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all"
-                                aria-label="Previous slide"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-                        </div>
-                        <div className="absolute bottom-1/2 translate-y-1/2 right-4 lg:right-8 z-20">
-                            <button
-                                onClick={scrollNext}
-                                className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all"
-                                aria-label="Next slide"
-                            >
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
 
                         {/* Slide Indicators */}
                         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
@@ -348,7 +345,7 @@ export default function SchoolSafetyLanding() {
                     </section>
 
                     {/* ================= CHALLENGES ================= */}
-                    <section className="max-w-7xl mx-auto px-6 py-20">
+                    <section className="max-w-7xl mx-auto px-6 py-10">
                         <h2 className="text-3xl font-bold text-center mb-12">
                             The Safety Challenges Schools Face Today
                         </h2>
@@ -374,7 +371,7 @@ export default function SchoolSafetyLanding() {
 
                     {/* ================= SOLUTION OVERVIEW ================= */}
                     <section className="bg-indigo-50">
-                        <div className="max-w-7xl mx-auto px-6 py-20">
+                        <div className="max-w-7xl mx-auto px-6 py-10">
                             <h2 className="text-3xl font-bold text-center mb-12">
                                 The ISI India Safety Ecosystem
                             </h2>
@@ -410,7 +407,7 @@ export default function SchoolSafetyLanding() {
                     </section>
 
                     {/* ================= PHILOSOPHY: 4 PILLARS ================= */}
-                    <section className="max-w-7xl mx-auto px-6 py-20">
+                    <section className="max-w-7xl mx-auto px-6 py-10">
                         <h2 className="text-3xl font-bold text-center mb-12">
                             The 4 Pillars of Ethical School Safety
                         </h2>
@@ -447,7 +444,7 @@ export default function SchoolSafetyLanding() {
 
                     {/* ================= COMPREHENSIVE OFFERINGS ================= */}
                     <section className="bg-gradient-to-br from-gray-50 to-indigo-50">
-                        <div className="max-w-7xl mx-auto px-6 py-20">
+                        <div className="max-w-7xl mx-auto px-6 py-10">
                             <h2 className="text-3xl font-bold text-center mb-12">
                                 Comprehensive Offerings Suite
                             </h2>
@@ -553,7 +550,7 @@ export default function SchoolSafetyLanding() {
                     </section>
 
                     {/* ================= BENEFITS ================= */}
-                    <section className="max-w-7xl mx-auto px-6 py-20">
+                    <section className="max-w-7xl mx-auto px-6 py-10">
                         <h2 className="text-3xl font-bold text-center mb-12">
                             Tangible Benefits for Schools
                         </h2>
@@ -602,7 +599,7 @@ export default function SchoolSafetyLanding() {
                     {/* Floating Trigger Button */}
                     <button
                         onClick={() => setIsEbookWidgetOpen(true)}
-                        className="fixed bottom-8 right-8 z-40 bg-gradient-to-br from-indigo-600 to-blue-500 text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-indigo-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2 font-semibold"
+                        className="fixed bottom-6 right-28 z-40 h-16 bg-gradient-to-br from-indigo-600 to-blue-500 text-white px-6 rounded-full shadow-2xl hover:shadow-indigo-500/50 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 font-semibold"
                         style={{ display: isEbookWidgetOpen ? 'none' : 'flex' }}
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -616,7 +613,7 @@ export default function SchoolSafetyLanding() {
                         className={`fixed top-0 right-0 h-full w-full md:w-[480px] bg-gradient-to-br from-gray-900 to-gray-800 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isEbookWidgetOpen ? 'translate-x-0' : 'translate-x-full'
                             }`}
                     >
-                        <div className="h-full overflow-y-auto p-6 md:p-8">
+                        <div className="h-full overflow-hidden p-8">
                             {/* Close Button */}
                             <button
                                 onClick={() => setIsEbookWidgetOpen(false)}
@@ -711,7 +708,7 @@ export default function SchoolSafetyLanding() {
 
                     {/* ================= CUSTOMER REGISTRATION ================= */}
                     <section className="bg-white">
-                        <div className="max-w-4xl mx-auto px-6 py-20">
+                        <div className="max-w-4xl mx-auto px-6 py-10">
                             <h2 className="text-3xl font-bold text-center mb-6">
                                 Request a Personalized Safety Consultation
                             </h2>
@@ -818,7 +815,7 @@ export default function SchoolSafetyLanding() {
 
                     {/* ================= FINAL CTA ================= */}
                     <section className="bg-gradient-to-br from-indigo-700 to-blue-500 text-white">
-                        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
+                        <div className="max-w-4xl mx-auto px-6 py-10 text-center">
                             <h2 className="text-3xl font-bold mb-6">
                                 Start Your School Safety Transformation Today
                             </h2>

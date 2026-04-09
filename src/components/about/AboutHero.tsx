@@ -15,7 +15,7 @@ const aboutHeroSlides = [
         title: "Guided by",
         highlight: "Experience",
         titleEnd: "& Expertise",
-        description: "Led by decorated ex-defence professionals and industry veterans with deep expertise in security operations, governance, and strategic growth.",
+        description: "Led by decorated ex-military professionals and industry veterans with deep expertise in security operations, governance, and strategic growth.",
         image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80",
         overlay: "from-background via-background/95 to-background/70"
     },

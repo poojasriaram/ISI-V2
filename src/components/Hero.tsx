@@ -8,16 +8,27 @@ import heroSoc from "../assets/hero-soc.jpg";
 import heroVerify from "../assets/hero-verify.jpg";
 import heroIntegration from "../assets/hero-integration.jpg";
 import heroDrone from "../assets/hero-drone.jpg";
+import heroFacility from "../assets/verticals-facility.jpg";
+import heroCommand from "../assets/command_center_1.jpg";
 
 const heroSlides = [
   {
-    badge: "ISO 9001:2015 Certified",
-    title: "AI Driven",
-    highlight: "Intelligence",
-    titleEnd: "Solutions",
-    description: "Since 1985, ISI has been SECURING INDIA'S 55 Trillion  ECONOMY with Advanced Techlogy Driven Security Solutions and Operaton.",
+    badge: "Our Strategic Evolution",
+    title: "From",
+    highlight: "Number of Guards per Site to Intelligence per Square Foot",
+    titleEnd: "",
+    description: "We are evolving from traditional manpower models to a tech-first ecosystem for 100% autonomous facility overwatch.",
     image: heroAiDriven,
     overlay: "from-background via-background/95 to-background/70",
+  },
+  {
+    badge: "The Future of Protection",
+    title: "Technology-Led",
+    highlight: "Strategic",
+    titleEnd: "Evolution",
+    description: "Since 1985, ISI has been securing India's ₹55 Trillion economy by integrating elite personnel with AI-powered autonomous security ecosystems.",
+    image: heroIntegration,
+    overlay: "from-background via-background/95 to-background/60",
   },
   {
     badge: "24/7 Security Operations",
@@ -38,16 +49,6 @@ const heroSlides = [
     overlay: "from-background via-background/95 to-background/60",
   },
   {
-    badge: "Securing India's ₹55 Trillion Economy",
-    title: "Large-Scale ",
-    highlight: "Integration",
-    titleEnd: "& Operations",
-    description:
-      "Delivering mission-critical, technology-driven security solutions engineered to safeguard India’s largest infrastructures with precision, reliability, and advanced intelligence.",
-    image: heroIntegration,
-    overlay: "from-background via-background/95 to-background/60",
-  },
-  {
     badge: "Next-Gen Technology",
     title: "Drone Surveillance &",
     highlight: "AI-Powered",
@@ -56,7 +57,24 @@ const heroSlides = [
     image: heroDrone,
     overlay: "from-background via-background/95 to-background/60",
   },
-
+  {
+    badge: "Integrated Facility Management",
+    title: "Smart",
+    highlight: "Facility Management",
+    titleEnd: "Solutions",
+    description: "End-to-end facility management powered by intelligent systems — from access control and housekeeping to engineering operations and compliance monitoring.",
+    image: heroFacility,
+    overlay: "from-background via-background/95 to-background/60",
+  },
+  {
+    badge: "Centralised Command & Control",
+    title: "Real-Time",
+    highlight: "Command & Control",
+    titleEnd: "Center",
+    description: "Our centralised Command & Control Centers provide 24/7 unified oversight across all client sites — integrating CCTV, access, alarms, and rapid response into one command hub.",
+    image: heroCommand,
+    overlay: "from-background via-background/95 to-background/60",
+  },
 ];
 
 const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -137,9 +155,10 @@ export const Hero = () => {
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
   const startAutoPlay = useCallback(() => {
-    if (autoplayRef.current) return;
+    if (!emblaApi) return;
+    stopAutoPlay();
     autoplayRef.current = setInterval(() => {
-      if (emblaApi) emblaApi.scrollNext();
+      emblaApi.scrollNext();
     }, 4000);
   }, [emblaApi]);
 
@@ -152,16 +171,16 @@ export const Hero = () => {
 
   useEffect(() => {
     if (!emblaApi) return;
+
     startAutoPlay();
 
-    // Stop autoplay when user interacts with carousel
-    emblaApi.on('pointerDown', stopAutoPlay);
-    emblaApi.on('pointerUp', startAutoPlay);
+    emblaApi.on("pointerDown", stopAutoPlay);
+    emblaApi.on("settle", startAutoPlay);
 
     return () => {
       stopAutoPlay();
-      emblaApi.off('pointerDown', stopAutoPlay);
-      emblaApi.off('pointerUp', startAutoPlay);
+      emblaApi.off("pointerDown", stopAutoPlay);
+      emblaApi.off("settle", startAutoPlay);
     };
   }, [emblaApi, startAutoPlay, stopAutoPlay]);
 
@@ -175,14 +194,14 @@ export const Hero = () => {
 
   return (
     <section
-      className="relative min-h-screen overflow-hidden"
+      className="relative h-[100dvh] min-h-[600px] overflow-hidden"
       id="hero"
     >
       <VideoModal isOpen={showVideo} onClose={closeVideo} />
       {/* Carousel */}
       <div
         ref={emblaRef}
-        className="overflow-hidden h-screen"
+        className="overflow-hidden h-full"
         onMouseEnter={stopAutoPlay}
         onMouseLeave={startAutoPlay}
       >
@@ -190,14 +209,14 @@ export const Hero = () => {
           {heroSlides.map((slide, index) => (
             <div
               key={index}
-              className="flex-[0_0_100%] min-w-0 relative h-full transition-opacity duration-50 ease-out"
+              className="flex-[0_0_100%] min-w-0 relative h-full"
             >
               {/* Background Image */}
               <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[8000ms] ease-out"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] ease-out"
                 style={{
                   backgroundImage: `url(${slide.image})`,
-                  transform: selectedIndex === index ? 'scale(1.05)' : 'scale(1)'
+                  transform: selectedIndex === index ? 'scale(1.1)' : 'scale(1)'
                 }}
               />
 
@@ -205,103 +224,82 @@ export const Hero = () => {
               <div className={`absolute inset-0 bg-gradient-to-r ${slide.overlay}`} />
 
               {/* Accent Shapes */}
-              <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
-              <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px]" />
+              <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+              <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] pointer-events-none" />
+
+              {/* Content Overlay - Now Inside Slide */}
+              <div className="absolute inset-0 flex items-center pt-20 md:pt-0">
+                <div className="container mx-auto px-4 lg:px-8 relative z-10">
+                  <div className="max-w-5xl">
+                    {/* Badge */}
+                    <div
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-full mb-6 md:mb-8 animate-fade-in"
+                    >
+                      <Shield className="w-4 h-4 text-primary" />
+                      <span className="text-xs sm:text-sm font-medium text-primary text-nowrap">{slide.badge}</span>
+                    </div>
+
+                    {/* Main Heading */}
+                    <h1
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-[1.15] mb-4 md:mb-6 animate-fade-in"
+                    >
+                      {slide.title}{" "}
+                      <span className="text-gradient block sm:inline">{slide.highlight}</span>{" "}
+                      {slide.titleEnd}
+                    </h1>
+
+                    {/* Subheading */}
+                    <p
+                      className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in"
+                    >
+                      {slide.description}
+                    </p>
+
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 mb-12 sm:mb-16">
+                      <Button
+                        size="lg"
+                        className="gap-2 text-base h-14 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+                        onClick={scrollToSolutions}
+                      >
+                        Explore Solutions
+                        <ArrowRight className="w-5 h-5" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary hover:text-white transition-all duration-300"
+                        onClick={openVideo}
+                      >
+                        <Play className="w-4 h-4 fill-current" />
+                        Watch Overview
+                      </Button>
+                    </div>
+
+                    {/* Trust Indicators */}
+                    <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-muted-foreground animate-fade-in">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                        <span className="font-semibold whitespace-nowrap">40+ Years Experience</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                        <span className="font-semibold whitespace-nowrap">500+ Enterprise Clients</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                        <span className="font-semibold whitespace-nowrap">Pan-India Coverage</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-start md:items-center pt-40 md:pt-32">
-        <div className="container mx-auto px-4 lg:px-8 relative z-10">
-          <div className="max-w-4xl">
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-full mb-8 animate-fade-in"
-              key={`badge-${selectedIndex}`}
-            >
-              <Shield className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">{heroSlides[selectedIndex].badge}</span>
-            </div>
 
-            {/* Main Heading */}
-            <h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-4 md:mb-6 animate-fade-in"
-              key={`title-${selectedIndex}`}
-            >
-              {heroSlides[selectedIndex].title}{" "}
-              <span className="text-gradient">{heroSlides[selectedIndex].highlight}</span>{" "}
-              {heroSlides[selectedIndex].titleEnd}
-            </h1>
-
-            {/* Subheading */}
-            <p
-              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in"
-              key={`desc-${selectedIndex}`}
-            >
-              {heroSlides[selectedIndex].description}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button
-                size="lg"
-                className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20"
-                onClick={scrollToSolutions}
-              >
-                Explore Solutions
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-[rgb(23,84,207)] hover:text-white transition-all duration-300"
-                onClick={openVideo}
-              >
-                <Play className="w-4 h-4" />
-                Watch Overview
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap gap-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="font-medium">40+ Years Experience</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="font-medium">500+ Enterprise Clients</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="font-medium">Pan-India Coverage</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Arrows */}
-      <div className="absolute bottom-1/2 translate-y-1/2 left-4 lg:left-8 z-20">
-        <button
-          onClick={scrollPrev}
-          className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-      </div>
-      <div className="absolute bottom-1/2 translate-y-1/2 right-4 lg:right-8 z-20">
-        <button
-          onClick={scrollNext}
-          className="p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground hover:bg-card hover:border-primary/50 transition-all"
-          aria-label="Next slide"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
 
       {/* Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">

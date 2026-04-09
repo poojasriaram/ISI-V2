@@ -789,9 +789,9 @@ export const verticalsDetailData: VerticalDetail[] = [
     },
     {
         id: "manufacturing",
-        title: "Smart Physical Security for Manufacturing & Defence Sectors",
+        title: "Smart Physical Security for Manufacturing & Industrial Sectors",
         subtitle: "Where Human Vigilance Meets Intelligent Technology",
-        description: "Manufacturing and defence facilities in India confront elevated security risks: vast perimeters, high-value assets and sensitive technologies, threats to production/IP continuity, insider risks, sabotage, espionage, and rigorous compliance (Factories Act, ISO 45001, DDP guidelines, ITAR-like controls, and offset requirements). Traditional approaches often lack the integration needed for these high-stakes environments. ISI India provides Smart Physical Security — a unified, tech-augmented solution merging elite trained personnel with real-time AI intelligence, predictive analytics, and cyber-physical convergence to protect people, assets, intellectual property, and operational resilience.",
+        description: "Manufacturing and industrial facilities in India confront elevated security risks: vast perimeters, high-value assets and sensitive technologies, threats to production/IP continuity, insider risks, sabotage, espionage, and rigorous compliance (Factories Act, ISO 45001, DDP guidelines, ITAR-like controls, and offset requirements). Traditional approaches often lack the integration needed for these high-stakes environments. ISI India provides Smart Physical Security — a unified, tech-augmented solution merging elite trained personnel with real-time AI intelligence, predictive analytics, and cyber-physical convergence to protect people, assets, intellectual property, and operational resilience.",
         gradient: "from-slate-500 via-gray-600 to-zinc-700",
         icon: Factory,
         sections: [
@@ -802,12 +802,12 @@ export const verticalsDetailData: VerticalDetail[] = [
                 offerings: [
                     {
                         title: "Elite Security Personnel with Advanced Technology",
-                        description: "Professional security that combines ex-defence/paramilitary expertise with cutting-edge monitoring systems.",
+                        description: "Professional security that combines ex-military/paramilitary expertise with cutting-edge monitoring systems.",
                         features: [
                             "Biometric + Facial Recognition Attendance: Real-time GPS/location tracking replacing manual logs and paper attendance",
                             "AI-Optimized Digital Patrol Routes: Time-stamped photo/video/geofence proof ensuring verifiable, tamper-proof rounds",
                             "Mobile App Incident Reporting: Instant AI-prioritized alerts to supervisors, clients, and emergency response teams",
-                            "Ex-Defence/Paramilitary Trained Personnel: Sector-specific SOPs covering GMP, OSHA, and classified material handling protocols"
+                            "Ex-Military/Paramilitary Trained Personnel: Sector-specific SOPs covering GMP, OSHA, and classified material handling protocols"
                         ]
                     }
                 ],
@@ -848,7 +848,7 @@ export const verticalsDetailData: VerticalDetail[] = [
                 benefits: [
                     {
                         title: "Comprehensive Perimeter Coverage",
-                        description: "Autonomous drones and AI sensors provide 24/7 monitoring of vast industrial perimeters without blind spots.",
+                        description: "Autonomous drones and AI sensors provide 24/7 monitoring of vast industrial perimeters without blind spots.  Next-generation autonomous capabilities successfully operate in flawless synchronization alongside top-tier human intelligence to exponentially scale our defensive footprint. These highly sophisticated tools implement real-time systemic anomaly detection, dramatically accelerating threat interdiction protocols and drastically reducing overall human error. With relentless round-the-clock remote monitoring and sophisticated N+1 physical redundancy designs, optimal and enduring continuity is unconditionally guaranteed.",
                         icon: Eye
                     },
                     {
@@ -938,7 +938,7 @@ export const verticalsDetailData: VerticalDetail[] = [
                 offerings: [
                     {
                         title: "Unified Operations Dashboard",
-                        description: "Single intelligent dashboard for factories, warehouses, depots, and defence installations with complete visibility.",
+                        description: "Single intelligent dashboard for factories, warehouses, depots, and high-security installations with complete visibility.",
                         features: [
                             "Live Personnel Tracking and Patrol Analytics: Real-time monitoring of all security personnel across multiple sites",
                             "Real-Time Perimeter/Intrusion Alerts with AI Triage: Intelligent prioritization of security incidents and threats",
@@ -968,17 +968,17 @@ export const verticalsDetailData: VerticalDetail[] = [
             },
             {
                 id: "advanced-manufacturing-security",
-                title: "Advanced Offerings for High-Security Manufacturing & Defence Clients",
+                title: "Advanced Offerings for High-Security Manufacturing & Industrial Clients",
                 icon: Sparkles,
                 offerings: [
                     {
                         title: "Next-Generation Security Intelligence",
-                        description: "Cutting-edge technologies for high-stakes manufacturing and defence operations requiring maximum protection.",
+                        description: "Cutting-edge technologies for high-stakes manufacturing and critical infrastructure operations requiring maximum protection.",
                         features: [
                             "Predictive Risk Intelligence: AI/ML analysis of incidents, threats, and patterns enabling proactive guard optimization (~25–30% risk reduction)",
                             "Digital Twin & 3D Mapping: Virtual plant models with live sensor/data overlays for remote audits, scenario planning, and emergency simulations",
                             "Cyber-Physical Security Fusion: Integration with SIEM/OT networks detecting converged threats (e.g., physical access + data exfiltration)",
-                            "Classified Compliance Reporting: Secure ESG/safety/IP protection metrics supporting sustainability, audit, and defence offset requirements",
+                            "Classified Compliance Reporting: Secure ESG/safety/IP protection metrics supporting sustainability, audit, and government offset requirements",
                             "Counter-Drone & Electronic Warfare Basics: Compliant jamming/detection systems protecting against aerial surveillance and threats"
                         ]
                     }
@@ -995,14 +995,14 @@ export const verticalsDetailData: VerticalDetail[] = [
                         icon: Cpu
                     },
                     {
-                        title: "Defence-Grade Protection",
+                        title: "Military-Grade Protection",
                         description: "Counter-drone systems and classified compliance reporting meet the highest security standards.",
                         icon: Shield
                     }
                 ]
             }
         ],
-        closingStatement: "ISI India's Smart Physical Security evolves manned guarding into a resilient, intelligence-driven fortress — delivering proactive defence, unbreakable compliance, and uninterrupted operations for India's vital manufacturing and defence ecosystems. Trusted by global leaders in automotive, chemicals, electronics, and high-stakes defence-adjacent operations, we provide elite expertise, stringent compliance, and future-ready scalability that decouples costs from headcount while integrating emerging threats like cyber-physical attacks."
+        closingStatement: "ISI India's Smart Physical Security evolves manned guarding into a resilient, intelligence-driven fortress — delivering proactive protection, unbreakable compliance, and uninterrupted operations for India's vital manufacturing and industrial ecosystems. Trusted by global leaders in automotive, chemicals, electronics, and high-stakes critical infrastructure operations, we provide elite expertise, stringent compliance, and future-ready scalability that decouples costs from headcount while integrating emerging threats like cyber-physical attacks."
     },
     {
         id: "drones",

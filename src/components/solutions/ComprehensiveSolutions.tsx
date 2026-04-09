@@ -262,7 +262,7 @@ export const ComprehensiveSolutions = () => {
     return (
         <div className="py-8 relative">
             {/* Header */}
-            <div className="container mx-auto px-4 lg:px-8 mb-16">
+            <div className="container mx-auto px-4 lg:px-8 mb-8">
                 <div className="max-w-4xl mx-auto text-center">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
                         <span className="text-sm font-semibold text-primary uppercase tracking-wider">
@@ -292,8 +292,8 @@ export const ComprehensiveSolutions = () => {
                             {/* Top Accent Line */}
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                             {/* Icon & Title */}
-                            <div className="flex items-start gap-4 mb-6">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-sm">
+                            <div className="flex flex-col items-center text-center gap-4 mb-6">
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-sm mx-auto">
                                     <solution.icon className="w-8 h-8 text-primary" />
                                 </div>
                                 <div className="flex-1">
@@ -307,14 +307,14 @@ export const ComprehensiveSolutions = () => {
                             <div className="space-y-6">
                                 {solution.sections.map((section, sectionIdx) => (
                                     <div key={sectionIdx} className="space-y-3">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-px flex-1 bg-border" />
+                                        <div className="flex items-center gap-2 justify-center">
+                                            <div className="h-px w-8 bg-border" />
                                             <h4 className="text-xs font-bold text-primary/80 uppercase tracking-wider">
                                                 {section.title}
                                             </h4>
-                                            <div className="h-px flex-1 bg-border" />
+                                            <div className="h-px w-8 bg-border" />
                                         </div>
-                                        <ul className="space-y-2">
+                                        <ul className="space-y-2 pl-20">
                                             {section.items.map((item, itemIdx) => (
                                                 <li key={itemIdx} className="flex items-start gap-3 text-xs text-muted-foreground leading-relaxed">
                                                     <Check className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />

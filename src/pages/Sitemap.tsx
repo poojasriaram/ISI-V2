@@ -1,7 +1,9 @@
 import { Layout } from "@/components/Layout";
+import { useContentProtection } from "@/hooks/useContentProtection";
 import { Home, Building2, Shield, Briefcase, FileText, Mail, ArrowRight, Clock, ExternalLink, ChevronRight } from "lucide-react";
 
 const Sitemap = () => {
+    useContentProtection();
     const sitemapSections = [
         {
             title: "Main Pages",
@@ -108,7 +110,7 @@ const Sitemap = () => {
                     type: "Industry"
                 },
                 {
-                    name: "Manufacturing & Defence",
+                    name: "Manufacturing & Industrial",
                     href: "/verticals/manufacturing",
                     description: "Industrial facility protection with perimeter security and access control",
                     type: "Industry"
@@ -153,6 +155,92 @@ const Sitemap = () => {
             ]
         },
         {
+            title: "Facility Management Excellence",
+            description: "Autonomous asset reliability and predictive maintenance solutions",
+            icon: Building2,
+            links: [
+                {
+                    name: "Hard FM Excellence",
+                    href: "/services/facility-management/hard-fm",
+                    description: "Autonomous asset reliability and predictive maintenance for critical infrastructure",
+                    type: "Category"
+                },
+                {
+                    name: "Soft FM Intelligence",
+                    href: "/services/facility-management/soft-fm",
+                    description: "AI-powered workforce orchestration and premium experience management",
+                    type: "Category"
+                },
+                {
+                    name: "ESG & Energy Intelligence",
+                    href: "/services/facility-management/energy-sustainability",
+                    description: "Data-driven sustainability and energy optimization for zero-carbon operations",
+                    type: "Category"
+                },
+                {
+                    name: "DCIM & Smart Infrastructure",
+                    href: "/services/facility-management/space-workplace",
+                    description: "Intelligent DCIM and autonomous infrastructure management",
+                    type: "Category"
+                },
+                {
+                    name: "Digital Twin & Autonomous FM",
+                    href: "/services/facility-management/compliance-risk",
+                    description: "Next-generation facility management with real-time digital twins",
+                    type: "Category"
+                },
+                {
+                    name: "Vendor & Supply Chain Intelligence",
+                    href: "/services/facility-management/vendor-supply-chain",
+                    description: "Securing global supply chains through autonomous vendor intelligence",
+                    type: "Category"
+                },
+            ]
+        },
+        {
+            title: "Security Intelligence Services",
+            description: "AI-augmented security and tactical intelligence for enterprise protection",
+            icon: Shield,
+            links: [
+                {
+                    name: "Manned Guarding Intelligence",
+                    href: "/services/security-services/manned-guarding",
+                    description: "AI-augmented physical protection and elite tactical guarding",
+                    type: "Category"
+                },
+                {
+                    name: "Electronic Security Intelligence",
+                    href: "/services/security-services/electronic-security",
+                    description: "Autonomous threat detection, video intelligence, and sensor fusion",
+                    type: "Category"
+                },
+                {
+                    name: "Smart Command & Control",
+                    href: "/services/security-services/command-control",
+                    description: "Centralized intelligence hubs for multi-site security orchestration",
+                    type: "Category"
+                },
+                {
+                    name: "Specialized Protection",
+                    href: "/services/security-services/specialized-protection",
+                    description: "High-risk asset logistics and specialized personnel protection",
+                    type: "Category"
+                },
+                {
+                    name: "Risk Intelligence & Advisory",
+                    href: "/services/security-services/risk-advisory",
+                    description: "Strategic risk modeling and geopolitical intelligence for global enterprise",
+                    type: "Category"
+                },
+                {
+                    name: "Emerging Threat & Technology Intelligence",
+                    href: "/services/security-services/emerging-threat-tech",
+                    description: "Future-ready security innovation covering drones, robotics, and neuro-security",
+                    type: "Category"
+                },
+            ]
+        },
+        {
             title: "Legal & Policies",
             description: "Terms, privacy, and compliance information",
             icon: FileText,
@@ -189,7 +277,7 @@ const Sitemap = () => {
         <Layout>
             <div className="bg-background min-h-screen">
                 {/* Enhanced Hero Section */}
-                <div className="relative py-16 md:py-20 bg-gradient-to-br from-primary via-primary/95 to-primary/90 overflow-hidden">
+                <div className="relative py-8 md:py-10 bg-gradient-to-br from-primary via-primary/95 to-primary/90 overflow-hidden">
                     {/* Animated Grid Pattern */}
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
@@ -214,7 +302,7 @@ const Sitemap = () => {
                             {/* Quick Stats */}
                             <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto">
                                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
-                                    <div className="text-3xl font-bold text-white mb-1">23</div>
+                                    <div className="text-3xl font-bold text-white mb-1">35</div>
                                     <div className="text-xs text-white/80 font-medium">Total Pages</div>
                                 </div>
                                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
@@ -222,7 +310,7 @@ const Sitemap = () => {
                                     <div className="text-xs text-white/80 font-medium">Verticals</div>
                                 </div>
                                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
-                                    <div className="text-3xl font-bold text-white mb-1">6</div>
+                                    <div className="text-3xl font-bold text-white mb-1">12</div>
                                     <div className="text-xs text-white/80 font-medium">Categories</div>
                                 </div>
                             </div>
@@ -231,7 +319,7 @@ const Sitemap = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="container mx-auto px-4 py-20 md:py-24 max-w-7xl">
+                <div className="container mx-auto px-4 py-10 md:py-12 max-w-7xl">
                     {/* Page Categories */}
                     <div className="space-y-12">
                         {sitemapSections.map((section, sectionIndex) => {
@@ -302,7 +390,7 @@ const Sitemap = () => {
                     </div>
 
                     {/* Bottom CTA */}
-                    <div className="mt-20 relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-12 md:p-16 rounded-3xl border border-primary/20">
+                    <div className="mt-10 relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-12 md:p-8 rounded-3xl border border-primary/20">
                         {/* Decorative Elements */}
                         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
                         <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />

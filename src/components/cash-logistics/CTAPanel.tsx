@@ -10,7 +10,7 @@ interface CTAPanelProps {
 
 export const CTAPanel = ({ text, buttonText, link }: CTAPanelProps) => {
     return (
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
                 {text}
             </p>

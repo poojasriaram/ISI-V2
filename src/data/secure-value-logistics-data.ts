@@ -109,19 +109,19 @@ export const section1_CashMonetary: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Banking",
-            description: "Cash-in-transit for branches, ATM replenishment (FLM/SLM), inter-branch transfers, and reverse cash logistics with real-time reconciliation and RBI-compliant documentation."
+            description: "Cash-in-transit for branches, ATM replenishment (FLM/SLM), inter-branch transfers, and reverse cash logistics with real-time reconciliation and RBI-compliant documentation. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Retail & Enterprises",
-            description: "Daily retail cash collection, event-based pickups, reverse end-of-day collections, and faster store-level reconciliation with digital proof of delivery."
+            description: "Daily retail cash collection, event-based pickups, reverse end-of-day collections, and faster store-level reconciliation with digital proof of delivery. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "ATM Networks",
-            description: "Predictive ATM replenishment forecasting, dynamic route optimization, surplus detection, and automated reverse cash reconciliation for optimal uptime."
+            description: "Predictive ATM replenishment forecasting, dynamic route optimization, surplus detection, and automated reverse cash reconciliation for optimal uptime. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Government & PSU",
-            description: "Secure movement of public funds, currency distribution, high audit standards, and transparent operations with regulator-aligned evidence trails."
+            description: "Secure movement of public funds, currency distribution, high audit standards, and transparent operations with regulator-aligned evidence trails. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         }
     ],
     cta: {
@@ -187,19 +187,19 @@ export const section2_HighValue: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Bullion & Jewellery",
-            description: "Secure forward and reverse logistics for gold, silver, precious metals, and jewellery with RFID tracking, dual custody, and insurance-compliant documentation for HNI and institutional clients."
+            description: "Secure forward and reverse logistics for gold, silver, precious metals, and jewellery with RFID tracking, dual custody, and insurance-compliant documentation for HNI and institutional clients. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Minerals & Precious Stones",
-            description: "Specialized transport for diamonds, gemstones, and high-value minerals with regulatory compliance, export documentation, and secure vault-to-vault movement."
+            description: "Specialized transport for diamonds, gemstones, and high-value minerals with regulatory compliance, export documentation, and secure vault-to-vault movement. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "High-Value Automobiles",
-            description: "Luxury vehicles, armored vehicles, prototypes, and auction vehicles with enclosed transport, GPS monitoring, condition tracking, and reverse logistics post-events."
+            description: "Luxury vehicles, armored vehicles, prototypes, and auction vehicles with enclosed transport, GPS monitoring, condition tracking, and reverse logistics post-events. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Documents & Artworks",
-            description: "Sensitive legal documents, contracts, artworks, and collectibles with tamper-proof handling, climate-controlled transport, and comprehensive insurance coverage."
+            description: "Sensitive legal documents, contracts, artworks, and collectibles with tamper-proof handling, climate-controlled transport, and comprehensive insurance coverage. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         }
     ],
     cta: {
@@ -265,19 +265,19 @@ export const section3_Vaults: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Cash Vaults",
-            description: "Secure cash storage with automated counting, sorting, and reconciliation. Real-time inventory tracking, aging analysis, and seamless integration with banking systems."
+            description: "Secure cash storage with automated counting, sorting, and reconciliation. Real-time inventory tracking, aging analysis, and seamless integration with banking systems. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Bullion & Precious Metals",
-            description: "Climate-controlled vaults for gold, silver, and precious metals with weight verification, purity testing, and insurance-grade documentation for institutional and retail clients."
+            description: "Climate-controlled vaults for gold, silver, and precious metals with weight verification, purity testing, and insurance-grade documentation for institutional and retail clients. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Mineral & Gemstone Storage",
-            description: "Specialized custody for diamonds, gemstones, and high-value minerals with regulatory compliance, export readiness, and secure access protocols."
+            description: "Specialized custody for diamonds, gemstones, and high-value minerals with regulatory compliance, export readiness, and secure access protocols. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Document & Legal Custody",
-            description: "Secure preservation of sensitive documents, contracts, legal instruments, and records with climate control, fire protection, and audit-ready retrieval systems."
+            description: "Secure preservation of sensitive documents, contracts, legal instruments, and records with climate control, fire protection, and audit-ready retrieval systems. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         }
     ],
     cta: {
@@ -343,19 +343,19 @@ export const section4_VIPLogistics: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "VIP & VVIP Movement",
-            description: "Secure transport for high-profile individuals, executives, and dignitaries with discreet routing, trained personnel, and real-time command center monitoring for complete safety and privacy."
+            description: "Secure transport for high-profile individuals, executives, and dignitaries with discreet routing, trained personnel, and real-time command center monitoring for complete safety and privacy. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Diplomatic Consignments",
-            description: "Protocol-compliant logistics for diplomatic cargo, sensitive government materials, and international consignments with customs coordination and security clearances."
+            description: "Protocol-compliant logistics for diplomatic cargo, sensitive government materials, and international consignments with customs coordination and security clearances. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Corporate Transfers",
-            description: "Confidential movement of sensitive corporate materials, prototypes, trade secrets, and executive documents with tamper-proof handling and audit trails."
+            description: "Confidential movement of sensitive corporate materials, prototypes, trade secrets, and executive documents with tamper-proof handling and audit trails. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Event Logistics",
-            description: "High-security logistics for conferences, summits, exhibitions, and high-profile events with coordinated security, access control, and emergency preparedness."
+            description: "High-security logistics for conferences, summits, exhibitions, and high-profile events with coordinated security, access control, and emergency preparedness. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         }
     ],
     cta: {
@@ -421,19 +421,19 @@ export const section5_Automobiles: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Luxury Vehicles",
-            description: "Premium transport for high-end automobiles including supercars, luxury sedans, and exotic vehicles with white-glove handling and comprehensive insurance coverage."
+            description: "Premium transport for high-end automobiles including supercars, luxury sedans, and exotic vehicles with white-glove handling and comprehensive insurance coverage. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Armored Vehicles",
-            description: "Specialized logistics for armored vehicles and security transport with trained personnel, secure routes, and confidential handling protocols."
+            description: "Specialized logistics for armored vehicles and security transport with trained personnel, secure routes, and confidential handling protocols. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Prototypes & Pre-Launch Models",
-            description: "Discreet transport for automotive prototypes, pre-launch models, and concept vehicles with NDA compliance and maximum security to prevent leaks."
+            description: "Discreet transport for automotive prototypes, pre-launch models, and concept vehicles with NDA compliance and maximum security to prevent leaks. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Auction & Exhibition Vehicles",
-            description: "Event logistics for auction houses, auto shows, and exhibitions with coordinated pickup, display transport, and post-event returns."
+            description: "Event logistics for auction houses, auto shows, and exhibitions with coordinated pickup, display transport, and post-event returns. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         }
     ],
     cta: {
@@ -499,19 +499,19 @@ export const section6_CommandCenter: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Operations View",
-            description: "Live monitoring of all CIT vehicles, high-value consignments, and asset movements with real-time GPS tracking, route adherence, and operational health dashboards."
+            description: "Live monitoring of all CIT vehicles, high-value consignments, and asset movements with real-time GPS tracking, route adherence, and operational health dashboards. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Asset Intelligence",
-            description: "Comprehensive visibility into cash, bullion, minerals, and high-value assets across locations, vaults, and transit with inventory management and aging analysis."
+            description: "Comprehensive visibility into cash, bullion, minerals, and high-value assets across locations, vaults, and transit with inventory management and aging analysis. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Risk Analytics",
-            description: "AI-powered predictive risk engine with route-time heatmaps, personnel behavior analytics, incident forecasting, and preventive recommendations."
+            description: "AI-powered predictive risk engine with route-time heatmaps, personnel behavior analytics, incident forecasting, and preventive recommendations. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Compliance Cockpit",
-            description: "Automated compliance checks, regulator-ready audit dashboards, immutable logs for forensic investigations, and one-click regulatory reports."
+            description: "Automated compliance checks, regulator-ready audit dashboards, immutable logs for forensic investigations, and one-click regulatory reports. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         }
     ],
     cta: {
@@ -577,19 +577,19 @@ export const section7_Banking: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Retail Banking",
-            description: "Branch cash management, ATM replenishment, cash collection from retail outlets, and reverse cash logistics with real-time reconciliation and RBI compliance."
+            description: "Branch cash management, ATM replenishment, cash collection from retail outlets, and reverse cash logistics with real-time reconciliation and RBI compliance. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Corporate Banking",
-            description: "Large-value cash movements, corporate cash pickups, treasury operations, and high-security transport for institutional banking clients."
+            description: "Large-value cash movements, corporate cash pickups, treasury operations, and high-security transport for institutional banking clients. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "ATM Networks",
-            description: "Predictive cash forecasting, optimized FLM/SLM schedules, surplus detection, downtime reduction, and automated reverse cash reconciliation."
+            description: "Predictive cash forecasting, optimized FLM/SLM schedules, surplus detection, downtime reduction, and automated reverse cash reconciliation. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Treasury Operations",
-            description: "Inter-bank transfers, currency distribution, vault management, and regulatory reporting with audit-ready documentation and compliance dashboards."
+            description: "Inter-bank transfers, currency distribution, vault management, and regulatory reporting with audit-ready documentation and compliance dashboards. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         }
     ],
     cta: {
@@ -655,35 +655,35 @@ export const section8_Dashboards: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Executive Command Overview",
-            description: "Board-level visibility with live operations snapshot, risk index panel, financial exposure tracking, and SLA health for faster executive decision-making."
+            description: "Board-level visibility with live operations snapshot, risk index panel, financial exposure tracking, and SLA health for faster executive decision-making. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Live Cash & Vehicle Operations",
-            description: "Real-time monitoring of every CIT vehicle with GPS tracking, route adherence, vehicle health, cash load panels, and reverse cash movements."
+            description: "Real-time monitoring of every CIT vehicle with GPS tracking, route adherence, vehicle health, cash load panels, and reverse cash movements. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "High-Value Asset Monitoring",
-            description: "Full lifecycle tracking of bullion, jewellery, minerals with asset ledger, custody chain timeline, risk intelligence, and reverse logistics visibility."
+            description: "Full lifecycle tracking of bullion, jewellery, minerals with asset ledger, custody chain timeline, risk intelligence, and reverse logistics visibility. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Vault Intelligence",
-            description: "Complete vault security with occupancy tracking, access control logs, AI-powered surveillance alerts, and audit readiness dashboards."
+            description: "Complete vault security with occupancy tracking, access control logs, AI-powered surveillance alerts, and audit readiness dashboards. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Banking Cash Intelligence",
-            description: "ATM forecasting, branch cash health, cheque logistics tracking, and RBI-compliant reporting for banking operations optimization."
+            description: "ATM forecasting, branch cash health, cheque logistics tracking, and RBI-compliant reporting for banking operations optimization. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "AI Risk & Predictive Analytics",
-            description: "Predictive risk engine, behavioral analytics, incident forecasting, and proactive security recommendations for prevention-first operations."
+            description: "Predictive risk engine, behavioral analytics, incident forecasting, and proactive security recommendations for prevention-first operations. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Incident & Escalation Center",
-            description: "Live incident queue, automated escalation workflows, digital evidence capture, and resolution tracking for faster incident management."
+            description: "Live incident queue, automated escalation workflows, digital evidence capture, and resolution tracking for faster incident management. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Compliance & Audit Cockpit",
-            description: "One-click audit readiness with asset movement logs, insurance evidence packs, regulatory reports, and compliance dashboards."
+            description: "One-click audit readiness with asset movement logs, insurance evidence packs, regulatory reports, and compliance dashboards. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         }
     ],
     cta: {
@@ -705,12 +705,12 @@ export const section9_Industries: SecureLogisticsSection = {
     statistics: [
         {
             value: "15",
-            label: "industries served",
+            label: "active industries",
             icon: Globe
         },
         {
             value: "100",
-            label: "use cases deployed",
+            label: "active use cases",
             icon: Briefcase
         },
         {
@@ -749,19 +749,19 @@ export const section9_Industries: SecureLogisticsSection = {
     verticalTabs: [
         {
             title: "Retail & FMCG",
-            description: "Daily cash collection from stores, reverse end-of-day pickups, faster reconciliation, reduced pilferage, and improved store-level accountability."
+            description: "Daily cash collection from stores, reverse end-of-day pickups, faster reconciliation, reduced pilferage, and improved store-level accountability. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Banking & Financial Services",
-            description: "ATM replenishment, branch cash management, cheque logistics, vault operations, and regulatory compliance with RBI-aligned processes."
+            description: "ATM replenishment, branch cash management, cheque logistics, vault operations, and regulatory compliance with RBI-aligned processes. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Bullion, Jewellery & Precious Assets",
-            description: "Secure bullion movement, retail-to-vault reverse logistics, audit and valuation transport, and full lifecycle traceability for HNI clients."
+            description: "Secure bullion movement, retail-to-vault reverse logistics, audit and valuation transport, and full lifecycle traceability for HNI clients. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Mining, Minerals & Export",
-            description: "Specialized transport for diamonds, gemstones, and minerals with customs coordination, export compliance, and secure vault-to-port logistics."
+            description: "Specialized transport for diamonds, gemstones, and minerals with customs coordination, export compliance, and secure vault-to-port logistics. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         }
     ],
     cta: {

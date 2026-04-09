@@ -6,7 +6,7 @@ interface VerticalsHeroProps {
 
 export const VerticalsHero = ({ isSidebar }: VerticalsHeroProps) => {
     return (
-        <div className={`text-center ${isSidebar ? 'mb-8' : 'mb-20'}`}>
+        <div className={`text-center ${isSidebar ? 'mb-8' : 'mb-10'}`}>
             <span className="inline-block px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 rounded-full mb-4">
                 Industry Verticals
             </span>

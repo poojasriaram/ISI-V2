@@ -30,14 +30,14 @@ const certifications = [
 
 export const Certifications = () => {
     return (
-        <section className="py-20 bg-gradient-to-br from-primary/5 via-background to-blue-50/30 relative overflow-hidden">
+        <section className="py-10 bg-gradient-to-br from-primary/5 via-background to-blue-50/30 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]" />
 
             <div className="container mx-auto px-4 lg:px-8 relative">
                 {/* Section Header */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
                         <Award className="w-4 h-4 text-primary" />
                         <span className="text-sm font-medium text-primary">Accreditations & Certifications</span>
@@ -60,7 +60,7 @@ export const Certifications = () => {
                             {/* Gradient overlay on hover */}
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
 
-                            <div className="relative">
+                            <div className="relative text-center">
                                 {/* Certification Image */}
                                 <div className="w-full h-32 flex items-center justify-center mb-6 overflow-hidden">
                                     <img
@@ -79,7 +79,7 @@ export const Certifications = () => {
                                 </p>
 
                                 {/* Verified badge */}
-                                <div className="flex items-center gap-2 text-xs text-primary font-medium">
+                                <div className="flex items-center justify-center gap-2 text-xs text-primary font-medium">
                                     <CheckCircle2 className="w-4 h-4" />
                                     <span>Verified & Active</span>
                                 </div>

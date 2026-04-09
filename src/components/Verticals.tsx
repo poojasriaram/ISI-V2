@@ -46,11 +46,11 @@ const verticalsHeroSlides = [
         overlay: "from-background via-background/95 to-background/60"
     },
     {
-        badge: "Industrial & Defence Operations",
+        badge: "Industrial & Critical Infrastructure",
         title: "Elite Security for",
         highlight: "Manufacturing",
         titleEnd: "",
-        description: "Ex-defence personnel, thermal drones, AI fence sensors, RFID tracking, and cyber-physical security fusion for high-stakes operations.",
+        description: "Ex-military personnel, thermal drones, AI fence sensors, RFID tracking, and cyber-physical security fusion for high-stakes operations.",
         image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80",
         overlay: "from-background via-background/95 to-background/60"
     },
@@ -102,7 +102,7 @@ export const Verticals = ({ isSidebar = false }: VerticalsProps) => {
     return (
         <section
             id="verticals"
-            className={`${isSidebar ? 'h-full overflow-y-auto' : 'overflow-x-hidden'} bg-background relative`}
+            className={`${isSidebar ? 'h-full overflow-y-auto' : 'overflow-x-hidden pt-12'} bg-background relative`}
         >
             {/* ===== HERO CAROUSEL ===== */}
             {!isSidebar && <PageHero slides={verticalsHeroSlides} />}
@@ -119,7 +119,7 @@ export const Verticals = ({ isSidebar = false }: VerticalsProps) => {
             ))}
 
             {/* ===== BOTTOM CTA SECTION ===== */}
-            <div className="py-20 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div className="py-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                 {/* Background Effects */}
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute inset-0" style={{

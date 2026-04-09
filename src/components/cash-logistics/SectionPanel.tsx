@@ -15,7 +15,7 @@ export const SectionPanel = ({ section, index }: SectionPanelProps) => {
     const bgClass = index % 2 === 0 ? "bg-background" : "bg-gradient-to-b from-primary/5 to-primary/10";
 
     return (
-        <section id={section.id} className={`py-8 relative overflow-hidden scroll-mt-32 ${bgClass}`}>
+        <section id={section.id} className={`py-8 relative overflow-hidden scroll-mt-10 ${bgClass}`}>
             {/* Background Elements */}
             {index % 2 === 1 && (
                 <>

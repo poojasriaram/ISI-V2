@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 
 export const LogisticsPortfolio = () => {
     return (
-        <div className="mb-16">
+        <div className="mb-8">
             {/* Section Subtitle */}
             <div className="text-center mb-10">
                 <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">

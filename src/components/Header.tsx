@@ -15,8 +15,8 @@ const navItems = [
   { name: "About Us", href: "/about" },
   { name: "Verticals", href: "/verticals", hasDropdown: true },
   { name: "Offerings", href: "/offerings", hasDropdown: true },
-  { name: "Capabilities", href: "/capabilities" },
-  { name: "Solutions", href: "/solutions" },
+  { name: "Capabilities", href: "/capabilities", hasDropdown: true },
+  { name: "Solutions", href: "/solutions", hasDropdown: true },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
@@ -40,9 +40,42 @@ const verticalsList = [
 ];
 
 const offeringsList = [
-  { name: "Core Security", href: "/offerings#core-security" },
-  { name: "Facility Evolution", href: "/offerings#facility-evolution" },
-  { name: "DCIM", href: "/offerings#dcim" },
+  // Facility Management Group
+  { name: "Hard FM (Engineering)", href: "/services/facility-management/hard-fm", category: "Facility Management" },
+  { name: "Soft FM (Sanitation)", href: "/services/facility-management/soft-fm", category: "Facility Management" },
+  { name: "Energy & Sustainability", href: "/services/facility-management/energy-sustainability", category: "Facility Management" },
+  { name: "Space & Workplace", href: "/services/facility-management/space-workplace", category: "Facility Management" },
+  { name: "Compliance & Risk", href: "/services/facility-management/compliance-risk", category: "Facility Management" },
+  { name: "Vendor & Supply Chain", href: "/services/facility-management/vendor-supply-chain", category: "Facility Management" },
+
+  // Security Services Group
+  { name: "Manned Guarding", href: "/services/security-services/manned-guarding", category: "Security Services" },
+  { name: "Electronic Security", href: "/services/security-services/electronic-security", category: "Security Services" },
+  { name: "Command & Control", href: "/services/security-services/command-control", category: "Security Services" },
+  { name: "Specialized Protection", href: "/services/security-services/specialized-protection", category: "Security Services" },
+  { name: "Risk Intelligence", href: "/services/security-services/risk-advisory", category: "Security Services" },
+  { name: "Emerging Tech Intel", href: "/services/security-services/emerging-threat-tech", category: "Security Services" },
+
+  // Modern Living Group
+  { name: "Modern Living & Business", href: "/modern-living", category: "Modern Living" },
+];
+
+const capabilitiesList = [
+  { name: "Physical Operations", id: "physical-ops" },
+  { name: "Rapid Mobilization", id: "rapid-mobilization" },
+  { name: "Fleet & Field Ops", id: "fleet-ops" },
+  { name: "Event & VIP Protection", id: "event-vip" },
+  { name: "Systems Integration", id: "systems-integration" },
+  { name: "Critical Infrastructure", id: "critical-infra" },
+  { name: "Strategic Advisory", id: "advisory-services" },
+  { name: "Emergency Response", id: "emergency-response" },
+  { name: "Future-Ready Tech", id: "future-ready" },
+];
+
+const solutionsList: { name: string; id?: string; href?: string }[] = [
+  { name: "Comprehensive Solutions", id: "solutions-comprehensive" },
+  { name: "Tailored Solutions", id: "tailored-solutions" },
+  { name: "Modern Living & Business", href: "/modern-living" },
 ];
 
 const scrollToSection = (hash: string) => {
@@ -55,7 +88,7 @@ const scrollToSection = (hash: string) => {
 interface NavDropdownProps {
   label: string;
   href: string;
-  items: { name: string; href: string }[];
+  items: { name: string; href: string; category?: string }[];
   onItemClick: (href: string) => void;
   onMainClick: (e: React.MouseEvent, href: string) => void;
 }
@@ -75,6 +108,14 @@ const NavDropdown = ({ label, href, items, onItemClick, onMainClick }: NavDropdo
     }, 100);
   };
 
+  // Group items by category if any category exists
+  const hasCategories = items.some(item => item.category);
+  const categories = hasCategories
+    ? Array.from(new Set(items.map(item => item.category).filter(Boolean))) as string[]
+    : [];
+
+  const isMultiColumn = items.length > 6 || hasCategories;
+
   return (
     <div
       onMouseEnter={handleMouseEnter}
@@ -89,29 +130,55 @@ const NavDropdown = ({ label, href, items, onItemClick, onMainClick }: NavDropdo
           <a
             href={href}
             onClick={(e) => onMainClick(e, href)}
-            className="relative px-3 py-2 text-sm font-medium text-black hover:text-primary transition-colors duration-200 group cursor-pointer flex items-center outline-none"
+            className="relative px-1.5 xl:px-2 2xl:px-3 py-2 text-sm xl:text-sm 2xl:text-base font-medium text-black hover:text-primary transition-colors duration-200 group cursor-pointer flex items-center outline-none"
           >
             {label}
             <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
           </a>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-56 max-h-[400px] overflow-y-auto"
+          className={`${isMultiColumn ? 'w-[450px] md:w-[500px] lg:w-[650px]' : 'w-56'} max-h-[600px] overflow-y-auto p-3`}
           align="start"
           sideOffset={8}
         >
-          {items.map((item) => (
-            <DropdownMenuItem
-              key={item.name}
-              onClick={() => onItemClick(item.href)}
-              className="cursor-pointer"
-            >
-              {item.name}
-            </DropdownMenuItem>
-          ))}
+          {hasCategories ? (
+            <div className="grid grid-cols-2 gap-6">
+              {categories.map(category => (
+                <div key={category} className="flex flex-col gap-1">
+                  <h3 className="px-3 mb-2 text-xs font-bold uppercase tracking-wider text-primary/70 border-b border-primary/10 pb-1">
+                    {category}
+                  </h3>
+                  {items
+                    .filter(item => item.category === category)
+                    .map(item => (
+                      <DropdownMenuItem
+                        key={item.name}
+                        onClick={() => onItemClick(item.href)}
+                        className="cursor-pointer py-1.5 px-3 rounded-lg hover:bg-primary/5 focus:bg-primary/5 focus:text-primary transition-colors"
+                      >
+                        <span className="text-sm font-medium">{item.name}</span>
+                      </DropdownMenuItem>
+                    ))
+                  }
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={`${isMultiColumn ? 'grid grid-cols-2 gap-x-2' : 'flex flex-col'}`}>
+              {items.map((item) => (
+                <DropdownMenuItem
+                  key={item.name}
+                  onClick={() => onItemClick(item.href)}
+                  className="cursor-pointer py-2 px-3 rounded-lg hover:bg-primary/5 focus:bg-primary/5 focus:text-primary transition-colors"
+                >
+                  <span className="text-sm font-medium">{item.name}</span>
+                </DropdownMenuItem>
+              ))}
+            </div>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </div >
   );
 };
 
@@ -160,38 +227,35 @@ export const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 overflow-x-hidden ${scrolled || mobileMenuOpen
-        ? "bg-background shadow-sm border-b border-border/50"
+        ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50"
         : "bg-transparent"
         }`}
     >
       {/* Top Bar */}
       <div className={`border-b border-border/50 transition-all duration-300 ${scrolled ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100"}`}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-16 max-w-full overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-8 max-w-full overflow-hidden">
           <div className="flex items-center justify-between h-10 text-xs">
             <div className="hidden md:flex items-center gap-3 lg:gap-6 text-black">
               <span className="whitespace-nowrap">ISO 9001:2015 Certified</span>
               <span className="w-1 h-1 rounded-full bg-border" />
-              <span className="whitespace-nowrap">Since 1985</span>
+              <span className="whitespace-nowrap">Your Trusted Shield Since 1985</span>
             </div>
-            <div className="flex items-center gap-2 text-black ml-auto">
+            <a href="tel:+917708887878" className="flex items-center gap-2 text-black ml-auto hover:text-primary transition-colors">
               <Phone className="w-3 h-3 flex-shrink-0" />
-              <span className="whitespace-nowrap text-[10px] sm:text-xs">+91 99444 99988</span>
-            </div>
+              <span className="whitespace-nowrap text-[10px] sm:text-xs">+91 77088 87878</span>
+            </a>
           </div>
         </div>
       </div>
 
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-full">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-6 2xl:px-8 max-w-full">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           <Link to="/" className="flex flex-col items-center gap-0.5 sm:gap-1 shrink-0">
             <img
               src={isiLogo}
               alt="ISI Security"
-              className="transition-transform duration-300 group-hover:scale-105 w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[200px] 2xl:w-[215px] h-auto object-contain"
+              className="transition-transform duration-300 group-hover:scale-105 w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[180px] 2xl:w-[215px] h-auto object-contain"
             />
-            <p className="text-[8px] sm:text-[9px] md:text-[10px] xl:text-[11px] text-[#0202fa] font-bold tracking-wide whitespace-nowrap hidden sm:block xl:hidden 2xl:block">
-              Your Trusted Shield Since 1985
-            </p>
           </Link>
 
           {/* Desktop Navigation */}
@@ -221,12 +285,39 @@ export const Header = () => {
                   />
                 )
               }
+              if (item.name === "Capabilities") {
+                return (
+                  <NavDropdown
+                    key={item.name}
+                    label={item.name}
+                    href={item.href}
+                    items={capabilitiesList.map(c => ({ name: c.name, href: `/capabilities#${c.id}` }))}
+                    onItemClick={handleDropdownItemClick}
+                    onMainClick={handleNavClick}
+                  />
+                )
+              }
+              if (item.name === "Solutions") {
+                return (
+                  <NavDropdown
+                    key={item.name}
+                    label={item.name}
+                    href={item.href}
+                    items={solutionsList.map(s => ({ 
+                        name: s.name, 
+                        href: s.href || `/solutions#${s.id}` 
+                    }))}
+                    onItemClick={handleDropdownItemClick}
+                    onMainClick={handleNavClick}
+                  />
+                )
+              }
               return (
                 <a
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="relative px-1.5 xl:px-2 2xl:px-3 py-2 text-xs xl:text-sm font-medium text-black hover:text-primary transition-colors duration-200 group cursor-pointer whitespace-nowrap block"
+                  className="relative px-1.5 xl:px-2 2xl:px-3 py-2 text-sm xl:text-sm 2xl:text-base font-medium text-black hover:text-primary transition-colors duration-200 group cursor-pointer whitespace-nowrap block"
                 >
                   {item.name}
                   <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
@@ -237,18 +328,18 @@ export const Header = () => {
 
           <div className="hidden xl:flex items-center gap-1.5 xl:gap-2 2xl:gap-3 shrink-0">
             <Link to="/contact">
-              <Button size="sm" className="gap-1.5 xl:gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 whitespace-nowrap text-xs xl:text-sm px-3 xl:px-4 py-2">
+              <Button size="sm" className="gap-1.5 xl:gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 whitespace-nowrap text-sm xl:text-sm 2xl:text-base px-3 xl:px-3 2xl:px-4 py-2">
                 Contact Us
-                <ArrowRight className="w-3 h-3 xl:w-4 xl:h-4" />
+                <ArrowRight className="w-3 h-3 xl:w-3 2xl:w-4 xl:h-3 2xl:h-4" />
               </Button>
             </Link>
             <a
-              href="https://wa.me/919944499988?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+              href="https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 xl:gap-2 px-2.5 xl:px-3 2xl:px-4 py-2 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-md shadow-lg shadow-green-600/20 transition-colors text-xs xl:text-sm font-medium whitespace-nowrap"
+              className="flex items-center gap-1.5 xl:gap-2 px-2.5 xl:px-3 2xl:px-4 py-2 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-md shadow-lg shadow-green-600/20 transition-colors text-sm xl:text-sm 2xl:text-base font-medium whitespace-nowrap"
             >
-              <MessageCircle className="w-3 h-3 xl:w-4 xl:h-4" />
+              <MessageCircle className="w-3 h-3 xl:w-3 2xl:w-4 xl:h-3 2xl:h-4" />
               WhatsApp
             </a>
           </div>
@@ -278,15 +369,38 @@ export const Header = () => {
                   {/* Render simplified nested list for mobile */}
                   {item.name === "Offerings" && (
                     <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1">
-                      {offeringsList.map(off => (
-                        <a key={off.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(off.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
-                          {off.name}
+                      {Array.from(new Set(offeringsList.map(off => off.category).filter(Boolean))).map(cat => (
+                        <div key={cat} className="mb-2 last:mb-0">
+                          <div className="px-3 py-1 text-[10px] font-bold text-primary/60 uppercase tracking-widest">{cat}</div>
+                          {offeringsList.filter(off => off.category === cat).map(off => (
+                            <a key={off.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(off.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                              {off.name}
+                            </a>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {item.name === "Capabilities" && (
+                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
+                      {capabilitiesList.map((c) => (
+                        <a key={c.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(`/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                          {c.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {item.name === "Solutions" && (
+                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
+                      {solutionsList.map((s) => (
+                        <a key={s.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(s.href || `/solutions#${s.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                          {s.name}
                         </a>
                       ))}
                     </div>
                   )}
                   {item.name === "Verticals" && (
-                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-1 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
+                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
                       {verticalsList.map(v => (
                         <a key={v.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(`/verticals#${v.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {v.name}
@@ -304,7 +418,7 @@ export const Header = () => {
                   </Button>
                 </Link>
                 <a
-                  href="https://wa.me/919944499988?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+                  href="https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"

@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { PartnerFormData, PartnerFormErrors } from "@/types/partner";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 // Local validation functions
 const isValidEmail = (email: string): boolean => {
@@ -55,6 +56,7 @@ const benefits = [
 ];
 
 export const Partners = () => {
+  const { trackFormSubmission } = useAnalytics();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Form state
@@ -136,14 +138,10 @@ export const Partners = () => {
     setIsSubmitting(true);
 
     try {
-      // Log form data (Airtable integration removed)
-      console.log('Partner Application Submission:', formData);
-
-      // Simulate submission delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Record form submission logic here (e.g. google sheets) if needed
 
       toast.success('Application submitted successfully!', {
-        description: 'Our partnership team will review your application and get back to you within 48 hours.',
+        description: 'Our partnership team has received your details and will contact you within 48 hours.',
         duration: 5000,
       });
 
@@ -172,12 +170,12 @@ export const Partners = () => {
   };
 
   return (
-    <section id="partners" className="py-28 bg-background relative overflow-hidden scroll-mt-32">
+    <section id="partners" className="pt-12 pb-8 bg-background relative overflow-hidden scroll-mt-10">
       {/* Subtle Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.03)_0%,transparent_50%)]" />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Left Content */}
           <div>
             <span className="inline-block px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 rounded-full mb-4">
@@ -231,7 +229,6 @@ export const Partners = () => {
                   </DialogDescription>
                 </DialogHeader>
 
-                {/* Partner Application Form */}
                 <form onSubmit={handleSubmit} className="space-y-6 mt-4">
                   {/* Row 1: Personal & Company Info */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -456,6 +453,6 @@ export const Partners = () => {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 };

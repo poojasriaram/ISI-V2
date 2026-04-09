@@ -77,7 +77,7 @@ const services = [
 
 export const Services = () => {
   return (
-    <section id="services" className="py-28 relative overflow-hidden scroll-mt-32">
+    <section id="services" className="pt-8 pb-8 relative overflow-hidden scroll-mt-10">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-[var(--section-gradient)]" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
@@ -85,7 +85,7 @@ export const Services = () => {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-10">
           <span className="inline-block px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 rounded-full mb-4">
             Our Services
           </span>

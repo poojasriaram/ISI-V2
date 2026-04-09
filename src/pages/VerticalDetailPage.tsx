@@ -38,7 +38,7 @@ export const VerticalDetailPage = () => {
         <Layout>
             <div className="bg-background min-h-screen">
                 {/* Header */}
-                <div className="relative py-20 bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 overflow-hidden">
+                <div className="relative py-10 bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 overflow-hidden">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.1)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20" />
 
                     {/* Back Button - Absolute top-left */}
@@ -72,7 +72,7 @@ export const VerticalDetailPage = () => {
                 </div>
 
                 {/* Content */}
-                <div className="container mx-auto px-4 py-16 max-w-6xl">
+                <div className="container mx-auto px-4 py-8 max-w-6xl">
                     <div className="prose prose-slate max-w-none dark:prose-invert">
 
                         {/* Overview */}
@@ -85,7 +85,7 @@ export const VerticalDetailPage = () => {
                         {vertical.sections.map((section, sectionIndex) => {
                             const SectionIcon = section.icon;
                             return (
-                                <div key={section.id} className="mb-16">
+                                <div key={section.id} className="mb-8">
                                     {/* Section Header */}
                                     <div className="flex items-start gap-4 mb-8">
                                         <div className="p-3 bg-primary/10 rounded-lg">

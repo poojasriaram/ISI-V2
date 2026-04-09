@@ -24,7 +24,7 @@ export const StatisticsGrid = ({ statistics }: StatisticsGridProps) => {
 
                         {/* Value */}
                         <div className="text-4xl md:text-5xl font-bold text-foreground mb-2">
-                            {stat.value}{stat.value !== "0" && stat.value !== "24" ? "%" : stat.value === "24" ? "×" : ""}
+                            {stat.value}
                         </div>
 
                         {/* Label */}

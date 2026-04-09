@@ -107,19 +107,19 @@ export const section1_ValueProposition: CommandCenterSection = {
     verticalTabs: [
         {
             title: "Operational Excellence",
-            description: "Transform operations with 60-85% faster incident detection, 40-70% reduced response time, and 50-90% fewer false positives through AI-native architecture and autonomous decision execution."
+            description: "Transform operations with 60-85% faster incident detection, 40-70% reduced response time, and 50-90% fewer false positives through AI-native architecture and autonomous decision execution.  Utilizing highly coordinated rapid deployment protocols, our elite tactical response units seamlessly neutralize high-stakes crises. We prioritize immediate life-safety measures and advanced de-escalation tactics, drastically minimizing operational impact while restoring total situational control within mere minutes. Utmost discretion is seamlessly blended with elite-tier defensive parameters to comfortably facilitate executive mobility and complete reputational protection."
         },
         {
             title: "Financial Impact",
-            description: "Achieve 25-45% cost reduction per incident, prevent 2-6% revenue leakage, and reduce guarding costs by 20-35% through intelligent automation and predictive analytics."
+            description: "Achieve 25-45% cost reduction per incident, prevent 2-6% revenue leakage, and reduce guarding costs by 20-35% through intelligent automation and predictive analytics. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Risk & Compliance",
-            description: "Maintain always-on audit readiness, >98% SLA adherence, and 60%+ reduction in compliance breach probability with quantum-safe security and automated workflows."
+            description: "Maintain always-on audit readiness, >98% SLA adherence, and 60%+ reduction in compliance breach probability with quantum-safe security and automated workflows. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Scalability",
-            description: "Operate seamlessly from single sites to national command centers with cloud-native architecture, edge-first design, and low-bandwidth resilience."
+            description: "Operate seamlessly from single sites to national command centers with cloud-native architecture, edge-first design, and low-bandwidth resilience. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         }
     ],
     cta: {
@@ -185,19 +185,19 @@ export const section2_Profitflow: CommandCenterSection = {
     verticalTabs: [
         {
             title: "Cost Optimization",
-            description: "Eliminate 20-30% of operational expenses through reduced manpower dependency, consolidated command rooms, and AI-driven automation that replaces manual oversight."
+            description: "Eliminate 20-30% of operational expenses through reduced manpower dependency, consolidated command rooms, and AI-driven automation that replaces manual oversight. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Revenue Assurance",
-            description: "Protect 2-5% of annual revenue through predictive detection of theft, fraud, downtime, and SLA breaches with real-time alerts and autonomous response."
+            description: "Protect 2-5% of annual revenue through predictive detection of theft, fraud, downtime, and SLA breaches with real-time alerts and autonomous response. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         },
         {
             title: "Operational Efficiency",
-            description: "Achieve 1.8-2.5× operator productivity by enabling single operators to manage multiple sites with autonomous drones and AI-driven incident prioritization."
+            description: "Achieve 1.8-2.5× operator productivity by enabling single operators to manage multiple sites with autonomous drones and AI-driven incident prioritization. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Service Innovation",
-            description: "Create new revenue streams with Command Center-as-a-Service, risk-based pricing, and performance-linked contracts for 10-20% margin expansion."
+            description: "Create new revenue streams with Command Center-as-a-Service, risk-based pricing, and performance-linked contracts for 10-20% margin expansion. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         }
     ],
     cta: {
@@ -258,34 +258,24 @@ export const section3_CoreFeatures: CommandCenterSection = {
             icon: Settings,
             title: "Industry SOP & Workflow Engine",
             features: ["Pre-configured SOPs", "Automated escalation", "SLA timers", "Compliance evidence capture"]
-        },
-        {
-            icon: Lock,
-            title: "Quantum-Safe Security",
-            features: ["Post-quantum encryption", "Zero-trust identity", "Secure device-to-cloud", "Tamper-proof audit trails"]
-        },
-        {
-            icon: BarChart3,
-            title: "Analytics & Decision Cockpit",
-            features: ["Risk heatmaps", "Incident trend analysis", "ROI dashboards", "Predictive simulations"]
         }
     ],
     verticalTabs: [
         {
             title: "Command & Control",
-            description: "Unified console with single pane of glass for video, IoT, drones, alerts, and workflows. Geo-spatial visualization, multi-tenant architecture, and role-based access for complete operational control."
+            description: "Unified console with single pane of glass for video, IoT, drones, alerts, and workflows. Geo-spatial visualization, multi-tenant architecture, and role-based access for complete operational control. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "AI & Automation",
-            description: "Computer vision for intrusion and anomaly detection, predictive risk scoring, event correlation across sensors, and AI-driven incident prioritization for autonomous decision execution."
+            description: "Computer vision for intrusion and anomaly detection, predictive risk scoring, event correlation across sensors, and AI-driven incident prioritization for autonomous decision execution.  We deploy sophisticated crowd-management methodologies alongside real-time digital threat assessments to maintain absolute environmental control. Our unobtrusive yet ubiquitous tactical presence ensures a remarkably safe, streamlined experience for all attendees without ever compromising rigorous protection standards. Utmost discretion is seamlessly blended with elite-tier defensive parameters to comfortably facilitate executive mobility and complete reputational protection."
         },
         {
             title: "Drone Intelligence",
-            description: "Autonomous patrol scheduling with adaptive routes, event-triggered dispatch, live video streaming with edge analytics, and BVLOS-ready architecture for perimeter security."
+            description: "Autonomous patrol scheduling with adaptive routes, event-triggered dispatch, live video streaming with edge analytics, and BVLOS-ready architecture for perimeter security. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Security & Compliance",
-            description: "Quantum-safe encryption, zero-trust architecture, industry-aligned SOPs, automated compliance workflows, and tamper-proof audit trails for regulatory readiness."
+            description: "Quantum-safe encryption, zero-trust architecture, industry-aligned SOPs, automated compliance workflows, and tamper-proof audit trails for regulatory readiness. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         }
     ],
     cta: {
@@ -312,11 +302,11 @@ export const section4_UseCases: CommandCenterSection = {
         },
         {
             value: "100",
-            label: "use cases deployed",
+            label: "active use cases",
             icon: Target
         },
         {
-            value: "98",
+            value: "98%",
             label: "SLA adherence rate",
             icon: CheckCircle2
         },
@@ -346,33 +336,28 @@ export const section4_UseCases: CommandCenterSection = {
             icon: Hospital,
             title: "Healthcare & Critical Infrastructure",
             features: ["Perimeter & access control", "Asset monitoring", "Emergency response", "Compliance reporting"]
-        },
-        {
-            icon: Globe,
-            title: "Government & Smart Cities",
-            features: ["City-wide surveillance", "Traffic & crowd control", "Disaster response", "Infrastructure monitoring"]
         }
     ],
     verticalTabs: [
         {
             title: "Banking & Financial Services",
-            description: "Comprehensive ATM and branch surveillance, cash movement monitoring, fraud and intrusion detection, and SLA-driven vendor oversight. Outcomes: Reduced theft & fraud, lower insurance costs, improved regulatory posture."
+            description: "Comprehensive ATM and branch surveillance, cash movement monitoring, fraud and intrusion detection, and SLA-driven vendor oversight. Outcomes: Reduced theft & fraud, lower insurance costs, improved regulatory posture. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Logistics & Cargo",
-            description: "Yard and warehouse monitoring, route risk detection, cargo tamper alerts, and drone-based perimeter security. Outcomes: Fewer losses and delays, higher on-time delivery, improved asset utilization."
+            description: "Yard and warehouse monitoring, route risk detection, cargo tamper alerts, and drone-based perimeter security. Outcomes: Fewer losses and delays, higher on-time delivery, improved asset utilization. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "Retail & Campuses",
-            description: "Shrinkage prevention, crowd and queue analytics, incident response automation, and centralized store-to-HQ visibility. Outcomes: Reduced shrinkage, better customer experience, centralized oversight."
+            description: "Shrinkage prevention, crowd and queue analytics, incident response automation, and centralized store-to-HQ visibility. Outcomes: Reduced shrinkage, better customer experience, centralized oversight. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         },
         {
             title: "Healthcare & Infrastructure",
-            description: "Perimeter and access control, asset and equipment monitoring, emergency response orchestration, and compliance reporting. Outcomes: Patient safety assurance, zero blind spots, audit-ready operations."
+            description: "Perimeter and access control, asset and equipment monitoring, emergency response orchestration, and compliance reporting. Outcomes: Patient safety assurance, zero blind spots, audit-ready operations. We prioritize continuous monitoring and predictive analytics to stay ahead of potential threats. Our tailored solutions seamlessly blend into your existing operations, ensuring elite protection without compromising on operational efficiency, productivity, or user experience."
         },
         {
             title: "Government & Smart Cities",
-            description: "City-wide surveillance, traffic and crowd control, disaster response coordination, and infrastructure monitoring. Outcomes: Faster emergency response, improved public safety, data-driven governance."
+            description: "City-wide surveillance, traffic and crowd control, disaster response coordination, and infrastructure monitoring. Outcomes: Faster emergency response, improved public safety, data-driven governance. Through the deployment of industry-leading protocols and state-of-the-art surveillance systems, we guarantee an elite level of protection. Our dedicated command centers orchestrate seamless coordination, ensuring that every asset and individual remains secure around the clock."
         }
     ],
     cta: {
@@ -438,19 +423,19 @@ export const section5_Deployment: CommandCenterSection = {
     verticalTabs: [
         {
             title: "Centralized National",
-            description: "Single national command center with multi-site visibility, hierarchical command structure, and disaster recovery readiness for large enterprises and government operations."
+            description: "Single national command center with multi-site visibility, hierarchical command structure, and disaster recovery readiness for large enterprises and government operations. This deeply integrated methodology not only safeguards critical assets but also drives strategic value by minimizing operational disruptions. Our experts continuously optimize security frameworks to adapt to evolving challenges, keeping your environment decisively safe and future-proof."
         },
         {
             title: "Regional + Local Hybrid",
-            description: "Regional command centers with local site integration, federated architecture, and edge + cloud processing for distributed operations with local autonomy."
+            description: "Regional command centers with local site integration, federated architecture, and edge + cloud processing for distributed operations with local autonomy. Our comprehensive approach ensures maximum operational resilience while maintaining rigorous compliance standards. We leverage real-time intelligence and rapid deployment protocols to neutralize risks before they escalate, providing complete peace of mind and uninterrupted continuity."
         },
         {
             title: "CCaaS Model",
-            description: "Fully managed Command Center-as-a-Service with pay-as-you-grow pricing, zero infrastructure investment, and 24/7 NOC support for rapid deployment and scalability."
+            description: "Fully managed Command Center-as-a-Service with pay-as-you-grow pricing, zero infrastructure investment, and 24/7 NOC support for rapid deployment and scalability.  This heavily fortified structural strategy ensures maximum systemic resilience against both unpredictable environmental hazards and targeted adversarial intrusions. Our multi-layered perimeter defense architectures are continuously actively monitored, effectively neutralizing any operational anomalies and safeguarding mission-critical capabilities. With relentless round-the-clock remote monitoring and sophisticated N+1 physical redundancy designs, optimal and enduring continuity is unconditionally guaranteed."
         },
         {
             title: "Private / Sovereign",
-            description: "On-premise or private cloud deployment with data sovereignty compliance, air-gapped options, and custom security policies for regulated industries and government."
+            description: "On-premise or private cloud deployment with data sovereignty compliance, air-gapped options, and custom security policies for regulated industries and government. By integrating advanced technological solutions with highly trained personnel, we create a robust defense architecture. This proactive strategy dramatically reduces incident response times and virtually eliminates vulnerabilities across your entire ecosystem without causing friction."
         }
     ],
     cta: {

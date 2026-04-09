@@ -9,6 +9,7 @@ interface Location {
     id: string;
     title: string;
     city: string;
+    state: string;
     region: string;
     lat: number;
     lng: number;

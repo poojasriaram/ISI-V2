@@ -1,6 +1,6 @@
 export const CapabilityPhilosophy = () => {
     return (
-        <div className="container mx-auto px-4 lg:px-8 py-16 relative z-10">
+        <div className="container mx-auto px-4 lg:px-8 py-8 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
                     <span className="text-sm font-semibold text-primary uppercase tracking-wider">
@@ -13,7 +13,7 @@ export const CapabilityPhilosophy = () => {
                 </h2>
 
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                    We deliver integrated, intelligence-led, AI-driven private security services designed to protect people, assets, infrastructure, logistics, and reputation across <span className="text-primary font-semibold">land, air, rail, and maritime domains</span>.
+                    We deliver integrated, intelligence-led, AI-driven private security services designed to protect people, assets, infrastructure, logistics, and reputation across <span className="text-primary font-semibold">Land, Air, Rail, and Maritime Domains</span>.
                 </p>
 
                 <p className="text-base md:text-lg text-muted-foreground leading-relaxed mt-4">

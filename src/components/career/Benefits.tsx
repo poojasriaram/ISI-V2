@@ -2,7 +2,7 @@ import { benefits } from "@/data/career-data";
 
 export const Benefits = () => {
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
             {benefits.map((item, idx) => (
                 <div key={idx} className="bg-card border border-border p-6 rounded-2xl flex flex-col items-center text-center hover:border-primary/50 transition-all duration-300">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
