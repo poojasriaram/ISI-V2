@@ -109,7 +109,7 @@ export const Footer = () => {
               <ul className="space-y-4">
                 {footerLinks.verticals.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-sm text-background/60 hover:text-primary hover:translate-x-1 transition-all inline-block">
+                    <a href={link.href} className="text-base text-background/70 hover:text-primary hover:translate-x-1 transition-all inline-block">
                       {link.name}
                     </a>
                   </li>
@@ -123,7 +123,7 @@ export const Footer = () => {
               <ul className="space-y-4 mb-10">
                 {footerLinks.solutions.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-sm text-background/60 hover:text-primary hover:translate-x-1 transition-all inline-block">
+                    <a href={link.href} className="text-base text-background/70 hover:text-primary hover:translate-x-1 transition-all inline-block">
                       {link.name}
                     </a>
                   </li>
@@ -133,7 +133,7 @@ export const Footer = () => {
               <ul className="space-y-4">
                 {footerLinks.landingPages.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-sm text-background/60 hover:text-primary hover:translate-x-1 transition-all inline-block">
+                    <a href={link.href} className="text-base text-background/70 hover:text-primary hover:translate-x-1 transition-all inline-block">
                       {link.name}
                     </a>
                   </li>
@@ -147,7 +147,7 @@ export const Footer = () => {
               <ul className="space-y-4">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-sm text-background/60 hover:text-primary hover:translate-x-1 transition-all inline-block">
+                    <a href={link.href} className="text-base text-background/70 hover:text-primary hover:translate-x-1 transition-all inline-block">
                       {link.name}
                     </a>
                   </li>
@@ -161,10 +161,10 @@ export const Footer = () => {
               <ul className="space-y-5 mb-10">
                 {footerLinks.contact.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-sm text-background/60 hover:text-primary transition-all flex items-start gap-3 group">
-                      {link.icon === "MapPin" && <MapPin className="w-4 h-4 mt-1 flex-shrink-0 text-primary group-hover:scale-110 transition-transform" />}
-                      {link.icon === "Phone" && <Phone className="w-4 h-4 mt-1 flex-shrink-0 text-primary group-hover:scale-110 transition-transform" />}
-                      {link.icon === "Mail" && <Mail className="w-4 h-4 mt-1 flex-shrink-0 text-primary group-hover:scale-110 transition-transform" />}
+                    <a href={link.href} className="text-base text-background/70 hover:text-primary transition-all flex items-start gap-4 group">
+                      {link.icon === "MapPin" && <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary group-hover:scale-110 transition-transform" />}
+                      {link.icon === "Phone" && <Phone className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary group-hover:scale-110 transition-transform" />}
+                      {link.icon === "Mail" && <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary group-hover:scale-110 transition-transform" />}
                       <span className="leading-relaxed">{link.name}</span>
                     </a>
                   </li>
@@ -173,7 +173,7 @@ export const Footer = () => {
               <h4 className="font-bold text-background mb-8 tracking-wider text-sm uppercase">Navigation</h4>
               <ul className="space-y-4">
                 <li>
-                  <a href="/sitemap" className="text-sm text-background/60 hover:text-primary hover:translate-x-1 transition-all inline-block">
+                  <a href="/sitemap" className="text-base text-background/70 hover:text-primary hover:translate-x-1 transition-all inline-block">
                     Site Directory
                   </a>
                 </li>

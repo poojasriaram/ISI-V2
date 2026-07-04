@@ -1,12 +1,18 @@
 import { Layout } from "@/components/Layout";
 import { Hero } from "@/components/Hero";
+import { TrustBar } from "@/components/TrustBar";
+import { HomeCustomers } from "@/components/HomeCustomers";
 import { HomeStats } from "@/components/HomeStats";
 import { CorePhilosophy } from "@/components/CorePhilosophy";
 import { Services } from "@/components/Services";
-import { Certifications } from "@/components/Certifications";
+import { HomeIndustries } from "@/components/HomeIndustries";
+import { SecurityProcess } from "@/components/SecurityProcess";
 import { CommandCenters } from "@/components/CommandCenters";
+import { Certifications } from "@/components/Certifications";
 import { LogisticsSection } from "@/components/LogisticsSection";
+import { Testimonials } from "@/components/Testimonials";
 import { JobMap } from "@/components/JobMap";
+import { FinalCTA } from "@/components/FinalCTA";
 
 import { homeLocations, activeLocations } from "@/data/locations-data";
 
@@ -17,12 +23,17 @@ const Index = () => {
   return (
     <Layout noPadding={true}>
       <Hero />
+      <HomeCustomers />
+      <TrustBar />
       <HomeStats />
       <CorePhilosophy />
       <Services />
-      <Certifications />
+      <HomeIndustries />
+      <SecurityProcess />
       <CommandCenters />
+      <Certifications />
       <LogisticsSection />
+      <Testimonials />
 
       {/* Map Section */}
       <section className="relative h-[600px] w-full overflow-hidden">
@@ -36,6 +47,7 @@ const Index = () => {
         </div>
         <JobMap locations={homeLocations} activeCity={null} />
       </section>
+      <FinalCTA />
     </Layout>
   );
 };

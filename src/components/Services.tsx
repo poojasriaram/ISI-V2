@@ -77,7 +77,7 @@ const services = [
 
 export const Services = () => {
   return (
-    <section id="services" className="pt-8 pb-8 relative overflow-hidden scroll-mt-10">
+    <section id="services" className="py-24 relative overflow-hidden scroll-mt-10">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-[var(--section-gradient)]" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
@@ -102,25 +102,32 @@ export const Services = () => {
           {services.map((service, index) => (
             <div
               key={index}
-              className="group relative bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-6 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 cursor-pointer overflow-hidden transform hover:-translate-y-1"
+              className="group relative bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-6 hover:border-primary hover:shadow-[0_0_25px_rgba(var(--primary),0.3)] transition-all duration-500 cursor-pointer overflow-hidden transform hover:-translate-y-2"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Gradient Background */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <div className="relative z-10 flex flex-col items-center h-full">
+              <div className="relative z-10 flex flex-col items-center h-full text-center">
                 {/* Icon */}
                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
                   <service.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
                 </div>
 
                 {/* Content */}
-                <h3 className="font-semibold text-foreground text-lg mb-3 group-hover:text-foreground transition-colors text-center">
+                <h3 className="font-semibold text-foreground text-lg mb-3 group-hover:text-foreground transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4 text-center">
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6 line-clamp-2 flex-grow">
                   {service.description}
                 </p>
+
+                {/* Learn More Button */}
+                <div className="mt-auto">
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:text-primary/80 transition-colors">
+                    Learn More <ArrowRight className="w-4 h-4 transition-transform duration-300 transform group-hover:translate-x-2" />
+                  </span>
+                </div>
               </div>
 
               {/* Shine Effect */}

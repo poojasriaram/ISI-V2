@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { FloatingCTA } from "@/components/FloatingCTA";
 
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -17,11 +18,12 @@ export const Layout = ({ children, className, noPadding = false }: LayoutProps) 
             <Header />
             <main className={cn(
                 "flex-grow overflow-x-hidden w-full",
-                !noPadding && "pt-32", // Default top padding for fixed header (approx 120px)
+                !noPadding && "pt-24 md:pt-32", // Default top padding for fixed header
                 className
             )}>
                 {children}
             </main>
+            <FloatingCTA />
             <Footer />
         </div>
     );

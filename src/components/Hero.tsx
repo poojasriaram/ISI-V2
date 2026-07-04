@@ -11,67 +11,33 @@ import heroDrone from "../assets/hero-drone.jpg";
 import heroFacility from "../assets/verticals-facility.jpg";
 import heroCommand from "../assets/command_center_1.jpg";
 
+// The text overlay will be static now, so we only need the images and overlays for the carousel.
 const heroSlides = [
   {
-    badge: "Our Strategic Evolution",
-    title: "From",
-    highlight: "Number of Guards per Site to Intelligence per Square Foot",
-    titleEnd: "",
-    description: "We are evolving from traditional manpower models to a tech-first ecosystem for 100% autonomous facility overwatch.",
     image: heroAiDriven,
     overlay: "from-background via-background/95 to-background/70",
   },
   {
-    badge: "The Future of Protection",
-    title: "Technology-Led",
-    highlight: "Strategic",
-    titleEnd: "Evolution",
-    description: "Since 1985, ISI has been securing India's ₹55 Trillion economy by integrating elite personnel with AI-powered autonomous security ecosystems.",
     image: heroIntegration,
     overlay: "from-background via-background/95 to-background/60",
   },
   {
-    badge: "24/7 Security Operations",
-    title: "Advanced SOC Services for",
-    highlight: "Real-Time",
-    titleEnd: "Protection",
-    description: "Our state-of-the-art Security Operations Center provides round-the-clock monitoring, threat detection, and rapid incident response.",
     image: heroSoc,
     overlay: "from-background via-background/95 to-background/60",
   },
   {
-    badge: "Trusted by 500+ Enterprises",
-    title: "Background",
-    highlight: "Verification",
-    titleEnd: "Services",
-    description: "Protect your organization with our thorough pre-employment screening, vendor verification, and continuous monitoring solutions.",
     image: heroVerify,
     overlay: "from-background via-background/95 to-background/60",
   },
   {
-    badge: "Next-Gen Technology",
-    title: "Drone Surveillance &",
-    highlight: "AI-Powered",
-    titleEnd: "Monitoring",
-    description: "Leverage cutting-edge drone technology and artificial intelligence for perimeter security, asset protection, and critical infrastructure monitoring.",
     image: heroDrone,
     overlay: "from-background via-background/95 to-background/60",
   },
   {
-    badge: "Integrated Facility Management",
-    title: "Smart",
-    highlight: "Facility Management",
-    titleEnd: "Solutions",
-    description: "End-to-end facility management powered by intelligent systems — from access control and housekeeping to engineering operations and compliance monitoring.",
     image: heroFacility,
     overlay: "from-background via-background/95 to-background/60",
   },
   {
-    badge: "Centralised Command & Control",
-    title: "Real-Time",
-    highlight: "Command & Control",
-    titleEnd: "Center",
-    description: "Our centralised Command & Control Centers provide 24/7 unified oversight across all client sites — integrating CCTV, access, alarms, and rapid response into one command hub.",
     image: heroCommand,
     overlay: "from-background via-background/95 to-background/60",
   },
@@ -226,76 +192,77 @@ export const Hero = () => {
               {/* Accent Shapes */}
               <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
               <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] pointer-events-none" />
-
-              {/* Content Overlay - Now Inside Slide */}
-              <div className="absolute inset-0 flex items-center pt-28 md:pt-32 lg:pt-36">
-                <div className="container mx-auto px-4 lg:px-8 relative z-10">
-                  <div className="max-w-5xl">
-                    {/* Badge */}
-                    <div
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-full mb-6 md:mb-8 animate-fade-in"
-                    >
-                      <Shield className="w-4 h-4 text-primary" />
-                      <span className="text-xs sm:text-sm font-medium text-primary text-nowrap">{slide.badge}</span>
-                    </div>
-
-                    {/* Main Heading */}
-                    <h1
-                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-[1.15] mb-4 md:mb-6 animate-fade-in"
-                    >
-                      {slide.title}{" "}
-                      <span className="text-gradient block sm:inline">{slide.highlight}</span>{" "}
-                      {slide.titleEnd}
-                    </h1>
-
-                    {/* Subheading */}
-                    <p
-                      className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in"
-                    >
-                      {slide.description}
-                    </p>
-
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 mb-12 sm:mb-16">
-                      <Button
-                        size="lg"
-                        className="gap-2 text-base h-14 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
-                        onClick={scrollToSolutions}
-                      >
-                        Explore Solutions
-                        <ArrowRight className="w-5 h-5" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary hover:text-white transition-all duration-300"
-                        onClick={openVideo}
-                      >
-                        <Play className="w-4 h-4 fill-current" />
-                        Watch Overview
-                      </Button>
-                    </div>
-
-                    {/* Trust Indicators */}
-                    <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-muted-foreground animate-fade-in">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                        <span className="font-semibold whitespace-nowrap">40+ Years Experience</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                        <span className="font-semibold whitespace-nowrap">500+ Enterprise Clients</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                        <span className="font-semibold whitespace-nowrap">Pan-India Coverage</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Content Overlay - Static */}
+      <div className="absolute inset-0 flex items-center pt-28 md:pt-32 lg:pt-36 pointer-events-none">
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <div className="max-w-5xl pointer-events-auto">
+            {/* Badge */}
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-full mb-6 md:mb-8 animate-fade-in"
+            >
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-xs sm:text-sm font-medium text-primary text-nowrap">Enterprise Security Partner</span>
+            </div>
+
+            {/* Main Heading */}
+            <h1
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-[1.15] mb-4 md:mb-6 animate-fade-in"
+            >
+              Integrated Security Solutions for <span className="text-gradient block sm:inline">Modern Enterprises</span>
+            </h1>
+
+            {/* Subheading */}
+            <p
+              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in"
+            >
+              Delivering AI-enabled integrated security solutions including Security Guarding, Electronic Security, Facility Management and Risk Consulting across multiple industries.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-10 sm:mb-12">
+              <Button
+                size="lg"
+                className="gap-2 text-base h-14 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform rounded-full"
+                onClick={scrollToSolutions}
+              >
+                Get Free Security Assessment
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary hover:text-white transition-all duration-300 rounded-full"
+                onClick={openVideo}
+              >
+                Talk to an Expert
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-foreground font-medium animate-fade-in">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                <span className="whitespace-nowrap">PAN India Services</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                <span className="whitespace-nowrap">24×7 Support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                <span className="whitespace-nowrap">Integrated Security Solutions</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                <span className="whitespace-nowrap">Enterprise Focus</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

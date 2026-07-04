@@ -1,42 +1,34 @@
-import { Brain, Globe, Clock, Award, ShieldCheck } from "lucide-react";
+import { Clock, Briefcase, Star, ShieldAlert } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 
 const stats = [
     {
-        icon: Globe,
-        value: "28",
-        suffix: "+",
-        label: "States Covered",
-        desc: "Pan-India Presence"
-    },
-    {
-        icon: Award,
-        value: "10000",
-        suffix: "+",
-        label: "Security Pros",
-        desc: "Highly Trained Force"
-    },
-    {
-        icon: ShieldCheck,
+        icon: Briefcase,
         value: "500",
         suffix: "+",
-        label: "Enterprise Clients",
-        desc: "Trusted Partners"
+        label: "Projects Delivered",
+        desc: "Successfully Executed"
     },
     {
-        icon: Brain,
-        value: "92",
+        icon: Star,
+        value: "98",
         suffix: "%",
-        label: "AI Accuracy",
-        desc: "Intelligent Detection"
+        label: "Client Satisfaction",
+        desc: "Trusted by Enterprises"
     },
     {
         icon: Clock,
-        value: "15",
-        suffix: "min",
-        prefix: "<",
-        label: "Response Time",
-        desc: "Rapid Mobilization"
+        value: "20",
+        suffix: "+",
+        label: "Years Experience",
+        desc: "Industry Leadership"
+    },
+    {
+        icon: ShieldAlert,
+        value: "24",
+        suffix: "×7",
+        label: "Security Operations",
+        desc: "Always Monitoring"
     },
 ];
 
@@ -84,21 +76,20 @@ const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: string; s
 
 export const HomeStats = () => {
     return (
-        <section className="py-12 bg-[rgb(23,84,207)] relative overflow-hidden text-white shadow-2xl z-20 -mt-2">
-            {/* Background decoration */}
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-4 lg:divide-x lg:divide-white/20">
+        <section className="relative z-30 py-12 md:py-16 bg-background">
+            <div className="container mx-auto px-4 lg:px-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {stats.map((stat, index) => (
-                        <div key={index} className="flex flex-col items-center text-center group">
-                            <div className="mb-3 p-3 rounded-2xl bg-white/10 group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300 backdrop-blur-sm">
-                                <stat.icon className="w-6 h-6 text-white" />
+                        <div key={index} className="group relative bg-card border border-border/50 rounded-2xl p-8 shadow-xl shadow-black/5 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col items-center text-center transform hover:-translate-y-2">
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+                            <div className="relative mb-4 p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 transition-all duration-300 shadow-sm">
+                                <stat.icon className="w-8 h-8" />
                             </div>
-                            <AnimatedCounter value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
-                            <div className="text-sm font-semibold uppercase tracking-wider opacity-90">{stat.label}</div>
-                            <div className="text-xs text-white/70 mt-1">{stat.desc}</div>
+                            <div className="relative">
+                                <AnimatedCounter value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
+                            </div>
+                            <div className="relative text-sm font-semibold text-foreground uppercase tracking-wider mt-2 opacity-90">{stat.label}</div>
+                            <div className="relative text-sm text-muted-foreground mt-2">{stat.desc}</div>
                         </div>
                     ))}
                 </div>
