@@ -1,23 +1,59 @@
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, PhoneCall, Mail, CalendarPlus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const FloatingCTA = () => {
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-      {/* WhatsApp Button */}
-      <a
-        href="https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group relative flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full shadow-lg shadow-green-600/30 transition-all duration-300 hover:scale-110"
-      >
-        <MessageCircle className="w-7 h-7" />
+    <>
+      {/* Desktop Floating CTA (Bottom Right) */}
+      <div className="hidden md:flex fixed bottom-6 right-6 z-50 flex-col gap-3">
+        {/* Request Consultation */}
+        <Link
+          to="/contact"
+          className="group relative flex items-center gap-3 px-6 py-3.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-[1.03]"
+        >
+          <CalendarPlus className="w-5 h-5" />
+          <span className="font-semibold text-sm">Request Consultation</span>
+        </Link>
         
-        {/* Tooltip */}
-        <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-foreground text-background text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-xl">
-          Chat with us
-          <span className="absolute top-1/2 -right-1.5 -translate-y-1/2 border-[6px] border-transparent border-l-foreground" />
-        </span>
-      </a>
-    </div>
+        {/* Call Now Button */}
+        <a
+          href="tel:+917708887878"
+          className="group relative flex items-center justify-end gap-3 px-6 py-3.5 bg-white border border-border/50 hover:bg-muted text-foreground rounded-full shadow-lg transition-all duration-300 hover:scale-[1.03] ml-auto"
+        >
+          <span className="font-semibold text-sm group-hover:text-primary transition-colors">Call Now</span>
+          <div className="bg-primary/10 p-1.5 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">
+            <PhoneCall className="w-4 h-4 text-primary group-hover:text-white" />
+          </div>
+        </a>
+      </div>
+
+      {/* Mobile Sticky CTA (Bottom Bar) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border/50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe">
+        <div className="flex h-16 items-center">
+          {/* Call */}
+          <a href="tel:+917708887878" className="flex-1 flex flex-col items-center justify-center gap-1 h-full hover:bg-muted/50 transition-colors border-r border-border/50">
+            <PhoneCall className="w-5 h-5 text-primary" />
+            <span className="text-[10px] font-semibold text-foreground">Call</span>
+          </a>
+          
+          {/* WhatsApp */}
+          <a 
+            href="https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex flex-col items-center justify-center gap-1 h-full hover:bg-muted/50 transition-colors border-r border-border/50"
+          >
+            <MessageCircle className="w-5 h-5 text-[#25D366]" />
+            <span className="text-[10px] font-semibold text-foreground">WhatsApp</span>
+          </a>
+
+          {/* Enquire Now */}
+          <Link to="/contact" className="flex-1 flex flex-col items-center justify-center gap-1 h-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors">
+            <Mail className="w-5 h-5" />
+            <span className="text-[10px] font-semibold">Enquire Now</span>
+          </Link>
+        </div>
+      </div>
+    </>
   );
 };

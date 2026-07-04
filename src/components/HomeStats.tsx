@@ -1,5 +1,7 @@
-import { Clock, Briefcase, Star, ShieldAlert } from "lucide-react";
+import { Clock, Briefcase, Star, ShieldAlert, ArrowRight } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const stats = [
     {
@@ -92,6 +94,22 @@ export const HomeStats = () => {
                             <div className="relative text-sm text-muted-foreground mt-2">{stat.desc}</div>
                         </div>
                     ))}
+                </div>
+
+                {/* Inline CTA */}
+                <div className="mt-12 text-center">
+                    <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-muted/30 border border-border/50 p-6 rounded-2xl w-full max-w-3xl mx-auto shadow-sm">
+                        <div className="flex-1 text-left sm:text-center md:text-left">
+                            <h4 className="text-lg font-bold text-foreground">Join 500+ Secure Enterprises</h4>
+                            <p className="text-sm text-muted-foreground mt-1">Discover how our integrated solutions can protect your operations.</p>
+                        </div>
+                        <Link to="/contact">
+                            <Button className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group">
+                                Get a Customized Security Solution
+                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </section>

@@ -224,42 +224,40 @@ export const Hero = () => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-10 sm:mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 sm:mb-8">
               <Button
                 size="lg"
-                className="gap-2 text-base h-14 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform rounded-full"
+                className="gap-2 text-base h-14 px-8 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full bg-primary text-white group"
                 onClick={scrollToSolutions}
               >
-                Get Free Security Assessment
-                <ArrowRight className="w-5 h-5" />
+                Request a Free Security Consultation
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary hover:text-white transition-all duration-300 rounded-full"
+                className="gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary/10 hover:text-primary transition-all duration-300 rounded-full group"
                 onClick={openVideo}
               >
-                Talk to an Expert
+                Talk to Our Security Experts
               </Button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-foreground font-medium animate-fade-in">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground font-medium animate-fade-in">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                <span className="whitespace-nowrap">PAN India Services</span>
+                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                <span className="whitespace-nowrap">Trusted by 500+ Enterprises</span>
               </div>
+              <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                <span className="whitespace-nowrap">24×7 Support</span>
+                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                <span className="whitespace-nowrap">ISO 9001:2015 Certified</span>
               </div>
+              <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                <span className="whitespace-nowrap">Integrated Security Solutions</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                <span className="whitespace-nowrap">Enterprise Focus</span>
+                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                <span className="whitespace-nowrap">Nationwide Service (PAN India)</span>
               </div>
             </div>
           </div>

@@ -1,4 +1,6 @@
 import { Factory, HeartPulse, GraduationCap, Server, Landmark, ShoppingBag, Package, ShieldCheck, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const industries = [
   {
@@ -81,6 +83,17 @@ export const HomeIndustries = () => {
               </p>
             </div>
           ))}
+        </div>
+        
+        {/* Section Bottom CTA */}
+        <div className="mt-16 text-center">
+            <h4 className="text-xl font-bold text-foreground mb-4">Secure Your Industry Today</h4>
+            <Link to="/contact">
+                <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
+                    Book a Site Assessment
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+            </Link>
         </div>
       </div>
     </section>

@@ -1,4 +1,6 @@
 import { Shield, Camera, MapPin, Truck, Search, Users, Building, FileCheck, ArrowRight, Cpu, LineChart, Plane } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const services = [
   {
@@ -125,7 +127,7 @@ export const Services = () => {
                 {/* Learn More Button */}
                 <div className="mt-auto">
                   <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:text-primary/80 transition-colors">
-                    Learn More <ArrowRight className="w-4 h-4 transition-transform duration-300 transform group-hover:translate-x-2" />
+                    Explore Security Solution <ArrowRight className="w-4 h-4 transition-transform duration-300 transform group-hover:translate-x-2" />
                   </span>
                 </div>
               </div>
@@ -136,6 +138,17 @@ export const Services = () => {
               </div>
             </div>
           ))}
+        </div>
+        
+        {/* Section Bottom CTA */}
+        <div className="mt-16 text-center">
+            <h4 className="text-xl font-bold text-foreground mb-4">Need a tailored approach?</h4>
+            <Link to="/contact">
+                <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
+                    Schedule an Expert Consultation
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+            </Link>
         </div>
       </div>
     </section>

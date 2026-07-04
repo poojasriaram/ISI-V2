@@ -26,24 +26,31 @@ export const FinalCTA = () => {
             Schedule a consultation with our experts and discover the right integrated security solution for your organization.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
             <Button
               size="lg"
-              className="w-full sm:w-auto text-base h-16 px-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full"
+              className="w-full sm:w-auto text-base h-16 px-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full group"
               onClick={() => navigate("/contact")}
             >
-              Get Free Security Assessment
-              <ArrowRight className="w-5 h-5 ml-2" />
+              Get Your Free Security Assessment
+              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto text-base h-16 px-10 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 rounded-full"
+              className="w-full sm:w-auto text-base h-16 px-10 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 rounded-full group"
               onClick={() => navigate("/contact")}
             >
-              <PhoneCall className="w-5 h-5 mr-2" />
-              Contact Sales
+              <PhoneCall className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
+              Call for Immediate Support
             </Button>
+          </div>
+          
+          {/* Trust Signals */}
+          <div className="flex items-center justify-center gap-4 text-sm font-medium text-slate-400">
+            <span>No obligation.</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+            <span>100% Confidential.</span>
           </div>
         </div>
       </div>
