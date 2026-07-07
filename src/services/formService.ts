@@ -46,12 +46,19 @@ async function sendToSheet(sheetName: string, payload: Record<string, any>): Pro
     }
 
     const ipCtx = getIpContext();
+    const sanitizedPayload = { ...payload };
+    for (const key in sanitizedPayload) {
+        if (typeof sanitizedPayload[key] === 'string' && sanitizedPayload[key].startsWith('+')) {
+            sanitizedPayload[key] = `'${sanitizedPayload[key]}`;
+        }
+    }
+
     const body = JSON.stringify({
         sheetName,
-        ...payload,
-        ipAddress: payload.ipAddress || ipCtx.ipAddress,
-        location: payload.location || ipCtx.location,
-        organization: payload.organization || ipCtx.organization,
+        ...sanitizedPayload,
+        ipAddress: sanitizedPayload.ipAddress || ipCtx.ipAddress,
+        location: sanitizedPayload.location || ipCtx.location,
+        organization: sanitizedPayload.organization || ipCtx.organization,
         variant: localStorage.getItem('isi_variant') || 'original',
         timestamp: getISTTimestamp()
     });
