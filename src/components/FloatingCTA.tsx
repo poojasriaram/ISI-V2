@@ -15,16 +15,6 @@ export const FloatingCTA = () => {
           <span className="font-semibold text-sm">Request Consultation</span>
         </Link>
         
-        {/* Call Now Button */}
-        <a
-          href="tel:+917708887878"
-          className="group relative flex items-center justify-end gap-3 px-6 py-3.5 bg-white border border-border/50 hover:bg-muted text-foreground rounded-full shadow-lg transition-all duration-300 hover:scale-[1.03] ml-auto"
-        >
-          <span className="font-semibold text-sm group-hover:text-primary transition-colors">Call Now</span>
-          <div className="bg-primary/10 p-1.5 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">
-            <PhoneCall className="w-4 h-4 text-primary group-hover:text-white" />
-          </div>
-        </a>
       </div>
 
       {/* Mobile Sticky CTA (Bottom Bar) */}

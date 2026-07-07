@@ -25,7 +25,7 @@ This file contains the **FULL 15-TAB ANALYTICS ENGINE** for your dashboard. I ha
  */
 
 // 🔴 YOUR FIRST TASK: PASTE THE SHEET 1 ID HERE
-var DATA_SHEET_ID = "14b7Y31zt1qgoPKIvxQPMxRUPgMq3PMP98zRXUiwBn34";
+var DATA_SHEET_ID = "1adJ7rtY6La6oeapBh4w_U6bc-f6LYNV86oxrdylCCsI";
 // 🔴 YOUR SECOND TASK: PASTE YOUR WEBSITE URL HERE (For Broken Link Test)
 var SITE_BASE_URL = "https://www.isisecurity.in/";
 

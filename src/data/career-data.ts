@@ -150,7 +150,7 @@ export interface JobOpening {
     experience: string;
     urgent: boolean;
     type: string;
-    openings: number;
+    openings?: number;
     workingDays?: string;
     workingHours?: string;
     gender?: string;
@@ -165,38 +165,116 @@ export interface JobOpening {
 
 export const openings: JobOpening[] = [
     {
-        id: 1,
-        title: "AI Engineer – Agentic AI Full-Stack Developer",
-        location: "Tamil Nadu / Karnataka",
-        department: "AI Engineering",
-        experience: "12–18 Months",
+        id: 10,
+        title: "HR Executive",
+        location: "Madurai (Work from Office)",
+        department: "Human Resources",
+        experience: "2–5 Years",
         urgent: true,
         type: "Full-time",
-        openings: 4,
-        description: "Industrial Security & Intelligence (India) Pvt. Ltd. (ISI) is transforming traditional security operations into AI-driven intelligent security platforms. We are seeking a highly motivated AI Engineer to help build the next generation of AI-powered platforms and intelligent security systems, combining structured and unstructured intelligence, data engineering, and automation. Applications Close: 20 March 2025.",
+        description: "We are seeking an experienced HR Executive to manage end-to-end recruitment, employee onboarding, and statutory compliance.",
         responsibilities: [
-            "Design and develop machine learning and deep learning models for predictive analytics and intelligent monitoring",
-            "Build LLM-powered applications and natural language interfaces for security analytics and operational intelligence",
-            "Develop AI agents and automation workflows capable of multi-step reasoning and task execution",
-            "Build AI-powered applications and dashboards that enable interaction with data and AI models",
-            "Design and build data pipelines for ingestion, processing, and analysis from multiple data sources",
-            "Develop backend systems and services that integrate AI capabilities into operational platforms",
-            "Collaborate with stakeholders to rapidly convert ideas into working AI prototypes and MVP platforms"
+            "Manage end-to-end recruitment for office and operational staff",
+            "Source, screen, and schedule interviews for prospective candidates",
+            "Coordinate employee onboarding, induction, and exit formalities",
+            "Maintain employee records, attendance, leave, and HR documentation",
+            "Support payroll by providing accurate attendance and leave data",
+            "Ensure compliance with statutory requirements, including PF, ESI, and labor laws",
+            "Prepare HR MIS reports, manpower reports, and other management reports",
+            "Coordinate employee performance appraisal and probation confirmation processes",
+            "Handle employee queries and maintain healthy employee relations",
+            "Assist in manpower planning and HR administrative activities",
+            "Support HR audits and maintain compliance-related documentation",
+            "Ensure adherence to company HR policies and procedures"
         ],
         requirements: [
-            "Bachelor’s Degree in Computer Science, IT, AI, or related field (M.Tech preferred)",
-            "Minimum 1+ year experience (including internships, projects, or startup work) in AI/ML, Data Engineering, or Full Stack Development",
-            "Strong proficiency in Python, JavaScript, and SQL",
-            "Experience with AI/ML frameworks, Generative AI, LLM tools, and RAG",
-            "Modern web application development using AI-assisted or prompt-driven development",
-            "Working with databases: MySQL, PostgreSQL, MongoDB, Neo4j (Graph Database)",
-            "Ability to build AI-driven automation systems and intelligent monitoring systems",
-            "Passion for building real-world AI products in a high-intensity startup environment",
-            "Excellent commitment, consistency, ownership, and confidence"
+            "Bachelor's Degree in Human Resources, Business Administration, Commerce, or an equivalent discipline",
+            "MBA/PGDM in Human Resources is preferred",
+            "2–5 years of experience in HR operations and recruitment",
+            "Experience in payroll support and statutory compliance",
+            "Strong knowledge of Microsoft Excel (Advanced Excel preferred)",
+            "Proficiency in VLOOKUP/XLOOKUP, Pivot Tables, Data Validation, and MIS reporting",
+            "Knowledge of payroll processing and attendance management",
+            "Understanding of PF, ESI, labor laws, and statutory compliance",
+            "Excellent communication, interpersonal, and organizational skills",
+            "Ability to maintain confidentiality and handle sensitive employee information",
+            "Good working knowledge of Microsoft Word and PowerPoint",
+            "Strong analytical and reporting skills",
+            "Ability to work independently and meet deadlines",
+            "Experience in the service or facility management industry will be an added advantage"
         ],
-        salary: "Competitive; Based on experience and performance",
-        applicationEmail: "rajkumar.s@isisecurity.in",
-        applicationSubject: "Application – AI Engineer (Agentic AI Full-Stack Developer)"
+        salary: "Competitive",
+        applicationEmail: "mduhrmgr@gmail.com",
+        applicationSubject: "Application – HR Executive"
+    },
+    {
+        id: 11,
+        title: "Admin Executive",
+        location: "Madurai (Work from Office)",
+        department: "Administration",
+        experience: "Not specified",
+        urgent: false,
+        type: "Full-time",
+        description: "We are looking for an Admin Executive to manage day-to-day office administration, coordinate with vendors, and handle e-procurement submissions.",
+        responsibilities: [
+            "Manage day-to-day office administration and maintain office records, files, and documents",
+            "Coordinate with vendors, service providers, and internal departments",
+            "Identify and monitor government and private business opportunities through e-procurement portals",
+            "Review documents, eligibility criteria, and submission requirements",
+            "Prepare, compile, and submit documents within the stipulated timelines",
+            "Handle submissions through GeM and other e-procurement portals",
+            "Coordinate with internal departments to collect statutory documents and ensure timely submissions",
+            "Ensure compliance with company policies and statutory requirements",
+            "Prepare MIS reports and provide administrative support for business development activities"
+        ],
+        requirements: [
+            "Bachelor's Degree in any discipline (Commerce or Business Administration preferred)",
+            "Proficiency in MS Office (Excel, Word, and PowerPoint)",
+            "Good communication, coordination, and documentation skills",
+            "Strong organizational and time management skills",
+            "Ability to work under deadlines and manage multiple tasks effectively"
+        ],
+        salary: "Competitive",
+        applicationEmail: "mduhrmgr@gmail.com",
+        applicationSubject: "Application – Admin Executive"
+    },
+    {
+        id: 12,
+        title: "Tally Accounts Executive",
+        location: "Madurai (WFO)",
+        department: "Finance",
+        experience: "2–5 Years",
+        urgent: false,
+        type: "Full-time",
+        description: "We are hiring a Tally Accounts Executive to maintain day-to-day accounting records using Tally ERP/TallyPrime and assist in statutory compliance.",
+        responsibilities: [
+            "Maintain day-to-day accounting records using Tally ERP/TallyPrime",
+            "Record sales, purchases, receipts, and payment vouchers",
+            "Prepare bank reconciliation statements",
+            "Manage accounts payable and receivable",
+            "Generate GST invoices and maintain GST records",
+            "Prepare monthly financial reports and MIS reports",
+            "Assist in GST, TDS, PF, ESI, and other statutory compliance",
+            "Maintain petty cash and expense records",
+            "Coordinate with auditors during internal and statutory audits",
+            "Prepare salary-related accounting entries and payroll support",
+            "Maintain vendor and customer ledgers",
+            "Ensure timely filing of statutory returns and compliance documentation"
+        ],
+        requirements: [
+            "Bachelor's Degree in Commerce (B.Com) or equivalent",
+            "2–5 years of accounting experience",
+            "Proficiency in Tally ERP/TallyPrime",
+            "Good knowledge of GST, TDS, and basic taxation",
+            "Strong understanding of accounting principles",
+            "Proficiency in MS Excel and financial reporting",
+            "Good analytical and numerical skills",
+            "Ability to maintain confidentiality of financial information",
+            "Experience in the security or facility management industry is an added advantage"
+        ],
+        salary: "Competitive",
+        applicationEmail: "mduhrmgr@gmail.com",
+        applicationSubject: "Application – Tally Accounts Executive"
     },
     {
         id: 2,
