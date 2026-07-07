@@ -46,7 +46,7 @@ async function sendToSheet(sheetName: string, payload: Record<string, any>): Pro
     }
 
     const ipCtx = getIpContext();
-    const payloadData = {
+    const body = JSON.stringify({
         sheetName,
         ...payload,
         ipAddress: payload.ipAddress || ipCtx.ipAddress,
@@ -54,17 +54,13 @@ async function sendToSheet(sheetName: string, payload: Record<string, any>): Pro
         organization: payload.organization || ipCtx.organization,
         variant: localStorage.getItem('isi_variant') || 'original',
         timestamp: getISTTimestamp()
-    };
-
-    const formData = new FormData();
-    for (const [key, value] of Object.entries(payloadData)) {
-        formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
-    }
+    });
 
     await fetch(SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        body: formData
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body
     });
 }
 
