@@ -208,16 +208,20 @@ export const useAnalytics = () => {
 
         if (!GOOGLE_SHEETS_WEB_APP_URL || GOOGLE_SHEETS_WEB_APP_URL.includes('YOUR_GOOGLE_SHEETS_WEB_APP_URL')) return;
         try {
+            const payloadData = {
+                sheetName,
+                ...data,
+                variant,
+                timestamp: data.timestamp || getISTTimestamp()
+            };
+            const formData = new FormData();
+            for (const [key, value] of Object.entries(payloadData)) {
+                formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+            }
             await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sheetName,
-                    ...data,
-                    variant,
-                    timestamp: data.timestamp || getISTTimestamp()
-                }),
+                body: formData
             });
         } catch { /* silent fail — analytics should never break the app */ }
     }, [variant]);
