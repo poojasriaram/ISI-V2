@@ -9,7 +9,7 @@ import {
     BaseTrackingData
 } from '@/types/analytics';
 
-const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxdspbJLcYEM3IJM0LIlkwh8K5CcisWLxCvSjOnrDkK1cUjVJyUy-njOF81ora8FKwXpg/exec';
+const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxfcFmiHhfW3F-T3skwzWZS5fG5XFlL5vbAWJCLbqtg_E06ePa4yIPXsdgLwMFqMfJB/exec';
 
 // ─── IST Timestamp (Human-readable: "26-Feb-2026 07:43:11 IST") ───────────────
 function getISTTimestamp(): string {
