@@ -1,8 +1,8 @@
 import { Award, CheckCircle2 } from "lucide-react";
-import ISO from "@/assets/ISO.png";
-import PSARA from "@/assets/PSARA.png";
-import RBI from "@/assets/RBI.png";
-import DGCA from "@/assets/DGCA.png";
+import ISO from "@/assets/ISO.webp";
+import PSARA from "@/assets/PSARA.webp";
+import RBI from "@/assets/RBI.webp";
+import DGCA from "@/assets/DGCA.webp";
 
 
 const certifications = [

@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { toast } from 'sonner';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
-import mascotImg from '../assets/security_mascot_sad.png'; // I will copy the generated image here later or reference it if I can
+import mascotImg from '../assets/security_mascot_sad.webp'; // I will copy the generated image here later or reference it if I can
 
 export const ExitIntentPopup = () => {
     const [isVisible, setIsVisible] = useState(false);

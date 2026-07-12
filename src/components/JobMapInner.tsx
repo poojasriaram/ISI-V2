@@ -6,8 +6,8 @@ import { Phone, Mail } from "lucide-react";
 // Leaflet CSS is loaded in index.html via CDN to avoid bundler issues
 
 // Fix for default Leaflet markers in React
-import icon from "../assets/marker-icon.png";
-import iconShadow from "../assets/marker-shadow.png";
+import icon from "../assets/marker-icon.webp";
+import iconShadow from "../assets/marker-shadow.webp";
 
 interface Location {
     id: string;
@@ -81,7 +81,7 @@ const JobMapInner = ({ activeCity, locations }: JobMapProps) => {
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.webp"
                 />
 
                 {(locations || []).map((loc) => {

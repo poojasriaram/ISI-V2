@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 export const AboutCTA = () => {
     return (
         <div className="py-8 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.webp')] opacity-10" />
             <div className="container mx-auto px-4 text-center relative z-10">
                 <h2 className="text-4xl md:text-5xl font-bold mb-8">Ready to Secure Your Future?</h2>
                 <p className="text-xl opacity-90 max-w-2xl mx-auto mb-12">

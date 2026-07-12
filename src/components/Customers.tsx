@@ -5,30 +5,30 @@ import { Quote, Star } from "lucide-react";
 // Categorized client data by industry sector
 const clientsByIndustry = {
   "Engineering / Manufacturing": [
-    { name: "Bosch", image: "/logos/Bosch_Global_Software_Tech._Pvt_Ltd-removebg-preview.png" },
-    { name: "Ramco Group", image: "/logos/Ramco_Group-removebg-preview.png" },
-    { name: "Ramco Cements Limited", image: "/logos/Ramco_Cements_Limited-removebg-preview.png" },
-    { name: "Murugappa Group", image: "/logos/Murugappa Group.png" },
-    { name: "Tubes Investment of India Limited", image: "/logos/Tubes_Investment_ot_India_Limited-removebg-preview.png" },
-    { name: "Carborundum Universal Limited", image: "/logos/Carborundum_UniversalLimited-removebg-preview.png" },
-    { name: "EID Parry (India) Limited", image: "/logos/EID_Parry__India__Limited-removebg-preview.png" },
-    { name: "TATA", image: "/logos/TATA.png" },
-    { name: "Sanmar Group", image: "/logos/Sanmar_Group-removebg-preview.png" },
-    { name: "Sanmar Matrix Metals Limited", image: "/logos/Sanmar_Matrix_Metals_Limited-removebg-preview.png" },
-    { name: "XOMOX Sanmar Ltd", image: "/logos/XOMOX_Sanmar_Ltd-removebg-preview.png" },
-    { name: "Anderson Greenwood Crosby Sanmar Limited", image: "/logos/Anderson_Green_Wood_Crosby_Sanmar_Limited-removebg-preview.png" },
-    { name: "VinFast", image: "/logos/VInfast.png" },
-    { name: "BYD India Pvt Ltd", image: "/logos/BYD_INDIA_PVT_LTD-removebg-preview.png" },
-    { name: "Britannia Industries Limited", image: "/logos/BRITANNIA_INDUSTRIES_LIMITED-removebg-preview.png" },
-    { name: "MTC Group", image: "/logos/MTC_GROUP-removebg-preview.png" },
-    { name: "Intersnack Group", image: "/logos/Intersnack Group.png" },
-    { name: "TZMO Global", image: "/logos/TZMO-Global-removebg-preview.png" },
-    { name: "LGB Group", image: "/logos/LGB___Brothers_Limited-removebg-preview.png" },
-    { name: "Marico Limited", image: "/logos/MARICO_LIMITED-removebg-preview.png" },
-    { name: "Zamil Steels", image: "/logos/Zamil Steels.png" },
-    { name: "Vikram Solar", image: "/logos/Vikram Solar.png" },
-    { name: "Milkymist", image: "/logos/Milkymist.png" },
-    { name: "Chemplast", image: "/logos/Chemplast.png" },
+    { name: "Bosch", image: "/logos/Bosch_Global_Software_Tech._Pvt_Ltd-removebg-preview.webp" },
+    { name: "Ramco Group", image: "/logos/Ramco_Group-removebg-preview.webp" },
+    { name: "Ramco Cements Limited", image: "/logos/Ramco_Cements_Limited-removebg-preview.webp" },
+    { name: "Murugappa Group", image: "/logos/Murugappa Group.webp" },
+    { name: "Tubes Investment of India Limited", image: "/logos/Tubes_Investment_ot_India_Limited-removebg-preview.webp" },
+    { name: "Carborundum Universal Limited", image: "/logos/Carborundum_UniversalLimited-removebg-preview.webp" },
+    { name: "EID Parry (India) Limited", image: "/logos/EID_Parry__India__Limited-removebg-preview.webp" },
+    { name: "TATA", image: "/logos/TATA.webp" },
+    { name: "Sanmar Group", image: "/logos/Sanmar_Group-removebg-preview.webp" },
+    { name: "Sanmar Matrix Metals Limited", image: "/logos/Sanmar_Matrix_Metals_Limited-removebg-preview.webp" },
+    { name: "XOMOX Sanmar Ltd", image: "/logos/XOMOX_Sanmar_Ltd-removebg-preview.webp" },
+    { name: "Anderson Greenwood Crosby Sanmar Limited", image: "/logos/Anderson_Green_Wood_Crosby_Sanmar_Limited-removebg-preview.webp" },
+    { name: "VinFast", image: "/logos/VInfast.webp" },
+    { name: "BYD India Pvt Ltd", image: "/logos/BYD_INDIA_PVT_LTD-removebg-preview.webp" },
+    { name: "Britannia Industries Limited", image: "/logos/BRITANNIA_INDUSTRIES_LIMITED-removebg-preview.webp" },
+    { name: "MTC Group", image: "/logos/MTC_GROUP-removebg-preview.webp" },
+    { name: "Intersnack Group", image: "/logos/Intersnack Group.webp" },
+    { name: "TZMO Global", image: "/logos/TZMO-Global-removebg-preview.webp" },
+    { name: "LGB Group", image: "/logos/LGB___Brothers_Limited-removebg-preview.webp" },
+    { name: "Marico Limited", image: "/logos/MARICO_LIMITED-removebg-preview.webp" },
+    { name: "Zamil Steels", image: "/logos/Zamil Steels.webp" },
+    { name: "Vikram Solar", image: "/logos/Vikram Solar.webp" },
+    { name: "Milkymist", image: "/logos/Milkymist.webp" },
+    { name: "Chemplast", image: "/logos/Chemplast.webp" },
   ],
 };
 
@@ -37,17 +37,17 @@ const smallSectionsRow1 = [
   {
     title: "IT & ITES Services",
     companies: [
-      { name: "Zoho", image: "/logos/Zoho_Corporation-removebg-preview.png" },
-      { name: "Gofrugal Technologies Private Limited", image: "/logos/Gofrugal_Technologies_Private_Limited-removebg-preview.png" },
-      { name: "Aardhraa Technologies", image: "/logos/Aardhraa_Technologies-removebg-preview.png" },
+      { name: "Zoho", image: "/logos/Zoho_Corporation-removebg-preview.webp" },
+      { name: "Gofrugal Technologies Private Limited", image: "/logos/Gofrugal_Technologies_Private_Limited-removebg-preview.webp" },
+      { name: "Aardhraa Technologies", image: "/logos/Aardhraa_Technologies-removebg-preview.webp" },
     ],
   },
   {
     title: "Hospitality & Tourism",
     companies: [
-      { name: "ITC Limited", image: "/logos/ITC Limited.png" },
-      { name: "Taj Group", image: "/logos/Taj_Group-removebg-preview.png" },
-      { name: "Marriott Bonvoy", image: "/logos/Marriott Bonvoy.png" },
+      { name: "ITC Limited", image: "/logos/ITC Limited.webp" },
+      { name: "Taj Group", image: "/logos/Taj_Group-removebg-preview.webp" },
+      { name: "Marriott Bonvoy", image: "/logos/Marriott Bonvoy.webp" },
     ],
   },
 ];
@@ -56,18 +56,18 @@ const smallSectionsRow2 = [
   {
     title: "Healthcare",
     companies: [
-      { name: "CMC", image: "/logos/CMC.png" },
-      { name: "Velammal", image: "/logos/Velammal_Medical_College_b_Research_Centre-removebg-preview.png" },
-      { name: "Aravind Eye Hospital", image: "/logos/Aravind_Eye_Hospital-removebg-preview.png" },
+      { name: "CMC", image: "/logos/CMC.webp" },
+      { name: "Velammal", image: "/logos/Velammal_Medical_College_b_Research_Centre-removebg-preview.webp" },
+      { name: "Aravind Eye Hospital", image: "/logos/Aravind_Eye_Hospital-removebg-preview.webp" },
     ],
   },
   {
     title: "BFSI",
     companies: [
-      { name: "HDFC", image: "/logos/HDFC.png" },
-      { name: "State Bank of India", image: "/logos/SBI-removebg-preview.png" },
-      { name: "Canara Bank", image: "/logos/Canara Bank.png" },
-      { name: "Indian Bank", image: "/logos/Indian Bank.png" },
+      { name: "HDFC", image: "/logos/HDFC.webp" },
+      { name: "State Bank of India", image: "/logos/SBI-removebg-preview.webp" },
+      { name: "Canara Bank", image: "/logos/Canara Bank.webp" },
+      { name: "Indian Bank", image: "/logos/Indian Bank.webp" },
     ],
   },
 ];
@@ -76,14 +76,14 @@ const smallSectionsRow3 = [
   {
     title: "Education",
     companies: [
-      { name: "Chinmaya School", image: "/logos/CHINMAYA_SCHOOL-removebg-preview.png" },
+      { name: "Chinmaya School", image: "/logos/CHINMAYA_SCHOOL-removebg-preview.webp" },
     ],
   },
   {
     title: "Retail & Wholesale",
     companies: [
-      { name: "Thangamayil Jewellery", image: "/logos/Thangamayil_Jewellery-removebg-preview.png" },
-      { name: "Prince Jewellery", image: "/logos/Prince_Jewellery.png" },
+      { name: "Thangamayil Jewellery", image: "/logos/Thangamayil_Jewellery-removebg-preview.webp" },
+      { name: "Prince Jewellery", image: "/logos/Prince_Jewellery.webp" },
     ],
   },
 ];
@@ -92,13 +92,13 @@ const smallSectionsRow4 = [
   {
     title: "NGO",
     companies: [
-      { name: "Amar Seva Sangam", image: "/logos/Amar_Seva_Sangam-removebg-preview.png" },
+      { name: "Amar Seva Sangam", image: "/logos/Amar_Seva_Sangam-removebg-preview.webp" },
     ],
   },
   {
     title: "Construction & Infrastructure",
     companies: [
-      { name: "Estancia", image: "/logos/Estancia.png" },
+      { name: "Estancia", image: "/logos/Estancia.webp" },
     ],
   },
 
@@ -108,7 +108,7 @@ const smallSectionsRow5 = [
   {
     title: "Logistics & Transportation",
     companies: [
-      { name: "Cipla", image: "/logos/Cipla.png" },
+      { name: "Cipla", image: "/logos/Cipla.webp" },
     ],
   },
 ];

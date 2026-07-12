@@ -42,10 +42,10 @@ export const verticalsData: Record<string, any> = {
         video: "https://videos.pexels.com/video-files/8539744/8539744-hd_1920_1080_25fps.mp4",
         poster: verticalsHealthcare,
         partners: [
-            { name: "Apollo Hospitals", logo: "/logos/apollo.png" },
+            { name: "Apollo Hospitals", logo: "/logos/apollo.webp" },
             { name: "Fortis", logo: "/logos/fortis.svg" },
-            { name: "Manipal Hospitals", logo: "/logos/manipal.png" },
-            { name: "Max Healthcare", logo: "/logos/max.png" }
+            { name: "Manipal Hospitals", logo: "/logos/manipal.webp" },
+            { name: "Max Healthcare", logo: "/logos/max.webp" }
         ],
         sections: [
             {
@@ -119,8 +119,8 @@ export const verticalsData: Record<string, any> = {
         partners: [
             { name: "HDFC Bank", logo: "/logos/hdfc.svg" },
             { name: "SBI", logo: "/logos/sbi.svg" },
-            { name: "ICICI Bank", logo: "/logos/icici.png" },
-            { name: "Axis Bank", logo: "/logos/axis.png" }
+            { name: "ICICI Bank", logo: "/logos/icici.webp" },
+            { name: "Axis Bank", logo: "/logos/axis.webp" }
         ],
         sections: [
             {
@@ -166,9 +166,9 @@ export const verticalsData: Record<string, any> = {
         poster: verticalsMep,
         partners: [
             { name: "Tata Steel", logo: "/logos/tata.svg" },
-            { name: "Reliance Industries", logo: "/logos/ril.png" },
-            { name: "L&T", logo: "/logos/larsentoubro.png" },
-            { name: "JSW", logo: "/logos/jsw.png" }
+            { name: "Reliance Industries", logo: "/logos/ril.webp" },
+            { name: "L&T", logo: "/logos/larsentoubro.webp" },
+            { name: "JSW", logo: "/logos/jsw.webp" }
         ],
         sections: [
             {
@@ -213,10 +213,10 @@ export const verticalsData: Record<string, any> = {
         video: "https://videos.pexels.com/video-files/2161457/2161457-hd_1920_1080_30fps.mp4",
         poster: verticalsMep,
         partners: [
-            { name: "Adani Green", logo: "/logos/adani.png" },
+            { name: "Adani Green", logo: "/logos/adani.webp" },
             { name: "NTPC", logo: "/logos/ntpc.svg" },
             { name: "Tata Power", logo: "/logos/tata.svg" },
-            { name: "Power Grid", logo: "/logos/powergrid.png" }
+            { name: "Power Grid", logo: "/logos/powergrid.webp" }
         ],
         sections: [
             {
@@ -263,7 +263,7 @@ export const verticalsData: Record<string, any> = {
         partners: [
             { name: "Siemens", logo: "/logos/siemens.svg" },
             { name: "Cisco", logo: "/logos/cisco.svg" },
-            { name: "Honeywell", logo: "/logos/honeywell.png" },
+            { name: "Honeywell", logo: "/logos/honeywell.webp" },
             { name: "Schneider", logo: "/logos/schneider.svg" }
         ],
         sections: [
@@ -309,9 +309,9 @@ export const verticalsData: Record<string, any> = {
         video: "https://videos.pexels.com/video-files/3052123/3052123-hd_1920_1080_25fps.mp4",
         poster: verticalsMep,
         partners: [
-            { name: "New Delhi Airport", logo: "/logos/delhiairport.png" },
-            { name: "Adani Ports", logo: "/logos/adani.png" },
-            { name: "DHL", logo: "/logos/dhl.png" },
+            { name: "New Delhi Airport", logo: "/logos/delhiairport.webp" },
+            { name: "Adani Ports", logo: "/logos/adani.webp" },
+            { name: "DHL", logo: "/logos/dhl.webp" },
             { name: "Blue Dart", logo: "/logos/bluedart.svg" }
         ],
         sections: [
@@ -357,10 +357,10 @@ export const verticalsData: Record<string, any> = {
         video: "https://videos.pexels.com/video-files/1005638/1005638-hd_1920_1080_30fps.mp4",
         poster: verticalsFacility,
         partners: [
-            { name: "Reliance Retail", logo: "/logos/relianceretail.png" },
-            { name: "Titan", logo: "/logos/titan.png" },
-            { name: "Shoppers Stop", logo: "/logos/shoppersstop.png" },
-            { name: "DMart", logo: "/logos/dmart.png" }
+            { name: "Reliance Retail", logo: "/logos/relianceretail.webp" },
+            { name: "Titan", logo: "/logos/titan.webp" },
+            { name: "Shoppers Stop", logo: "/logos/shoppersstop.webp" },
+            { name: "DMart", logo: "/logos/dmart.webp" }
         ],
         sections: [
             {
@@ -405,10 +405,10 @@ export const verticalsData: Record<string, any> = {
         video: "https://videos.pexels.com/video-files/7578546/7578546-hd_1920_1080_30fps.mp4",
         poster: verticalsHealthcare, // Friendly vibe
         partners: [
-            { name: "DLF", logo: "/logos/dlf.png" },
-            { name: "Lodha", logo: "/logos/lodha.png" },
+            { name: "DLF", logo: "/logos/dlf.webp" },
+            { name: "Lodha", logo: "/logos/lodha.webp" },
             { name: "Godrej", logo: "/logos/godrej.svg" },
-            { name: "Prestige", logo: "/logos/prestige.png" }
+            { name: "Prestige", logo: "/logos/prestige.webp" }
         ],
         sections: [
             {
@@ -501,10 +501,10 @@ export const verticalsData: Record<string, any> = {
         video: "https://videos.pexels.com/video-files/2516335/2516335-hd_1920_1080_30fps.mp4",
         poster: verticalsMep,
         partners: [
-            { name: "Maruti Suzuki", logo: "/logos/maruti.png" },
-            { name: "Hyundai", logo: "/logos/hyundai.png" },
-            { name: "Samsung", logo: "/logos/samsung.png" },
-            { name: "Foxconn", logo: "/logos/foxconn.png" }
+            { name: "Maruti Suzuki", logo: "/logos/maruti.webp" },
+            { name: "Hyundai", logo: "/logos/hyundai.webp" },
+            { name: "Samsung", logo: "/logos/samsung.webp" },
+            { name: "Foxconn", logo: "/logos/foxconn.webp" }
         ],
         sections: [
             {

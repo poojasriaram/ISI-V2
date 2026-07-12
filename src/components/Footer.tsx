@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import isiLogo from "@/assets/isi-logo.png";
+import isiLogo from "@/assets/isi-logo.webp";
 
 // Custom X (Twitter) Icon Component
 const XIcon = ({ className }: { className?: string }) => (

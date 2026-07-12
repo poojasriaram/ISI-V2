@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import isiLogo from "@/assets/isi-logo.png";
+import isiLogo from "@/assets/isi-logo.webp";
 
 const navItems = [
   { name: "Home", href: "/" },
