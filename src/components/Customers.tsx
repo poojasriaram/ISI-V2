@@ -173,6 +173,8 @@ export const Customers = () => {
                       <img loading="lazy"
                         src={company.image}
                         alt={company.name}
+                        width="160"
+                        height="64"
                         className="h-14 w-auto object-contain"
                       />
                     </div>
@@ -205,6 +207,8 @@ export const Customers = () => {
                         <img loading="lazy"
                           src={company.image}
                           alt={company.name}
+                          width="160"
+                          height="64"
                           className="h-14 w-auto object-contain"
                         />
                       </div>
@@ -238,6 +242,8 @@ export const Customers = () => {
                         <img loading="lazy"
                           src={company.image}
                           alt={company.name}
+                          width="160"
+                          height="64"
                           className="h-14 w-auto object-contain"
                         />
                       </div>
@@ -271,6 +277,8 @@ export const Customers = () => {
                         <img loading="lazy"
                           src={company.image}
                           alt={company.name}
+                          width="160"
+                          height="64"
                           className="h-14 w-auto object-contain"
                         />
                       </div>
@@ -304,6 +312,8 @@ export const Customers = () => {
                         <img loading="lazy"
                           src={company.image}
                           alt={company.name}
+                          width="160"
+                          height="64"
                           className="h-14 w-auto object-contain"
                         />
                       </div>
@@ -337,6 +347,8 @@ export const Customers = () => {
                         <img loading="lazy"
                           src={company.image}
                           alt={company.name}
+                          width="160"
+                          height="64"
                           className="h-14 w-auto object-contain"
                         />
                       </div>

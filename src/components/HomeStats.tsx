@@ -110,7 +110,7 @@ export const HomeStats = () => {
                 <div className="mt-16 text-center">
                     <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-white/10 border border-white/20 p-6 rounded-2xl w-full max-w-3xl mx-auto backdrop-blur-sm">
                         <div className="flex-1 text-left sm:text-center md:text-left">
-                            <h4 className="text-lg font-bold text-white">Join 500+ Secure Enterprises</h4>
+                            <h2 className="text-lg font-bold text-white">Join 500+ Secure Enterprises</h2>
                             <p className="text-sm text-white/80 mt-1">Discover how our integrated solutions can protect your operations.</p>
                         </div>
                         <Link to="/contact">

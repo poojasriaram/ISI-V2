@@ -304,6 +304,7 @@ export const Footer = () => {
             {/* Social Links */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-8">
               <a
+                aria-label="LinkedIn"
                 href="https://www.linkedin.com/company/isiguards"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -312,6 +313,7 @@ export const Footer = () => {
                 <Linkedin className="w-4 h-4" />
               </a>
               <a
+                aria-label="Instagram"
                 href="https://www.instagram.com/isiguards/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -320,6 +322,7 @@ export const Footer = () => {
                 <Instagram className="w-4 h-4" />
               </a>
               <a
+                aria-label="YouTube"
                 href="https://www.youtube.com/@isiguards"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -328,6 +331,7 @@ export const Footer = () => {
                 <Youtube className="w-4 h-4" />
               </a>
               <a
+                aria-label="X (Twitter)"
                 href="https://x.com/isiguards"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -336,6 +340,7 @@ export const Footer = () => {
                 <XIcon className="w-4 h-4" />
               </a>
               <a
+                aria-label="Facebook"
                 href="https://www.facebook.com/isiguards"
                 target="_blank"
                 rel="noopener noreferrer"

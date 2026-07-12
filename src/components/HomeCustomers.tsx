@@ -64,6 +64,8 @@ export const HomeCustomers = () => {
               <img loading="lazy"
                 src={company.image}
                 alt={company.name}
+                width="160"
+                height="64"
                 className="h-12 sm:h-16 w-auto object-contain"
               />
             </div>

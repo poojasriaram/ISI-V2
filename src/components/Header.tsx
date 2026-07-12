@@ -393,6 +393,7 @@ export const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
+            aria-label="Toggle mobile menu"
             className="xl:hidden p-2 rounded-lg hover:bg-muted transition-colors ml-auto"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >

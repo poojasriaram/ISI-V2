@@ -91,6 +91,8 @@ const JobMapInner = ({ activeCity, locations }: JobMapProps) => {
                             key={loc.id}
                             position={[loc.lat, loc.lng]}
                             icon={isComingSoon ? comingSoonIcon : activeIcon}
+                            title={loc.title}
+                            alt={loc.title}
                         >
                             <Popup className="min-w-[200px]">
                                 <div className="p-2">

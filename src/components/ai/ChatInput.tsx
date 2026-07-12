@@ -163,6 +163,7 @@ export const ChatInput = React.forwardRef<{ processFiles: (files: FileList | Fil
                                 </div>
                             )}
                             <button
+                                aria-label="Remove attachment"
                                 type="button"
                                 onClick={() => removeAttachment(idx)}
                                 className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg scale-0 group-hover:scale-100 transition-transform hover:bg-red-600"
@@ -175,6 +176,7 @@ export const ChatInput = React.forwardRef<{ processFiles: (files: FileList | Fil
             )}
             <div className="relative flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full p-1 focus-within:bg-white focus-within:border-primary focus-within:ring-[4px] focus-within:ring-primary/5 transition-all duration-300">
                 <button
+                    aria-label="Attach file"
                     type="button"
                     onClick={triggerFileInput}
                     className="ml-2 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-primary transition-all"
@@ -193,6 +195,7 @@ export const ChatInput = React.forwardRef<{ processFiles: (files: FileList | Fil
                     className="w-full bg-transparent border-none focus:ring-0 focus:outline-none py-2.5 px-1 text-sm text-slate-700 placeholder:text-slate-400 outline-none"
                 />
                 <button
+                    aria-label="Send message"
                     type="submit"
                     disabled={(!input.trim() && attachments.length === 0) || disabled}
                     className="w-10 h-10 rounded-full bg-primary text-white hover:bg-primary/90 disabled:bg-slate-200 disabled:text-slate-400 transition-all flex items-center justify-center shrink-0 hover:scale-105 active:scale-95"

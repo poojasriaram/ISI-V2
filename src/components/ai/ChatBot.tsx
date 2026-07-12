@@ -117,6 +117,7 @@ export const ChatBot = () => {
                     </div>
                     <div className="flex items-center gap-1 relative z-10">
                         <Button
+                            aria-label="Minimize Chat"
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-full hover:bg-white/10 text-white transition-colors"
@@ -161,6 +162,7 @@ export const ChatBot = () => {
 
             {/* Site-Aligned Toggle Button */}
             <button
+                aria-label={isOpen ? "Close Chat" : "Open Chat"}
                 onClick={toggleChat}
                 className={cn(
                     "h-16 w-16 rounded-[1.5rem] shadow-2xl flex items-center justify-center transition-all duration-300 active:scale-95 group relative overflow-hidden pointer-events-auto",
