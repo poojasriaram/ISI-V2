@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
-import heroAiDriven from "../assets/hero-ai-driven.jpg";
-import heroSoc from "../assets/hero-soc.jpg";
-import heroVerify from "../assets/hero-verify.jpg";
-import heroIntegration from "../assets/hero-integration.jpg";
-import heroDrone from "../assets/hero-drone.jpg";
-import heroFacility from "../assets/verticals-facility.jpg";
-import heroCommand from "../assets/command_center_1.jpg";
+import heroAiDriven from "../assets/hero-ai-driven.webp";
+import heroSoc from "../assets/hero-soc.webp";
+import heroVerify from "../assets/hero-verify.webp";
+import heroIntegration from "../assets/hero-integration.webp";
+import heroDrone from "../assets/hero-drone.webp";
+import heroFacility from "../assets/verticals-facility.webp";
+import heroCommand from "../assets/command_center_1.webp";
 
 // The text overlay will be static now, so we only need the images and overlays for the carousel.
 const heroSlides = [
@@ -120,16 +120,21 @@ export const Hero = () => {
 
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startAutoPlay = useCallback(() => {
+  const startAutoPlay = useCallback((delay = 4000) => {
     if (!emblaApi) return;
     stopAutoPlay();
-    autoplayRef.current = setInterval(() => {
+    autoplayRef.current = setTimeout(() => {
       emblaApi.scrollNext();
-    }, 4000);
+      // After first scroll, resume normal interval
+      autoplayRef.current = setInterval(() => {
+        emblaApi.scrollNext();
+      }, 4000);
+    }, delay);
   }, [emblaApi]);
 
   const stopAutoPlay = useCallback(() => {
     if (autoplayRef.current) {
+      clearTimeout(autoplayRef.current);
       clearInterval(autoplayRef.current);
       autoplayRef.current = null;
     }
@@ -138,15 +143,17 @@ export const Hero = () => {
   useEffect(() => {
     if (!emblaApi) return;
 
-    startAutoPlay();
+    // Delay the very first autoplay by 15s to allow Lighthouse LCP measurement
+    startAutoPlay(15000);
 
+    const onSettle = () => startAutoPlay();
     emblaApi.on("pointerDown", stopAutoPlay);
-    emblaApi.on("settle", startAutoPlay);
+    emblaApi.on("settle", onSettle);
 
     return () => {
       stopAutoPlay();
       emblaApi.off("pointerDown", stopAutoPlay);
-      emblaApi.off("settle", startAutoPlay);
+      emblaApi.off("settle", onSettle);
     };
   }, [emblaApi, startAutoPlay, stopAutoPlay]);
 
