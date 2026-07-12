@@ -174,10 +174,11 @@ export const useAnalytics = () => {
 
     // ─── CORE FIX: Fetch IP info eagerly and flush queue when ready ──────────
     useEffect(() => {
-        fetchIpWithFallback().then((data) => {
-            if (data) {
-                ipInfoRef.current = data;
-                setIpInfo(data);
+        const initAnalytics = () => {
+            fetchIpWithFallback().then((data) => {
+                if (data) {
+                    ipInfoRef.current = data;
+                    setIpInfo(data);
                 ipReady.current = true;
 
                 // Flush all queued events now that IP is available
@@ -197,6 +198,12 @@ export const useAnalytics = () => {
                 }
             }
         });
+        };
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initAnalytics);
+        } else {
+            setTimeout(initAnalytics, 1000);
+        }
     }, []);  
 
     // ─── Raw HTTP fire (no queue logic — only called when IP is ready or for flush) ─
