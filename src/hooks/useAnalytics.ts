@@ -199,12 +199,14 @@ export const useAnalytics = () => {
             }
         });
         };
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(initAnalytics);
-        } else {
-            setTimeout(initAnalytics, 1000);
-        }
-    }, []);  
+        setTimeout(() => {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initAnalytics);
+            } else {
+                initAnalytics();
+            }
+        }, 5000);
+    }, []);
 
     // ─── Raw HTTP fire (no queue logic — only called when IP is ready or for flush) ─
     const fireToSheets = useCallback(async (sheetName: SheetName, data: any  ) => {
