@@ -66,6 +66,8 @@ export const Certifications = () => {
                                     <img loading="lazy"
                                         src={cert.image}
                                         alt={cert.name}
+                                        width="160"
+                                        height="128"
                                         className="max-w-full max-h-full object-contain"
                                     />
                                 </div>

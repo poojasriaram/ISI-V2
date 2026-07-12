@@ -299,6 +299,8 @@ export const Header = () => {
             <img loading="lazy"
               src={isiLogo}
               alt="ISI Security"
+              width="160"
+              height="40"
               className="transition-transform duration-300 group-hover:scale-105 w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[180px] 2xl:w-[215px] h-auto object-contain"
             />
           </Link>

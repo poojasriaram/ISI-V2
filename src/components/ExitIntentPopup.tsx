@@ -89,6 +89,8 @@ export const ExitIntentPopup = () => {
                                     <img loading="lazy" 
                                         src={mascotImg} 
                                         alt="Security Mascot" 
+                                        width="192"
+                                        height="192"
                                         className="w-full h-full object-contain relative z-10"
                                     />
                                     {/* Fallback Icon if image fails */}

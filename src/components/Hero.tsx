@@ -183,11 +183,11 @@ export const Hero = () => {
                   <img
                     src={slide.image}
                     alt="Hero Slide"
-                    fetchPriority="high"
-                    loading="eager"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] ease-out"
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    className={`absolute inset-0 w-full h-full object-cover ${index === 0 ? '' : 'transition-transform duration-[10000ms] ease-out'}`}
                     style={{
-                      transform: selectedIndex === index ? 'scale(1.1)' : 'scale(1)'
+                      transform: (index !== 0 && selectedIndex === index) ? 'scale(1.1)' : 'scale(1)'
                     }}
                   />
                   {/* Preload link for Vite to inject */}

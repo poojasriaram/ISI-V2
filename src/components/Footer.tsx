@@ -266,6 +266,8 @@ export const Footer = () => {
             <img loading="lazy"
               src={isiLogo}
               alt="ISI Security"
+              width="240"
+              height="60"
               className="mb-4 w-[240px] h-auto object-contain"
             />
             <p className="text-background/80 text-sm font-semibold mb-4 uppercase tracking-[0.2em]">
