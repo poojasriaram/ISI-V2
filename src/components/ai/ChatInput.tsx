@@ -152,7 +152,7 @@ export const ChatInput = React.forwardRef<{ processFiles: (files: FileList | Fil
                         <div key={idx} className="relative group animate-in fade-in zoom-in duration-200">
                             {file.type === 'image' ? (
                                 <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 shadow-sm ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
-                                    <img src={file.url} alt="upload" className="w-full h-full object-cover" />
+                                    <img loading="lazy" src={file.url} alt="upload" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
                                 <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center gap-1 p-1 shadow-sm ring-2 ring-transparent group-hover:ring-primary/20 transition-all">

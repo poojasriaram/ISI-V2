@@ -4,7 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 interface ServicePortfolioCard {
     title: string;
     features: string[];
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
 }
 
 interface ServicePortfolioGridProps {

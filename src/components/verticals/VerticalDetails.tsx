@@ -2,7 +2,7 @@ import { CheckCircle2 } from "lucide-react";
 import { forwardRef } from "react";
 
 interface VerticalDetailsProps {
-    activeData: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    activeData: any  ;
 }
 
 export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(({ activeData }, ref) => {
@@ -26,9 +26,9 @@ export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(
                         <div className="mt-12 pt-8 border-t border-border/50 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
                             <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Trusted By Leaders</p>
                             <div className="flex flex-wrap gap-8 items-center">
-                                {activeData.partners.map((partner: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, i: number) => (
+                                {activeData.partners.map((partner: any  , i: number) => (
                                     <div key={i} className="group/logo relative">
-                                        <img
+                                        <img loading="lazy"
                                             src={partner.logo}
                                             alt={partner.name}
                                             title={partner.name}
@@ -57,12 +57,12 @@ export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(
                 </div>
 
                 <div className="p-8 lg:p-12 space-y-24 bg-background/50">
-                    {activeData.sections.map((section: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, idx: number) => (
+                    {activeData.sections.map((section: any  , idx: number) => (
                         <div key={idx} className="scroll-mt-12">
                             <div className="flex flex-col lg:flex-row gap-8 lg:gap-8 items-start">
                                 <div className="lg:w-1/3 space-y-6 sticky top-24">
                                     <div className="relative rounded-2xl overflow-hidden shadow-2xl group/image">
-                                        <img
+                                        <img loading="lazy"
                                             src={section.image}
                                             alt={section.title}
                                             className="w-full aspect-[4/3] object-cover transform transition-transform duration-700 group-hover/image:scale-110"
@@ -79,7 +79,7 @@ export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(
                                 </div>
 
                                 <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {section.features.map((feature: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, fIdx: number) => (
+                                    {section.features.map((feature: any  , fIdx: number) => (
                                         <div key={fIdx} className="group p-6 rounded-xl bg-card/60 backdrop-blur-sm border border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300">
                                             <div className="flex items-start gap-4">
                                                 <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />

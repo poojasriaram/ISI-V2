@@ -13,11 +13,11 @@ import {
 export interface CashLogisticsStatistic {
     value: string;
     label: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
 }
 
 export interface CashLogisticsCard {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     features: string[];
 }

@@ -9,11 +9,11 @@ import {
 export interface TransitStatistic {
     value: string;
     label: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
 }
 
 export interface TransitCard {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     features: string[];
 }

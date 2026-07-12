@@ -61,7 +61,7 @@ export const HomeCustomers = () => {
               key={index}
               className="flex items-center justify-center w-40 sm:w-48 mx-4 sm:mx-8 hover:scale-110 transition-all duration-300"
             >
-              <img
+              <img loading="lazy"
                 src={company.image}
                 alt={company.name}
                 className="h-12 sm:h-16 w-auto object-contain"

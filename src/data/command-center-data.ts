@@ -12,11 +12,11 @@ import {
 export interface CommandCenterStatistic {
     value: string;
     label: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
 }
 
 export interface CommandCenterCard {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     features: string[];
 }

@@ -6,18 +6,18 @@ export interface ServiceOfferingSection {
     id: string;
     title: string;
     subtitle: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     stats: {
         value: string;
         label: string;
-        icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+        icon: any  ;
         suffix?: string;
         prefix?: string;
     }[];
     portfolio: {
         title: string;
         features: string[];
-        icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+        icon: any  ;
         link?: string;
     }[];
     tabs: {

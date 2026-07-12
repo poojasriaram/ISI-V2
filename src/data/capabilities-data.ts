@@ -31,7 +31,7 @@ export interface CapabilityTopic {
 }
 
 export interface CapabilityPillar {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     punchline: string;
     topics: CapabilityTopic[];
@@ -650,7 +650,7 @@ export const capabilityPhilosophy = {
 };
 
 export interface SecurityDomain {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     description: string;
     services: {

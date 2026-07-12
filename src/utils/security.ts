@@ -63,7 +63,7 @@ export const isValidURL = (url: string): boolean => {
  * Secure localStorage wrapper with encryption-ready structure
  */
 export const secureStorage = {
-    setItem: (key: string, value: any /* eslint-disable-line @typescript-eslint/no-explicit-any */): void => {
+    setItem: (key: string, value: any  ): void => {
         try {
             const serialized = JSON.stringify(value);
             localStorage.setItem(key, serialized);

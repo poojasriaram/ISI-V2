@@ -40,7 +40,7 @@ export const ExecutiveSummary = () => {
 
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-2xl bg-primary/10 overflow-hidden border border-primary/20 shadow-lg">
-                                        <img
+                                        <img loading="lazy"
                                             src={data.leader.image}
                                             alt={data.leader.name}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

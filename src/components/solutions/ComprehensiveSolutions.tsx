@@ -1,7 +1,7 @@
 import { Shield, Bot, Plane, Brain, Truck, UserCheck, Factory, Scale, Check } from "lucide-react";
 
 interface SolutionCategory {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     emoji: string;
     title: string;
     description: string;

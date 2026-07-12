@@ -15,11 +15,11 @@ import {
 export interface VerticalStatistic {
     value: string;
     label: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
 }
 
 export interface VerticalCard {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     features: string[];
 }

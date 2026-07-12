@@ -4,7 +4,7 @@ import { LucideIcon } from "lucide-react";
 interface ServiceStatistic {
     value: string;
     label: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     suffix?: string;
     prefix?: string;
 }

@@ -146,7 +146,7 @@ export const ServiceHub = () => {
     );
 };
 
-const ServiceCard = ({ service, index }: { service: any /* eslint-disable-line @typescript-eslint/no-explicit-any */, index: number }) => {
+const ServiceCard = ({ service, index }: { service: any  , index: number }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -132,7 +132,7 @@ export const handleReactError = (error: Error, errorInfo: { componentStack: stri
 /**
  * API Error Handler
  */
-export const handleAPIError = (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */): string => {
+export const handleAPIError = (error: any  ): string => {
     // Log the actual error
     errorHandler.logError(error, 'medium');
 
@@ -176,7 +176,7 @@ export const handleValidationError = (field: string, error: string): void => {
 /**
  * Security Event Logger
  */
-export const logSecurityEvent = (event: string, details?: any /* eslint-disable-line @typescript-eslint/no-explicit-any */): void => {
+export const logSecurityEvent = (event: string, details?: any  ): void => {
     const securityLog: ErrorLog = {
         timestamp: new Date().toISOString(),
         message: `Security Event: ${event}`,

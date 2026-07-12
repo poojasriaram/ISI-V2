@@ -263,7 +263,7 @@ export const Footer = () => {
 
           {/* Logo & Newsletter */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2 pt-10 lg:pt-0 lg:pl-10 border-t border-background/10 lg:border-t-0 lg:border-l lg:border-background/20 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <img
+            <img loading="lazy"
               src={isiLogo}
               alt="ISI Security"
               className="mb-4 w-[240px] h-auto object-contain"

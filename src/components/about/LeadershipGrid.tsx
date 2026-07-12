@@ -17,7 +17,7 @@ export const LeadershipGrid = () => {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                     {allLeaders.map((leader, idx) => (
                         <div key={idx} className="group relative overflow-hidden rounded-3xl aspect-[3/4] shadow-xl">
-                            <img src={leader.img} alt={leader.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <img loading="lazy" src={leader.img} alt={leader.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
 
                             {/* Content container - always at bottom */}

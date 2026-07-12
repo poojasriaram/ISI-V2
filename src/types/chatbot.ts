@@ -70,6 +70,6 @@ export interface LocationInfo {
 
 export interface IntentHandler {
     keywords: string[];
-    response: (context?: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => string;
+    response: (context?: any  ) => string;
     actions?: ChatAction[];
 }

@@ -177,14 +177,32 @@ export const Hero = () => {
               key={index}
               className="flex-[0_0_100%] min-w-0 relative h-full"
             >
-              {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] ease-out"
-                style={{
-                  backgroundImage: `url(${slide.image})`,
-                  transform: selectedIndex === index ? 'scale(1.1)' : 'scale(1)'
-                }}
-              />
+              {/* If it's the first slide, we use an actual image tag for eager loading and LCP optimization */}
+              {index === 0 ? (
+                <>
+                  <img
+                    src={slide.image}
+                    alt="Hero Slide"
+                    fetchPriority="high"
+                    loading="eager"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] ease-out"
+                    style={{
+                      transform: selectedIndex === index ? 'scale(1.1)' : 'scale(1)'
+                    }}
+                  />
+                  {/* Preload link for Vite to inject */}
+                  <link rel="preload" href={slide.image} as="image" />
+                </>
+              ) : (
+                /* Background Image for other slides */
+                <div
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] ease-out"
+                  style={{
+                    backgroundImage: `url(${slide.image})`,
+                    transform: selectedIndex === index ? 'scale(1.1)' : 'scale(1)'
+                  }}
+                />
+              )}
 
               {/* Gradient Overlay */}
               <div className={`absolute inset-0 bg-gradient-to-r ${slide.overlay}`} />

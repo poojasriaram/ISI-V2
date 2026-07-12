@@ -121,7 +121,7 @@ export interface UserBehaviorLibrary extends BaseTrackingData {
     // Technical
     interactions: any[];
     tree?: string;
-    [key: string]: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    [key: string]: any  ;
 }
 
 export type SheetName =

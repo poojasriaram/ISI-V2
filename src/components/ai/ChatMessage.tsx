@@ -43,7 +43,7 @@ export const ChatMessage = ({ message, onActionClick }: ChatMessageProps) => {
                                 {message.attachments.map((file, idx) => (
                                     <div key={idx} className="rounded-xl overflow-hidden bg-slate-50/10 border border-white/20">
                                         {file.type === 'image' ? (
-                                            <img src={file.url} alt={file.name} className="max-w-full h-auto object-cover rounded-lg" />
+                                            <img loading="lazy" src={file.url} alt={file.name} className="max-w-full h-auto object-cover rounded-lg" />
                                         ) : file.type === 'video' ? (
                                             <div className="relative group flex flex-col">
                                                 <video src={file.url} className="w-full rounded-lg" />

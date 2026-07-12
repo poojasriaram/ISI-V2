@@ -14,7 +14,7 @@ interface TopicModalProps {
     isOpen: boolean;
     onClose: () => void;
     pillarTitle: string;
-    pillarIcon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    pillarIcon: any  ;
 }
 
 const TopicModal = ({ topic, isOpen, onClose, pillarTitle, pillarIcon: Icon }: TopicModalProps) => {

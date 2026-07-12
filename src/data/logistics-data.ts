@@ -3,12 +3,12 @@ import { Truck, Wallet, Package, Lock, MonitorDot, Shield, Eye, TrendingUp, File
 export interface LogisticsStatistic {
     value: string;
     label: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     suffix?: string;
 }
 
 export interface LogisticsServiceCard {
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     title: string;
     description: string;
     features: string[];
@@ -17,7 +17,7 @@ export interface LogisticsServiceCard {
 export interface LogisticsTabContent {
     id: string;
     title: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     description: string;
     offerings: {
         title: string;
@@ -26,7 +26,7 @@ export interface LogisticsTabContent {
     benefits: {
         title: string;
         description: string;
-        icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+        icon: any  ;
     }[];
     keyMetric?: string;
 }

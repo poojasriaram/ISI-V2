@@ -60,7 +60,7 @@ export const ModernLiving = () => {
                             viewport={{ once: true }}
                             className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border border-border/50"
                         >
-                            <img 
+                            <img loading="lazy" 
                                 src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80" 
                                 alt="Modern Living Security"
                                 className="w-full h-auto aspect-[4/3] object-cover"

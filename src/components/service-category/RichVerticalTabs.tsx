@@ -11,7 +11,7 @@ export interface RichTabPayload {
     id: string;
     title: string;
     description: string;
-    icon: any /* eslint-disable-line @typescript-eslint/no-explicit-any */;
+    icon: any  ;
     details: TabDetail[];
 }
 

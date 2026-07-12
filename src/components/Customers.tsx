@@ -170,7 +170,7 @@ export const Customers = () => {
 
                     {/* Logo Container */}
                     <div className="relative flex items-center justify-center w-full h-full">
-                      <img
+                      <img loading="lazy"
                         src={company.image}
                         alt={company.name}
                         className="h-14 w-auto object-contain"
@@ -202,7 +202,7 @@ export const Customers = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                       <div className="relative flex items-center justify-center w-full h-full">
-                        <img
+                        <img loading="lazy"
                           src={company.image}
                           alt={company.name}
                           className="h-14 w-auto object-contain"
@@ -235,7 +235,7 @@ export const Customers = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                       <div className="relative flex items-center justify-center w-full h-full">
-                        <img
+                        <img loading="lazy"
                           src={company.image}
                           alt={company.name}
                           className="h-14 w-auto object-contain"
@@ -268,7 +268,7 @@ export const Customers = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                       <div className="relative flex items-center justify-center w-full h-full">
-                        <img
+                        <img loading="lazy"
                           src={company.image}
                           alt={company.name}
                           className="h-14 w-auto object-contain"
@@ -301,7 +301,7 @@ export const Customers = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                       <div className="relative flex items-center justify-center w-full h-full">
-                        <img
+                        <img loading="lazy"
                           src={company.image}
                           alt={company.name}
                           className="h-14 w-auto object-contain"
@@ -334,7 +334,7 @@ export const Customers = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                       <div className="relative flex items-center justify-center w-full h-full">
-                        <img
+                        <img loading="lazy"
                           src={company.image}
                           alt={company.name}
                           className="h-14 w-auto object-contain"

@@ -63,7 +63,7 @@ export const Certifications = () => {
                             <div className="relative text-center">
                                 {/* Certification Image */}
                                 <div className="w-full h-32 flex items-center justify-center mb-6 overflow-hidden">
-                                    <img
+                                    <img loading="lazy"
                                         src={cert.image}
                                         alt={cert.name}
                                         className="max-w-full max-h-full object-contain"

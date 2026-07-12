@@ -86,7 +86,7 @@ export const ExitIntentPopup = () => {
                             <div className="mb-6 flex justify-center">
                                 <div className="w-48 h-48 relative">
                                     {/* Use a placeholder circle if image path is tricky, but let's try to pass the actual image later */}
-                                    <img 
+                                    <img loading="lazy" 
                                         src={mascotImg} 
                                         alt="Security Mascot" 
                                         className="w-full h-full object-contain relative z-10"

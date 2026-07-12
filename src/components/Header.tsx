@@ -296,7 +296,7 @@ export const Header = () => {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-6 2xl:px-8 max-w-full">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           <Link to="/" className="flex flex-col items-center gap-0.5 sm:gap-1 shrink-0">
-            <img
+            <img loading="lazy"
               src={isiLogo}
               alt="ISI Security"
               className="transition-transform duration-300 group-hover:scale-105 w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[180px] 2xl:w-[215px] h-auto object-contain"
