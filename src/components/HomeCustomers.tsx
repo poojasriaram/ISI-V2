@@ -66,7 +66,7 @@ export const HomeCustomers = () => {
                 alt={company.name}
                 width="160"
                 height="64"
-                className="h-12 sm:h-16 w-auto object-contain"
+                className="h-12 sm:h-16 aspect-[5/2] object-contain"
               />
             </div>
           ))}

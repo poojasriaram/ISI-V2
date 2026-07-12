@@ -304,7 +304,7 @@ export const Hero = () => {
             aria-label={`Go to slide ${index + 1}`}
           >
             {selectedIndex === index && (
-              <span className="absolute inset-0 rounded-full bg-primary animate-pulse" />
+              <span className="absolute inset-0 rounded-full bg-primary opacity-80 animate-pulse" />
             )}
           </button>
         ))}
@@ -313,8 +313,8 @@ export const Hero = () => {
       {/* Progress Bar */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-border/50 z-20">
         <div
-          className="h-full bg-primary transition-all duration-300"
-          style={{ width: `${((selectedIndex + 1) / heroSlides.length) * 100}%` }}
+          className="h-full bg-primary transition-transform duration-300 origin-left"
+          style={{ transform: `scaleX(${((selectedIndex + 1) / heroSlides.length)})` }}
         />
       </div>
     </section>

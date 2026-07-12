@@ -146,10 +146,32 @@ const AppRouter = () => {
   const [showWidgets, setShowWidgets] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWidgets(true);
-    }, 5000);
-    return () => clearTimeout(timer);
+    let fired = false;
+    const loadWidgets = () => {
+      if (!fired) {
+        fired = true;
+        setShowWidgets(true);
+        cleanup();
+      }
+    };
+    
+    // Also set a very long fallback just in case there is no interaction for a long time
+    const timer = setTimeout(loadWidgets, 10000);
+
+    const cleanup = () => {
+      window.removeEventListener('scroll', loadWidgets);
+      window.removeEventListener('mousemove', loadWidgets);
+      window.removeEventListener('touchstart', loadWidgets);
+      window.removeEventListener('keydown', loadWidgets);
+      clearTimeout(timer);
+    };
+
+    window.addEventListener('scroll', loadWidgets, { passive: true });
+    window.addEventListener('mousemove', loadWidgets, { passive: true });
+    window.addEventListener('touchstart', loadWidgets, { passive: true });
+    window.addEventListener('keydown', loadWidgets, { passive: true });
+
+    return cleanup;
   }, []);
 
   useAnalytics();

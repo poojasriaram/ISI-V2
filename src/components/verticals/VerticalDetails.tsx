@@ -32,7 +32,9 @@ export const VerticalDetails = forwardRef<HTMLDivElement, VerticalDetailsProps>(
                                             src={partner.logo}
                                             alt={partner.name}
                                             title={partner.name}
-                                            className="h-20 w-auto object-contain transition-all duration-500 hover:scale-110"
+                                            width="200"
+                                            height="80"
+                                            className="h-20 aspect-[5/2] object-contain transition-all duration-500 hover:scale-110"
                                         />
                                     </div>
                                 ))}

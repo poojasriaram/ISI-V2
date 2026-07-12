@@ -175,7 +175,7 @@ export const Customers = () => {
                         alt={company.name}
                         width="160"
                         height="64"
-                        className="h-14 w-auto object-contain"
+                        className="h-14 aspect-[5/2] object-contain"
                       />
                     </div>
                   </div>
@@ -209,7 +209,7 @@ export const Customers = () => {
                           alt={company.name}
                           width="160"
                           height="64"
-                          className="h-14 w-auto object-contain"
+                          className="h-14 aspect-[5/2] object-contain"
                         />
                       </div>
                     </div>
@@ -244,7 +244,7 @@ export const Customers = () => {
                           alt={company.name}
                           width="160"
                           height="64"
-                          className="h-14 w-auto object-contain"
+                          className="h-14 aspect-[5/2] object-contain"
                         />
                       </div>
                     </div>
@@ -279,7 +279,7 @@ export const Customers = () => {
                           alt={company.name}
                           width="160"
                           height="64"
-                          className="h-14 w-auto object-contain"
+                          className="h-14 aspect-[5/2] object-contain"
                         />
                       </div>
                     </div>
@@ -314,7 +314,7 @@ export const Customers = () => {
                           alt={company.name}
                           width="160"
                           height="64"
-                          className="h-14 w-auto object-contain"
+                          className="h-14 aspect-[5/2] object-contain"
                         />
                       </div>
                     </div>
@@ -349,7 +349,7 @@ export const Customers = () => {
                           alt={company.name}
                           width="160"
                           height="64"
-                          className="h-14 w-auto object-contain"
+                          className="h-14 aspect-[5/2] object-contain"
                         />
                       </div>
                     </div>
