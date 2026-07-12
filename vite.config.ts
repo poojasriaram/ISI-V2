@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => ({
             'lucide-react',
             'framer-motion'
           ],
-          carousel: ['embla-carousel', 'embla-carousel-react', 'embla-carousel-autoplay'],
+          carousel: ['embla-carousel-react'],
           utils: ['tailwind-merge', 'clsx', 'date-fns', 'sonner'],
           vendor: ['leaflet', 'react-leaflet', 'recharts']
         },
