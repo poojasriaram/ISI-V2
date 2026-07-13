@@ -30,7 +30,7 @@ export const FinalCTA = () => {
             <Button
               size="lg"
               className="w-full sm:w-auto text-base h-16 px-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full group"
-              onClick={() => navigate("/contact")}
+              onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')}
             >
               Get Your Free Security Assessment
               <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
@@ -39,7 +39,7 @@ export const FinalCTA = () => {
               variant="outline"
               size="lg"
               className="w-full sm:w-auto text-base h-16 px-10 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 rounded-full group"
-              onClick={() => navigate("/contact")}
+              onClick={() => window.location.href = 'tel:+917708887878'}
             >
               <PhoneCall className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
               Call for Immediate Support

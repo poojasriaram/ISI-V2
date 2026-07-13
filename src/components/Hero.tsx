@@ -1,4 +1,5 @@
 import { Shield, ArrowRight, CheckCircle, Play, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -250,25 +251,27 @@ export const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6 sm:mb-8">
-              <Button
-                size="lg"
-                className="gap-2 text-base h-14 px-8 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full bg-primary text-white group"
-                onClick={scrollToSolutions}
-              >
-                Request a Free Security Consultation
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary/10 hover:text-primary transition-all duration-300 rounded-full group"
-                onClick={openVideo}
-              >
-                Talk to Our Security Experts
-              </Button>
+              <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }} className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="w-full gap-2 text-base h-14 px-8 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full bg-primary text-white group"
+                >
+                  Request a Free Security Consultation
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+              <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }} className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary/10 hover:text-primary transition-all duration-300 rounded-full group"
+                >
+                  Talk to Our Security Experts
+                </Button>
+              </Link>
             </div>
 
-            {/* Trust Indicators */}
+            {/* Trust Indicators & Slide Indicators */}
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground font-medium animate-fade-in">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-primary shrink-0" />
@@ -284,30 +287,28 @@ export const Hero = () => {
                 <CheckCircle className="w-4 h-4 text-primary shrink-0" />
                 <span className="whitespace-nowrap">Nationwide Service (PAN India)</span>
               </div>
+
+              {/* Slide Indicators next to trust indicators */}
+              <div className="flex items-center gap-3 ml-2 mt-1 sm:mt-0">
+                {heroSlides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => scrollTo(index)}
+                    className={`relative h-2 rounded-full transition-all duration-300 ${selectedIndex === index
+                      ? "w-10 bg-primary"
+                      : "w-2 bg-muted-foreground/40 hover:bg-muted-foreground/60"
+                      }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  >
+                    {selectedIndex === index && (
+                      <span className="absolute inset-0 rounded-full bg-primary opacity-80 animate-pulse" />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-
-
-      {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
-        {heroSlides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => scrollTo(index)}
-            className={`relative h-2 rounded-full transition-all duration-300 ${selectedIndex === index
-              ? "w-10 bg-primary"
-              : "w-2 bg-muted-foreground/40 hover:bg-muted-foreground/60"
-              }`}
-            aria-label={`Go to slide ${index + 1}`}
-          >
-            {selectedIndex === index && (
-              <span className="absolute inset-0 rounded-full bg-primary opacity-80 animate-pulse" />
-            )}
-          </button>
-        ))}
       </div>
 
       {/* Progress Bar */}

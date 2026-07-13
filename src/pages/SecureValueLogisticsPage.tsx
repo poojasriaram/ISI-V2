@@ -117,7 +117,7 @@ const SecureValueLogisticsPage = () => {
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-4 md:mb-6 animate-fade-in">{secureLogisticsHero.title}</h1>
                                 <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 md:mb-10 animate-fade-in">{secureLogisticsHero.subtitle}</p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                                    <Link to="/contact"><Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">Get Started<ArrowRight className="w-5 h-5" /></Button></Link>
+                                    <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}><Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">Get Started<ArrowRight className="w-5 h-5" /></Button></Link>
                                     <Link to="#cash-monetary-logistics"><Button variant="outline" size="lg" className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary hover:text-primary-foreground transition-all duration-300">Explore Solutions</Button></Link>
                                 </div>
                             </div>

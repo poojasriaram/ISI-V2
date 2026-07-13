@@ -77,7 +77,7 @@ export const CorePhilosophy = () => {
         {/* Section Bottom CTA */}
         <div className="mt-16 text-center">
             <h4 className="text-xl font-bold text-foreground mb-4">Experience the ISI Difference</h4>
-            <Link to="/contact">
+            <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
                 <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
                     Speak with a Specialist
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

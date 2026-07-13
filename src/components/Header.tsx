@@ -176,7 +176,7 @@ const NavDropdown = ({ label, href, items, onItemClick, onMainClick }: NavDropdo
                 {/* Bottom CTA within items area */}
                 <div className="mt-6 p-4 bg-muted/30 rounded-xl flex items-center justify-between border border-border/50">
                   <span className="text-sm text-muted-foreground">Need help choosing the right services?</span>
-                  <Button size="sm" onClick={() => onItemClick('/contact')} className="h-8 text-xs px-4">Contact Us</Button>
+                  <Button size="sm" onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')} className="h-8 text-xs px-4">Contact Us</Button>
                 </div>
               </div>
             </div>
@@ -214,7 +214,7 @@ const NavDropdown = ({ label, href, items, onItemClick, onMainClick }: NavDropdo
                 <h4 className="text-base font-bold text-foreground mb-2">Need Help Choosing?</h4>
                 <p className="text-sm text-muted-foreground mb-6">Our security experts can tailor a solution to fit your unique enterprise needs.</p>
               </div>
-              <Button onClick={() => onItemClick('/contact')} className="w-full gap-2 relative z-10 hover:scale-[1.02] transition-transform">
+              <Button onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')} className="w-full gap-2 relative z-10 hover:scale-[1.02] transition-transform">
                 Talk to Experts
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -376,7 +376,7 @@ export const Header = () => {
           </div>
 
           <div className="hidden xl:flex items-center gap-1.5 xl:gap-2 2xl:gap-3 shrink-0">
-            <Link to="/contact">
+            <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
               <Button size="sm" className="gap-1.5 xl:gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 whitespace-nowrap text-sm xl:text-sm 2xl:text-base px-5 xl:px-5 2xl:px-6 py-4 rounded-full font-bold">
                 Get a Quote
                 <ArrowRight className="w-4 h-4" />
@@ -461,7 +461,7 @@ export const Header = () => {
                 </div>
               ))}
               <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:mt-4 px-3 sm:px-4 pb-3 sm:pb-4">
-                <Link to="/contact" className="flex-1">
+                <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }} className="flex-1">
                   <Button size="sm" className="w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm" onClick={() => setMobileMenuOpen(false)}>
                     Contact Us
                     <ArrowRight className="w-4 h-4" />

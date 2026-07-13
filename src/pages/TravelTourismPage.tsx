@@ -117,7 +117,7 @@ const TravelTourismPage = () => {
                                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-4 animate-fade-in">{heroSlides[selectedIndex].title}</h1>
                                 <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-xl mb-6 md:mb-8 animate-fade-in">{heroSlides[selectedIndex].subtitle}</p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                                    <Link to="/contact"><Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">Secure Tourism Destinations<ArrowRight className="w-5 h-5" /></Button></Link>
+                                    <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}><Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">Secure Tourism Destinations<ArrowRight className="w-5 h-5" /></Button></Link>
                                     <Link to="#tourism-intelligence"><Button variant="outline" size="lg" className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary hover:text-primary-foreground transition-all duration-300">Explore Visitor Intelligence</Button></Link>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 max-w-2xl text-xs sm:text-sm text-muted-foreground/80 font-medium">

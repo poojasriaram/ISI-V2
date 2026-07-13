@@ -126,12 +126,12 @@ export const Services = () => {
 
                 {/* Card CTAs */}
                 <div className="mt-auto flex items-center justify-center gap-6 w-full opacity-80 group-hover:opacity-100 transition-opacity duration-300 pt-2">
-                  <Link to="/contact" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors z-20 relative">
+                  <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors z-20 relative">
                     Contact Us
                   </Link>
-                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary z-20 relative cursor-pointer">
+                  <Link to="/services" className="inline-flex items-center gap-2 text-sm font-semibold text-primary z-20 relative">
                     Explore Solutions <ArrowRight className="w-4 h-4 transition-transform duration-300 transform group-hover:translate-x-1" />
-                  </span>
+                  </Link>
                 </div>
               </div>
 
@@ -146,7 +146,7 @@ export const Services = () => {
         {/* Section Bottom CTA */}
         <div className="mt-16 text-center">
             <h4 className="text-xl font-bold text-foreground mb-4">Need a tailored approach?</h4>
-            <Link to="/contact">
+            <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
                 <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
                     Schedule an Expert Consultation
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

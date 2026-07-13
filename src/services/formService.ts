@@ -97,7 +97,12 @@ export const submitChatbotLead = async (
 };
 export const submitCareerApplication = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('CareerApplications', data);
+        await sendToSheet('CareerApplications', {
+            ...data,
+            targetEmail: 'hrms2026@isisecurity.in',
+            notifyEmail: 'hrms2026@isisecurity.in',
+            emailTo: 'hrms2026@isisecurity.in'
+        });
         return { success: true };
     } catch (error) {
         console.error('Error submitting career application:', error);

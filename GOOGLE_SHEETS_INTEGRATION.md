@@ -1,4 +1,6 @@
-# Ultra-Pro Google Sheets Analytics & Lead Integration (V4)# Ultra-Pro Google Sheets Analytics & Lead Integration (V4)# Ultra-Pro Google Sheets Analytics & Lead Integration (V4)
+# Ultra-Pro Google Sheets Analytics & Lead Integration (V4)
+# Ultra-Pro Google Sheets Analytics & Lead Integration (V4)
+# Ultra-Pro Google Sheets Analytics & Lead Integration (V4)
 
 This project implements **Elite-Level** tracking with **60+ Master Metrics**, A/B testing, and industrial behavioral profiling. All data fields are guaranteed to be populated — see the IP fix notes below.
 

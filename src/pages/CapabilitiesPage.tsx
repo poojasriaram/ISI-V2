@@ -114,7 +114,7 @@ const CapabilitiesPage = () => {
                                     {capabilitiesHero.subtitle}
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                                    <Link to="/contact">
+                                    <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
                                         <Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">
                                             Explore Solutions <ArrowRight className="w-5 h-5" />
                                         </Button>

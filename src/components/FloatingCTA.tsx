@@ -7,13 +7,15 @@ export const FloatingCTA = () => {
       {/* Desktop Floating CTA (Bottom Right) */}
       <div className="hidden md:flex fixed bottom-6 right-6 z-50 flex-col gap-3">
         {/* Request Consultation */}
-        <Link
-          to="/contact"
+        <a
+          href="https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+          target="_blank"
+          rel="noopener noreferrer"
           className="group relative flex items-center gap-3 px-6 py-3.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-[1.03]"
         >
           <CalendarPlus className="w-5 h-5" />
           <span className="font-semibold text-sm">Request Consultation</span>
-        </Link>
+        </a>
         
       </div>
 
@@ -38,10 +40,15 @@ export const FloatingCTA = () => {
           </a>
 
           {/* Enquire Now */}
-          <Link to="/contact" className="flex-1 flex flex-col items-center justify-center gap-1 h-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors">
+          <a 
+            href="https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex flex-col items-center justify-center gap-1 h-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+          >
             <Mail className="w-5 h-5" />
             <span className="text-[10px] font-semibold">Enquire Now</span>
-          </Link>
+          </a>
         </div>
       </div>
     </>

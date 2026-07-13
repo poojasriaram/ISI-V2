@@ -10,7 +10,7 @@ export const AboutCTA = () => {
                 <p className="text-xl opacity-90 max-w-2xl mx-auto mb-12">
                     Join the hundreds of industry leaders who trust us with their most valuable assets.
                 </p>
-                <Button variant="secondary" size="lg" className="h-14 px-8 text-lg rounded-full group">
+                <Button variant="secondary" size="lg" className="h-14 px-8 text-lg rounded-full group" onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')}>
                     Contact Us Today
                     <ArrowUpRight className="ml-2 w-5 h-5 group-hover:rotate-45 transition-transform" />
                 </Button>

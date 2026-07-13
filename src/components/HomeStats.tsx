@@ -113,7 +113,7 @@ export const HomeStats = () => {
                             <h2 className="text-lg font-bold text-white">Join 500+ Secure Enterprises</h2>
                             <p className="text-sm text-white/80 mt-1">Discover how our integrated solutions can protect your operations.</p>
                         </div>
-                        <Link to="/contact">
+                        <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
                             <Button className="gap-2 rounded-full bg-white text-[#1855c2] hover:bg-white/90 shadow-lg hover:scale-[1.02] transition-transform group">
                                 Get a Customized Security Solution
                                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
