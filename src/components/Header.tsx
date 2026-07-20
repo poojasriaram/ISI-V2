@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key } from "lucide-react";
+import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key, Coins } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import isiLogo from "@/assets/isi-logo.webp";
@@ -44,6 +44,9 @@ const offeringsList = [
   { name: "Command & Control", href: "/services/security-services/command-control", category: "Security Services", desc: "Centralized monitoring hub", icon: Activity },
   { name: "Specialized Protection", href: "/services/security-services/specialized-protection", category: "Security Services", desc: "Executive & VIP guarding", icon: Shield },
   { name: "Risk Intelligence", href: "/services/security-services/risk-advisory", category: "Security Services", desc: "Threat assessment & consulting", icon: Search },
+
+  // Specialized Group
+  { name: "Gold Offerings", href: "/offerings#gold-offerings", category: "Specialized Offerings", desc: "Gem & Jewellery security & facility solutions", icon: Coins },
 ];
 
 const capabilitiesList = [

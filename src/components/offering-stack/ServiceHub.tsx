@@ -19,7 +19,8 @@ import {
     Home,
     HeartPulse,
     ShieldCheck,
-    Sparkles
+    Sparkles,
+    Coins
 } from "lucide-react";
 
 const fmServices = [
@@ -45,6 +46,10 @@ const livingServices = [
     { id: "hni-residences", title: "HNI Residential", subtitle: "Discreet protection for luxury estates", icon: Home, type: "modern-living" },
     { id: "elderly-care", title: "Elderly Care", subtitle: "AI-driven wellness & safety monitoring", icon: HeartPulse, type: "modern-living" },
     { id: "vacant-property", title: "Vacant Property", subtitle: "Remote guarding for secondary homes", icon: ShieldCheck, type: "modern-living" },
+];
+
+const specializedServices = [
+    { id: "gold-offerings", title: "Gold Offerings", subtitle: "Gem & Jewellery Security & Facility Intelligence", icon: Coins, type: "gold-offerings", hash: "#gold-offerings" },
 ];
 
 export const ServiceHub = () => {
@@ -122,6 +127,25 @@ export const ServiceHub = () => {
                         </div>
                     </div>
 
+                    {/* Specialized Industry Offerings Section */}
+                    <div className="relative pt-8">
+                        <div className="flex flex-col items-center mb-12">
+                            <h3 className="text-3xl md:text-4xl font-bold flex items-center gap-4 text-foreground">
+                                <span className="w-12 h-12 rounded-2xl bg-amber-500 text-amber-950 flex items-center justify-center shadow-xl shadow-amber-500/30">
+                                    <Coins className="w-6 h-6" />
+                                </span>
+                                Specialized Offerings
+                            </h3>
+                            <div className="mt-4 h-0.5 w-48 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+                        </div>
+
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {specializedServices.map((service, index) => (
+                                <ServiceCard key={service.id} service={service} index={index} />
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Modern Living & Business Section */}
                     <div className="relative pt-8">
                         <div className="flex flex-col items-center mb-12">
@@ -146,7 +170,17 @@ export const ServiceHub = () => {
     );
 };
 
-const ServiceCard = ({ service, index }: { service: any  , index: number }) => {
+const ServiceCard = ({ service, index }: { service: any, index: number }) => {
+    const handleClick = (e: React.MouseEvent) => {
+        if (service.hash) {
+            e.preventDefault();
+            const el = document.getElementById(service.hash.substring(1));
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -156,7 +190,8 @@ const ServiceCard = ({ service, index }: { service: any  , index: number }) => {
             className="group relative h-full"
         >
             <Link
-                to={service.type === "modern-living" ? "/modern-living" : `/services/${service.type}/${service.id}`}
+                to={service.hash ? service.hash : (service.type === "modern-living" ? "/modern-living" : `/services/${service.type}/${service.id}`)}
+                onClick={handleClick}
                 className="flex flex-col h-full bg-card border border-border/50 rounded-2xl p-7 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 group-hover:border-primary/40 overflow-hidden"
             >
                 {/* Decorative corner element */}
