@@ -5,7 +5,7 @@ import {
     CheckCircle2, TrendingUp, Clock, Award, Zap, Activity, Globe, Cpu,
     Settings, AlertTriangle, Truck, ShoppingBag, Map, Train, Car,
     Warehouse, Server, ShieldAlert, Radio, Briefcase, Landmark as Bank,
-    Cloud, MapPin, Search, ShieldX, Package, Heart
+    Cloud, MapPin, Search, ShieldX, Package, Heart, Store
 } from "lucide-react";
 
 // ============================================================================
@@ -1137,6 +1137,68 @@ export const vertical14_CashLogistics: VerticalSection = {
 };
 
 // ============================================================================
+// VERTICAL 15: GEMS & JEWELLERY
+// ============================================================================
+
+export const vertical15_GemsJewellery: VerticalSection = {
+    id: "gems-jewellery",
+    badgeLabel: "Gems & Jewellery Security",
+    title: "Enterprise-grade Protection for Gems & Jewellery",
+    subtitle: "End-to-end security, facility management, and risk mitigation for manufacturers, exporters, and showrooms.",
+    statistics: [
+        { value: "100%", label: "vault compliance", icon: ShieldCheck },
+        { value: "24/7", label: "surveillance", icon: Eye },
+        { value: "Zero", label: "transit breaches", icon: Truck },
+        { value: "50+", label: "showrooms secured", icon: Store }
+    ],
+    portfolioCards: [
+        {
+            icon: Shield,
+            title: "Physical Security",
+            features: ["Armed guards", "Loss prevention", "Executive protection", "Access control"]
+        },
+        {
+            icon: Cpu,
+            title: "Electronic Systems",
+            features: ["Seismic sensors", "Biometrics", "CCTV analytics", "Automated lockdown"]
+        },
+        {
+            icon: Building2,
+            title: "Facility Management",
+            features: ["Cleanroom upkeep", "Vault climate control", "HVAC maintenance", "Sanitation"]
+        },
+        {
+            icon: Target,
+            title: "Risk & Compliance",
+            features: ["Threat audits", "Background checks", "Regulatory alignment", "Incident response"]
+        }
+    ],
+    verticalTabs: [
+        {
+            title: "Retail Stores",
+            description: "Showroom protection, counter loss prevention, discreet executive guards, and customer safety management."
+        },
+        {
+            title: "Manufacturing",
+            description: "Cleanroom security, high-value production line surveillance, employee screening, and access logs."
+        },
+        {
+            title: "Wholesale & Transit",
+            description: "Fortress-level vault defense, heavy vehicle transit security, seismic sensing, and armed monitoring."
+        },
+        {
+            title: "Export Houses",
+            description: "End-to-end supply chain defense, customs clearance area guarding, tamper-evident sealing, and logistics safety."
+        }
+    ],
+    cta: {
+        text: "Secure your high-value assets with our specialized intelligence",
+        buttonText: "Partner with Us",
+        link: "https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20Gems%20%26%20Jewellery%20security%20solutions."
+    }
+};
+
+// ============================================================================
 // EXPORT ALL VERTICALS
 // ============================================================================
 
@@ -1154,5 +1216,6 @@ export const allVerticalsPageSections = [
     vertical11_MassTransportation,
     vertical12_Retail,
     vertical13_TravelTourism,
-    vertical14_CashLogistics
+    vertical14_CashLogistics,
+    vertical15_GemsJewellery
 ];

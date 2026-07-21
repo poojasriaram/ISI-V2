@@ -28,6 +28,7 @@ const verticalsList = [
   { name: "Smart Cities", id: "smart-cities", desc: "Urban surveillance", icon: Activity },
   { name: "Event Management", id: "event-management", desc: "Crowd control & safety", icon: Users },
   { name: "Retail", id: "retail", desc: "Loss prevention", icon: Building2 },
+  { name: "Gems & Jewellery", id: "gems-jewellery", desc: "Enterprise-grade protection", icon: Coins },
 ];
 
 const offeringsList = [
@@ -45,8 +46,6 @@ const offeringsList = [
   { name: "Specialized Protection", href: "/services/security-services/specialized-protection", category: "Security Services", desc: "Executive & VIP guarding", icon: Shield },
   { name: "Risk Intelligence", href: "/services/security-services/risk-advisory", category: "Security Services", desc: "Threat assessment & consulting", icon: Search },
 
-  // Specialized Group
-  { name: "Gold Offerings", href: "/offerings#gold-offerings", category: "Specialized Offerings", desc: "Gem & Jewellery security & facility solutions", icon: Coins },
 ];
 
 const capabilitiesList = [

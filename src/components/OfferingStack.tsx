@@ -4,7 +4,6 @@ import { CoreSecurity } from "./offering-stack/CoreSecurity";
 import { FacilityEvolution } from "./offering-stack/FacilityEvolution";
 import { DCIM } from "./offering-stack/DCIM";
 import { ModernLiving } from "./offering-stack/ModernLiving";
-import { GoldOfferings } from "./offering-stack/GoldOfferings";
 
 export const OfferingStack = () => {
     return (
@@ -15,7 +14,6 @@ export const OfferingStack = () => {
             <FacilityEvolution />
             <DCIM />
             <ModernLiving />
-            <GoldOfferings />
         </div>
     );
 };

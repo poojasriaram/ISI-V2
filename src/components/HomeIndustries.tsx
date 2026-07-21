@@ -1,4 +1,4 @@
-import { Factory, HeartPulse, GraduationCap, Server, Landmark, ShoppingBag, Package, ShieldCheck, ArrowRight } from "lucide-react";
+import { Factory, HeartPulse, GraduationCap, Server, Landmark, ShoppingBag, Package, ShieldCheck, ArrowRight, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -42,6 +42,11 @@ const industries = [
     icon: ShieldCheck,
     name: "Government",
     description: "Compliance-driven security for public sectors.",
+  },
+  {
+    icon: Coins,
+    name: "Gems & Jewellery",
+    description: "Enterprise protection for manufacturers, exporters, and showrooms.",
   },
 ];
 

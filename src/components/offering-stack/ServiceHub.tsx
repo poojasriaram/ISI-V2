@@ -48,9 +48,6 @@ const livingServices = [
     { id: "vacant-property", title: "Vacant Property", subtitle: "Remote guarding for secondary homes", icon: ShieldCheck, type: "modern-living" },
 ];
 
-const specializedServices = [
-    { id: "gold-offerings", title: "Gold Offerings", subtitle: "Gem & Jewellery Security & Facility Intelligence", icon: Coins, type: "gold-offerings", hash: "#gold-offerings" },
-];
 
 export const ServiceHub = () => {
     return (
@@ -127,24 +124,6 @@ export const ServiceHub = () => {
                         </div>
                     </div>
 
-                    {/* Specialized Industry Offerings Section */}
-                    <div className="relative pt-8">
-                        <div className="flex flex-col items-center mb-12">
-                            <h3 className="text-3xl md:text-4xl font-bold flex items-center gap-4 text-foreground">
-                                <span className="w-12 h-12 rounded-2xl bg-amber-500 text-amber-950 flex items-center justify-center shadow-xl shadow-amber-500/30">
-                                    <Coins className="w-6 h-6" />
-                                </span>
-                                Specialized Offerings
-                            </h3>
-                            <div className="mt-4 h-0.5 w-48 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {specializedServices.map((service, index) => (
-                                <ServiceCard key={service.id} service={service} index={index} />
-                            ))}
-                        </div>
-                    </div>
 
                     {/* Modern Living & Business Section */}
                     <div className="relative pt-8">
