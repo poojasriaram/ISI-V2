@@ -1143,8 +1143,8 @@ export const vertical14_CashLogistics: VerticalSection = {
 export const vertical15_GemsJewellery: VerticalSection = {
     id: "gems-jewellery",
     badgeLabel: "Gems & Jewellery Security",
-    title: "Enterprise-grade Protection for Gems & Jewellery",
-    subtitle: "End-to-end security, facility management, and risk mitigation for manufacturers, exporters, and showrooms.",
+    title: "Fullstack - Gems & Jewellers",
+    subtitle: "A complete full-stack solution integrating physical security, electronic systems, facility management, and risk mitigation for manufacturers, exporters, and showrooms.",
     statistics: [
         { value: "100%", label: "vault compliance", icon: ShieldCheck },
         { value: "24/7", label: "surveillance", icon: Eye },

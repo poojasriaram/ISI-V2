@@ -96,7 +96,7 @@ const ModernLivingLanding = lazy(() => import("./pages/ModernLivingLanding"));
 
 import { BackToTop } from "./components/BackToTop";
 const ServiceCategoryPage = lazy(() => import("./pages/ServiceCategoryPage"));
-
+const SalesInquiryPage = lazy(() => import("./pages/SalesInquiryPage"));
 
 const StrictRedirect = ({ pattern }: { pattern: string }) => {
   const params = useParams();
@@ -137,6 +137,7 @@ const appRoutes = [
   { path: "/travel-tourism", element: <TravelTourismPage /> },
   { path: "/gcc-it-parks", element: <GccItParksPage /> },
   { path: "/event-management", element: <EventManagementPage /> },
+  { path: "/sales-inquiry", element: <SalesInquiryPage /> },
   { path: "/services/:type/:categoryId", element: <ServiceCategoryPage /> }
 ];
 

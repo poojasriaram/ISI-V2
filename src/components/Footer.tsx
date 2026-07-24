@@ -53,6 +53,7 @@ const footerLinks = {
     { name: "Partners", href: "/partners" },
     { name: "Tenders & RFQ", href: "/partners#tenders" },
     { name: "Careers", href: "/career" },
+    { name: "Sales Inquiry", href: "/sales-inquiry" },
     { name: "Contact Us", href: "https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions." },
   ],
   contact: [
