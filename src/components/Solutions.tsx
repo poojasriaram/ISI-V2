@@ -182,23 +182,18 @@ const solutions = [
 
 export const Solutions = () => {
   return (
-    <section id="solutions" className="pt-12 pb-8 relative overflow-hidden bg-background scroll-mt-10">
-      {/* Dynamic Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background" />
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
-
+    <div id="solutions" className="relative w-full">
       {/* Comprehensive Solutions Section */}
-      <div id="solutions-comprehensive" className="scroll-mt-10">
+      <div id="solutions-comprehensive" className="bg-background pt-24 pb-16 relative overflow-hidden scroll-mt-10">
+        {/* Dynamic Background for Comprehensive */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
         <ComprehensiveSolutions />
       </div>
 
-      {/* Divider */}
-      <div className="container mx-auto px-4 lg:px-8 py-4">
-        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-      </div>
-
       {/* Problem-Based Solutions */}
-      <div id="tailored-solutions" className="container mx-auto px-4 lg:px-8 relative z-10 scroll-mt-10">
+      <div id="tailored-solutions" className="bg-gradient-to-b from-primary/5 to-primary/10 py-24 relative overflow-hidden scroll-mt-10">
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
 
         <div className="text-center mb-10 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 rounded-full mb-6 border border-primary/20">
@@ -261,8 +256,9 @@ export const Solutions = () => {
               </CardContent>
             </Card>
           ))}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };

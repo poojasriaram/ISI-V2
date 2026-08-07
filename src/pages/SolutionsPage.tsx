@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { Layout } from "@/components/Layout";
 import { Solutions } from "@/components/Solutions";
+import { SolutionsHero } from "@/components/solutions/SolutionsHero";
 
 export const SolutionsPage = () => {
     useContentProtection();
@@ -12,6 +13,7 @@ export const SolutionsPage = () => {
 
     return (
         <Layout>
+            <SolutionsHero />
             <Solutions />
         </Layout>
     );
