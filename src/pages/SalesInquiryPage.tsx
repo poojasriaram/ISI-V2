@@ -67,8 +67,9 @@ export const SalesInquiryPage = () => {
         toast.success("Inquiry Submitted Successfully!", {
           description: "Our sales team will get back to you within 24 hours.",
         });
+        const submittedName = formData.get("fullName");
         (e.target as HTMLFormElement).reset();
-        navigate('/integrated-services/thank-you');
+        navigate('/integrated-services/thank-you', { state: { name: submittedName } });
       } else {
         throw new Error("Network response was not ok");
       }
