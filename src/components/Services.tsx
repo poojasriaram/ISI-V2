@@ -3,78 +3,103 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import comprehensiveImg from "@/assets/comprehensive solution.png";
 
+import img1 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-1.png";
+import img2 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-2.png";
+import img3 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-3.png";
+import img4 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-4.png";
+import img5 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-5.png";
+import img6 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-6.png";
+import img7 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-7.png";
+import img8 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-8.png";
+import img9 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-9.png";
+import img10 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-10.png";
+import img11 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-11.png";
+import img12 from "@/assets/COMPREHENSIVE SOLUTIONS/solution-img-12.png";
+
 const services = [
   {
     icon: Shield,
     title: "Guarding & On-Site Security",
     description: "Trained personnel with digital attendance, GPS patrol tracking, and 24/7 multi-site management.",
     color: "from-blue-500/20 to-blue-600/5",
+    image: img1,
   },
   {
     icon: Camera,
     title: " AI Driven Tech Solutions Systems",
     description: "IP CCTV, access control, intrusion detection, fire systems with AI-powered video analytics.",
     color: "from-violet-500/20 to-violet-600/5",
+    image: img2,
   },
   {
     icon: MapPin,
     title: "Remote Monitoring & SOC",
     description: "24/7 Security Operations Centre with cloud-based VMS and real-time incident response.",
     color: "from-emerald-500/20 to-emerald-600/5",
+    image: img3,
   },
   {
     icon: Truck,
     title: "Secure Cash Logistics",
     description: "ATM replenishment, cash-in-transit with GPS tracking and tamper-proof monitoring.",
     color: "from-amber-500/20 to-amber-600/5",
+    image: img4,
   },
   {
     icon: Search,
     title: "Risk Assessment & Consulting",
     description: "Security audits, threat modeling, red-teaming for BFSI, Pharma, and critical infrastructure.",
     color: "from-rose-500/20 to-rose-600/5",
+    image: img5,
   },
   {
     icon: Users,
     title: "Background Verification",
     description: "AI-driven identity checks, continuous screening with HRIS API integration.",
     color: "from-cyan-500/20 to-cyan-600/5",
+    image: img6,
   },
   {
     icon: Building,
     title: "Residential Security",
     description: "Smart township management with visitor systems, ANPR, and community safety apps.",
     color: "from-indigo-500/20 to-indigo-600/5",
+    image: img7,
   },
   {
     icon: FileCheck,
     title: "Compliance & Audit",
     description: "RBI audit readiness, regulatory compliance, and certified security protocols.",
     color: "from-teal-500/20 to-teal-600/5",
+    image: img8,
   },
   {
     icon: Building,
     title: "Large Scale Security Systems Integration & Operations",
     description: "End-to-end enterprise security integration including multi-site CCTV, access control, command centres, IoT security, and unified SOC operations.",
     color: "from-orange-500/20 to-red-500/10",
+    image: img9,
   },
   {
     icon: Cpu,
     title: "AI Based Security System Integration",
     description: "Next-gen security architecture integrating AI sensors, IoT devices, and automated response protocols.",
     color: "from-purple-500/20 to-purple-600/5",
+    image: img10,
   },
   {
     icon: LineChart,
     title: "Security Consultancy & Risk Analytics",
     description: "Data-driven threat analysis, security audits, and strategic consulting for resilient risk management.",
     color: "from-rose-500/20 to-pink-600/5",
+    image: img11,
   },
   {
     icon: Plane,
     title: "Drone Surveillance Services",
     description: "Advanced aerial monitoring with thermal imaging, AI threat detection, and autonomous perimeter security for large-scale facilities.",
     color: "from-sky-500/20 to-blue-600/5",
+    image: img12,
   },
 ];
 
@@ -104,8 +129,25 @@ export const Services = () => {
         </div>
 
         {isIntegratedServices ? (
-          <div className="flex justify-center w-full mb-10 px-4">
-            <img src={comprehensiveImg} alt="Comprehensive Security Solutions" className="w-full max-w-6xl h-auto" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => (
+              <div
+                key={index}
+                className="group relative bg-card/60 backdrop-blur-sm border border-border/50 rounded-xl overflow-hidden hover:border-primary hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 cursor-pointer flex flex-col"
+              >
+                {/* Image Section */}
+                <div className="w-full aspect-[4/3] overflow-hidden bg-muted">
+                  <img src={service.image} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                </div>
+
+                {/* Content Section */}
+                <div className="p-4 flex flex-col items-center text-center justify-center min-h-[5rem]">
+                  <h3 className="font-semibold text-foreground text-sm md:text-base group-hover:text-primary transition-colors">
+                    {service.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
