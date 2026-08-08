@@ -45,7 +45,7 @@ export const ModernLiving = () => {
                             ))}
                         </div>
 
-                        <Link to="/modern-living">
+                        <Link to="/modernliving">
                             <Button size="lg" className="gap-2 group shadow-xl shadow-primary/20">
                                 Explore Modern Living Solutions
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

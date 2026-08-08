@@ -105,7 +105,7 @@ const services = [
 
 export const Services = () => {
   const location = useLocation();
-  const isIntegratedServices = location.pathname === '/integrated-services';
+  const isIntegratedServices = location.pathname === '/integratedservices';
 
   return (
     <section id="services" className="py-24 relative overflow-hidden scroll-mt-10">

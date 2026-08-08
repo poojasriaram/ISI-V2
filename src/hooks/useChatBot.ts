@@ -43,14 +43,14 @@ const PAGE_SPECIFIC_GREETINGS: Record<string, Greeting> = {
             { label: "Security Audit", value: "site survey", type: "contact" }
         ]
     },
-    '/school-safety': {
+    '/schoolsafety': {
         text: "Ensuring school safety is something we take very personally here at ISI. Would you like to see how our 'Child-First' framework can protect your institution?",
         actions: [
             { label: "Request Safety Roadmap", value: "safety audit", type: "contact" },
             { label: "View Module Details", value: "school safety", type: "quickReply" }
         ]
     },
-    '/school-safety-v2': {
+    '/schoolsafety-v2': {
         text: "Welcome to our upgraded School Safety hub. I can guide you through our 36-month transformation journey or explain our four ethical pillars. Where should we start?",
         actions: [
             { label: "Transformation Journey", value: "roadmap", type: "quickReply" },
@@ -59,7 +59,7 @@ const PAGE_SPECIFIC_GREETINGS: Record<string, Greeting> = {
         ]
     },
     // Adding the specific logic for the new pages here as well
-    '/secure-value-logistics': {
+    '/securevaluelogistics': {
         text: "Welcome to Secure Value Logistics. We offer armored transit and high-value asset protection. How can we secure your assets today?",
         actions: [
             { label: "Transit Quote", value: "quote", type: "contact" },
@@ -124,21 +124,21 @@ const PAGE_SPECIFIC_GREETINGS: Record<string, Greeting> = {
             { label: "Joint Deployment", value: "deployment partner", type: "quickReply" }
         ]
     },
-    '/campus-safety': {
+    '/campussafety': {
         text: "Ensuring student and faculty safety is paramount. Would you like to see how our campus safety frameworks create secure but welcoming environments?",
         actions: [
             { label: "Campus Audit", value: "safety audit", type: "contact" },
             { label: "View Framework", value: "roadmap", type: "quickReply" }
         ]
     },
-    '/cash-logistics': {
+    '/cashlogistics': {
         text: "Welcome. Secure cash management requires absolute precision. Are you looking for cash-in-transit or ATM replenishment services?",
         actions: [
             { label: "Cash-in-Transit", value: "cash guarding", type: "quickReply" },
             { label: "Request Quote", value: "quote", type: "contact" }
         ]
     },
-    '/command-center': {
+    '/commandcenter': {
         text: "Hi! Our 24/7 Command Center is the nerve center of our operations. Would you like to see a demo of our remote monitoring and AI threat detection?",
         actions: [
             { label: "Book Demo", value: "callback", type: "contact" },
@@ -153,7 +153,7 @@ const PAGE_SPECIFIC_GREETINGS: Record<string, Greeting> = {
     }
 };
 
-const LEGAL_PAGES = ['/privacy-policy', '/terms-of-service', '/cookie-policy', '/copyright-policy'];
+const LEGAL_PAGES = ['/privacypolicy', '/termsofservice', '/cookiepolicy', '/copyrightpolicy'];
 
 const INITIAL_MESSAGE: ChatMessage = {
     id: '1',

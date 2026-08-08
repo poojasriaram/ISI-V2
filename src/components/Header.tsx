@@ -11,7 +11,7 @@ const navItems = [
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
   { name: "Solutions", href: "/solutions", hasDropdown: true },
-  { name: "Integrated Services", href: "/integrated-services" },
+  { name: "Integrated Services", href: "/integratedservices" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
@@ -63,7 +63,7 @@ const capabilitiesList = [
 const solutionsList: { name: string; id?: string; href?: string; desc?: string; icon?: any }[] = [
   { name: "Comprehensive Solutions", id: "solutions-comprehensive", desc: "End-to-end security programs", icon: Shield },
   { name: "Tailored Solutions", id: "tailored-solutions", desc: "Industry-specific strategies", icon: Target },
-  { name: "Modern Living & Business", href: "/modern-living", desc: "Residential & corporate spaces", icon: Key },
+  { name: "Modern Living & Business", href: "/modernliving", desc: "Residential & corporate spaces", icon: Key },
 ];
 
 const scrollToSection = (hash: string) => {

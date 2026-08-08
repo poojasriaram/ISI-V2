@@ -381,9 +381,9 @@ export const Partners = () => {
                       <Checkbox id="privacy" checked={formData.privacyConsent} onCheckedChange={handleCheckboxChange} disabled={isSubmitting} className="mt-0.5" />
                       <label htmlFor="privacy" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
                         I agree to the{" "}
-                        <a href="/privacy-policy" className="text-primary hover:underline font-medium">Privacy Policy</a>
+                        <a href="/privacypolicy" className="text-primary hover:underline font-medium">Privacy Policy</a>
                         {" "}and{" "}
-                        <a href="/terms-of-service" className="text-primary hover:underline font-medium">Terms & Conditions</a>
+                        <a href="/termsofservice" className="text-primary hover:underline font-medium">Terms & Conditions</a>
                       </label>
                     </div>
                     {errors.privacyConsent && <p className="text-xs text-red-500">{errors.privacyConsent}</p>}

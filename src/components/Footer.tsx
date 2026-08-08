@@ -33,18 +33,18 @@ const footerLinks = {
     { name: "Tailored Solutions", href: "/solutions#tailored-solutions" },
   ],
   landingPages: [
-    { name: "School Safety Solutions", href: "/school-safety" },
-    { name: "Campus Safety Solutions", href: "/campus-safety" },
-    { name: "Cash Logistics Platform", href: "/cash-logistics" },
-    { name: "Secure Value Logistics", href: "/secure-value-logistics" },
-    { name: "Command Center Platform", href: "/command-center" },
-    { name: "Smart City Platform", href: "/smart-city" },
-    { name: "Mass Transportation Platform", href: "/mass-transportation" },
-    { name: "Travel & Tourism Platform", href: "/travel-tourism" },
-    { name: "GCC / IT Parks Security", href: "/gcc-it-parks" },
-    { name: "Event Management Security", href: "/event-management" },
-    { name: "Modern Living & Business", href: "/modern-living" },
-    { name: "Integrated Services", href: "/integrated-services" },
+    { name: "School Safety Solutions", href: "/schoolsafety" },
+    { name: "Campus Safety Solutions", href: "/campussafety" },
+    { name: "Cash Logistics Platform", href: "/cashlogistics" },
+    { name: "Secure Value Logistics", href: "/securevaluelogistics" },
+    { name: "Command Center Platform", href: "/commandcenter" },
+    { name: "Smart City Platform", href: "/smartcity" },
+    { name: "Mass Transportation Platform", href: "/masstransportation" },
+    { name: "Travel & Tourism Platform", href: "/traveltourism" },
+    { name: "GCC / IT Parks Security", href: "/gccitparks" },
+    { name: "Event Management Security", href: "/eventmanagement" },
+    { name: "Modern Living & Business", href: "/modernliving" },
+    { name: "Integrated Services", href: "/integratedservices" },
   ],
   company: [
     { name: "About Us", href: "/about" },
@@ -54,7 +54,7 @@ const footerLinks = {
     { name: "Partners", href: "/partners" },
     { name: "Tenders & RFQ", href: "/partners#tenders" },
     { name: "Careers", href: "/career" },
-    { name: "Integrated Services", href: "/integrated-services" },
+    { name: "Integrated Services", href: "/integratedservices" },
     { name: "Contact Us", href: "/contact" },
   ],
   contact: [
@@ -362,10 +362,10 @@ export const Footer = () => {
             © {new Date().getFullYear()} Industrial Security & Intelligence (I) Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm text-background/50 order-1 lg:order-2">
-            <a href="/terms-of-service" className="hover:text-background transition-colors">Terms of Service</a>
-            <a href="/privacy-policy" className="hover:text-background transition-colors">Privacy Policy</a>
-            <a href="/cookie-policy" className="hover:text-background transition-colors">Cookie Policy</a>
-            <a href="/copyright-policy" className="hover:text-background transition-colors">Copyright Policy</a>
+            <a href="/termsofservice" className="hover:text-background transition-colors">Terms of Service</a>
+            <a href="/privacypolicy" className="hover:text-background transition-colors">Privacy Policy</a>
+            <a href="/cookiepolicy" className="hover:text-background transition-colors">Cookie Policy</a>
+            <a href="/copyrightpolicy" className="hover:text-background transition-colors">Copyright Policy</a>
           </div>
         </div>
       </div>

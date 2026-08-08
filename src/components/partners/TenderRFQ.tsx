@@ -374,7 +374,7 @@ export const TenderRFQ = () => {
                             </div>
                             <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-primary/10">
                                 <Checkbox id="tender-privacy" checked={formData.privacy} onCheckedChange={(v: boolean) => setFormData(p => ({...p, privacy: v}))} />
-                                <label htmlFor="tender-privacy" className="text-xs text-muted-foreground leading-relaxed cursor-pointer font-medium">I agree to the <a href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</a> and understand that further documents may be requested.</label>
+                                <label htmlFor="tender-privacy" className="text-xs text-muted-foreground leading-relaxed cursor-pointer font-medium">I agree to the <a href="/privacypolicy" className="text-primary hover:underline">Privacy Policy</a> and understand that further documents may be requested.</label>
                             </div>
                             <Button disabled={isSubmitting} className="w-full h-12 rounded-xl font-bold mt-4 shadow-lg shadow-primary/20">
                                 {isSubmitting ? "Submitting..." : "Send Technical Proposal"}

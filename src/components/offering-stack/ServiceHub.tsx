@@ -169,7 +169,7 @@ const ServiceCard = ({ service, index }: { service: any, index: number }) => {
             className="group relative h-full"
         >
             <Link
-                to={service.hash ? service.hash : (service.type === "modern-living" ? "/modern-living" : `/services/${service.type}/${service.id}`)}
+                to={service.hash ? service.hash : (service.type === "modern-living" ? "/modernliving" : `/services/${service.type}/${service.id}`)}
                 onClick={handleClick}
                 className="flex flex-col h-full bg-card border border-border/50 rounded-2xl p-7 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 group-hover:border-primary/40 overflow-hidden"
             >

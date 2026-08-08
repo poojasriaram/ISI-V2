@@ -62,19 +62,19 @@ const Sitemap = () => {
             links: [
                 {
                     name: "School Safety Solutions",
-                    href: "/school-safety",
+                    href: "/schoolsafety",
                     description: "Comprehensive safety ecosystem for educational institutions with AI-powered monitoring",
                     type: "Vertical Solution"
                 },
                 {
                     name: "Cash Logistics",
-                    href: "/cash-logistics",
+                    href: "/cashlogistics",
                     description: "Secure cash-in-transit and value logistics with real-time tracking and armed protection",
                     type: "Vertical Solution"
                 },
                 {
                     name: "Command Center",
-                    href: "/command-center",
+                    href: "/commandcenter",
                     description: "24/7 centralized security operations with advanced monitoring and rapid response",
                     type: "Vertical Solution"
                 },
@@ -247,25 +247,25 @@ const Sitemap = () => {
             links: [
                 {
                     name: "Privacy Policy",
-                    href: "/privacy-policy",
+                    href: "/privacypolicy",
                     description: "How we collect, use, and protect your personal information",
                     type: "Legal"
                 },
                 {
                     name: "Terms of Service",
-                    href: "/terms-of-service",
+                    href: "/termsofservice",
                     description: "Terms and conditions governing the use of our services",
                     type: "Legal"
                 },
                 {
                     name: "Cookie Policy",
-                    href: "/cookie-policy",
+                    href: "/cookiepolicy",
                     description: "Information about cookies and how we use them on our website",
                     type: "Legal"
                 },
                 {
                     name: "Copyright Policy",
-                    href: "/copyright-policy",
+                    href: "/copyrightpolicy",
                     description: "Intellectual property rights and content usage guidelines",
                     type: "Legal"
                 },

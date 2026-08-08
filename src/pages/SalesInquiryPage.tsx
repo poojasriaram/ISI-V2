@@ -42,7 +42,7 @@ export const SalesInquiryPage = () => {
     
     const formData = new FormData(e.currentTarget);
     const data = {
-      sheetName: "SalesInquiries",
+      sheetName: "AdCampaign",
       "Full Name": formData.get("fullName"),
       "Phone Number": formData.get("phoneNumber"),
       "Work Email": formData.get("workEmail"),
@@ -69,7 +69,7 @@ export const SalesInquiryPage = () => {
         });
         const submittedName = formData.get("fullName");
         (e.target as HTMLFormElement).reset();
-        navigate('/integrated-services/thank-you', { state: { name: submittedName } });
+        navigate('/integratedservices/thank-you', { state: { name: submittedName } });
       } else {
         throw new Error("Network response was not ok");
       }

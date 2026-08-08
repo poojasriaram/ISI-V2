@@ -48,7 +48,7 @@ export const SolutionsCTA = () => {
                 });
                 const submittedName = form.name;
                 setForm({ name: '', companyType: '', email: '', phone: '', message: '' });
-                navigate('/integrated-services/thank-you', { state: { name: submittedName } });
+                navigate('/integratedservices/thank-you', { state: { name: submittedName } });
             } else {
                 throw new Error("Network response was not ok");
             }
