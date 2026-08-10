@@ -103,9 +103,14 @@ const services = [
   },
 ];
 
-export const Services = () => {
+interface ServicesProps {
+  hideConsultation?: boolean;
+}
+
+export const Services = ({ hideConsultation }: ServicesProps = {}) => {
   const location = useLocation();
   const isIntegratedServices = location.pathname === '/integratedservices';
+  const shouldHideConsultation = hideConsultation ?? isIntegratedServices;
 
   return (
     <section id="services" className="py-24 relative overflow-hidden scroll-mt-10">
@@ -195,15 +200,17 @@ export const Services = () => {
         )}
         
         {/* Section Bottom CTA */}
-        <div className="mt-16 text-center">
-            <h4 className="text-xl font-bold text-foreground mb-4">Need a tailored approach?</h4>
-            <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
-                <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
-                    Schedule an Expert Consultation
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-            </Link>
-        </div>
+        {!shouldHideConsultation && (
+          <div className="mt-16 text-center">
+              <h4 className="text-xl font-bold text-foreground mb-4">Need a tailored approach?</h4>
+              <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
+                  <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
+                      Schedule an Expert Consultation
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+              </Link>
+          </div>
+        )}
       </div>
     </section>
   );

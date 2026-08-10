@@ -147,6 +147,8 @@ const appRoutes = [
 
 
 const AppRouter = () => {
+  const location = useLocation();
+  const isIntegratedServices = location.pathname === '/integratedservices';
   const [showWidgets, setShowWidgets] = useState(false);
 
   useEffect(() => {
@@ -178,7 +180,7 @@ const AppRouter = () => {
 
       <ScrollToTop />
       <BackToTop />
-      {showWidgets && (
+      {showWidgets && !isIntegratedServices && (
         <>
           <ExitIntentPopup />
           <ChatBot />

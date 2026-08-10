@@ -84,7 +84,11 @@ const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: string; s
     );
 };
 
-export const HomeStats = () => {
+interface HomeStatsProps {
+    hideCTA?: boolean;
+}
+
+export const HomeStats = ({ hideCTA = false }: HomeStatsProps) => {
     return (
         <section className="relative z-30 py-16 bg-[#1855c2] text-white overflow-hidden">
             <div className="container mx-auto px-4">
@@ -107,20 +111,22 @@ export const HomeStats = () => {
                 </div>
 
                 {/* Inline CTA */}
-                <div className="mt-16 text-center">
-                    <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-white/10 border border-white/20 p-6 rounded-2xl w-full max-w-3xl mx-auto backdrop-blur-sm">
-                        <div className="flex-1 text-left sm:text-center md:text-left">
-                            <h2 className="text-lg font-bold text-white">Join 500+ Secure Enterprises</h2>
-                            <p className="text-sm text-white/80 mt-1">Discover how our integrated solutions can protect your operations.</p>
+                {!hideCTA && (
+                    <div className="mt-16 text-center">
+                        <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-white/10 border border-white/20 p-6 rounded-2xl w-full max-w-3xl mx-auto backdrop-blur-sm">
+                            <div className="flex-1 text-left sm:text-center md:text-left">
+                                <h2 className="text-lg font-bold text-white">Join 500+ Secure Enterprises</h2>
+                                <p className="text-sm text-white/80 mt-1">Discover how our integrated solutions can protect your operations.</p>
+                            </div>
+                            <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
+                                <Button className="gap-2 rounded-full bg-white text-[#1855c2] hover:bg-white/90 shadow-lg hover:scale-[1.02] transition-transform group">
+                                    Get a Customized Security Solution
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </Button>
+                            </Link>
                         </div>
-                        <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
-                            <Button className="gap-2 rounded-full bg-white text-[#1855c2] hover:bg-white/90 shadow-lg hover:scale-[1.02] transition-transform group">
-                                Get a Customized Security Solution
-                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                            </Button>
-                        </Link>
                     </div>
-                </div>
+                )}
             </div>
         </section>
     );

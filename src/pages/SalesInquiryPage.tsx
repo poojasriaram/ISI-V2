@@ -69,7 +69,7 @@ export const SalesInquiryPage = () => {
         });
         const submittedName = formData.get("fullName");
         (e.target as HTMLFormElement).reset();
-        navigate('/integratedservices/thank-you', { state: { name: submittedName } });
+        navigate('/integratedservices/thank-you', { state: { name: submittedName, fromIntegratedServices: true } });
       } else {
         throw new Error("Network response was not ok");
       }
@@ -83,9 +83,9 @@ export const SalesInquiryPage = () => {
   };
 
   return (
-    <Layout noPadding={true}>
+    <Layout noPadding={true} hideHeaderFooter={true}>
       {/* Hero Section */}
-      <div className="w-full relative pt-[72px] md:pt-[96px] bg-white overflow-hidden">
+      <div className="w-full relative pt-0 bg-white overflow-hidden">
         <div className="relative w-full">
           {/* Banner Image - Spans full width */}
           <img 
@@ -150,10 +150,12 @@ export const SalesInquiryPage = () => {
         </div>
       </div>
 
-      {/* Imported Sections to match the layout exactly */}
-      <HomeStats />
+      {/* Section 2: Client Logos */}
       <HomeCustomers />
-      <Services />
+
+      {/* Section 3: Remaining Sections */}
+      <HomeStats hideCTA={true} />
+      <Services hideConsultation={true} />
       <Certifications />
       <Testimonials />
 

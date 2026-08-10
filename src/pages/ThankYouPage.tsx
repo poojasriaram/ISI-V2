@@ -7,6 +7,7 @@ import { useEffect } from "react";
 const ThankYouPage = () => {
   const location = useLocation();
   const userName = location.state?.name || "there";
+  const isFromIntegratedServices = location.state?.fromIntegratedServices || location.pathname === '/integratedservices/thank-you';
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -28,12 +29,14 @@ const ThankYouPage = () => {
                 Return to Homepage
               </Button>
             </Link>
-            <a href="https://wa.me/917708887878?text=Hello!%20I%20have%20submitted%20an%20inquiry%20and%20would%20like%20to%20connect." target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#25D366] hover:bg-[#128C7E] text-white text-base py-6 px-8 rounded-md shadow-md transition-all flex items-center gap-2">
-                <MessageCircle className="w-5 h-5" />
-                Connect on WhatsApp
-              </Button>
-            </a>
+            {!isFromIntegratedServices && (
+              <a href="https://wa.me/917708887878?text=Hello!%20I%20have%20submitted%20an%20inquiry%20and%20would%20like%20to%20connect." target="_blank" rel="noopener noreferrer">
+                <Button className="bg-[#25D366] hover:bg-[#128C7E] text-white text-base py-6 px-8 rounded-md shadow-md transition-all flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5" />
+                  Connect on WhatsApp
+                </Button>
+              </a>
+            )}
           </div>
         </div>
       </div>
