@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -15,28 +16,20 @@ import { Testimonials } from "@/components/Testimonials";
 import salesImg from "@/assets/Sales inquiry.png";
 import isiLogo from "@/assets/isi-logo.webp";
 
+import { getUtmParams } from '@/utils/utm';
+
 export const SalesInquiryPage = () => {
   useContentProtection();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Helper to decode UTM parameters cleanly
-  const getDecodedParam = (key: string): string => {
-    const val = searchParams.get(key);
-    if (!val) return '';
-    try {
-      return decodeURIComponent(val);
-    } catch (e) {
-      return val;
-    }
-  };
-
-  const utmSource = getDecodedParam('utm_source');
-  const utmMedium = getDecodedParam('utm_medium');
-  const utmCampaign = getDecodedParam('utm_campaign');
-  const utmTerm = getDecodedParam('utm_term');
-  const utmContent = getDecodedParam('utm_content');
+  const utmObj = getUtmParams();
+  const utmSource = utmObj.utmSource;
+  const utmMedium = utmObj.utmMedium;
+  const utmCampaign = utmObj.utmCampaign;
+  const utmTerm = utmObj.utmTerm;
+  const utmContent = utmObj.utmContent;
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -56,59 +49,16 @@ export const SalesInquiryPage = () => {
     }
   }, [location.pathname]);
 
-  const blockedDomains = [
-    'gmail.com',
-    'googlemail.com',
-    'yahoo.com',
-    'yahoo.co.in',
-    'hotmail.com',
-    'hotmail.co.uk',
-    'outlook.com',
-    'live.com',
-    'msn.com',
-    'icloud.com',
-    'me.com',
-    'aol.com',
-    'protonmail.com',
-    'proton.me',
-    'zoho.com'
-  ];
-
   const validatePhone = (value: string): boolean => {
-    const normalized = value.replace(/[+\-\(\)\s]/g, '');
-    const digits = normalized.replace(/\D/g, '');
-    const hasInvalidChars = /[^0-9]/.test(normalized);
-
-    if (hasInvalidChars || digits.length < 10) {
-      setPhoneError("Please enter a valid phone number with at least 10 digits.");
-      return false;
-    }
-    setPhoneError("");
-    return true;
+    const res = validatePhoneNumber(value);
+    setPhoneError(res.message);
+    return res.isValid;
   };
 
   const validateEmail = (value: string): boolean => {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      setEmailError("Work email is required.");
-      return false;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmed)) {
-      setEmailError("Please enter a valid email address.");
-      return false;
-    }
-
-    const parts = trimmed.split('@');
-    const domain = parts[parts.length - 1].toLowerCase();
-
-    if (blockedDomains.includes(domain)) {
-      setEmailError("Please enter your work email address. Personal email addresses are not accepted.");
-      return false;
-    }
-    setEmailError("");
-    return true;
+    const res = validateWorkEmail(value);
+    setEmailError(res.message);
+    return res.isValid;
   };
 
   const handlePhoneBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -192,7 +142,7 @@ export const SalesInquiryPage = () => {
         setPhoneError('');
         setEmailError('');
         
-        navigate('/integratedservices/thank-you', { state: { name: submittedName, fromIntegratedServices: true } });
+        navigate('/lp/facility-management/thank-you', { state: { name: submittedName, fromIntegratedServices: true } });
       } else {
         throw new Error("Network response was not ok");
       }
@@ -229,7 +179,14 @@ export const SalesInquiryPage = () => {
           {/* Floating Form Overlay (Desktop/Tablet) */}
           <div className="absolute inset-0 w-full max-w-7xl mx-auto pointer-events-none">
             <div className="hidden md:block absolute right-4 lg:right-12 top-1/2 -translate-y-1/2 w-full max-w-[380px] bg-white p-8 rounded-sm shadow-2xl border-r-4 border-primary z-10 pointer-events-auto">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-6">Schedule a Free Consultation</h2>
+              <div className="flex justify-center mb-6">
+                <img 
+                  src={isiLogo} 
+                  alt="ISI Security" 
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
+              <h2 className="text-xl font-semibold text-slate-900 mb-6 text-center">Schedule a Free Consultation</h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="hidden" name="utm_source" value={utmSource} />
@@ -301,7 +258,14 @@ export const SalesInquiryPage = () => {
 
         {/* Mobile Form (Displayed below banner on small screens) */}
         <div className="md:hidden w-full bg-white p-6 border-t-4 border-primary">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">Schedule a Free Consultation</h2>
+          <div className="flex justify-center mb-6">
+            <img 
+              src={isiLogo} 
+              alt="ISI Security" 
+              className="h-10 w-auto object-contain"
+            />
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6 text-center">Schedule a Free Consultation</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input type="hidden" name="utm_source" value={utmSource} />
             <input type="hidden" name="utm_medium" value={utmMedium} />

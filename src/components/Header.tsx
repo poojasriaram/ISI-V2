@@ -11,7 +11,7 @@ const navItems = [
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
   { name: "Solutions", href: "/solutions", hasDropdown: true },
-  { name: "Integrated Services", href: "/integratedservices" },
+  { name: "Integrated Services", href: "/lp/facility-management" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },

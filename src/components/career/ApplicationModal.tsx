@@ -16,16 +16,7 @@ import { CareerFormData, CareerFormErrors } from "@/types/career";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { submitCareerApplication } from "@/services/formService";
 
-// Local validation functions
-const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
-
-const isValidPhone = (phone: string): boolean => {
-    const digitsOnly = phone.replace(/\D/g, '');
-    return digitsOnly.length >= 10 && digitsOnly.length <= 15;
-};
+import { validateGeneralEmail, validatePhoneNumber } from "@/utils/validation";
 
 interface ApplicationModalProps {
     jobTitle: string | null;
@@ -58,13 +49,19 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
         if (!formData.name.trim()) newErrors.name = 'Name is required';
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
-        } else if (!isValidEmail(formData.email)) {
-            newErrors.email = 'Please enter a valid email';
+        } else {
+            const emailVal = validateGeneralEmail(formData.email);
+            if (!emailVal.isValid) {
+                newErrors.email = emailVal.message;
+            }
         }
         if (!formData.phone.trim()) {
             newErrors.phone = 'Phone is required';
-        } else if (!isValidPhone(formData.phone)) {
-            newErrors.phone = 'Please enter a valid phone number';
+        } else {
+            const phoneVal = validatePhoneNumber(formData.phone);
+            if (!phoneVal.isValid) {
+                newErrors.phone = phoneVal.message;
+            }
         }
         if (!resume) {
             newErrors.resume = 'Resume is required';

@@ -7,7 +7,7 @@ import { useEffect } from "react";
 const ThankYouPage = () => {
   const location = useLocation();
   const userName = location.state?.name || "there";
-  const isFromIntegratedServices = location.state?.fromIntegratedServices || location.pathname === '/integratedservices/thank-you';
+  const isFromIntegratedServices = location.state?.fromIntegratedServices || location.pathname === '/lp/facility-management/thank-you' || location.pathname === '/integratedservices/thank-you';
 
   useEffect(() => {
     window.scrollTo(0, 0);

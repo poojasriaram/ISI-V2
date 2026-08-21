@@ -1,3 +1,5 @@
+import { getUtmParams } from '../utils/utm';
+
 // src/services/formService.ts
 
 const SHEETS_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
@@ -37,7 +39,7 @@ function getIpContext(): { ipAddress: string; location: string; organization: st
 }
 
 /**
- * Generic sheet sender — wraps every form submission with IP context.
+ * Generic sheet sender — wraps every form submission with IP context and UTM parameters.
  */
 async function sendToSheet(sheetName: string, payload: Record<string, unknown>): Promise<void> {
     // if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -46,6 +48,8 @@ async function sendToSheet(sheetName: string, payload: Record<string, unknown>):
     // }
 
     const ipCtx = getIpContext();
+    const utmCtx = getUtmParams();
+
     const sanitizedPayload = { ...payload };
     for (const key in sanitizedPayload) {
         if (typeof sanitizedPayload[key] === 'string' && /^[+=\-@]/.test(sanitizedPayload[key])) {
@@ -55,6 +59,7 @@ async function sendToSheet(sheetName: string, payload: Record<string, unknown>):
 
     const body = JSON.stringify({
         sheetName,
+        ...utmCtx,
         ...sanitizedPayload,
         ipAddress: sanitizedPayload.ipAddress || ipCtx.ipAddress,
         location: sanitizedPayload.location || ipCtx.location,

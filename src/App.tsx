@@ -138,9 +138,11 @@ const appRoutes = [
   { path: "/traveltourism", element: <TravelTourismPage /> },
   { path: "/gccitparks", element: <GccItParksPage /> },
   { path: "/eventmanagement", element: <EventManagementPage /> },
-  { path: "/integratedservices", element: <SalesInquiryPage /> },
-  { path: "/integratedservices/thank-you", element: <ThankYouPage /> },
-  { path: "/salesinquiry", element: <Navigate to="/integratedservices" replace /> },
+  { path: "/lp/facility-management", element: <SalesInquiryPage /> },
+  { path: "/lp/facility-management/thank-you", element: <ThankYouPage /> },
+  { path: "/integratedservices", element: <Navigate to="/lp/facility-management" replace /> },
+  { path: "/integratedservices/thank-you", element: <Navigate to="/lp/facility-management/thank-you" replace /> },
+  { path: "/salesinquiry", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/services/:type/:categoryId", element: <ServiceCategoryPage /> }
 ];
 
@@ -148,7 +150,7 @@ const appRoutes = [
 
 const AppRouter = () => {
   const location = useLocation();
-  const isIntegratedServices = location.pathname === '/integratedservices';
+  const isIntegratedServices = location.pathname === '/lp/facility-management' || location.pathname === '/integratedservices';
   const [showWidgets, setShowWidgets] = useState(false);
 
   useEffect(() => {

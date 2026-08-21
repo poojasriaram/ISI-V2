@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { validateWorkEmail, validatePhoneNumber } from "@/utils/validation";
 
 export default function ModernLivingLanding() {
     useContentProtection();
@@ -25,9 +26,23 @@ export default function ModernLivingLanding() {
         phone: '',
         message: ''
     });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(form.email);
+        if (!emailVal.isValid) newErrors.email = emailVal.message;
+        const phoneVal = validatePhoneNumber(form.phone);
+        if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
+        
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         setSubmitting(true);
         trackFormSubmission('ContactForm', {
             ...form,
@@ -39,6 +54,7 @@ export default function ModernLivingLanding() {
                 description: 'Our senior security consultant will contact you shortly.'
             });
             setForm({ name: '', propertyType: '', email: '', phone: '', message: '' });
+            setErrors({});
             setSubmitting(false);
         }, 1000);
     };
@@ -122,21 +138,29 @@ export default function ModernLivingLanding() {
                                             <input 
                                                 type="email"
                                                 required
-                                                className="w-full h-14 px-5 rounded-xl border border-border bg-card/60 backdrop-blur-sm text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                                                className={`w-full h-14 px-5 rounded-xl border bg-card/60 backdrop-blur-sm text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${errors.email ? 'border-red-500' : 'border-border'}`}
                                                 placeholder="admin@property.com"
                                                 value={form.email}
-                                                onChange={(e) => setForm({...form, email: e.target.value})}
+                                                onChange={(e) => {
+                                                    setForm({...form, email: e.target.value});
+                                                    if (errors.email) setErrors(p => ({ ...p, email: "" }));
+                                                }}
                                             />
+                                            {errors.email && <p className="text-red-500 text-xs mt-1 leading-normal">{errors.email}</p>}
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Phone Number</label>
                                             <input 
                                                 required
-                                                className="w-full h-14 px-5 rounded-xl border border-border bg-card/60 backdrop-blur-sm text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                                                className={`w-full h-14 px-5 rounded-xl border bg-card/60 backdrop-blur-sm text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${errors.phone ? 'border-red-500' : 'border-border'}`}
                                                 placeholder="+91 XXXX XXX XXX"
                                                 value={form.phone}
-                                                onChange={(e) => setForm({...form, phone: e.target.value})}
+                                                onChange={(e) => {
+                                                    setForm({...form, phone: e.target.value});
+                                                    if (errors.phone) setErrors(p => ({ ...p, phone: "" }));
+                                                }}
                                             />
+                                            {errors.phone && <p className="text-red-500 text-xs mt-1 leading-normal">{errors.phone}</p>}
                                         </div>
                                     </div>
 

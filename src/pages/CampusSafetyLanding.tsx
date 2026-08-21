@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { validateWorkEmail, validatePhoneNumber } from "@/utils/validation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -78,10 +79,25 @@ export default function CampusSafetyLanding() {
 
     // Floating E-Book widget state
     const [isEbookWidgetOpen, setIsEbookWidgetOpen] = useState(false);
+    const [consultationErrors, setConsultationErrors] = useState<Record<string, string>>({});
+    const [ebookErrors, setEbookErrors] = useState<Record<string, string>>({});
 
 
     const handleEbookSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(ebookForm.email);
+        if (!emailVal.isValid) newErrors.email = emailVal.message;
+        const phoneVal = validatePhoneNumber(ebookForm.phone);
+        if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
+        
+        if (Object.keys(newErrors).length > 0) {
+            setEbookErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         setEbookSubmitting(true);
         // Track submission to Google Sheets
         trackFormSubmission('EbookDownloads', {
@@ -95,12 +111,26 @@ export default function CampusSafetyLanding() {
             });
             setIsEbookWidgetOpen(false);
             setEbookForm({ schoolName: '', role: '', email: '', phone: '' });
+            setEbookErrors({});
             setEbookSubmitting(false);
         }, 1000);
     };
 
     const handleConsultationSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(consultationForm.email);
+        if (!emailVal.isValid) newErrors.email = emailVal.message;
+        const phoneVal = validatePhoneNumber(consultationForm.phone);
+        if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
+        
+        if (Object.keys(newErrors).length > 0) {
+            setConsultationErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         setConsultationSubmitting(true);
         // Track submission to Google Sheets
         trackFormSubmission('ConsultationReqs', {
@@ -119,6 +149,7 @@ export default function CampusSafetyLanding() {
                 phone: '',
                 city: '',
             });
+            setConsultationErrors({});
             setConsultationSubmitting(false);
         }, 1000);
     };
@@ -191,8 +222,14 @@ export default function CampusSafetyLanding() {
                                         <FormInput label="Primary Goal" placeholder="Ex: ICT, Security, Medical" value={consultationForm.primaryConcern} onChange={(v) => setConsultationForm(p => ({ ...p, primaryConcern: v }))} />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <FormInput label="Email" type="email" placeholder="admin@school.com" value={consultationForm.email} onChange={(v) => setConsultationForm(p => ({ ...p, email: v }))} />
-                                        <FormInput label="Phone" placeholder="+91 XXXX XXX XXX" value={consultationForm.phone} onChange={(v) => setConsultationForm(p => ({ ...p, phone: v }))} />
+                                        <FormInput label="Email" type="email" placeholder="admin@school.com" value={consultationForm.email} error={consultationErrors.email} onChange={(v) => {
+                                            setConsultationForm(p => ({ ...p, email: v }));
+                                            if (consultationErrors.email) setConsultationErrors(p => ({ ...p, email: "" }));
+                                        }} />
+                                        <FormInput label="Phone" placeholder="+91 XXXX XXX XXX" value={consultationForm.phone} error={consultationErrors.phone} onChange={(v) => {
+                                            setConsultationForm(p => ({ ...p, phone: v }));
+                                            if (consultationErrors.phone) setConsultationErrors(p => ({ ...p, phone: "" }));
+                                        }} />
                                     </div>
                                     <Button type="submit" disabled={consultationSubmitting} className="w-full h-16 text-lg rounded-xl mt-6 shadow-xl shadow-primary/20">
                                         {consultationSubmitting ? "Initiating protocol..." : "Request Tactical Consultation"}
@@ -252,8 +289,14 @@ export default function CampusSafetyLanding() {
                         <form onSubmit={handleEbookSubmit} className="space-y-4">
                             <FormInput label="Institution Name" placeholder="School Name" value={ebookForm.schoolName} onChange={(v) => setEbookForm(p => ({ ...p, schoolName: v }))} />
                             <FormInput label="Designation" placeholder="e.g. Director, Principal, IT Head" value={ebookForm.role} onChange={(v) => setEbookForm(p => ({ ...p, role: v }))} />
-                            <FormInput label="Official Email" type="email" placeholder="name@school.com" value={ebookForm.email} onChange={(v) => setEbookForm(p => ({ ...p, email: v }))} />
-                            <FormInput label="Contact Number" placeholder="+91 ..." value={ebookForm.phone} onChange={(v) => setEbookForm(p => ({ ...p, phone: v }))} />
+                            <FormInput label="Official Email" type="email" placeholder="name@school.com" value={ebookForm.email} error={ebookErrors.email} onChange={(v) => {
+                                setEbookForm(p => ({ ...p, email: v }));
+                                if (ebookErrors.email) setEbookErrors(p => ({ ...p, email: "" }));
+                            }} />
+                            <FormInput label="Contact Number" placeholder="+91 ..." value={ebookForm.phone} error={ebookErrors.phone} onChange={(v) => {
+                                setEbookForm(p => ({ ...p, phone: v }));
+                                if (ebookErrors.phone) setEbookErrors(p => ({ ...p, phone: "" }));
+                            }} />
                             <Button type="submit" className="w-full h-14 text-lg mt-4 shadow-xl shadow-primary/20" disabled={ebookSubmitting}>
                                 {ebookSubmitting ? "Processing..." : "Receive Blueprint via Email"}
                             </Button>
@@ -267,18 +310,19 @@ export default function CampusSafetyLanding() {
 }
 
 // Helper Components
-function FormInput({ label, type = 'text', placeholder, value, onChange }: { label: string, type?: string, placeholder: string, value: string, onChange: (v: string) => void }) {
+function FormInput({ label, type = 'text', placeholder, value, onChange, error }: { label: string, type?: string, placeholder: string, value: string, onChange: (v: string) => void, error?: string }) {
     return (
         <div className="space-y-2">
             <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{label}</label>
             <input
                 type={type}
-                className="w-full h-14 px-5 rounded-xl border border-border bg-card/60 backdrop-blur-sm text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm"
+                className={`w-full h-14 px-5 rounded-xl border bg-card/60 backdrop-blur-sm text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm ${error ? 'border-red-500' : 'border-border'}`}
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 required
             />
+            {error && <p className="text-red-500 text-xs mt-1 leading-normal">{error}</p>}
         </div>
     );
 }

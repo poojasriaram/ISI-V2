@@ -2,7 +2,7 @@ var masterMetrics = [
   "Session ID","Visitor ID","Organization","IP Address","IP Location","Variant",
   "Viewport","OS","Screen Resolution","Connection Type","Language","Dark Theme",
   "Time Zone","Page Depth","Active Tab","Session Age","Initial Source","Landing Page",
-  "UTM Medium","UTM Campaign","Referrer Host","Search Engine","First Visit Date",
+  "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content","Referrer Host","Search Engine","First Visit Date",
   "Returning User","Cursor Velocity","Rage Clicks","Scroll Velocity","Max Scroll Depth",
   "Total Click Count","Average Dwell Time","Total Active Time","Idle Time","Tab Switches",
   "Exit Intent Triggered","Interaction Frequency","Last Active Timestamp","Lead Generated",
@@ -22,6 +22,7 @@ var TAB_CONFIGS = {
   "UserBehaviorLibrary": masterMetrics,
   "TrafficAnalytics": [
     "Session ID","Visitor ID","Page Path","Page Title","Referrer","Traffic Source",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "Organization","IP Location","IP Address","Variant","Timestamp"
   ],
   "EngagementMetrics": [
@@ -34,30 +35,42 @@ var TAB_CONFIGS = {
   ],
   "ContactForm": [
     "Name","Email","Company","Designation","Phone","Location","Service Interest",
-    "Source","Message","Status","IP Location","IP Address","Variant","Timestamp"
+    "Source","Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
   ],
   "PartnerApps": [
     "Name","Email","Company","Designation","Phone","Location","Partnership Type",
-    "Message","Status","IP Location","IP Address","Variant","Timestamp"
+    "Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
   ],
   "CareerApplications": [
     "Name","Email","Phone","Job Title","Resume File Name","Cover Letter",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "Status","IP Location","IP Address","Variant","Timestamp"
   ],
   "EbookDownloads": [
     "School Name","Role","Email","Phone","Source","Follow Up Status",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "IP Location","IP Address","Variant","Timestamp"
   ],
   "ConsultationReqs": [
     "Name","School Name","Board","Number of Students","Primary Concern","Email",
-    "Phone","City","Status","IP Location","IP Address","Variant","Timestamp"
+    "Phone","City","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
   ],
   "ChatbotLeads": [
-    "Name","Email","Phone","Existing Customer","Category","Message","Status",
-    "IP Location","IP Address","Organization","Variant","Timestamp"
+    "Name","Email","Phone","Existing Customer","Category","Message",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Organization","Variant","Timestamp"
   ],
   "SalesInquiries": [
     "Full Name","Phone Number","Work Email","Company Name",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "IP Location","IP Address","Variant","Timestamp"
+  ],
+  "AdCampaign": [
+    "Full Name","Phone Number","Work Email","Company Name",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "IP Location","IP Address","Variant","Timestamp"
   ]
 };
@@ -379,6 +392,11 @@ function resolveField(header, data) {
     "Exit Intent Triggered":  (data.exitIntentTriggered !== undefined) ? String(data.exitIntentTriggered) : "",
     "Ebook Downloaded":       (data.ebookDownloaded !== undefined) ? String(data.ebookDownloaded) : "",
     "Consultation Requested": (data.consultationRequested !== undefined) ? String(data.consultationRequested) : "",
+    "UTM Source":             data.utmSource     || data.utm_source  || data["UTM Source"]   || "",
+    "UTM Medium":             data.utmMedium     || data.utm_medium  || data["UTM Medium"]   || "",
+    "UTM Campaign":           data.utmCampaign   || data.utm_campaign|| data["UTM Campaign"] || "",
+    "UTM Term":               data.utmTerm       || data.utm_term    || data["UTM Term"]     || "",
+    "UTM Content":            data.utmContent    || data.utm_content || data["UTM Content"]  || "",
     "Timestamp":              normalizeTimestamp(data.timestamp || data.Timestamp)
   };
   

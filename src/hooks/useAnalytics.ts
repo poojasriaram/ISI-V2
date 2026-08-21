@@ -8,6 +8,7 @@ import {
     UserBehaviorLibrary,
     BaseTrackingData
 } from '@/types/analytics';
+import { getUtmParams, captureUtmParams } from '@/utils/utm';
 
 const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
 
@@ -165,6 +166,7 @@ export const useAnalytics = () => {
 
     // Initial Source Attribution (UTM Persistence)
     useEffect(() => {
+        captureUtmParams();
         const currentSource = getTrafficSource();
         const storedSource = localStorage.getItem('isi_initial_source');
         if (!storedSource || (currentSource !== 'Direct' && currentSource !== storedSource)) {
@@ -489,8 +491,11 @@ export const useAnalytics = () => {
                 sessionAge: Math.round((Date.now() - startTime) / 1000),
                 initialSource: localStorage.getItem('isi_initial_source') || 'Direct',
                 landingPage: navigationPath.current[0]?.path || '/',
-                utmMedium: new URLSearchParams(window.location.search).get('utm_medium') || '',
-                utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign') || '',
+                utmSource: getUtmParams().utmSource,
+                utmMedium: getUtmParams().utmMedium,
+                utmCampaign: getUtmParams().utmCampaign,
+                utmTerm: getUtmParams().utmTerm,
+                utmContent: getUtmParams().utmContent,
                 referrerHost: document.referrer ? (() => { try { return new URL(document.referrer).hostname; } catch { return document.referrer; } })() : 'None',
                 searchEngine: getTrafficSource().includes('Search') ? getTrafficSource() : '',
                 firstVisitDate: localStorage.getItem('isi_first_visit') || new Date().toISOString(),

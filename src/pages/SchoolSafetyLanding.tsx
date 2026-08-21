@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { validateWorkEmail, validatePhoneNumber } from "@/utils/validation";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
@@ -68,6 +69,10 @@ export default function SchoolSafetyLanding() {
 
     // Floating E-Book widget state
     const [isEbookWidgetOpen, setIsEbookWidgetOpen] = useState(false);
+    
+    // Form error states
+    const [consultationErrors, setConsultationErrors] = useState<Record<string, string>>({});
+    const [ebookErrors, setEbookErrors] = useState<Record<string, string>>({});
 
     // Carousel state
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
@@ -147,6 +152,19 @@ export default function SchoolSafetyLanding() {
     // E-Book form handler
     const handleEbookSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(ebookForm.email);
+        if (!emailVal.isValid) newErrors.email = emailVal.message;
+        const phoneVal = validatePhoneNumber(ebookForm.phone);
+        if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
+        
+        if (Object.keys(newErrors).length > 0) {
+            setEbookErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         setEbookSubmitting(true);
         try {
             // Track submission to Google Sheets
@@ -161,6 +179,7 @@ export default function SchoolSafetyLanding() {
                 duration: 5000,
             });
             setEbookForm({ schoolName: '', role: '', email: '', phone: '' });
+            setEbookErrors({});
             setIsEbookWidgetOpen(false);
         } catch (error) {
             console.error('E-Book form error:', error);
@@ -176,6 +195,19 @@ export default function SchoolSafetyLanding() {
     // Consultation form handler
     const handleConsultationSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(consultationForm.email);
+        if (!emailVal.isValid) newErrors.email = emailVal.message;
+        const phoneVal = validatePhoneNumber(consultationForm.phone);
+        if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
+        
+        if (Object.keys(newErrors).length > 0) {
+            setConsultationErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         setConsultationSubmitting(true);
         try {
             // Track submission to Google Sheets
@@ -198,6 +230,7 @@ export default function SchoolSafetyLanding() {
                 phone: '',
                 city: '',
             });
+            setConsultationErrors({});
         } catch (error) {
             console.error('Consultation form error:', error);
             toast.error('Failed to submit request', {
@@ -667,24 +700,36 @@ export default function SchoolSafetyLanding() {
                                             required
                                             disabled={ebookSubmitting}
                                         />
-                                        <input
-                                            className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                            placeholder="Email Address"
-                                            type="email"
-                                            value={ebookForm.email}
-                                            onChange={(e) => setEbookForm(prev => ({ ...prev, email: e.target.value }))}
-                                            required
-                                            disabled={ebookSubmitting}
-                                        />
-                                        <input
-                                            className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                            placeholder="Phone Number"
-                                            type="tel"
-                                            value={ebookForm.phone}
-                                            onChange={(e) => setEbookForm(prev => ({ ...prev, phone: e.target.value }))}
-                                            required
-                                            disabled={ebookSubmitting}
-                                        />
+                                        <div>
+                                            <input
+                                                className={`w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${ebookErrors.email ? 'border-red-500' : 'border-gray-300'}`}
+                                                placeholder="Email Address"
+                                                type="email"
+                                                value={ebookForm.email}
+                                                onChange={(e) => {
+                                                    setEbookForm(prev => ({ ...prev, email: e.target.value }));
+                                                    if (ebookErrors.email) setEbookErrors(prev => ({ ...prev, email: "" }));
+                                                }}
+                                                required
+                                                disabled={ebookSubmitting}
+                                            />
+                                            {ebookErrors.email && <p className="text-red-500 text-xs mt-1 ml-1 leading-normal">{ebookErrors.email}</p>}
+                                        </div>
+                                        <div>
+                                            <input
+                                                className={`w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${ebookErrors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                                                placeholder="Phone Number"
+                                                type="tel"
+                                                value={ebookForm.phone}
+                                                onChange={(e) => {
+                                                    setEbookForm(prev => ({ ...prev, phone: e.target.value }));
+                                                    if (ebookErrors.phone) setEbookErrors(prev => ({ ...prev, phone: "" }));
+                                                }}
+                                                required
+                                                disabled={ebookSubmitting}
+                                            />
+                                            {ebookErrors.phone && <p className="text-red-500 text-xs mt-1 ml-1 leading-normal">{ebookErrors.phone}</p>}
+                                        </div>
                                         <button
                                             type="submit"
                                             disabled={ebookSubmitting}
@@ -775,24 +820,36 @@ export default function SchoolSafetyLanding() {
                                         <option value="Technology Integration">Technology Integration</option>
                                         <option value="Other">Other</option>
                                     </select>
-                                    <input
-                                        className="w-full border p-3 rounded"
-                                        placeholder="Email Address"
-                                        type="email"
-                                        value={consultationForm.email}
-                                        onChange={(e) => setConsultationForm(prev => ({ ...prev, email: e.target.value }))}
-                                        required
-                                        disabled={consultationSubmitting}
-                                    />
-                                    <input
-                                        className="w-full border p-3 rounded"
-                                        placeholder="Phone Number"
-                                        type="tel"
-                                        value={consultationForm.phone}
-                                        onChange={(e) => setConsultationForm(prev => ({ ...prev, phone: e.target.value }))}
-                                        required
-                                        disabled={consultationSubmitting}
-                                    />
+                                    <div>
+                                        <input
+                                            className={`w-full border p-3 rounded ${consultationErrors.email ? 'border-red-500' : 'border-gray-300'}`}
+                                            placeholder="Email Address"
+                                            type="email"
+                                            value={consultationForm.email}
+                                            onChange={(e) => {
+                                                setConsultationForm(prev => ({ ...prev, email: e.target.value }));
+                                                if (consultationErrors.email) setConsultationErrors(prev => ({ ...prev, email: "" }));
+                                            }}
+                                            required
+                                            disabled={consultationSubmitting}
+                                        />
+                                        {consultationErrors.email && <p className="text-red-500 text-xs mt-1 ml-1 leading-normal">{consultationErrors.email}</p>}
+                                    </div>
+                                    <div>
+                                        <input
+                                            className={`w-full border p-3 rounded ${consultationErrors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                                            placeholder="Phone Number"
+                                            type="tel"
+                                            value={consultationForm.phone}
+                                            onChange={(e) => {
+                                                setConsultationForm(prev => ({ ...prev, phone: e.target.value }));
+                                                if (consultationErrors.phone) setConsultationErrors(prev => ({ ...prev, phone: "" }));
+                                            }}
+                                            required
+                                            disabled={consultationSubmitting}
+                                        />
+                                        {consultationErrors.phone && <p className="text-red-500 text-xs mt-1 ml-1 leading-normal">{consultationErrors.phone}</p>}
+                                    </div>
                                     <input
                                         className="w-full border p-3 rounded"
                                         placeholder="City"

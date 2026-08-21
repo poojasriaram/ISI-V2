@@ -8,16 +8,7 @@ import { toast } from "sonner";
 import { PartnerFormData, PartnerFormErrors } from "@/types/partner";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
-// Local validation functions
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const isValidPhone = (phone: string): boolean => {
-  const digitsOnly = phone.replace(/\D/g, '');
-  return digitsOnly.length >= 10 && digitsOnly.length <= 15;
-};
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 
 const partnerTypes = [
   {
@@ -107,15 +98,21 @@ export const Partners = () => {
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+    } else {
+      const emailVal = validateWorkEmail(formData.email);
+      if (!emailVal.isValid) {
+        newErrors.email = emailVal.message;
+      }
     }
     if (!formData.company.trim()) newErrors.company = 'Company is required';
     if (!formData.designation.trim()) newErrors.designation = 'Designation is required';
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone is required';
-    } else if (!isValidPhone(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
+    } else {
+      const phoneVal = validatePhoneNumber(formData.phone);
+      if (!phoneVal.isValid) {
+        newErrors.phone = phoneVal.message;
+      }
     }
     if (!formData.location.trim()) newErrors.location = 'Location is required';
     if (!formData.partnershipType) newErrors.partnershipType = 'Please select a partnership type';

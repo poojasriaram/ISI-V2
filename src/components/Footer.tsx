@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { validateGeneralEmail } from "@/utils/validation";
 import { Mail, Phone, MapPin, Linkedin, Youtube, Facebook, Instagram, ArrowRight, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
@@ -44,7 +45,7 @@ const footerLinks = {
     { name: "GCC / IT Parks Security", href: "/gccitparks" },
     { name: "Event Management Security", href: "/eventmanagement" },
     { name: "Modern Living & Business", href: "/modernliving" },
-    { name: "Integrated Services", href: "/integratedservices" },
+    { name: "Integrated Services", href: "/lp/facility-management" },
   ],
   company: [
     { name: "About Us", href: "/about" },
@@ -54,7 +55,7 @@ const footerLinks = {
     { name: "Partners", href: "/partners" },
     { name: "Tenders & RFQ", href: "/partners#tenders" },
     { name: "Careers", href: "/career" },
-    { name: "Integrated Services", href: "/integratedservices" },
+    { name: "Integrated Services", href: "/lp/facility-management" },
     { name: "Contact Us", href: "/contact" },
   ],
   contact: [
@@ -72,6 +73,12 @@ export const Footer = () => {
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newsletterEmail) return;
+
+    const emailVal = validateGeneralEmail(newsletterEmail);
+    if (!emailVal.isValid) {
+      toast.error(emailVal.message);
+      return;
+    }
 
     setIsNewsletterSubmitting(true);
     try {

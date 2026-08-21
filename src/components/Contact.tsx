@@ -8,16 +8,7 @@ import { ContactFormData, FormErrors } from '@/types/contact';
 import { homeLocations } from "@/data/locations-data";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
-// Local validation functions
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const isValidPhone = (phone: string): boolean => {
-  const digitsOnly = phone.replace(/\D/g, '');
-  return digitsOnly.length >= 10 && digitsOnly.length <= 15;
-};
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 
 export const Contact = () => {
   const { trackFormSubmission } = useAnalytics();
@@ -74,8 +65,11 @@ export const Contact = () => {
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+    } else {
+      const emailVal = validateWorkEmail(formData.email);
+      if (!emailVal.isValid) {
+        newErrors.email = emailVal.message;
+      }
     }
 
     if (!formData.company.trim()) {
@@ -88,8 +82,11 @@ export const Contact = () => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
-    } else if (!isValidPhone(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
+    } else {
+      const phoneVal = validatePhoneNumber(formData.phone);
+      if (!phoneVal.isValid) {
+        newErrors.phone = phoneVal.message;
+      }
     }
 
     if (!formData.location.trim()) {

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { validateWorkEmail, validatePhoneNumber } from "@/utils/validation";
 import { 
     FileText, Download, Calendar, ArrowRight, ClipboardList, 
     ShieldCheck, Filter, Search, X, CheckSquare, ListTodo, MapPin, 
@@ -40,6 +41,7 @@ export const TenderRFQ = () => {
         message: "",
         privacy: false
     });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const filteredTenders = useMemo(() => {
         return selectedType === "all" 
@@ -55,10 +57,29 @@ export const TenderRFQ = () => {
     const handleApply = (tender: TenderItem) => {
         setSelectedTender(tender);
         setIsSubmitModalOpen(true);
+        setErrors({});
     };
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(formData.email);
+        if (!emailVal.isValid) {
+            newErrors.email = emailVal.message;
+        }
+        
+        const phoneVal = validatePhoneNumber(formData.phone);
+        if (!phoneVal.isValid) {
+            newErrors.phone = phoneVal.message;
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         if (!formData.privacy) {
             toast.error("Please agree to the privacy policy.");
             return;
@@ -77,6 +98,7 @@ export const TenderRFQ = () => {
             });
             setIsSubmitModalOpen(false);
             setFormData({ name: "", email: "", company: "", phone: "", gst: "", message: "", privacy: false });
+            setErrors({});
         } catch (error) {
             toast.error("Submission failed. Please try again.");
         } finally {
@@ -357,7 +379,11 @@ export const TenderRFQ = () => {
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-muted-foreground ml-1">Official Email</label>
-                                    <input required type="email" value={formData.email} onChange={e => setFormData(p => ({...p, email: e.target.value}))} className="w-full px-4 py-2.5 bg-background border border-border/50 rounded-xl focus:ring-1 focus:ring-primary outline-none" placeholder="Email@company.com" />
+                                    <input required type="email" value={formData.email} onChange={e => {
+                                        setFormData(p => ({...p, email: e.target.value}));
+                                        if (errors.email) setErrors(p => ({...p, email: ""}));
+                                    }} className={`w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-1 focus:ring-primary outline-none ${errors.email ? 'border-red-500' : 'border-border/50'}`} placeholder="Email@company.com" />
+                                    {errors.email && <p className="text-red-500 text-xs mt-1 leading-normal">{errors.email}</p>}
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-muted-foreground ml-1">Company Name</label>
@@ -365,7 +391,11 @@ export const TenderRFQ = () => {
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-muted-foreground ml-1">Phone Number</label>
-                                    <input required value={formData.phone} onChange={e => setFormData(p => ({...p, phone: e.target.value}))} className="w-full px-4 py-2.5 bg-background border border-border/50 rounded-xl focus:ring-1 focus:ring-primary outline-none" placeholder="+91 XXXX" />
+                                    <input required value={formData.phone} onChange={e => {
+                                        setFormData(p => ({...p, phone: e.target.value}));
+                                        if (errors.phone) setErrors(p => ({...p, phone: ""}));
+                                    }} className={`w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-1 focus:ring-primary outline-none ${errors.phone ? 'border-red-500' : 'border-border/50'}`} placeholder="+91 XXXX" />
+                                    {errors.phone && <p className="text-red-500 text-xs mt-1 leading-normal">{errors.phone}</p>}
                                 </div>
                             </div>
                             <div className="space-y-1.5">

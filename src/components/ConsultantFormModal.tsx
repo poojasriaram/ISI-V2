@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, User, Mail, Phone, MapPin, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 
 interface ConsultantFormModalProps {
     isOpen: boolean;
@@ -18,11 +19,25 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
         location: defaultLocation,
         message: '',
     });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     if (!isOpen) return null;
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+        const emailVal = validateWorkEmail(formData.email);
+        if (!emailVal.isValid) newErrors.email = emailVal.message;
+        const phoneVal = validatePhoneNumber(formData.phone);
+        if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
+        
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error("Please correct the errors in the form.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         // Simulate submission
@@ -33,6 +48,7 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
         });
 
         setIsSubmitting(false);
+        setErrors({});
         onClose();
     };
 
@@ -78,9 +94,13 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
                                     required
                                     type="tel"
                                     value={formData.phone}
-                                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                    onChange={e => {
+                                        setFormData({ ...formData, phone: e.target.value });
+                                        if (errors.phone) setErrors(p => ({ ...p, phone: "" }));
+                                    }}
+                                    className={`w-full px-3 py-2 bg-background border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 ${errors.phone ? 'border-red-500' : 'border-border'}`}
                                 />
+                                {errors.phone && <p className="text-red-500 text-[10px] mt-1 leading-normal">{errors.phone}</p>}
                             </div>
                         </div>
 
@@ -93,9 +113,13 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
                                     required
                                     type="email"
                                     value={formData.email}
-                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                    onChange={e => {
+                                        setFormData({ ...formData, email: e.target.value });
+                                        if (errors.email) setErrors(p => ({ ...p, email: "" }));
+                                    }}
+                                    className={`w-full px-3 py-2 bg-background border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 ${errors.email ? 'border-red-500' : 'border-border'}`}
                                 />
+                                {errors.email && <p className="text-red-500 text-[10px] mt-1 leading-normal">{errors.email}</p>}
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
