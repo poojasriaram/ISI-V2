@@ -41,40 +41,68 @@ function getIpContext(): { ipAddress: string; location: string; organization: st
 /**
  * Generic sheet sender — wraps every form submission with IP context and UTM parameters.
  */
-async function sendToSheet(sheetName: string, payload: Record<string, unknown>): Promise<void> {
-    // if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    //     console.log(`[Form Blocked on Localhost] Would have sent to ${sheetName}:`, payload);
-    //     return;
-    // }
-
+async function sendToSheet(
+    sheetName: string,
+    payload: Record<string, unknown>
+): Promise<void> {
     const ipCtx = getIpContext();
     const utmCtx = getUtmParams();
 
     const sanitizedPayload = { ...payload };
+
+    // Prevent Google Sheets formula injection
     for (const key in sanitizedPayload) {
-        if (typeof sanitizedPayload[key] === 'string' && /^[+=\-@]/.test(sanitizedPayload[key])) {
+        if (
+            typeof sanitizedPayload[key] === 'string' &&
+            /^[+=\-@]/.test(sanitizedPayload[key] as string)
+        ) {
             sanitizedPayload[key] = `'${sanitizedPayload[key]}`;
         }
     }
 
     const body = JSON.stringify({
         sheetName,
-        ...utmCtx,
+
+        // Form data first
         ...sanitizedPayload,
-        ipAddress: sanitizedPayload.ipAddress || ipCtx.ipAddress,
-        location: sanitizedPayload.location || ipCtx.location,
-        organization: sanitizedPayload.organization || ipCtx.organization,
-        variant: localStorage.getItem('isi_variant') || 'original',
+
+        // Include UTM values ONLY for AdCampaign submissions
+        ...(sheetName === 'AdCampaign' ? utmCtx : {}),
+
+        // IP information
+        ipAddress:
+            sanitizedPayload.ipAddress || ipCtx.ipAddress,
+
+        location:
+            sanitizedPayload.location || ipCtx.location,
+
+        organization:
+            sanitizedPayload.organization || ipCtx.organization,
+
+        // Variant
+        variant:
+            localStorage.getItem('isi_variant') || 'original',
+
+        // Timestamp
         timestamp: getISTTimestamp()
+    });
+
+    console.log('[FORM SUBMISSION]', {
+        sheetName,
+        utmCtx,
+        payload: sanitizedPayload
     });
 
     await fetch(SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+        },
         body
     });
 }
+
 
 export const submitChatbotLead = async (
     name: string,
@@ -124,3 +152,14 @@ export const submitTenderRFQ = async (data: Record<string, unknown>) => {
         throw error;
     }
 };
+
+export const submitAdCampaignLead = async (data: Record<string, unknown>) => {
+    try {
+        await sendToSheet('AdCampaign', data);
+        return { success: true };
+    } catch (error) {
+        console.error('Error submitting Ad Campaign lead:', error);
+        throw error;
+    }
+};
+
