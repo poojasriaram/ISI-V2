@@ -28,6 +28,12 @@ const Sitemap = () => {
                     description: "Connect with our team for consultations, inquiries, and partnership opportunities",
                     type: "Contact"
                 },
+                {
+                    name: "Blog & Healthcare Insights",
+                    href: "/blog",
+                    description: "Guides and analysis on Healthcare Disaster Vulnerability, Cyber-Physical Resilience, & De-escalation",
+                    type: "Knowledge Center"
+                },
             ]
         },
         {

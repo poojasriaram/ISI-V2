@@ -32,6 +32,7 @@ const footerLinks = {
   solutions: [
     { name: "Integrated Security", href: "/solutions" },
     { name: "Tailored Solutions", href: "/solutions#tailored-solutions" },
+    { name: "Integrated Services", href: "/lp/facility-management" },
   ],
   landingPages: [
     { name: "School Safety Solutions", href: "/schoolsafety" },
@@ -49,13 +50,13 @@ const footerLinks = {
   ],
   company: [
     { name: "About Us", href: "/about" },
+    { name: "Blog & Insights", href: "/blog" },
     { name: "Our Offerings", href: "/offerings" },
     { name: "Our Capabilities", href: "/capabilities" },
     { name: "Our Customers", href: "/customers" },
     { name: "Partners", href: "/partners" },
     { name: "Tenders & RFQ", href: "/partners#tenders" },
     { name: "Careers", href: "/career" },
-    { name: "Integrated Services", href: "/lp/facility-management" },
     { name: "Contact Us", href: "/contact" },
   ],
   contact: [

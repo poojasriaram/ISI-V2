@@ -98,6 +98,8 @@ import { BackToTop } from "./components/BackToTop";
 const ServiceCategoryPage = lazy(() => import("./pages/ServiceCategoryPage"));
 const SalesInquiryPage = lazy(() => import("./pages/SalesInquiryPage"));
 const ThankYouPage = lazy(() => import("./pages/ThankYouPage"));
+const BlogListingPage = lazy(() => import("./pages/BlogListingPage"));
+const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
 
 const StrictRedirect = ({ pattern }: { pattern: string }) => {
   const params = useParams();
@@ -127,6 +129,8 @@ const appRoutes = [
   { path: "/cookiepolicy", element: <CookiePolicy /> },
   { path: "/copyrightpolicy", element: <CopyrightPolicy /> },
   { path: "/sitemap", element: <Sitemap /> },
+  { path: "/blog", element: <BlogListingPage /> },
+  { path: "/blog/:slug", element: <BlogDetailPage /> },
   { path: "/schoolsafety", element: <SchoolSafetyLanding /> },
   { path: "/campussafety", element: <CampusSafetyLanding /> },
   { path: "/modernliving", element: <ModernLivingLanding /> },

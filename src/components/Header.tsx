@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key, Coins } from "lucide-react";
+import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key, Coins, BookOpen } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import isiLogo from "@/assets/isi-logo.webp";
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "About Us", href: "/about" },
+  { name: "About Us", href: "/about", hasDropdown: true },
   { name: "Verticals", href: "/verticals", hasDropdown: true },
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
   { name: "Solutions", href: "/solutions", hasDropdown: true },
-  { name: "Integrated Services", href: "/lp/facility-management" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
+];
+
+const aboutList = [
+  { name: "About ISI", href: "/about", desc: "Our 40+ year legacy, mission & core values", icon: Shield },
+  { name: "Board of Directors", href: "/about#board-of-directors", desc: "Executive leadership & strategic guidance", icon: Users },
+  { name: "Blogs & Insights", href: "/blog", desc: "Thought leadership & executive guides", icon: BookOpen },
 ];
 
 // New industry verticals list for the dropdown
@@ -39,6 +44,7 @@ const offeringsList = [
   { name: "Energy & Sustainability", href: "/services/facility-management/energy-sustainability", category: "Facility Management", desc: "Green initiatives & energy mgmt", icon: Zap },
   { name: "Space & Workplace", href: "/services/facility-management/space-workplace", category: "Facility Management", desc: "Office layout & environment", icon: Building2 },
   { name: "Compliance & Risk", href: "/services/facility-management/compliance-risk", category: "Facility Management", desc: "Regulatory adherence & auditing", icon: ShieldCheck },
+  { name: "Integrated Services", href: "/lp/facility-management", category: "Facility Management", desc: "Combined facility & security solutions", icon: Building2 },
 
   // Security Services Group
   { name: "Manned Guarding", href: "/services/security-services/manned-guarding", category: "Security Services", desc: "Trained security personnel", icon: UserCheck },
@@ -46,7 +52,6 @@ const offeringsList = [
   { name: "Command & Control", href: "/services/security-services/command-control", category: "Security Services", desc: "Centralized monitoring hub", icon: Activity },
   { name: "Specialized Protection", href: "/services/security-services/specialized-protection", category: "Security Services", desc: "Executive & VIP guarding", icon: Shield },
   { name: "Risk Intelligence", href: "/services/security-services/risk-advisory", category: "Security Services", desc: "Threat assessment & consulting", icon: Search },
-
 ];
 
 const capabilitiesList = [
@@ -311,6 +316,18 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <div className="hidden xl:flex items-center gap-0.5 2xl:gap-1 shrink-0">
             {navItems.map((item) => {
+              if (item.name === "About Us") {
+                return (
+                  <NavDropdown
+                    key={item.name}
+                    label={item.name}
+                    href={item.href}
+                    items={aboutList}
+                    onItemClick={handleDropdownItemClick}
+                    onMainClick={handleNavClick}
+                  />
+                )
+              }
               if (item.name === "Verticals") {
                 return (
                   <NavDropdown
@@ -420,6 +437,15 @@ export const Header = () => {
                     {item.name}
                   </a>
                   {/* Render simplified nested list for mobile */}
+                  {item.name === "About Us" && (
+                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 flex flex-col gap-1">
+                      {aboutList.map((a) => (
+                        <a key={a.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                          {a.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                   {item.name === "Offerings" && (
                     <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1">
                       {Array.from(new Set(offeringsList.map(off => off.category).filter(Boolean))).map(cat => (
