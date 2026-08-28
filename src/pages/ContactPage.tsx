@@ -4,6 +4,7 @@ import { Layout } from "@/components/Layout";
 import { Contact } from "@/components/Contact";
 import { JobMap } from "@/components/JobMap";
 import { homeLocations } from "@/data/locations-data";
+import SEO from "@/components/SEO";
 
 export const ContactPage = () => {
   useContentProtection();
@@ -14,6 +15,11 @@ export const ContactPage = () => {
 
   return (
     <Layout>
+      <SEO 
+        title="Contact Us" 
+        description="Get in touch with ISI Security for comprehensive guarding, facility management, electronic security, and risk consulting across India."
+        canonical="/contact"
+      />
       <Contact />
       {/* Map Section */}
       <section className="relative h-[600px] w-full overflow-hidden">
@@ -32,4 +38,3 @@ export const ContactPage = () => {
 };
 
 export default ContactPage;
-

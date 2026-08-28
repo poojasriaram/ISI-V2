@@ -53,6 +53,7 @@ const footerLinks = {
     { name: "Blog & Insights", href: "/blog" },
     { name: "Our Offerings", href: "/offerings" },
     { name: "Our Capabilities", href: "/capabilities" },
+    { name: "CDAC Courses", href: "/courses" },
     { name: "Our Customers", href: "/customers" },
     { name: "Partners", href: "/partners" },
     { name: "Tenders & RFQ", href: "/partners#tenders" },

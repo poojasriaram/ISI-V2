@@ -5,6 +5,8 @@ import { homeLocations, activeLocations } from "@/data/locations-data";
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { ViewportLazy } from "@/components/ViewportLazy";
 
+import SEO from "@/components/SEO";
+
 // Lazy load below-the-fold components to improve LCP/FCP
 const TrustBar = lazy(() => import("@/components/TrustBar").then(module => ({ default: module.TrustBar })));
 const HomeCustomers = lazy(() => import("@/components/HomeCustomers").then(module => ({ default: module.HomeCustomers })));
@@ -24,6 +26,11 @@ const Index = () => {
   useContentProtection();
   return (
     <Layout noPadding={true}>
+      <SEO 
+        title="ISI - Industrial Security & Intelligence (I) Pvt. Ltd" 
+        description="ISI is an ISO 9001:2015 certified company providing comprehensive security solutions including guarding services, electronic security, and risk consulting across India." 
+        canonical="/" 
+      />
       <Hero />
       <Suspense fallback={<div className="min-h-[200px] flex items-center justify-center bg-background/50"></div>}>
         <ViewportLazy><HomeCustomers /></ViewportLazy>

@@ -11,6 +11,7 @@ const navItems = [
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
   { name: "Solutions", href: "/solutions", hasDropdown: true },
+  { name: "Courses", href: "/courses" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },

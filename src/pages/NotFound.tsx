@@ -2,6 +2,7 @@ import { Layout } from "@/components/Layout";
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import SEO from "@/components/SEO";
 
 const NotFound = () => {
   useContentProtection();
@@ -13,7 +14,8 @@ const NotFound = () => {
 
   return (
     <Layout>
-      <div className="flex flex-grow items-center justify-center bg-muted h-full">
+      <SEO title="404 Page Not Found" description="The requested page could not be found." noindex={true} />
+      <div className="flex flex-grow items-center justify-center bg-muted h-full py-20">
         <div className="text-center py-10">
           <h1 className="mb-4 text-4xl font-bold">404</h1>
           <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>

@@ -1,4 +1,3 @@
-
 import { useParams, Navigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,13 +7,20 @@ import { ServicePortfolioGrid } from "@/components/service-category/ServicePortf
 import { CTAPanel } from "@/components/cash-logistics/CTAPanel";
 import { RichVerticalTabs, RichTabPayload } from "@/components/service-category/RichVerticalTabs";
 import { serviceCategories } from "@/data/service-categories";
-import { Lightbulb, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 import { useEffect } from "react";
 import { useContentProtection } from "@/hooks/useContentProtection";
+import SEO from "@/components/SEO";
 
-const ServiceCategoryPage = () => {
+interface ServiceCategoryPageProps {
+  categoryIdOverride?: string;
+  canonicalPathOverride?: string;
+}
+
+const ServiceCategoryPage = ({ categoryIdOverride, canonicalPathOverride }: ServiceCategoryPageProps) => {
     useContentProtection();
-    const { categoryId } = useParams<{ categoryId: string }>();
+    const { categoryId: paramCategoryId } = useParams<{ categoryId: string }>();
+    const categoryId = categoryIdOverride || paramCategoryId;
 
     // Scroll to top on mount
     useEffect(() => {
@@ -27,8 +33,15 @@ const ServiceCategoryPage = () => {
         return <Navigate to="/404" replace />;
     }
 
+    const canonicalPath = canonicalPathOverride || `/services/${categoryData.type}/${categoryData.id}`;
+
     return (
         <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
+            <SEO
+                title={categoryData.title}
+                description={categoryData.subtitle}
+                canonical={canonicalPath}
+            />
             <Header />
             <main className="flex-grow overflow-x-hidden pt-32">
                 {/* Hero Section */}

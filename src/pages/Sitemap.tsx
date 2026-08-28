@@ -1,10 +1,12 @@
 import { Layout } from "@/components/Layout";
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { Home, Building2, Shield, Briefcase, FileText, Mail, ArrowRight, Clock, ExternalLink, ChevronRight } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const Sitemap = () => {
     useContentProtection();
     const sitemapSections = [
+
         {
             title: "Main Pages",
             description: "Essential pages for understanding ISI India",
@@ -34,6 +36,12 @@ const Sitemap = () => {
                     description: "Guides and analysis on Healthcare Disaster Vulnerability, Cyber-Physical Resilience, & De-escalation",
                     type: "Knowledge Center"
                 },
+                {
+                    name: "CDAC Technology Courses",
+                    href: "/courses",
+                    description: "9 Premium Technology Courses in AI, Cyber Security, IoT, Robotics, HPC, Quantum, EV and more",
+                    type: "Education"
+                },
             ]
         },
         {
@@ -41,6 +49,24 @@ const Sitemap = () => {
             description: "Comprehensive security solutions tailored to your needs",
             icon: Shield,
             links: [
+                {
+                    name: "Security Services",
+                    href: "/services/security/",
+                    description: "Comprehensive manned guarding, tactical intelligence, and electronic security solutions",
+                    type: "Primary Service"
+                },
+                {
+                    name: "Integrated Facility Management",
+                    href: "/services/integrated-facility-management/",
+                    description: "End-to-end hard & soft FM solutions, energy intelligence, and asset management",
+                    type: "Primary Service"
+                },
+                {
+                    name: "Skill Development & Manpower",
+                    href: "/services/skill-development-manpower/",
+                    description: "Specialized training, certified security personnel, and workforce deployment",
+                    type: "Primary Service"
+                },
                 {
                     name: "Capabilities",
                     href: "/capabilities",
@@ -281,6 +307,7 @@ const Sitemap = () => {
 
     return (
         <Layout>
+            <SEO title="Site Map" description="Explore our complete website structure and quickly find all pages and security solutions." canonical="/sitemap" />
             <div className="bg-background min-h-screen">
                 {/* Enhanced Hero Section */}
                 <div className="relative py-8 md:py-10 bg-gradient-to-br from-primary via-primary/95 to-primary/90 overflow-hidden">

@@ -100,6 +100,8 @@ const SalesInquiryPage = lazy(() => import("./pages/SalesInquiryPage"));
 const ThankYouPage = lazy(() => import("./pages/ThankYouPage"));
 const BlogListingPage = lazy(() => import("./pages/BlogListingPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 
 const StrictRedirect = ({ pattern }: { pattern: string }) => {
   const params = useParams();
@@ -115,6 +117,7 @@ const StrictRedirect = ({ pattern }: { pattern: string }) => {
 
 const appRoutes = [
   { path: "/contact", element: <ContactPage /> },
+  { path: "/courses", element: <CoursesPage /> },
   { path: "/verticals", element: <VerticalsPage /> },
   { path: "/verticals/:verticalId", element: <VerticalDetailPage /> },
   { path: "/career", element: <CareersPage /> },
@@ -147,6 +150,12 @@ const appRoutes = [
   { path: "/integratedservices", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/integratedservices/thank-you", element: <Navigate to="/lp/facility-management/thank-you" replace /> },
   { path: "/salesinquiry", element: <Navigate to="/lp/facility-management" replace /> },
+  { path: "/services/security", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/security/" /> },
+  { path: "/services/integrated-facility-management", element: <ServiceCategoryPage categoryIdOverride="hard-fm" canonicalPathOverride="/services/integrated-facility-management/" /> },
+  { path: "/services/skill-development-manpower", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/skill-development-manpower/" /> },
+  { path: "/mobile-security-services-chennai-crime-prevention", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/mobile-security-services-chennai-crime-prevention/" /> },
+  { path: "/need-protection-money-properties-vip-escort-services", element: <NotFound /> },
+  { path: "/404", element: <NotFound /> },
   { path: "/services/:type/:categoryId", element: <ServiceCategoryPage /> }
 ];
 
@@ -202,7 +211,7 @@ const AppRouter = () => {
           <Route key={`redirect-${idx}`} path={`${route.path}/*`} element={<StrictRedirect pattern={route.path} />} />
         ))}
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
     </ErrorBoundary>
