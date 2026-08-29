@@ -30,7 +30,6 @@ import {
   ArrowRight, 
   Clock, 
   Users2, 
-  IndianRupee, 
   Sparkles, 
   X, 
   Check, 
@@ -170,8 +169,8 @@ export const CoursesPage = () => {
                   <span className="text-sm font-semibold text-white">9 Premium Tech Courses</span>
                 </div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-md border border-emerald-400/40 rounded-full shadow-lg">
-                  <IndianRupee className="w-4 h-4 text-emerald-300" />
-                  <span className="text-sm font-bold text-emerald-200">Flat ₹15,000 Fee</span>
+                  <Award className="w-4 h-4 text-emerald-300" />
+                  <span className="text-sm font-bold text-emerald-200">CDAC Certification</span>
                 </div>
               </div>
 
@@ -197,8 +196,8 @@ export const CoursesPage = () => {
                   <div className="text-xs md:text-sm text-white/80 font-medium">Tech Courses</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center">
-                  <div className="text-2xl md:text-3xl font-extrabold text-emerald-300 mb-1">₹15,000</div>
-                  <div className="text-xs md:text-sm text-white/80 font-medium">Flat Fee</div>
+                  <div className="text-2xl md:text-3xl font-extrabold text-emerald-300 mb-1">2-3 Mo</div>
+                  <div className="text-xs md:text-sm text-white/80 font-medium">Duration</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center">
                   <div className="text-2xl md:text-3xl font-extrabold text-white mb-1">CDAC</div>
@@ -303,15 +302,8 @@ export const CoursesPage = () => {
                     </div>
                   </div>
 
-                  {/* Price & CTA */}
+                  {/* CTA */}
                   <div>
-                    <div className="flex items-baseline justify-between mb-4">
-                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Flat Fee</span>
-                      <div className="text-3xl font-extrabold text-foreground">
-                        ₹{course.fee.toLocaleString()}
-                      </div>
-                    </div>
-
                     <div className="grid grid-cols-2 gap-3">
                       <Button 
                         onClick={() => setSelectedCourse(course)}
@@ -384,11 +376,6 @@ export const CoursesPage = () => {
                   </div>
 
                   <div>
-                    <div className="flex items-baseline justify-between mb-4">
-                      <span className="text-xs font-semibold text-muted-foreground">Flat Fee</span>
-                      <span className="text-2xl font-bold text-foreground">₹{course.fee.toLocaleString()}</span>
-                    </div>
-
                     <div className="grid grid-cols-2 gap-2">
                       <Button 
                         onClick={() => setSelectedCourse(course)}
@@ -427,7 +414,7 @@ export const CoursesPage = () => {
                 Why Choose CDAC-MEPZ?
               </h2>
               <p className="text-muted-foreground text-base leading-relaxed">
-                Trusted brand equity, practical infrastructure, and accessible pricing.
+                Trusted brand equity, practical infrastructure, and industry-aligned instruction.
               </p>
             </div>
 
@@ -595,7 +582,6 @@ export const CoursesPage = () => {
                     <th className="py-4 px-6">Duration</th>
                     <th className="py-4 px-6">Hours</th>
                     <th className="py-4 px-6">Batch Size</th>
-                    <th className="py-4 px-6">Fee</th>
                     <th className="py-4 px-6 text-right">Action</th>
                   </tr>
                 </thead>
@@ -617,7 +603,6 @@ export const CoursesPage = () => {
                         <td className="py-4 px-6 text-muted-foreground font-medium">{course.duration}</td>
                         <td className="py-4 px-6 text-muted-foreground font-medium">{course.hours} hrs</td>
                         <td className="py-4 px-6 text-muted-foreground font-medium">{course.batchSize}</td>
-                        <td className="py-4 px-6 font-extrabold text-foreground">₹{course.fee.toLocaleString()}</td>
                         <td className="py-4 px-6 text-right">
                           <Button 
                             onClick={() => setSelectedCourse(course)}
@@ -632,7 +617,7 @@ export const CoursesPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-muted-foreground">
+                      <td colSpan={7} className="py-12 text-center text-muted-foreground">
                         No courses found matching your criteria.
                       </td>
                     </tr>
@@ -650,24 +635,21 @@ export const CoursesPage = () => {
             
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 border border-white/20 rounded-full text-xs font-bold uppercase tracking-widest text-white mb-6">
               <Sparkles className="w-4 h-4 text-emerald-300" />
-              Transparent Pricing Model
+              CDAC Certified Excellence
             </div>
 
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
-              One Flat Fee. Nine Technology Pathways.
+              Industry-Recognized Certification. Nine Technology Pathways.
             </h2>
 
             <div className="my-8">
-              <span className="text-5xl md:text-7xl font-black text-emerald-300 block mb-2">
-                ₹15,000
-              </span>
-              <span className="text-lg md:text-xl text-white/80 font-bold uppercase tracking-wider">
-                Flat Fee Per Course
+              <span className="text-2xl md:text-4xl font-extrabold text-emerald-300 block mb-2">
+                Empower Your Career with CDAC-MEPZ Technology Training
               </span>
             </div>
 
             <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed mb-10">
-              Choose the technology domain that matches your career goals.
+              Choose the technology domain that matches your career goals and join our next cohort.
             </p>
 
             <Button 
@@ -754,13 +736,9 @@ export const CoursesPage = () => {
                   <span className="text-muted-foreground">Total Hours:</span>
                   <span className="font-bold text-foreground">{selectedCourse.hours} Hours</span>
                 </div>
-                <div className="flex justify-between border-b border-border/40 pb-2">
+                <div className="flex justify-between">
                   <span className="text-muted-foreground">Batch Size:</span>
                   <span className="font-bold text-foreground">{selectedCourse.batchSize} Learners</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Course Fee:</span>
-                  <span className="font-extrabold text-emerald-600 text-lg">₹{selectedCourse.fee.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -817,7 +795,7 @@ export const CoursesPage = () => {
                   >
                     <option value="General Course Enquiry">General Course Enquiry</option>
                     {coursesData.map(c => (
-                      <option key={c.id} value={c.title}>{c.id} - {c.title} (₹15,000)</option>
+                      <option key={c.id} value={c.title}>{c.id} - {c.title}</option>
                     ))}
                   </select>
                 </div>
@@ -885,8 +863,8 @@ export const CoursesPage = () => {
         {/* STICKY MOBILE CTA BAR */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border p-3 flex items-center justify-between shadow-2xl">
           <div>
-            <div className="text-xs font-extrabold text-foreground">Flat ₹15,000 Fee</div>
-            <div className="text-[10px] text-muted-foreground">9 Technology Courses</div>
+            <div className="text-xs font-extrabold text-foreground">CDAC Technology Courses</div>
+            <div className="text-[10px] text-muted-foreground">9 Certified Tech Programs</div>
           </div>
           <Button 
             onClick={() => handleOpenEnquiry()}

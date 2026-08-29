@@ -720,6 +720,81 @@ export const section9_FutureReady: CapabilitiesSection = {
     }
 };
 
+// SECTION 10: TECHNOLOGY COURSES
+export const section10_TechnologyCourses: CapabilitiesSection = {
+    id: "courses",
+    badgeLabel: "CDAC Certified Training",
+    title: "Technology Courses & Skill Development",
+    subtitle: "State-of-the-art technology education programs delivered in collaboration with CDAC-MEPZ.",
+    statistics: [
+        { value: "9", label: "Specialized Tech Programs", icon: Brain },
+        { value: "100%", label: "Hands-on Lab Infrastructure", icon: ShieldCheck },
+        { value: "CDAC", label: "Government-backed Certification", icon: GraduationCap },
+        { value: "Dual", label: "Shift Flexible Batch Timings", icon: Clock }
+    ],
+    portfolioCards: [
+        {
+            icon: Brain,
+            title: "AI & Cyber Security",
+            features: [
+                "Artificial Intelligence & ML",
+                "Cyber Security Defense",
+                "Threat Intelligence Ops",
+                "Security Operations"
+            ]
+        },
+        {
+            icon: Cpu,
+            title: "IoT & Supercomputing",
+            features: [
+                "IoT & Industrial Automation",
+                "High-Performance Computing",
+                "Quantum Computing",
+                "Edge Node Infrastructure"
+            ]
+        },
+        {
+            icon: Cog,
+            title: "Robotics & Automotive",
+            features: [
+                "Robotics & UAV Drones",
+                "Automotive Cyber-Security",
+                "Electric Vehicle Systems",
+                "Smart Mechatronics"
+            ]
+        },
+        {
+            icon: GraduationCap,
+            title: "Professional Excellence",
+            features: [
+                "Master Trainer Program",
+                "IEEE Blended Learning (BLP)",
+                "Pedagogical Instruction",
+                "Industry Alignment"
+            ]
+        }
+    ],
+    verticalTabs: [
+        {
+            title: "Core Technology",
+            description: "Flagship 3-month certification programs in AI, Cyber Defense, and IoT."
+        },
+        {
+            title: "Specialized Domains",
+            description: "Cutting-edge tracks in HPC, Robotics, Quantum, EV, and IEEE BLP."
+        },
+        {
+            title: "Skill Building",
+            description: "Structured paths for students, working professionals, and enterprise engineering teams."
+        }
+    ],
+    cta: {
+        text: "Explore our 9 CDAC-MEPZ technology training programs",
+        buttonText: "View All Technology Courses",
+        link: "/courses"
+    }
+};
+
 export const allCapabilitiesSections = [
     section1_PhysicalOperations,
     section2_RapidMobilization,
@@ -729,7 +804,8 @@ export const allCapabilitiesSections = [
     section6_CriticalInfrastructure,
     section7_AdvisoryServices,
     section8_EmergencyResponse,
-    section9_FutureReady
+    section9_FutureReady,
+    section10_TechnologyCourses
 ];
 
 export const finalCapabilitiesCTA = {

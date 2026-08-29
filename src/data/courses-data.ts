@@ -6,7 +6,6 @@ export interface Course {
   duration: string;
   hours: number;
   batchSize: number;
-  fee: number;
   description: string;
   iconName: string;
   badge?: string;
@@ -21,7 +20,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Flagship",
     description: "Industry-aligned certification program in Artificial Intelligence and Machine Learning fundamentals.",
     iconName: "Brain"
@@ -34,7 +32,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Flagship",
     description: "Core principles of cyber defense, threat intelligence, network protection, and security management.",
     iconName: "ShieldCheck"
@@ -47,7 +44,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Flagship",
     description: "Connected sensor systems, edge node deployment, and smart industrial automation architectures.",
     iconName: "Cpu"
@@ -60,7 +56,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Specialized",
     description: "Securing connected vehicle networks, ECU protocols, and electric vehicle powertrain intelligence.",
     iconName: "Zap"
@@ -73,7 +68,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Specialized",
     description: "Parallel computing architectures, cluster management, and high-throughput workload processing.",
     iconName: "Server"
@@ -86,7 +80,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Specialized",
     description: "Autonomous robotic control, UAV drone navigation systems, and smart factory mechatronics.",
     iconName: "Bot"
@@ -99,7 +92,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 90,
     batchSize: 15,
-    fee: 15000,
     badge: "Specialized",
     description: "Quantum algorithms, qubit mechanics, and next-generation quantum computing paradigm foundations.",
     iconName: "Atom"
@@ -112,7 +104,6 @@ export const coursesData: Course[] = [
     duration: "3 Months",
     hours: 120,
     batchSize: 10,
-    fee: 15000,
     badge: "Advanced",
     description: "Advanced pedagogical training and practical technical instruction for technology educators and leads.",
     iconName: "GraduationCap"
@@ -125,7 +116,6 @@ export const coursesData: Course[] = [
     duration: "2 Months",
     hours: 60,
     batchSize: 20,
-    fee: 15000,
     badge: "Specialized",
     description: "IEEE Blended Learning Program focusing on industry-standard engineering practices and tech skills.",
     iconName: "BookOpen"
@@ -150,7 +140,7 @@ export const whyChooseData = [
   },
   {
     title: "Accessible Premium Education",
-    description: "A flat ₹15,000 fee designed to make premium technology education more accessible.",
+    description: "High-impact structured programs designed to make premium technology education accessible.",
     iconName: "CheckCircle2"
   }
 ];

@@ -11,7 +11,6 @@ const navItems = [
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
   { name: "Solutions", href: "/solutions", hasDropdown: true },
-  { name: "Courses", href: "/courses" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
@@ -55,7 +54,7 @@ const offeringsList = [
   { name: "Risk Intelligence", href: "/services/security-services/risk-advisory", category: "Security Services", desc: "Threat assessment & consulting", icon: Search },
 ];
 
-const capabilitiesList = [
+const capabilitiesList: { name: string; id?: string; href?: string; desc: string; icon: any }[] = [
   { name: "Physical Operations", id: "physical-ops", desc: "On-ground deployment force", icon: Users },
   { name: "Rapid Mobilization", id: "rapid-mobilization", desc: "Quick incident response", icon: Zap },
   { name: "Fleet & Field Ops", id: "fleet-ops", desc: "Mobile patrol units", icon: Truck },
@@ -64,6 +63,7 @@ const capabilitiesList = [
   { name: "Critical Infrastructure", id: "critical-infra", desc: "Protecting vital assets", icon: Building2 },
   { name: "Strategic Advisory", id: "advisory-services", desc: "Expert security consulting", icon: Target },
   { name: "Emergency Response", id: "emergency-response", desc: "24/7 crisis management", icon: HeadphonesIcon },
+  { name: "Technology Courses", href: "/courses", desc: "CDAC certified tech training programs", icon: GraduationCap },
 ];
 
 const solutionsList: { name: string; id?: string; href?: string; desc?: string; icon?: any }[] = [
@@ -359,7 +359,7 @@ export const Header = () => {
                     key={item.name}
                     label={item.name}
                     href={item.href}
-                    items={capabilitiesList.map(c => ({ name: c.name, href: `/capabilities#${c.id}`, desc: c.desc, icon: c.icon }))}
+                    items={capabilitiesList.map(c => ({ name: c.name, href: c.href || `/capabilities#${c.id}`, desc: c.desc, icon: c.icon }))}
                     onItemClick={handleDropdownItemClick}
                     onMainClick={handleNavClick}
                   />
@@ -464,7 +464,7 @@ export const Header = () => {
                   {item.name === "Capabilities" && (
                     <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
                       {capabilitiesList.map((c) => (
-                        <a key={c.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(`/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                        <a key={c.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(c.href || `/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {c.name}
                         </a>
                       ))}
