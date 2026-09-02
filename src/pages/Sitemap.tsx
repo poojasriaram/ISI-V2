@@ -37,9 +37,9 @@ const Sitemap = () => {
                     type: "Knowledge Center"
                 },
                 {
-                    name: "CDAC Technology Courses",
+                    name: "ISI Academy",
                     href: "/courses",
-                    description: "9 Premium Technology Courses in AI, Cyber Security, IoT, Robotics, HPC, Quantum, EV and more",
+                    description: "CDAC certified technology courses, skill development, and professional training programs",
                     type: "Education"
                 },
             ]
@@ -70,7 +70,7 @@ const Sitemap = () => {
                 {
                     name: "Capabilities",
                     href: "/capabilities",
-                    description: "Explore our core competencies in physical security, technology integration, and risk management",
+                    description: "Explore our core competencies in physical security, technology integration, risk management, and merged enterprise solutions",
                     type: "Service Overview"
                 },
                 {
@@ -78,12 +78,6 @@ const Sitemap = () => {
                     href: "/offerings",
                     description: "Browse our complete portfolio of security services and specialized solutions",
                     type: "Service Catalog"
-                },
-                {
-                    name: "Solutions",
-                    href: "/solutions",
-                    description: "Discover customized security solutions designed for your specific requirements",
-                    type: "Solutions"
                 },
             ]
         },

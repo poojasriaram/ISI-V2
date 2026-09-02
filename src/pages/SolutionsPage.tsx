@@ -1,22 +1,7 @@
-import { useEffect } from 'react';
-import { useContentProtection } from "@/hooks/useContentProtection";
-import { Layout } from "@/components/Layout";
-import { Solutions } from "@/components/Solutions";
-import { SolutionsHero } from "@/components/solutions/SolutionsHero";
+import { Navigate } from 'react-router-dom';
 
 export const SolutionsPage = () => {
-    useContentProtection();
-    // Scroll to top on component mount
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
-    return (
-        <Layout>
-            <SolutionsHero />
-            <Solutions />
-        </Layout>
-    );
+    return <Navigate to="/capabilities" replace />;
 };
 
 export default SolutionsPage;

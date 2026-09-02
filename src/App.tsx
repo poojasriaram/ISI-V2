@@ -118,6 +118,7 @@ const StrictRedirect = ({ pattern }: { pattern: string }) => {
 const appRoutes = [
   { path: "/contact", element: <ContactPage /> },
   { path: "/courses", element: <CoursesPage /> },
+  { path: "/academy", element: <Navigate to="/courses" replace /> },
   { path: "/verticals", element: <VerticalsPage /> },
   { path: "/verticals/:verticalId", element: <VerticalDetailPage /> },
   { path: "/career", element: <CareersPage /> },

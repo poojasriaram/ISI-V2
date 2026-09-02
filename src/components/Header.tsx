@@ -10,7 +10,7 @@ const navItems = [
   { name: "Verticals", href: "/verticals", hasDropdown: true },
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
-  { name: "Solutions", href: "/solutions", hasDropdown: true },
+  { name: "ISI Academy", href: "/courses" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
@@ -63,13 +63,10 @@ const capabilitiesList: { name: string; id?: string; href?: string; desc: string
   { name: "Critical Infrastructure", id: "critical-infra", desc: "Protecting vital assets", icon: Building2 },
   { name: "Strategic Advisory", id: "advisory-services", desc: "Expert security consulting", icon: Target },
   { name: "Emergency Response", id: "emergency-response", desc: "24/7 crisis management", icon: HeadphonesIcon },
-  { name: "Technology Courses", href: "/courses", desc: "CDAC certified tech training programs", icon: GraduationCap },
-];
-
-const solutionsList: { name: string; id?: string; href?: string; desc?: string; icon?: any }[] = [
   { name: "Comprehensive Solutions", id: "solutions-comprehensive", desc: "End-to-end security programs", icon: Shield },
   { name: "Tailored Solutions", id: "tailored-solutions", desc: "Industry-specific strategies", icon: Target },
   { name: "Modern Living & Business", href: "/modernliving", desc: "Residential & corporate spaces", icon: Key },
+  { name: "Technology Courses", href: "/courses", desc: "CDAC certified tech training programs", icon: GraduationCap },
 ];
 
 const scrollToSection = (hash: string) => {
@@ -365,23 +362,6 @@ export const Header = () => {
                   />
                 )
               }
-              if (item.name === "Solutions") {
-                return (
-                  <NavDropdown
-                    key={item.name}
-                    label={item.name}
-                    href={item.href}
-                    items={solutionsList.map(s => ({ 
-                        name: s.name, 
-                        href: s.href || `/solutions#${s.id}`,
-                        desc: s.desc,
-                        icon: s.icon
-                    }))}
-                    onItemClick={handleDropdownItemClick}
-                    onMainClick={handleNavClick}
-                  />
-                )
-              }
               return (
                 <a
                   key={item.name}
@@ -466,15 +446,6 @@ export const Header = () => {
                       {capabilitiesList.map((c) => (
                         <a key={c.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(c.href || `/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {c.name}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                  {item.name === "Solutions" && (
-                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
-                      {solutionsList.map((s) => (
-                        <a key={s.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(s.href || `/solutions#${s.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
-                          {s.name}
                         </a>
                       ))}
                     </div>

@@ -2,6 +2,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CapabilitiesLandingSection } from "@/components/capabilities/CapabilitiesLandingSections";
+import { Solutions } from "@/components/Solutions";
 import {
     capabilitiesHero,
     allCapabilitiesSections,
@@ -139,6 +140,9 @@ const CapabilitiesPage = () => {
                 {allCapabilitiesSections.map((section, index) => (
                     <CapabilitiesLandingSection key={section.id} section={section} index={index} />
                 ))}
+
+                {/* Merged Solutions Section */}
+                <Solutions />
 
                 {/* Final CTA Section */}
                 <section className="py-12 relative overflow-hidden bg-gradient-to-b from-background to-primary/5">

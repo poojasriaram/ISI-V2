@@ -30,8 +30,9 @@ const footerLinks = {
     { name: "Drone Services", href: "/verticals#drones" },
   ],
   solutions: [
-    { name: "Integrated Security", href: "/solutions" },
-    { name: "Tailored Solutions", href: "/solutions#tailored-solutions" },
+    { name: "ISI Academy / Tech Courses", href: "/courses" },
+    { name: "Integrated Security", href: "/capabilities#solutions-comprehensive" },
+    { name: "Tailored Solutions", href: "/capabilities#tailored-solutions" },
     { name: "Integrated Services", href: "/lp/facility-management" },
   ],
   landingPages: [
@@ -128,9 +129,9 @@ export const Footer = () => {
               </ul>
             </div>
 
-            {/* Pillar 2: Solutions & Hubs */}
+            {/* Pillar 2: ISI Academy & Hubs */}
             <div>
-              <h4 className="font-bold text-background mb-8 tracking-wider text-sm uppercase">Solutions</h4>
+              <h4 className="font-bold text-background mb-8 tracking-wider text-sm uppercase">ISI Academy</h4>
               <ul className="space-y-4 mb-10">
                 {footerLinks.solutions.map((link) => (
                   <li key={link.name}>
@@ -211,7 +212,7 @@ export const Footer = () => {
               </AccordionItem>
 
               <AccordionItem value="solutions" className="border-b border-background/10">
-                <AccordionTrigger className="text-background hover:no-underline font-bold py-4">Solutions & Hubs</AccordionTrigger>
+                <AccordionTrigger className="text-background hover:no-underline font-bold py-4">ISI Academy & Hubs</AccordionTrigger>
                 <AccordionContent>
                   <ul className="space-y-4 pt-2 mb-6">
                     {footerLinks.solutions.map((link) => (
