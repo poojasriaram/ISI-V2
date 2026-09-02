@@ -102,6 +102,7 @@ const BlogListingPage = lazy(() => import("./pages/BlogListingPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage"));
+const AcademyPage = lazy(() => import("./pages/AcademyPage"));
 
 const StrictRedirect = ({ pattern }: { pattern: string }) => {
   const params = useParams();
@@ -118,7 +119,7 @@ const StrictRedirect = ({ pattern }: { pattern: string }) => {
 const appRoutes = [
   { path: "/contact", element: <ContactPage /> },
   { path: "/courses", element: <CoursesPage /> },
-  { path: "/academy", element: <Navigate to="/courses" replace /> },
+  { path: "/academy", element: <AcademyPage /> },
   { path: "/verticals", element: <VerticalsPage /> },
   { path: "/verticals/:verticalId", element: <VerticalDetailPage /> },
   { path: "/career", element: <CareersPage /> },

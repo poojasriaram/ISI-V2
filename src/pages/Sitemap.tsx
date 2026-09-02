@@ -38,8 +38,14 @@ const Sitemap = () => {
                 },
                 {
                     name: "ISI Academy",
+                    href: "/academy",
+                    description: "Experiential Learn → Build → Deploy academic framework, 6 Tamil Nadu campuses, and 3-Month Industry Residencies",
+                    type: "Education"
+                },
+                {
+                    name: "Technology Courses",
                     href: "/courses",
-                    description: "CDAC certified technology courses, skill development, and professional training programs",
+                    description: "CDAC-MEPZ certified technology courses, skill development, and professional training programs",
                     type: "Education"
                 },
             ]

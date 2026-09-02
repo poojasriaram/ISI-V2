@@ -30,7 +30,8 @@ const footerLinks = {
     { name: "Drone Services", href: "/verticals#drones" },
   ],
   solutions: [
-    { name: "ISI Academy / Tech Courses", href: "/courses" },
+    { name: "ISI Academy", href: "/academy" },
+    { name: "Technology Courses", href: "/courses" },
     { name: "Integrated Security", href: "/capabilities#solutions-comprehensive" },
     { name: "Tailored Solutions", href: "/capabilities#tailored-solutions" },
     { name: "Integrated Services", href: "/lp/facility-management" },

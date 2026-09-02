@@ -9,7 +9,6 @@ import {
   targetAudienceData, 
   Course 
 } from "@/data/courses-data";
-import { ISIAcademy } from "@/components/academy/ISIAcademy";
 import { 
   Brain, 
   ShieldCheck, 
@@ -230,10 +229,7 @@ export const CoursesPage = () => {
           </div>
         </section>
 
-        {/* SECTION 2 — ISI ACADEMIC ADVANTAGE & PROGRAM CATALOG */}
-        <ISIAcademy onEnquireClick={(title) => handleOpenEnquiry(title)} />
-
-        {/* SECTION 3 — COURSE PORTFOLIO */}
+        {/* SECTION 2 — COURSE PORTFOLIO */}
         <section id="course-portfolio" className="py-20 md:py-28 container mx-auto px-4 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16">

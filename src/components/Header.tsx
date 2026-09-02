@@ -10,7 +10,7 @@ const navItems = [
   { name: "Verticals", href: "/verticals", hasDropdown: true },
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
-  { name: "ISI Academy", href: "/courses" },
+  { name: "ISI Academy", href: "/academy" },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
