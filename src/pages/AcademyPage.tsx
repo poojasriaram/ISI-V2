@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { submitForm } from "@/services/formService";
+import { submitChatbotLead } from "@/services/formService";
 
 export const AcademyPage = () => {
   useContentProtection();
@@ -62,26 +62,19 @@ export const AcademyPage = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await submitForm({
-        formType: 'course',
-        fullName: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        courseName: formData.course || enquiryCourseTitle,
-        additionalNotes: formData.message,
-        source: 'ISI Academy Landing Page'
-      });
+      await submitChatbotLead(
+        formData.name,
+        formData.phone,
+        formData.email,
+        `ISI Academy Inquiry: ${formData.course || enquiryCourseTitle} — ${formData.message || "No notes"}`,
+        "No",
+        "ISI Academy"
+      );
 
-      if (response.success) {
-        toast.success("Enquiry Submitted Successfully!", {
-          description: "Our academic counselor will get in touch with you shortly."
-        });
-        handleCloseEnquiry();
-      } else {
-        toast.error("Submission failed", {
-          description: response.message || "Please try again later or contact us directly."
-        });
-      }
+      toast.success("Enquiry Submitted Successfully!", {
+        description: "Our academic counselor will get in touch with you shortly."
+      });
+      handleCloseEnquiry();
     } catch (error) {
       toast.error("Submission Error", {
         description: "An unexpected error occurred. Please try again."
