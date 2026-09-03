@@ -87,8 +87,8 @@ export const AcademyPage = () => {
   return (
     <Layout>
       <SEO 
-        title="ISI Academy | The Learn → Build → Deploy Model"
-        description="Engineering industry-ready professionals through an experiential three-phase academic framework, 6 campuses in Tamil Nadu, and 3-Month Industry Residencies."
+        title="ISI Academy | Industry-Led Security Learning & Workforce Development Platform"
+        description="Build security expertise and safer organizations. Industry-led learning, practical lab execution, certification, and enterprise workforce development."
         canonical="/academy"
       />
 

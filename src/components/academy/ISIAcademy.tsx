@@ -26,6 +26,7 @@ import {
   Layers, 
   Briefcase,
   ChevronRight,
+  ChevronLeft,
   Shield,
   HelpCircle,
   BarChart3,
@@ -34,961 +35,932 @@ import {
   Calendar,
   CheckSquare,
   Compass,
-  AlertCircle
+  AlertCircle,
+  Target,
+  Lock,
+  Eye,
+  Workflow,
+  X,
+  Send,
+  Plus,
+  Minus,
+  School,
+  FileSpreadsheet,
+  Terminal,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
+import academyHeroImg from '@/assets/academy_hero_tech_security.jpg';
+import enterpriseImg from '@/assets/academy_enterprise_workforce.jpg';
+import cyberRangeImg from '@/assets/academy_cyber_range.jpg';
+import droneLabImg from '@/assets/academy_drone_iot_lab.jpg';
+import evLabImg from '@/assets/academy_ev_lab.jpg';
+import healthcareItImg from '@/assets/academy_healthcare_it.jpg';
+import quantumImg from '@/assets/academy_quantum_lab.jpg';
+import smartCityImg from '@/assets/academy_smart_city_grid.jpg';
+
 interface ISIAcademyProps {
   onEnquireClick?: (programTitle?: string) => void;
 }
 
 export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
-  const [programTab, setProgramTab] = useState<string>("certificates");
+  const [selectedTierTab, setSelectedTierTab] = useState<string>("certificates");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeProgramModal, setActiveProgramModal] = useState<any | null>(null);
 
-  const campuses = [
-    { name: "Chennai", city: "📍 Chennai", rationale: "IT corridor (OMR/Sholinganallur), EV manufacturing hub (Hosur-Sriperumbudur belt), major hospital networks, hyperscale DC clusters" },
-    { name: "Coimbatore", city: "📍 Coimbatore", rationale: "'Manchester of South India' — industrial automation, textile-tech, emerging IT parks, strong engineering college ecosystem" },
-    { name: "Madurai", city: "📍 Madurai", rationale: "Southern Tamil Nadu's education and healthcare hub, C-DAC's regional PG diploma delivery anchor, growing Smart City infrastructure" },
-    { name: "Hosur", city: "📍 Hosur", rationale: "India's emerging EV capital — Tata Motors, Ather Energy, TVS Motors manufacturing within a 30 km radius; ideal for EV residency deployments" },
-    { name: "Salem", city: "📍 Salem", rationale: "Industrial corridor node, steel/metals manufacturing, emerging smart city, strategic for MEP and infrastructure engineering placements" },
-    { name: "Sivagangai", city: "📍 Sivagangai", rationale: "Deep rural Tamil Nadu — ISI Academy's commitment to democratizing access; positioned for agricultural drone technology, rural IoT, and agri-tech innovation" }
+  // Active slide index state for each of the 8 course sliders
+  const [carouselIndices, setCarouselIndices] = useState<{ [key: number]: number }>({
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0
+  });
+
+  const nextSlide = (courseIdx: number, totalSlides: number) => {
+    setCarouselIndices(prev => ({
+      ...prev,
+      [courseIdx]: (prev[courseIdx] + 1) % totalSlides
+    }));
+  };
+
+  const prevSlide = (courseIdx: number, totalSlides: number) => {
+    setCarouselIndices(prev => ({
+      ...prev,
+      [courseIdx]: (prev[courseIdx] - 1 + totalSlides) % totalSlides
+    }));
+  };
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleEnquire = (title?: string) => {
+    if (onEnquireClick) {
+      onEnquireClick(title || "ISI Academy General Consultation");
+    }
+  };
+
+  // 8 COURSES WITH INDIVIDUAL IMAGE CAROUSELS (Academy Material Aligned)
+  const eightCoursePortfolio = [
+    {
+      id: 0,
+      title: "AI & Advanced Computing",
+      badge: "C-DAC PG-DAC Aligned",
+      images: [enterpriseImg, cyberRangeImg, academyHeroImg],
+      captions: ["AI Research Lab", "SOC Machine Learning Analytics", "High Performance Cluster"],
+      desc: "Master Enterprise Java Spring Boot microservices, Python AI models, CNN diagnostics, React.js, PostgreSQL/MongoDB, and secure SDLC practices.",
+      modules: ["Spring Boot & React", "TensorFlow & PyTorch", "Deep Learning", "PostgreSQL & MongoDB"],
+      outcome: "Full-Stack AI Developer / Software Engineer",
+      labs: "C-DAC Aligned High Performance Computing & Software Security Suite"
+    },
+    {
+      id: 1,
+      title: "Cyber Security & Digital Forensics",
+      badge: "C-DAC PG-DCSF Aligned",
+      images: [cyberRangeImg, academyHeroImg, enterpriseImg],
+      captions: ["Air-Gapped Cyber Range", "SIEM Threat Hunting Desk", "Forensics Extraction Rig"],
+      desc: "Static & dynamic malware reverse engineering (IDA Pro/Ghidra), NIST incident response lifecycle, Splunk SOC alert triage, and FTK Imager forensics.",
+      modules: ["Malware Reverse Eng", "Splunk SIEM Triage", "FTK Digital Forensics", "NIST Incident Response"],
+      outcome: "SOC Analyst / Digital Forensics Investigator",
+      labs: "Air-Gapped Cyber Range & Splunk Security Operations Simulation Center"
+    },
+    {
+      id: 2,
+      title: "IoT & Industrial Automation",
+      badge: "C-DAC PG-DIoT / DESD Aligned",
+      images: [droneLabImg, evLabImg, smartCityImg],
+      captions: ["Embedded Systems Workbench", "PLC & SCADA Rig", "Edge IoT Gateway Sandbox"],
+      desc: "Embedded C/C++, ARM Cortex-M (STM32), FreeRTOS task scheduling, Modbus RTU/TCP & PROFINET protocols, and secure boot firmware signing.",
+      modules: ["Embedded C & FreeRTOS", "ARM Cortex-M (STM32)", "Modbus & PROFINET", "AWS IoT Core"],
+      outcome: "Embedded Firmware Engineer / IoT Architect",
+      labs: "Hardware Interfacing & Industrial Protocol Calibration Facility"
+    },
+    {
+      id: 3,
+      title: "Automotive Cyber Security & EV Tech",
+      badge: "AIS-156 & ISO 21434 Standard",
+      images: [evLabImg, enterpriseImg, cyberRangeImg],
+      captions: ["EV Powertrain Dynamometer", "BMS Diagnostic Bench", "CAN Bus Hacking Simulator"],
+      desc: "Oscilloscope motor controller analysis, CAN bus message decoding (CANalyzer), cell-level BMS recalibration, AIS-156 high-voltage safety, and ISO 21434 threat modeling.",
+      modules: ["BMS Battery Chemistry", "CAN Bus Message Decoding", "AIS-156 Safety Rules", "ISO 21434 Threat Modeling"],
+      outcome: "EV Powertrain Engineer / Automotive Security Specialist",
+      labs: "High-Voltage EV Powertrain & CAN Bus Vulnerability Analysis Lab"
+    },
+    {
+      id: 4,
+      title: "Robotics, Drones & Aerial Analytics",
+      badge: "DGCA & ROS 2 Aligned",
+      images: [droneLabImg, cyberRangeImg, smartCityImg],
+      captions: ["Multi-Rotor Flight Testing", "ROS 2 Gazebo Simulation", "Pix4D Mapping Desk"],
+      desc: "BVLOS autonomous flight modes, LiDAR point-cloud classification, DEM photogrammetry, mining volumetric surveys, ROS 2 path planning, and DGCA RPTO rules.",
+      modules: ["ROS 2 & Gazebo", "Pix4D Photogrammetry", "LiDAR Point-Cloud", "DGCA Digital Sky Rules"],
+      outcome: "Drone Survey Engineer / Robotics Systems Developer",
+      labs: "Autonomous Flight Testing Enclosure & Photogrammetry Analytics Suite"
+    },
+    {
+      id: 5,
+      title: "Smart City & Municipal IoT",
+      badge: "100 Smart Cities Mission",
+      images: [smartCityImg, droneLabImg, academyHeroImg],
+      captions: ["Municipal Operations Desk", "LoRaWAN Gateway Monitor", "5G Telemetry Matrix"],
+      desc: "Municipal IoT adoption, 5G network slicing, MEC (Multi-Access Edge Computing), V2X communication (V2V/V2I), urban GIS analytics, and PPP governance.",
+      modules: ["5G mmWave & MEC", "LoRaWAN Mesh Networks", "V2X Communication", "Municipal GIS Dashboards"],
+      outcome: "Smart City Solutions Architect / Municipal Tech Specialist",
+      labs: "Municipal IoT Telemetry Sandbox & 5G Edge Computing Command Center"
+    },
+    {
+      id: 6,
+      title: "Quantum Computing & Cryptography",
+      badge: "National Quantum Mission",
+      images: [quantumImg, cyberRangeImg, academyHeroImg],
+      captions: ["Quantum Optics & Cryo Rig", "QKD Node Terminal", "NIST PQC Testbed"],
+      desc: "Qubits, quantum gates, Shor & Grover algorithms, NIST Post-Quantum Cryptography (ML-KEM, ML-DSA), commercial QKD systems (BB84/E91), and QRNG integration.",
+      modules: ["NIST PQC Standards", "QKD Protocol Testing", "IBM Quantum Composer", "Cryptographic Agility"],
+      outcome: "Quantum Cryptography Engineer / Post-Quantum Security Analyst",
+      labs: "Quantum Optics Simulation Bench & Commercial QKD Hardware Sandbox"
+    },
+    {
+      id: 7,
+      title: "Data Center & Infrastructure Technologies",
+      badge: "TIA-942 Tier IV Standard",
+      images: [academyHeroImg, evLabImg, smartCityImg],
+      captions: ["Raised Floor DC Pod", "CRAC/CRAH HVAC Systems", "DCIM Power Monitoring"],
+      desc: "TIA-942 Tier I-IV redundancy, CRAC/CRAH chilled water plants, ITIL framework NOC incident management, ATS/STS switches, sub-1.2 PUE, and 200-rack DCIM strategy.",
+      modules: ["TIA-942 Architecture", "CRAC/CRAH Chilled Water", "DCIM Energy Analytics", "Sub-1.2 PUE Design"],
+      outcome: "Data Center Operations Manager / Critical Infra Engineer",
+      labs: "Full-Scale Raised Floor Data Center Mock-up & DCIM Command Platform"
+    }
   ];
 
-  const mouPartners = [
-    { domain: "IT & Cloud", categories: "IT Conglomerates, Global Capability Centers, Cloud Providers", partners: "Cisco Partners, HCL, Infosys BPM, TCS iON ecosystem firms" },
-    { domain: "BFSI (Banking, Financial Services & Insurance)", categories: "Core Banking IT, Insurance Tech, Payment Infrastructure", partners: "Major BFSI IT divisions with SOC/NOC operations" },
-    { domain: "EV & Automotive", categories: "OEMs, Charging Infra Providers, Battery Recyclers", partners: "Tata Motors (EV Division), Ather Energy, Ola Electric, ABB E-Mobility" },
-    { domain: "Healthcare", categories: "Hospital Networks, Medical Device OEMs, Health-Tech Startups", partners: "Apollo Hospitals, Fortis Healthcare, leading IoMT device manufacturers" },
-    { domain: "Infrastructure & MEP", categories: "Conglomerates, Facility Management Firms, DC Operators", partners: "L&T (Construction & Technology), Godrej Interio, JLL, CBRE, Schneider Electric Partners" },
-    { domain: "Drone & Geospatial", categories: "AgriTech, Mining, Surveying, Defense-Adjacent Startups", partners: "DGCA-approved Remote Pilot Training Organizations (RPTOs)" }
+  // 5 EXPERIENTIAL LEARNING LOCATIONS
+  const experientialLocations = [
+    {
+      title: "Tier-4 NOCs & SOCs",
+      desc: "Scholars monitor live network traffic, triage real alerts, and execute incident response playbooks under certified analyst supervision.",
+      icon: Network,
+      image: cyberRangeImg
+    },
+    {
+      title: "Hyperscale Data Centers",
+      desc: "Scholars walk live raised-floor environments, interact with CRAC/CRAH cooling systems, and master DCIM platforms used by global colocation providers.",
+      icon: Server,
+      image: academyHeroImg
+    },
+    {
+      title: "Smart City Grids & Municipal IoT",
+      desc: "Working alongside civic technology partners, scholars engage with sensor telemetry, LoRaWAN gateways, and 100 Smart Cities dashboards.",
+      icon: Globe,
+      image: smartCityImg
+    },
+    {
+      title: "Healthcare IT Networks",
+      desc: "Embedded in hospital environments interacting with Hospital Information Systems (HIS), Electronic Health Records (EHR), and ABDM compliance stacks.",
+      icon: HeartPulse,
+      image: healthcareItImg
+    },
+    {
+      title: "EV Manufacturing Floors & Testing",
+      desc: "Participate in battery pack assembly, BMS firmware flashing, high-voltage safety protocol execution (AIS-156), and AC/DC charger commissioning.",
+      icon: Zap,
+      image: evLabImg
+    }
   ];
 
-  const labs = [
-    { title: "EV Powertrain & Battery Labs", desc: "Functional EV battery packs, BMS diagnostic tools, high-voltage safety training rigs, AC/DC charger simulators compliant with IS 17017 and AIS-156 standards." },
-    { title: "Cyber Ranges", desc: "Isolated, air-gapped environments for live penetration testing, malware analysis, digital forensics, and SOC operations — equipped with Wireshark, Nmap, Metasploit, Burp Suite, Splunk, and ELK Stack." },
-    { title: "DCIM Simulation Labs", desc: "Full-scale rack mock-ups, environmental monitoring sensor arrays, BMS dashboards, and TIA-942 compliance reference architectures." },
-    { title: "Biomedical Equipment Labs", desc: "Calibration stations, patient monitor test benches, ventilator simulation units, and IoMT security testing environments." },
-    { title: "IoT & Embedded Systems Labs", desc: "Arduino, ESP32, Raspberry Pi, STM32 kits; sensor arrays (temperature, humidity, accelerometer, gas); MQTT/CoAP protocol analyzers; AWS IoT Core & Azure IoT Hub sandboxes." },
-    { title: "Drone & Robotics Labs", desc: "Multi-rotor and fixed-wing training drones, flight simulation software, LiDAR sensors, photogrammetry workstations, ROS (Robot Operating System) environments." }
+  // INSTITUTIONAL MOU PARTNERS
+  const mouDomains = [
+    { domain: "IT & Cloud", categories: "IT Conglomerates, GCCs, Cloud Providers", partners: "Cisco Partners, HCL, Infosys BPM, TCS iON ecosystem firms" },
+    { domain: "BFSI (Banking & Finance)", categories: "Core Banking IT, Insurance Tech, Payment Infra", partners: "Major BFSI IT divisions with SOC/NOC operations" },
+    { domain: "EV & Automotive", categories: "OEMs, Charging Infra Providers, Battery Recyclers", partners: "Tata Motors (EV Div), Ather Energy, Ola Electric, ABB E-Mobility" },
+    { domain: "Healthcare", categories: "Hospital Networks, Medical Device OEMs, Health-Tech", partners: "Apollo Hospitals, Fortis Healthcare, leading IoMT device OEMs" },
+    { domain: "Infrastructure & MEP", categories: "Conglomerates, Facility Management, DC Operators", partners: "L&T, Godrej Interio, JLL, CBRE, Schneider Electric Partners" },
+    { domain: "Drone & Geospatial", categories: "AgriTech, Mining, Surveying, Defense-Adjacent", partners: "DGCA-approved Remote Pilot Training Organizations (RPTOs)" }
   ];
 
-  const nationalTalentGaps = [
-    { domain: "Cybersecurity", count: "500,000+", source: "DSCI, 2023" },
-    { domain: "IoT & Embedded Systems", count: "300,000+", source: "NASSCOM estimate" },
-    { domain: "Data Center Operations", count: "50,000+", source: "JLL 2025 Projection" },
-    { domain: "EV Technology", count: "100,000+", source: "EV Industry Bodies" },
-    { domain: "Medical Device Engineering", count: "75,000+", source: "AiMeD estimate" },
-    { domain: "Drone Operations", count: "100,000+", source: "FICCI-EY Report" }
+  // REDESIGNED 4 ACADEMIC PROGRAM TIERS (Image-Driven Cards)
+  const programTiersData = [
+    {
+      id: "certificates",
+      title: "Certificate Programs",
+      duration: "90 Days (3 Months)",
+      image: cyberRangeImg,
+      badge: "Targeted Skill Acceleration",
+      desc: "Targeted 90-day intensive technical certificates designed for fast-track skill acquisition in specialized domain areas.",
+      highlights: ["EV Battery Tech & BMS", "Cybersecurity & DPDPA", "IoT Edge Computing", "Smart City & 5G IoT", "Drone Ops & Analytics", "Robotics & Automation", "Quantum Computing", "Medical IT & Health Informatics", "Cisco CCNA Prep", "DC Facility Operations"],
+      count: "10 Programs Available"
+    },
+    {
+      id: "diplomas",
+      title: "Diploma Programs",
+      duration: "6 Months (3M Academic + 3M Residency)",
+      image: evLabImg,
+      badge: "Comprehensive Mastery + Residency",
+      desc: "Deep 6-month hands-on diplomas culminating in a mandatory 3-Month Guaranteed Industry Residency deployment.",
+      highlights: ["EV Tech & Maintenance", "MEP & Smart Building HVAC", "IoT Embedded Systems (C-DAC)", "Cyber Security & Forensics (C-DAC)", "Medical Instrumentation", "Data Center DCIM Ops", "Commercial Drone Surveying", "Cloud Security DevSecOps"],
+      count: "8 Programs Available"
+    },
+    {
+      id: "degrees",
+      title: "Undergraduate Degrees",
+      duration: "3-4 Years (Blended + Residency)",
+      image: academyHeroImg,
+      badge: "B.Tech & B.Sc Degree Pathways",
+      desc: "Blended degree programs providing physical lab access, localized mentorship, and official support for IIT Madras & IIT Kanpur online degrees.",
+      highlights: ["B.Tech EV Engineering", "B.Tech/B.Sc Robotics & AI", "B.Tech/B.Sc Medical Instrumentation", "B.Sc Cybersecurity & Quantum", "B.Tech Data Center Engineering", "IIT Madras & IIT Kanpur Offline Support"],
+      count: "6 Degree Options"
+    },
+    {
+      id: "pg-diplomas",
+      title: "Postgraduate Programs",
+      duration: "24 Weeks to 1 Year",
+      image: quantumImg,
+      badge: "C-DAC Official & Proprietary PG Diplomas",
+      desc: "Official C-DAC affiliated PG Diplomas (delivering PGCP-ITISS, PG-DCSF, PG-DIoT, PG-DESD, PG-DAC via C-CAT) & Advanced Proprietary PG Diplomas.",
+      highlights: ["Official C-DAC PG-DCSF", "Official C-DAC PG-DESD", "Official C-DAC PG-DIoT", "Official C-DAC PG-DAC", "Advanced EV Systems & Auto Cyber", "Quantum Cryptography & Secure Comms", "Medical IT Systems Analytics", "DC Green Infrastructure"],
+      count: "9 PG Diplomas"
+    }
   ];
 
   return (
-    <div className="w-full bg-background text-foreground">
-      {/* 🌟 HERO & PREAMBLE */}
-      <section className="relative py-20 md:py-28 bg-gradient-to-b from-primary/10 via-background to-background overflow-hidden border-b border-border/40">
-        <div className="container mx-auto px-4 lg:px-8 relative z-10 max-w-6xl">
-          <div className="text-center max-w-4xl mx-auto space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary font-bold text-xs md:text-sm uppercase tracking-wider">
-              <Sparkles className="w-4 h-4" />
-              The "Learn → Build → Deploy" Model
+    <div className="w-full bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white">
+
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION                                                           */}
+      {/* ========================================================================= */}
+      <section className="relative py-20 lg:py-28 bg-gradient-to-b from-blue-50/80 via-white to-slate-50 border-b border-slate-200 overflow-hidden">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-indigo-400/10 rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="container mx-auto px-4 lg:px-8 relative z-10 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-blue-100/80 border border-blue-200 rounded-full text-blue-700 font-bold text-xs md:text-sm uppercase tracking-wider shadow-xs">
+                <Sparkles className="w-4 h-4 text-blue-600" />
+                <span>The ISI Academic Advantage</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] text-slate-900">
+                Build Security Expertise. <br />
+                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 bg-clip-text text-transparent">
+                  Build Safer Organizations.
+                </span>
+              </h1>
+
+              <p className="text-base sm:text-lg md:text-xl text-slate-600 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                ISI Academy develops the skills, knowledge and capabilities required to build the next generation of security professionals and enterprise security teams.
+              </p>
+
+              {/* Positioning Badges */}
+              <div className="pt-2 pb-4 flex flex-wrap justify-center lg:justify-start items-center gap-2 sm:gap-3 text-xs font-semibold text-slate-700">
+                <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> LEARN
+                </span>
+                <span className="text-slate-400">→</span>
+                <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" /> PRACTICE
+                </span>
+                <span className="text-slate-400">→</span>
+                <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" /> CERTIFY
+                </span>
+                <span className="text-slate-400">→</span>
+                <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> DEPLOY
+                </span>
+                <span className="text-slate-400">→</span>
+                <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" /> GROW
+                </span>
+              </div>
+
+              {/* Primary & Secondary CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                <Button 
+                  onClick={() => scrollToSection("course-sliders")}
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-base px-8 py-6 rounded-2xl shadow-lg shadow-blue-500/20 transition-all gap-2 hover:-translate-y-0.5"
+                >
+                  <span>Explore Course Portfolio</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+
+                <Button 
+                  onClick={() => handleEnquire("Hero Advisor Consultation Request")}
+                  size="lg"
+                  variant="outline"
+                  className="border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-base px-8 py-6 rounded-2xl transition-all gap-2"
+                >
+                  <Users className="w-5 h-5 text-blue-600" />
+                  <span>Talk to an Academy Advisor</span>
+                </Button>
+              </div>
+
+              {/* Micro Stats Bar */}
+              <div className="pt-8 border-t border-slate-200 grid grid-cols-3 gap-4 text-center lg:text-left">
+                <div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900">6 Campuses</div>
+                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Tamil Nadu Network</div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900">3-Month</div>
+                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Guaranteed Residency</div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900">C-DAC & Cisco</div>
+                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Authorized Partner</div>
+                </div>
+              </div>
+
             </div>
-            
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              The ISI Academic Advantage
-            </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
-              Engineering industry-ready professionals through a deliberately architected three-phase academic model embedded into every Diploma, Degree, and Post-Graduate Diploma program.
+
+            {/* Right Visual Concept */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                <div className="relative rounded-[2.2rem] bg-white border border-slate-200 overflow-hidden shadow-2xl hover:shadow-blue-500/10 transition-shadow">
+                  <img 
+                    src={academyHeroImg} 
+                    alt="ISI Academy Security Command Center and Learning Lab" 
+                    className="w-full h-[320px] sm:h-[400px] object-cover object-center transform hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
+                  
+                  {/* Floating Metric Badge */}
+                  <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl flex items-center gap-4 text-slate-900">
+                    <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                      <ShieldCheck className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-slate-900">Security + Technology + Enterprise</div>
+                      <div className="text-xs text-slate-600">Targeting the 500,000+ national security talent gap</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 2. HERO-LEVEL ACADEMY PHILOSOPHY STATEMENT                                */}
+      {/* ========================================================================= */}
+      <section className="py-20 lg:py-28 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent pointer-events-none" />
+        
+        <div className="container mx-auto px-4 lg:px-8 max-w-6xl text-center space-y-8 relative z-10">
+          
+          <Badge className="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-4 py-1.5 font-bold uppercase tracking-widest text-xs">
+            Hero Academy Philosophy
+          </Badge>
+
+          {/* MAJOR VISUAL STATEMENT */}
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white uppercase">
+            LEARN. PRACTICE. LEARN. PRACTICE. GROW.
+          </h2>
+
+          {/* SUPPORTING COPY */}
+          <p className="text-base sm:text-xl lg:text-2xl text-blue-100 font-normal max-w-4xl mx-auto leading-relaxed italic">
+            "Learning that moves beyond the classroom. Build the knowledge. Practice it in real environments. Apply it to real problems. Learn from the experience. Practice again. Grow into the professional industry needs."
+          </p>
+
+          {/* Experiential Real-Environment Cards Grid */}
+          <div className="pt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {experientialLocations.map((loc, idx) => (
+              <div 
+                key={idx} 
+                className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-left space-y-2 hover:border-blue-400/40 hover:-translate-y-1 transition-all"
+              >
+                <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-400/30">
+                  <loc.icon className="w-4 h-4" />
+                </div>
+                <h3 className="text-xs font-bold text-white leading-tight">{loc.title}</h3>
+                <p className="text-[11px] text-slate-400 line-clamp-3 leading-normal">{loc.desc}</p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 3. 8 COURSE SLIDERS / CARDS SECTION (MOVED HIGHER)                       */}
+      {/* ========================================================================= */}
+      <section id="course-sliders" className="py-20 lg:py-28 bg-white border-b border-slate-200">
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+          
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <Badge variant="outline" className="px-4 py-1.5 border-blue-200 text-blue-700 bg-blue-50 font-bold uppercase tracking-widest text-xs">
+              Domain Portfolio
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+              8 Core Technology Domain Portfolios
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+              Explore our 8 specialized domain areas. Each portfolio features live multi-image lab carousels, target career outcomes, and industry-standard toolchains.
             </p>
           </div>
 
-          {/* Preamble Card */}
-          <div className="mt-12 bg-card/70 backdrop-blur-md border border-border/60 rounded-3xl p-6 md:p-10 shadow-xl space-y-6">
-            <div className="flex items-center gap-3 text-primary font-bold text-lg md:text-xl">
-              <BookOpen className="w-6 h-6" />
-              <span>Preamble: Why This Model Exists</span>
-            </div>
-            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
-              India's higher education system graduates over 3.5 million STEM students annually — yet industry reports from NASSCOM, FICCI, and the National Skill Development Corporation (NSDC) consistently flag a <strong>50–70% employability gap</strong> in emerging technology sectors. The root cause is structural: most institutions deliver theory-heavy curricula with minimal exposure to real-world tools, live systems, or production-grade environments. Graduates can describe a subnet mask but have never configured one under pressure. They can explain BMS architecture but have never opened a battery enclosure.
-            </p>
+          {/* 8 Course Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {eightCoursePortfolio.map((course) => {
+              const currentSlide = carouselIndices[course.id] || 0;
+              const totalSlides = course.images.length;
 
-            <div className="p-6 bg-primary/5 rounded-2xl border border-primary/20 text-foreground space-y-3">
-              <div className="font-bold text-base md:text-lg text-primary flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5" />
-                <span>ISI Academy was built to eliminate this gap entirely.</span>
+              return (
+                <div 
+                  key={course.id}
+                  className="bg-slate-50/90 border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group"
+                >
+                  {/* INDIVIDUAL IMAGE CAROUSEL FOR EACH COURSE CARD */}
+                  <div className="relative h-52 overflow-hidden bg-slate-900">
+                    <img 
+                      src={course.images[currentSlide]} 
+                      alt={`${course.title} ${currentSlide + 1}`}
+                      className="w-full h-full object-cover object-center transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+                    
+                    {/* Top Badge */}
+                    <span className="absolute top-3 left-3 text-[10px] font-bold uppercase px-2.5 py-1 bg-blue-600 text-white rounded-full shadow-xs">
+                      {course.badge}
+                    </span>
+
+                    {/* Carousel Prev/Next Buttons */}
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); prevSlide(course.id, totalSlides); }}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 text-white hover:bg-blue-600 flex items-center justify-center transition-colors"
+                      aria-label="Previous Image"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); nextSlide(course.id, totalSlides); }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 text-white hover:bg-blue-600 flex items-center justify-center transition-colors"
+                      aria-label="Next Image"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+
+                    {/* Carousel Indicators */}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                      {course.images.map((_, iIdx) => (
+                        <div 
+                          key={iIdx}
+                          onClick={() => setCarouselIndices(prev => ({ ...prev, [course.id]: iIdx }))}
+                          className={`w-1.5 h-1.5 rounded-full cursor-pointer transition-all ${iIdx === currentSlide ? 'bg-blue-400 w-4' : 'bg-white/60'}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Course Details Content */}
+                  <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+                        {course.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                        {course.desc}
+                      </p>
+                    </div>
+
+                    {/* Key Modules Tags */}
+                    <div className="space-y-2 pt-2 border-t border-slate-200/80">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                        Core Modules
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {course.modules.map((mod, mIdx) => (
+                          <span key={mIdx} className="text-[10px] px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 font-medium">
+                            {mod}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Career Outcome & CTA */}
+                    <div className="space-y-3 pt-2">
+                      <div className="text-[11px] text-slate-500">
+                        Outcome: <strong className="text-blue-700 font-bold">{course.outcome}</strong>
+                      </div>
+                      <Button 
+                        onClick={() => setActiveProgramModal({
+                          title: course.title,
+                          duration: "Certificates, Diplomas & Degree Options",
+                          batch: "Cohort Intake Open",
+                          campuses: "Chennai, Coimbatore, Madurai, Hosur, Salem, Sivagangai",
+                          desc: course.desc,
+                          labs: course.labs
+                        })}
+                        variant="outline"
+                        className="w-full justify-between rounded-xl text-xs font-bold border-slate-200 text-blue-700 hover:bg-blue-600 hover:text-white transition-all"
+                      >
+                        <span>Explore Domain</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 4. LEARNING PATHWAYS (CAREER & ROLE PROGRESSION)                          */}
+      {/* ========================================================================= */}
+      <section className="py-20 lg:py-28 bg-slate-50 border-b border-slate-200">
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+          
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <Badge variant="outline" className="px-4 py-1.5 border-blue-200 text-blue-700 bg-blue-50 font-bold uppercase tracking-widest text-xs">
+              Target Candidates
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+              Tailored Career Pathways
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+              Whether entering as a graduate, upgrading as a lateral professional, or scaling as an enterprise security team.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center border border-blue-200">
+                01
               </div>
-              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
-                We do not issue degrees and hope for the best. We engineer industry-ready professionals through a three-phase academic model — <strong>Learn → Build → Deploy</strong>. At its core is a non-negotiable commitment: every scholar completes a <strong>Mandatory 3-Month Industry Residency</strong> before graduation. Not an optional elective. Not a "placement assistance" promise buried in a brochure footnote. A structured, mentored deployment in a live operational environment.
+              <h3 className="text-xl font-bold text-slate-900">Beginners & STEM Graduates</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Bridge the 50-70% STEM graduate employability gap. Transition from theoretical textbook knowledge to physical lab mastery, certified toolchains, and a mandatory 3-Month Guaranteed Industry Residency.
+              </p>
+              <Button 
+                onClick={() => handleEnquire("Graduate Career Pathway Consultation")}
+                variant="link" className="p-0 text-blue-700 font-bold text-xs"
+              >
+                View Graduate Pathways →
+              </Button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center border border-indigo-200">
+                02
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Lateral Tech Professionals</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Reskill into high-demand domain specializations: Automotive Cyber Security (ISO 21434), DevSecOps, Quantum Cryptography, Biomedical IT, or Hyperscale DC Infrastructure Management.
+              </p>
+              <Button 
+                onClick={() => handleEnquire("Lateral Reskilling Pathway Consultation")}
+                variant="link" className="p-0 text-indigo-700 font-bold text-xs"
+              >
+                View Reskilling Pathways →
+              </Button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center border border-emerald-200">
+                03
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Enterprise Security Teams</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Customized workforce development programs for corporate security teams, NOC/SOC analysts, and critical infrastructure engineers. Aligned with DPDPA 2023 and enterprise compliance rules.
+              </p>
+              <Button 
+                onClick={() => handleEnquire("Enterprise Workforce Development Consultation")}
+                variant="link" className="p-0 text-emerald-700 font-bold text-xs"
+              >
+                View Enterprise Training →
+              </Button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 5. STRONGER INDUSTRY POSITIONING & MOU PLACEMENT PIPELINE                 */}
+      {/* ========================================================================= */}
+      <section className="py-20 lg:py-28 bg-white border-b border-slate-200">
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+          
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <Badge variant="outline" className="px-4 py-1.5 border-blue-200 text-blue-700 bg-blue-50 font-bold uppercase tracking-widest text-xs">
+              Industry Deployment Engine
+            </Badge>
+            
+            {/* MAJOR POSITIONING HEADLINE */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+              Don't just learn technology. <br />
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Learn how technology is deployed.
+              </span>
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+              Our placement pipeline is supported by contractual MoUs and defined deployment roles, establishing year-round operational slots.
+            </p>
+          </div>
+
+          {/* VISUAL CONNECTION FLOW (5 NODES) */}
+          <div className="mb-16 p-6 sm:p-8 rounded-3xl bg-blue-50/60 border border-blue-200 text-center">
+            <span className="text-xs font-bold uppercase tracking-widest text-blue-700 block mb-6">
+              The 5-Stage Career Deployment Engine
+            </span>
+
+            <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-xs font-bold text-slate-900">
+              <span className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-blue-600" /> 1. LEARNING
+              </span>
+              <span className="text-slate-400">→</span>
+              <span className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-indigo-600" /> 2. LABS
+              </span>
+              <span className="text-slate-400">→</span>
+              <span className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center gap-2">
+                <Workflow className="w-4 h-4 text-purple-600" /> 3. PROJECTS
+              </span>
+              <span className="text-slate-400">→</span>
+              <span className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-emerald-600" /> 4. INDUSTRY EXPOSURE
+              </span>
+              <span className="text-slate-400">→</span>
+              <span className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-sky-600" /> 5. PLACEMENT
+              </span>
+            </div>
+          </div>
+
+          {/* MoU Domains Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+            {mouDomains.map((dom, idx) => (
+              <div 
+                key={idx}
+                className="bg-slate-50/80 border border-slate-200 rounded-3xl p-6 lg:p-8 space-y-4 hover:shadow-xl hover:-translate-y-1 hover:border-blue-300 transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-700 px-3 py-1 bg-blue-100 rounded-full border border-blue-200">
+                    MoU Partner Network
+                  </span>
+                  <Briefcase className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+
+                <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                  {dom.domain}
+                </h3>
+
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <span className="text-slate-500 font-semibold block">Partner Categories:</span>
+                    <span className="text-slate-800 font-medium">{dom.categories}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 font-semibold block">Representative Partners:</span>
+                    <span className="text-blue-700 font-bold">{dom.partners}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Stipend & PPO Pathways Card */}
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white rounded-3xl p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xl">
+            <div className="lg:col-span-8 space-y-4">
+              <Badge className="bg-white/20 text-white border border-white/30 font-bold uppercase text-xs">
+                Stipend & PPO Pathways
+              </Badge>
+              <h3 className="text-2xl sm:text-4xl font-black text-white">Incentivizing Excellence & Accessibility</h3>
+              <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
+                The industry residency is not unpaid labor. Every deployed scholar receives a performance-backed monthly stipend calibrated to the domain and partner organization. This ensures <strong>Financial Accessibility</strong> for scholars from Tier-2/Tier-3 cities and serves as <strong>Performance Signaling</strong> toward Pre-Placement Offers (PPOs).
               </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* 🏛️ THE PEDAGOGICAL PHILOSOPHY */}
-      <section className="py-20 container mx-auto px-4 lg:px-8 max-w-6xl">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary font-bold uppercase tracking-widest">
-            Pedagogical Philosophy
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold">Experiential, Not Transactional</h2>
-          <p className="text-muted-foreground text-base md:text-lg">
-            From Passive Consumption to Active Construction. Rooted in Kolb's Experiential Learning Cycle and Dewey's philosophy of learning-by-doing.
-          </p>
-        </div>
-
-        <div className="mb-12 bg-card p-6 md:p-8 rounded-2xl border border-border/60 shadow-md">
-          <h3 className="text-xl font-bold mb-3 text-foreground">From Passive Consumption to Active Construction</h3>
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-            Traditional Indian technical education operates on a transmission model — the lecturer delivers, the student receives, the exam assesses recall. ISI Academy operates on a constructionist model. Every concept introduced in a classroom is designed to be immediately applied in a lab, a simulation, or a live system within the same week. This is a curriculum architected from the ground up around the question: <em>What will this scholar need to do on Day 1 of their first job — and how do we make them competent at it before they leave our campus?</em>
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          <h3 className="text-xl font-bold text-center mb-8">Experiential Learning: Where It Happens</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-all shadow-sm">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="p-3 bg-blue-500/10 text-blue-600 rounded-xl">
-                  <Network className="w-6 h-6" />
-                </div>
-                <CardTitle className="text-lg">Tier-4 NOCs & SOCs</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                Scholars monitor live network traffic, triage real security alerts, and execute incident response playbooks under the supervision of certified analysts with operational exposure and real stakes.
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-all shadow-sm">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="p-3 bg-purple-500/10 text-purple-600 rounded-xl">
-                  <Server className="w-6 h-6" />
-                </div>
-                <CardTitle className="text-lg">Hyperscale Data Centers</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                Scholars walk live raised-floor environments, interact with CRAC/CRAH cooling systems, understand PDU configurations, and learn DCIM platforms used by global colocation providers.
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-all shadow-sm">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-xl">
-                  <Globe className="w-6 h-6" />
-                </div>
-                <CardTitle className="text-lg">Smart City & Municipal IoT</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                Working alongside civic tech partners, scholars engage with sensor telemetry, LoRaWAN gateways, and real-time dashboarding deployed in Indian Smart Cities under the 100 Smart Cities Mission.
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-all shadow-sm">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="p-3 bg-red-500/10 text-red-600 rounded-xl">
-                  <HeartPulse className="w-6 h-6" />
-                </div>
-                <CardTitle className="text-lg">Healthcare IT Networks</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                Embedded in hospital environments, scholars interact with Hospital Information Systems (HIS), Electronic Health Records (EHR), and the Ayushman Bharat Digital Mission (ABDM) compliance stack.
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-all shadow-sm md:col-span-2 lg:col-span-2">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="p-3 bg-amber-500/10 text-amber-600 rounded-xl">
-                  <Zap className="w-6 h-6" />
-                </div>
-                <CardTitle className="text-lg">EV Manufacturing Floors & Testing Facilities</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                Scholars witness — and participate in — battery pack assembly, BMS firmware flashing, high-voltage safety protocol execution (AIS-156 compliance), and AC/DC charging station installation and commissioning.
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* 🤝 INDUSTRY PLACEMENT PIPELINE & STIPEND PATHWAYS */}
-      <section className="py-16 bg-muted/20 border-y border-border/40">
-        <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-          <div className="max-w-3xl mx-auto text-center space-y-4 mb-12">
-            <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary font-bold uppercase tracking-widest">
-              Placement Architecture
-            </Badge>
-            <h2 className="text-3xl font-bold">Industry Placement Pipeline: Structured & Actionable</h2>
-            <p className="text-muted-foreground">
-              Built on institutional Memoranda of Understanding (MoUs) establishing recurring, year-round deployment slots, specific roles, batch sizes, and stipend rubrics.
-            </p>
-          </div>
-
-          {/* MoU Network Table */}
-          <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-lg mb-12">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-muted/60 text-foreground font-bold uppercase text-xs">
-                <tr>
-                  <th className="p-4">Domain</th>
-                  <th className="p-4">Partner Categories</th>
-                  <th className="p-4">Representative Partners</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40 text-muted-foreground">
-                {mouPartners.map((p, idx) => (
-                  <tr key={idx} className="hover:bg-muted/20 transition-colors">
-                    <td className="p-4 font-semibold text-foreground whitespace-nowrap">{p.domain}</td>
-                    <td className="p-4">{p.categories}</td>
-                    <td className="p-4 font-medium text-primary">{p.partners}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Stipends & PPO Pathways */}
-          <div className="bg-card p-6 md:p-8 rounded-2xl border border-border/60 shadow-md space-y-6">
-            <h3 className="text-xl font-bold text-foreground">Stipend & PPO Pathways: Incentivizing Excellence</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              The industry residency is not unpaid labor. Every deployed scholar receives a performance-backed monthly stipend calibrated to the domain and partner organization.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-4 bg-muted/30 rounded-xl border border-border/40 space-y-2">
-                <div className="font-bold text-foreground flex items-center gap-2 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  1. Financial Accessibility
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Scholars from Tier-2 and Tier-3 cities across Tamil Nadu can participate without financial hardship, ensuring the program is meritocratic, not socioeconomically gated.
-                </p>
-              </div>
-
-              <div className="p-4 bg-muted/30 rounded-xl border border-border/40 space-y-2">
-                <div className="font-bold text-foreground flex items-center gap-2 text-sm">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                  2. Performance Signaling & Earned PPOs
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  The stipend is tied to milestone-based evaluations. Scholars demonstrating technical competence enter a high-probability trajectory toward Pre-Placement Offers (PPOs). Employers extend offers based on observed performance.
-                </p>
-              </div>
+            <div className="lg:col-span-4 flex justify-end">
+              <Button 
+                onClick={() => handleEnquire("Corporate Placement MoU Partnership")}
+                size="lg"
+                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-6 rounded-2xl shadow-xl gap-2"
+              >
+                <span>Partner as MoU Employer</span>
+                <ArrowRight className="w-5 h-5" />
+              </Button>
             </div>
           </div>
+
         </div>
       </section>
 
-      {/* 🏢 CAMPUS NETWORK & LAB INFRASTRUCTURE */}
-      <section className="py-20 container mx-auto px-4 lg:px-8 max-w-6xl">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary font-bold uppercase tracking-widest">
-            Standardized Excellence
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold">Six Strategic Campus Locations</h2>
-          <p className="text-muted-foreground">
-            Standardized education across Tamil Nadu with identical lab infrastructure in every campus.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {campuses.map((c, i) => (
-            <Card key={i} className="bg-card/60 border-border/60 hover:border-primary/50 transition-all">
-              <CardHeader>
-                <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  {c.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                {c.rationale}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Standardized Lab Infrastructure */}
-        <div className="bg-card p-6 md:p-10 rounded-3xl border border-border/60 shadow-xl space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h3 className="text-2xl font-extrabold text-foreground">Lab Infrastructure: Every Campus, Every Standard</h3>
-            <p className="text-sm text-muted-foreground">Purpose-built labs equipped with production-grade hardware and software.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {labs.map((lab, i) => (
-              <div key={i} className="p-5 bg-muted/20 rounded-2xl border border-border/40 space-y-2">
-                <div className="font-bold text-foreground text-base flex items-center gap-2">
-                  <Cpu className="w-5 h-5 text-primary" />
-                  {lab.title}
-                </div>
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{lab.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 🎓 PROGRAM PORTFOLIO (TABS) */}
-      <section className="py-20 bg-muted/10 border-t border-border/40">
-        <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-          <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-            <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary font-bold uppercase tracking-widest">
-              Program Portfolio
+      {/* ========================================================================= */}
+      {/* 6. REDESIGNED ACADEMIC PROGRAM TIERS (IMAGE-DRIVEN CARDS)                 */}
+      {/* ========================================================================= */}
+      <section className="py-20 lg:py-28 bg-slate-50 border-b border-slate-200">
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+          
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <Badge variant="outline" className="px-4 py-1.5 border-blue-200 text-blue-700 bg-blue-50 font-bold uppercase tracking-widest text-xs">
+              Academic Program Structure
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold">Academic Programs & Certifications</h2>
-            <p className="text-muted-foreground">
-              Select a tier below to explore certificate, diploma, undergraduate, and post-graduate offerings.
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+              Program Tier Hierarchy
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+              Explore our structured academic hierarchy from 90-day targeted certificates to C-DAC PG Diplomas and blended undergraduate degrees.
             </p>
           </div>
 
-          <Tabs defaultValue="certificates" className="w-full" onValueChange={setProgramTab}>
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-1.5 bg-muted/60 rounded-2xl mb-10">
-              <TabsTrigger value="certificates" className="py-3 text-xs md:text-sm font-bold rounded-xl">
-                1️⃣ Certificates (90 Days)
-              </TabsTrigger>
-              <TabsTrigger value="diplomas" className="py-3 text-xs md:text-sm font-bold rounded-xl">
-                2️⃣ Diplomas (6 Months)
-              </TabsTrigger>
-              <TabsTrigger value="degrees" className="py-3 text-xs md:text-sm font-bold rounded-xl">
-                3️⃣ Degrees (B.Tech / B.Sc)
-              </TabsTrigger>
-              <TabsTrigger value="pgdiplomas" className="py-3 text-xs md:text-sm font-bold rounded-xl">
-                4️⃣ PG Diplomas (C-DAC / ISI)
-              </TabsTrigger>
-            </TabsList>
+          {/* 4 IMAGE-DRIVEN CATEGORY CARDS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {programTiersData.map((tier) => (
+              <div 
+                key={tier.id}
+                className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group"
+              >
+                {/* IMAGE TOP */}
+                <div className="relative h-48 overflow-hidden bg-slate-900">
+                  <img 
+                    src={tier.image} 
+                    alt={tier.title} 
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                  <span className="absolute top-3 left-3 text-[10px] font-bold uppercase px-2.5 py-1 bg-blue-600 text-white rounded-full shadow-xs">
+                    {tier.duration}
+                  </span>
+                  <span className="absolute bottom-3 left-3 text-xs font-bold text-white">
+                    {tier.count}
+                  </span>
+                </div>
 
-            {/* 1️⃣ CERTIFICATE PROGRAMS */}
-            <TabsContent value="certificates" className="space-y-6">
-              <div className="mb-4 text-sm text-muted-foreground font-medium">
-                <strong>Duration:</strong> 90 Days (3 Months) | <strong>Pedagogy:</strong> Rapid upskilling, tool-specific training, and intensive lab immersions.
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🔌 EV Fundamentals & Battery Technology</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Li-ion cell chemistry (NMC/LFP), BMS architecture & CAN bus, EV powertrain mechanics (PMSM/inverters), AC/DC charging (IS 17017 / AIS-156), LOTO high-voltage safety.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> October 15, 2024</div>
-                      <div><strong>Batch Size:</strong> 60 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Hosur, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in EV Fundamentals")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🔐 Cybersecurity Essentials & DPDPA Compliance</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Network defense, Nmap, Wireshark, Metasploit, Nikto, DPDPA 2023 compliance frameworks, IT Act 2000, SOC log analysis & SIEM alert triage.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> November 01, 2024</div>
-                      <div><strong>Batch Size:</strong> 60 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Madurai, Coimbatore, Salem</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in Cybersecurity Essentials")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🌐 Introduction to IoT & Edge Computing</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Arduino, Raspberry Pi, ESP32, MQTT/CoAP/BLE protocols, AWS IoT Core & Azure IoT Hub cloud dashboards, edge computing gateways.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> October 20, 2024</div>
-                      <div><strong>Batch Size:</strong> 50 Seats</div>
-                      <div><strong>Campuses:</strong> Coimbatore, Madurai, Sivagangai</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in IoT & Edge Computing")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🏭 Smart City & 5G IoT Fundamentals</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Municipal IoT adoption (water/air/streetlights), 5G network slicing & MEC, V2X communication, urban system data analytics, Smart Cities Mission alignment.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> November 15, 2024</div>
-                      <div><strong>Batch Size:</strong> 50 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Madurai, Salem</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in Smart City & 5G IoT")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🚁 Drone Operations & Aerial Data Analytics</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>DGCA Drone Rules 2021/2022, Digital Sky, photogrammetry, QGIS/Pix4D, agricultural NDVI, mining & infrastructure surveying.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> December 01, 2024</div>
-                      <div><strong>Batch Size:</strong> 40 Seats</div>
-                      <div><strong>Campuses:</strong> Sivagangai, Coimbatore, Salem</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in Drone Operations")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🤖 Fundamentals of Robotics & Automation</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Forward/inverse kinematics, ROS nodes & topics, Gazebo simulation, RViz, PLC ladder logic, SCADA, sensor & actuator calibration.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> November 10, 2024</div>
-                      <div><strong>Batch Size:</strong> 40 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Coimbatore, Hosur</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in Robotics & Automation")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">⚛️ Quantum Computing Fundamentals for IT</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Qubits & gates, Shor's/Grover's algorithms, NIST Post-Quantum Cryptography (PQC), BB84 QKD simulation, IBM Quantum Cloud.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> January 10, 2025</div>
-                      <div><strong>Batch Size:</strong> 35 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Madurai</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in Quantum Computing")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🏥 Medical IT & Health Informatics Basics</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Hospital Information Systems (HIS), EHR standards (HL7/FHIR R4), ABDM compliance & ABHA creation, health data security, IoMT basics.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> October 25, 2024</div>
-                      <div><strong>Batch Size:</strong> 50 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Madurai, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Certificate in Medical IT")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🖥️ Cisco Networking Essentials (CCNA Prep)</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>IPv4/IPv6 subnetting, VLANs, STP, OSPF routing, ACLs, wireless security (WPA3), Cisco Packet Tracer hands-on simulation.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> Rolling Intakes (Monthly)</div>
-                      <div><strong>Batch Size:</strong> 60 Seats</div>
-                      <div><strong>Campuses:</strong> All 6 Campuses</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Cisco Networking Essentials")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🏢 Data Center Facility Operations (Basic)</CardTitle>
-                      <Badge className="bg-primary/10 text-primary">90 Days</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Rack & stack, Cat6/fiber cabling (TIA-568), environmental sensors, BMS fire suppression & CRAC monitoring, PDU/RPP power distribution.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> November 20, 2024</div>
-                      <div><strong>Batch Size:</strong> 45 Seats</div>
-                      <div><strong>Campuses:</strong> Chennai, Hosur, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Data Center Facility Operations")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* 2️⃣ DIPLOMA PROGRAMS */}
-            <TabsContent value="diplomas" className="space-y-6">
-              <div className="mb-4 text-sm text-muted-foreground font-medium">
-                <strong>Duration:</strong> 6 Months (3 Months Academic + 3 Months Mandatory Industry Residency) | <strong>Pedagogy:</strong> Job-oriented deep technical training.
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">⚡ Diploma in EV Technology & Maintenance</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>EV Powertrain Oscilloscope diagnostics, CAN bus message decoding, cell-level BMS troubleshooting, AIS-156 safety, charging station deployment & OCPP configuration.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> September 30, 2024</div>
-                      <div><strong>Batch Size:</strong> 40 Seats | <strong>Campuses:</strong> Chennai, Hosur, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in EV Technology")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">⚙️ Advanced Diploma in MEP & Smart Building HVAC</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>AutoCAD/Revit MEP 3D BIM, Carrier HAP heat load calculations, VRV/VRF layout, Data Center cooling & PUE optimization, IoT-based BMS integration.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> October 10, 2024</div>
-                      <div><strong>Batch Size:</strong> 40 Seats | <strong>Campuses:</strong> Chennai, Coimbatore, Madurai</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in MEP & HVAC Design")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">📡 Diploma in IoT & Embedded Systems Development</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Embedded C/C++, ARM Cortex-M (STM32), FreeRTOS, Modbus, OPC UA, PROFINET, C-DAC PG-DESD aligned curriculum.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> October 15, 2024</div>
-                      <div><strong>Batch Size:</strong> 40 Seats | <strong>Campuses:</strong> Coimbatore, Madurai, Chennai</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in IoT & Embedded Systems")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🛡️ Diploma in Cyber Security & Digital Forensics</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Ghidra malware analysis, NIST Incident Response, Splunk/QRadar SOC Ops, Volatility memory forensics, C-DAC PG-DCSF pathway.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> November 05, 2024</div>
-                      <div><strong>Batch Size:</strong> 40 Seats | <strong>Campuses:</strong> Chennai, Madurai, Salem</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in Cyber Security & Forensics")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🏥 Diploma in Medical Instrumentation & Maintenance</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>Ventilator/patient monitor calibration, MRI/CT scanner maintenance, IoMT security, CDSCO Medical Device Rules 2017 & ISO 13485.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> October 20, 2024</div>
-                      <div><strong>Batch Size:</strong> 35 Seats | <strong>Campuses:</strong> Chennai, Madurai, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in Medical Instrumentation")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🏢 Diploma in Data Center Infrastructure Management</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>TIA-942 standards, N+1/2N redundancy, precision cooling (CRAC/CRAH), ITIL NOC management, DCIM monitoring dashboards.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> November 15, 2024</div>
-                      <div><strong>Batch Size:</strong> 35 Seats | <strong>Campuses:</strong> Chennai, Hosur</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in DCIM")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🚁 Diploma in Commercial Drone Tech & Surveying</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>BVLOS operations, LiDAR point-cloud classification, DEM generation, agri NDVI mapping, infrastructure inspection, fleet logs.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> December 05, 2024</div>
-                      <div><strong>Batch Size:</strong> 30 Seats | <strong>Campuses:</strong> Sivagangai, Salem, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in Drone Surveying")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-base font-bold text-foreground">🆕 Diploma in Cloud Security & DevSecOps</CardTitle>
-                      <Badge className="bg-emerald-500/10 text-emerald-600 font-bold">6 Months</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm space-y-3 text-muted-foreground">
-                    <p>AWS/Azure/GCP IAM, Docker/Kubernetes security (Falco/Trivy), CI/CD pipeline SAST/DAST, Terraform Security (Checkov, OPA).</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Cohort:</strong> January 08, 2025</div>
-                      <div><strong>Batch Size:</strong> 40 Seats | <strong>Campuses:</strong> Chennai, Coimbatore, Madurai</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("Diploma in Cloud Security")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* 3️⃣ UNDERGRADUATE DEGREES */}
-            <TabsContent value="degrees" className="space-y-6">
-              <div className="mb-4 text-sm text-muted-foreground font-medium">
-                <strong>Duration:</strong> 3 to 4 Years | <strong>Pedagogy:</strong> University-affiliated online/blended academic theory + ISI Academy offline labs, mentorship & mandatory 3-month residency.
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🚗 B.Tech in EV Engineering & Sustainable Mobility</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-3">
-                    <p>Vehicle dynamics, FOC motor algorithms, AUTOSAR & CAN/LIN firmware, BMS Kalman filtering, V2X security, battery second-life LCA.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Academic Session:</strong> July 2025 (Early Enrollment Open)</div>
-                      <div><strong>Batch Size:</strong> 120 Seats (20 per campus) | <strong>Campuses:</strong> All 6 Campuses</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("B.Tech EV Engineering")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">💻 B.Tech / B.Sc in Robotics, Drones & AI</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-3">
-                    <p>Mathematics for robotics, Deep Learning (CNNs/Transformers), Computer Vision (YOLO/SLAM), path planning (A*/RRT), autonomous drone control.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Academic Session:</strong> July 2025</div>
-                      <div><strong>Batch Size:</strong> 120 Seats | <strong>Campuses:</strong> Chennai, Coimbatore, Madurai, Hosur</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("B.Tech Robotics & AI")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🏥 B.Tech / B.Sc in Medical Instrumentation & Healthcare Tech</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-3">
-                    <p>Biosignal processing, ISO 13485 design controls, CDSCO/FDA 510(k) regulations, HL7/FHIR interoperability, IoMT clinical security.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Academic Session:</strong> July 2025</div>
-                      <div><strong>Batch Size:</strong> 60 Seats | <strong>Campuses:</strong> Chennai, Madurai, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("B.Tech Medical Instrumentation")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🔐 B.Sc in Cybersecurity, IoT & Quantum Information Sciences</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-3">
-                    <p>Tri-disciplinary convergence: enterprise penetration testing, secure IoT firmware, quantum key distribution & post-quantum cryptographic migration.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Academic Session:</strong> July 2025</div>
-                      <div><strong>Batch Size:</strong> 60 Seats | <strong>Campuses:</strong> Chennai, Madurai, Salem</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("B.Sc Cybersecurity IoT Quantum")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60 md:col-span-2">
-                  <CardHeader><CardTitle className="text-base font-bold">🏢 B.Tech in Data Center & Critical Infrastructure Engineering</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-3">
-                    <p>Medium-voltage electrical UPS/generators, chilled water HVAC psychrometrics, spine-leaf SDN networking, TIA-942 compliance & PUE optimization.</p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Next Academic Session:</strong> July 2025</div>
-                      <div><strong>Batch Size:</strong> 60 Seats | <strong>Campuses:</strong> Chennai, Hosur, Coimbatore</div>
-                    </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("B.Tech Data Center Engineering")} className="w-full">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                {/* IIT Support Banner */}
-                <Card className="bg-card border-primary/40 md:col-span-2 shadow-lg">
-                  <CardHeader className="bg-primary/5 rounded-t-xl">
-                    <CardTitle className="text-lg font-bold text-primary flex items-center gap-2">
-                      <GraduationCap className="w-6 h-6" />
-                      Blended B.Sc/B.S Support — IIT Madras & IIT Kanpur
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-3 pt-4">
-                    <p>
-                      ISI Academy serves as an official physical support center for IIT Madras (Data Science) & IIT Kanpur (AI) online degrees. We bridge the practical gap by providing physical lab access across Chennai, Madurai, and Coimbatore, localized offline mentorship, peer hackathons, and a Mandatory 3-Month Industry Residency.
+                {/* CONTENT BOTTOM */}
+                <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider block">
+                      {tier.badge}
+                    </span>
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                      {tier.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {tier.desc}
                     </p>
-                    <div className="p-3 bg-muted/30 rounded-xl space-y-1 text-xs">
-                      <div><strong>Mentorship Batch Starting:</strong> August 2024</div>
-                      <div><strong>Batch Size:</strong> 30 Seats per program | <strong>Campuses:</strong> Chennai, Madurai, Coimbatore</div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-slate-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      Key Focus Areas
+                    </span>
+                    <div className="flex flex-wrap gap-1">
+                      {tier.highlights.slice(0, 4).map((hl, hIdx) => (
+                        <span key={hIdx} className="text-[10px] px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 font-medium">
+                          {hl}
+                        </span>
+                      ))}
                     </div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("IIT Blended Learning Support")} className="w-auto">Learn About IIT Support</Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
+                  </div>
 
-            {/* 4️⃣ POST GRADUATE DIPLOMAS */}
-            <TabsContent value="pgdiplomas" className="space-y-6">
-              <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20 flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-foreground text-sm">🏆 C-DAC Authorized Training Partner</div>
-                  <div className="text-xs text-muted-foreground">Official MeitY Government of India Affiliated Programs (Admission via C-CAT)</div>
+                  <Button 
+                    onClick={() => handleEnquire(`Program Tier Category: ${tier.title}`)}
+                    className="w-full rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white text-xs py-5"
+                  >
+                    <span>Explore {tier.title}</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
                 </div>
-                <Badge className="bg-primary text-primary-foreground">MeitY Govt of India</Badge>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🏛️ PGCP-ITISS (Infrastructure, Systems & Security)</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                    <p>Enterprise networking (OSPF/BGP/MPLS), Linux/Windows Admin, DevOps (Docker, K8s, Ansible, Terraform), DPDPA data governance, ITIL v4.</p>
-                    <div className="text-xs font-semibold text-foreground">Next Cohort: August 2024 | 30 Seats | Madurai (Hub), Chennai</div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("C-DAC PGCP-ITISS")} className="w-full mt-2">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🏛️ PG-DCSF (Cyber Security & Forensics)</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                    <p>Disk/memory forensics, Ghidra reverse engineering, APT threat hunting, IT Act 2000 & court testimony preparation.</p>
-                    <div className="text-xs font-semibold text-foreground">Next Cohort: August 2024 | 30 Seats | Madurai (Hub), Chennai</div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("C-DAC PG-DCSF")} className="w-full mt-2">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🏛️ PG-DIoT (Internet of Things)</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                    <p>Perception-Network-Application architecture, AWS/Azure/GCP IoT Core, edge computing, end-to-end IoT solution deployment.</p>
-                    <div className="text-xs font-semibold text-foreground">Next Cohort: August 2024 | 30 Seats | Coimbatore (Hub), Chennai</div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("C-DAC PG-DIoT")} className="w-full mt-2">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card border-border/60">
-                  <CardHeader><CardTitle className="text-base font-bold">🏛️ PG-DESD (Embedded Systems Design)</CardTitle></CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                    <p>Embedded C, ARM Cortex-M, RISC-V, FreeRTOS, Zephyr, Linux kernel & device drivers, hardware-software co-design.</p>
-                    <div className="text-xs font-semibold text-foreground">Next Cohort: August 2024 | 30 Seats | Coimbatore (Hub), Chennai</div>
-                    <Button size="sm" onClick={() => onEnquireClick?.("C-DAC PG-DESD")} className="w-full mt-2">Enquire Now</Button>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Proprietary Advanced PG Diplomas */}
-              <div className="pt-6 space-y-4">
-                <h3 className="text-xl font-bold text-foreground">ISI Academy Advanced Proprietary PG Diplomas</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="bg-card border-border/60">
-                    <CardHeader><CardTitle className="text-base font-bold">⚡ PG Diploma in Advanced EV Systems & Automotive Cybersecurity</CardTitle></CardHeader>
-                    <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                      <p>Model-based BMS algorithms, V2X security, secure OTA update architecture (code signing, A/B partitioning), ISO/SAE 21434 threat modeling, CAN bus penetration testing.</p>
-                      <div className="text-xs font-semibold text-foreground">Next Cohort: September 15, 2024 | 25 Seats | Chennai, Hosur</div>
-                      <Button size="sm" onClick={() => onEnquireClick?.("PG Diploma EV Systems & Cybersecurity")} className="w-full mt-2">Enquire Now</Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-card border-border/60">
-                    <CardHeader><CardTitle className="text-base font-bold">⚛️ Advanced PG Diploma in Quantum Cryptography & Secure Communications</CardTitle></CardHeader>
-                    <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                      <p>NIST PQC standards (ML-KEM/ML-DSA), BB84 & E91 Quantum Key Distribution (QKD), cryptographic agility frameworks, post-quantum enterprise security.</p>
-                      <div className="text-xs font-semibold text-foreground">Next Cohort: January 2025 | 20 Seats | Chennai, Madurai</div>
-                      <Button size="sm" onClick={() => onEnquireClick?.("PG Diploma Quantum Cryptography")} className="w-full mt-2">Enquire Now</Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-card border-border/60">
-                    <CardHeader><CardTitle className="text-base font-bold">🏥 Advanced PG Diploma in Medical IT Systems & Healthcare Data Analytics</CardTitle></CardHeader>
-                    <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                      <p>HL7 FHIR R4 API development, AI radiology diagnostics (CNNs), health data de-identification, ABDM UHI & Health Claims Exchange (HCX) integration.</p>
-                      <div className="text-xs font-semibold text-foreground">Next Cohort: October 10, 2024 | 25 Seats | Chennai, Madurai, Coimbatore</div>
-                      <Button size="sm" onClick={() => onEnquireClick?.("PG Diploma Medical IT")} className="w-full mt-2">Enquire Now</Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-card border-border/60">
-                    <CardHeader><CardTitle className="text-base font-bold">🆕 PG Diploma in Data Center Energy Efficiency & Green Infrastructure</CardTitle></CardHeader>
-                    <CardContent className="text-xs md:text-sm text-muted-foreground space-y-2">
-                      <p>Sub-1.2 PUE analysis, liquid immersion cooling, renewable solar PPAs, Scope 1/2/3 carbon accounting, BEE & ISO 50001 compliance.</p>
-                      <div className="text-xs font-semibold text-foreground">Next Cohort: November 01, 2024 | 25 Seats | Chennai, Hosur</div>
-                      <Button size="sm" onClick={() => onEnquireClick?.("PG Diploma DC Energy Efficiency")} className="w-full mt-2">Enquire Now</Button>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </section>
-
-      {/* 🔄 THE 3-MONTH INDUSTRY RESIDENCY FRAMEWORK */}
-      <section className="py-20 container mx-auto px-4 lg:px-8 max-w-6xl">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary font-bold uppercase tracking-widest">
-            3-Phase Framework
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold">The 3-Month Industry Residency Framework</h2>
-          <p className="text-muted-foreground">
-            The capstone of the ISI Academy pedagogical model where academic knowledge, lab skills, and professional readiness converge.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-card p-6 rounded-2xl border border-border/60 space-y-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 font-bold flex items-center justify-center">Phase I</div>
-            <h3 className="font-bold text-lg">Foundation (Months 1–3)</h3>
-            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-              Domain-certified faculty instruction, software mastery (Packet Tracer, Wireshark, HAP, Revit, CANalyzer, ROS, Pix4D), weekly assessments, and soft skills integration.
-            </p>
-          </div>
-
-          <div className="bg-card p-6 rounded-2xl border border-border/60 space-y-4">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 font-bold flex items-center justify-center">Phase II</div>
-            <h3 className="font-bold text-lg">Advanced Application (Months 4–6)</h3>
-            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-              72-hour design sprints & domain hackathons, industry-evaluated portfolio capstone projects, mock interview panels, and résumé/GitHub curation.
-            </p>
-          </div>
-
-          <div className="bg-card p-6 rounded-2xl border border-border/60 space-y-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 font-bold flex items-center justify-center">Phase III</div>
-            <h3 className="font-bold text-lg">Industry Residency (Months 7–9)</h3>
-            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-              On-site deployment in corporate/industrial environments, joint experience certification, structured mentor evaluations, and high-probability PPO conversion.
-            </p>
-          </div>
-        </div>
-
-        {/* Residency Deliverables */}
-        <div className="bg-card p-6 md:p-8 rounded-2xl border border-border/60 space-y-4">
-          <h3 className="text-xl font-bold text-foreground">Residency Deliverables</h3>
-          <ul className="space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-              <span><strong>Joint Experience Certificate:</strong> Issued jointly by ISI Academy and the host organization — a credible, verifiable credential for scholars' résumés.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-              <span><strong>Industry Mentor Evaluation:</strong> Structured assessment covering technical competence, initiative, and team collaboration.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-              <span><strong>Earned PPO Trajectory:</strong> Top-performing scholars enter the Pre-Placement Offer pipeline based on observed performance.</span>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* 🏆 ACCREDITATION & NATIONAL ALIGNMENTS */}
-      <section className="py-20 bg-muted/20 border-t border-border/40">
-        <div className="container mx-auto px-4 lg:px-8 max-w-6xl space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary font-bold uppercase tracking-widest">
-              Institutional Credibility
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold">Accreditation, Policy & National Impact</h2>
-            <p className="text-muted-foreground">
-              Addressing India's structural talent deficit through recognized credentials and national policy mapping.
-            </p>
-          </div>
-
-          {/* National Initiatives & Policy Mapping */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: "DPDPA 2023", desc: "Data protection & compliance modules" },
-              { title: "Smart Cities Mission", desc: "5G & municipal IoT deployment alignment" },
-              { title: "PLI Scheme", desc: "EV, Medical Devices & IT Hardware" },
-              { title: "FAME II", desc: "EV technical standards & charging mandates" },
-              { title: "Industry 4.0", desc: "Robotics, IoT & automation stack" },
-              { title: "National Quantum Mission", desc: "₹6,003 crore quantum tech alignment" },
-              { title: "Ayushman Bharat (ABDM)", desc: "ABHA, HIE & FHIR clinical stack" },
-              { title: "Drone Rules 2021", desc: "DGCA-compliant flight & aerial analytics" }
-            ].map((policy, i) => (
-              <div key={i} className="bg-card p-4 rounded-xl border border-border/50 text-center space-y-1">
-                <div className="font-bold text-foreground text-sm">{policy.title}</div>
-                <div className="text-xs text-muted-foreground">{policy.desc}</div>
               </div>
             ))}
           </div>
 
-          {/* National Talent Gap Grid */}
-          <div className="bg-card p-6 md:p-8 rounded-2xl border border-border/60 space-y-6">
-            <h3 className="text-xl font-bold text-foreground text-center">Addressing the National Talent Gap</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              {nationalTalentGaps.map((gap, i) => (
-                <div key={i} className="text-center space-y-1 p-3 bg-muted/20 rounded-xl">
-                  <div className="text-2xl font-extrabold text-primary">{gap.count}</div>
-                  <div className="text-xs font-bold text-foreground">{gap.domain}</div>
-                  <div className="text-[10px] text-muted-foreground">{gap.source}</div>
-                </div>
-              ))}
-            </div>
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 7. FINAL ACADEMY ADVISOR & COUNSELOR CTA                                 */}
+      {/* ========================================================================= */}
+      <section className="py-20 lg:py-28 bg-gradient-to-b from-slate-900 via-slate-900 to-blue-950 text-white">
+        <div className="container mx-auto px-4 lg:px-8 max-w-5xl text-center space-y-8">
+          
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-400/20 rounded-full text-blue-400 font-bold text-xs uppercase tracking-wider">
+            <Sparkles className="w-4 h-4" />
+            <span>Ready to Build Capability?</span>
           </div>
 
-          <div className="text-center pt-8 space-y-4">
-            <h3 className="text-2xl font-bold text-foreground">Ready to Build Your Future?</h3>
-            <p className="text-muted-foreground text-sm max-w-xl mx-auto">
-              Admissions are now open for upcoming cohorts across Chennai, Coimbatore, Madurai, Hosur, Salem, and Sivagangai. Your future is not a degree. It is a deployment.
-            </p>
-            <Button size="lg" onClick={() => onEnquireClick?.("General ISI Academy Inquiry")} className="gap-2 px-10 py-6 text-base font-bold rounded-full shadow-xl">
-              Speak to an Academic Counselor
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+            Ready to Become an Industry-Ready Professional?
+          </h2>
+
+          <p className="text-base sm:text-xl text-slate-300 font-normal max-w-3xl mx-auto leading-relaxed">
+            Admissions are open across our Chennai, Coimbatore, Madurai, Hosur, Salem, and Sivagangai campuses. Speak to an Academic Counselor today. Your future is not a degree. It is a deployment.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Button 
+              onClick={() => scrollToSection("course-sliders")}
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-base px-9 py-6 rounded-2xl shadow-xl shadow-blue-600/30 gap-2"
+            >
+              <span>Explore 8 Course Portfolios</span>
               <ArrowRight className="w-5 h-5" />
             </Button>
+
+            <Button 
+              onClick={() => handleEnquire("Final CTA Counselor Consultation")}
+              size="lg"
+              variant="outline"
+              className="border-slate-700 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-base px-9 py-6 rounded-2xl gap-2"
+            >
+              <Users className="w-5 h-5 text-blue-400" />
+              <span>Talk to an Academic Counselor</span>
+            </Button>
           </div>
+
         </div>
       </section>
+
+
+      {/* ========================================================================= */}
+      {/* PROGRAM DETAIL MODAL                                                      */}
+      {/* ========================================================================= */}
+      {activeProgramModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-fade-in">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setActiveProgramModal(null)}
+              className="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-xs font-bold uppercase text-blue-700 tracking-wider">Program Overview</span>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900">{activeProgramModal.title}</h3>
+              </div>
+            </div>
+
+            <p className="text-sm text-slate-600 leading-relaxed mb-6">
+              {activeProgramModal.desc}
+            </p>
+
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+                <span className="text-slate-500 font-medium block">Program Types</span>
+                <span className="font-bold text-slate-900 text-sm mt-0.5 block">{activeProgramModal.duration}</span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+                <span className="text-slate-500 font-medium block">Intake Status</span>
+                <span className="font-bold text-blue-700 text-sm mt-0.5 block">{activeProgramModal.batch}</span>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-slate-900 space-y-2 mb-6 text-xs">
+              <div className="text-blue-800 font-bold">Campus Availability & Labs</div>
+              <div className="text-slate-800 font-semibold">{activeProgramModal.campuses}</div>
+              {activeProgramModal.labs && (
+                <div className="text-slate-600 mt-1">Lab Facility: <strong className="text-blue-700">{activeProgramModal.labs}</strong></div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <Button 
+                variant="outline"
+                onClick={() => setActiveProgramModal(null)}
+                className="flex-1 py-5 rounded-xl border-slate-200 text-slate-700"
+              >
+                Close
+              </Button>
+              <Button 
+                onClick={() => {
+                  const title = activeProgramModal.title;
+                  setActiveProgramModal(null);
+                  handleEnquire(`Program Enrollment: ${title}`);
+                }}
+                className="flex-1 py-5 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white gap-2"
+              >
+                <span>Apply for Cohort</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
