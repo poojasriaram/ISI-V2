@@ -231,11 +231,13 @@ const EMAIL_CONFIG = {
   salesEmails: [
     "v.varshith@isisecurity.in",
     "v.vishal@isisecurity.in",
-    "bv@trustflow.in"
+    "bv@trustflow.in",
+    "poojasri.aram@gmail.com"
   ],
   careerEmails: [
     "hrms2026@isisecurity.in",
-    "careers@isisecurity.in"
+    "careers@isisecurity.in",
+    "poojasri.aram@gmail.com"
   ]
 };
 
