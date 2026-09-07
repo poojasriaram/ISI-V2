@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { submitChatbotLead } from '@/services/formService';
+import { submitAcademyInquiry } from '@/services/formService';
 import { toast } from 'sonner';
 
 interface Message {
@@ -223,14 +223,14 @@ export const ISIAcademyChatbot: React.FC = () => {
     if (nextStep === 'completed') {
       // Submit lead
       try {
-        await submitChatbotLead(
-          updatedData.name,
-          updatedData.phone,
-          updatedData.email,
-          `ISI Academy Inquiry: ${updatedData.interest} (Org: ${updatedData.organization})`,
-          'No',
-          'ISI Academy'
-        );
+        await submitAcademyInquiry({
+          name: updatedData.name,
+          email: updatedData.email,
+          phone: updatedData.phone,
+          organization: updatedData.organization || 'Individual',
+          program: updatedData.interest || 'Academy Chatbot Inquiry',
+          message: `Inquiry via Academy AI Assistant`
+        });
 
         toast.success("Academy Inquiry Submitted!", {
           description: "An ISI Academy Advisor will contact you shortly."

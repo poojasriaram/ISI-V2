@@ -128,6 +128,31 @@ export const submitChatbotLead = async (
         throw error;
     }
 };
+export const submitAcademyInquiry = async (data: {
+    name: string;
+    email: string;
+    phone: string;
+    organization?: string;
+    program?: string;
+    message?: string;
+}) => {
+    try {
+        await sendToSheet('AcademyInquiries', {
+            Name: data.name,
+            Email: data.email,
+            Phone: data.phone,
+            Organization: data.organization || 'Individual',
+            "Program / Course": data.program || 'General Academy Inquiry',
+            Message: data.message || 'No additional notes',
+            Status: 'New Lead'
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Error submitting Academy inquiry:', error);
+        throw error;
+    }
+};
+
 export const submitCareerApplication = async (data: Record<string, unknown>) => {
     try {
         await sendToSheet('CareerApplications', {

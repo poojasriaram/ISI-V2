@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { submitChatbotLead } from "@/services/formService";
+import { submitAcademyInquiry } from "@/services/formService";
 
 export const AcademyPage = () => {
   useContentProtection();
@@ -62,14 +62,13 @@ export const AcademyPage = () => {
     setIsSubmitting(true);
 
     try {
-      await submitChatbotLead(
-        formData.name,
-        formData.phone,
-        formData.email,
-        `ISI Academy Inquiry: ${formData.course || enquiryCourseTitle} — ${formData.message || "No notes"}`,
-        "No",
-        "ISI Academy"
-      );
+      await submitAcademyInquiry({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        program: formData.course || enquiryCourseTitle,
+        message: formData.message || "No notes"
+      });
 
       toast.success("Enquiry Submitted Successfully!", {
         description: "Our academic counselor will get in touch with you shortly."
