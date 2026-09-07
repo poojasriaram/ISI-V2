@@ -1,20 +1,3 @@
-# ISI Enterprise Analytics Dashboard (Sheet 2) - Master Sanitized Script
-
-This file contains the **FULL 15-TAB ANALYTICS ENGINE** for your dashboard. I have meticulously restored every chart, every calculation, and every design element from your original architecture, while fixing the errors and integrating the **Localhost Sanitization Engine**.
-
----
-
-## 🛠 Setup Instructions
-
-1.  **Sheet 1 ID**: `DATA_SHEET_ID` is set to `"1vHFp5FfF_kHCKNtGpigcDLbS2gm3ETy1xdYuuJAru60"` (your Data Collection Sheet).
-2.  **One-Click Menu**: After saving, refresh your sheet. Use the **🚀 ISI ANALYTICS** menu to run the dashboard.
-3.  **Data Integrity**: Localhost results starting with `127.0.0.1` or `localhost` are automatically purged during processing.
-
----
-
-## 💻 Complete Analytics Script (Sheet 2)
-
-```javascript
 /**
  * ═════════════════════════════════════════════════════════════════════════════
  * ISI ENTERPRISE ANALYTICS DASHBOARD (SHEET 2) - ULTIMATE LIGHT EDITION
@@ -726,4 +709,3 @@ function onOpen() {
         .addItem('🧹 Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')
         .addToUi();
 }
-```

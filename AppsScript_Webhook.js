@@ -11,7 +11,7 @@ var masterMetrics = [
   "WhatsApp Widget Interactions","CTA Conversion Rate","Interest Banking","Interest Retail",
   "Interest Logistics","Interest School Safety","Interest Campus Safety",
   "Interest Cash Logistics","Interest Command Center","Interest Services",
-  "Interest Commercial","Interest Residential","Map Interactions","Offices Explored",
+  "Interest Commercial","Interest Residential","Interest Academy","Map Interactions","Offices Explored",
   "Job Views","Certification Views","Carousel Slide Swipes","Testimonials Viewed",
   "Philosophy Views","Trust Metric Engagement","Benefits Section Views",
   "Footer Navigation Usage","Weighted Rank","Engagement Score","Segment",
@@ -72,6 +72,11 @@ var TAB_CONFIGS = {
     "Full Name","Phone Number","Work Email","Company Name",
     "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "IP Location","IP Address","Variant","Timestamp"
+  ],
+  "AcademyInquiries": [
+    "Name","Email","Phone","Organization","Program / Course","Message",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
   ]
 };
 
@@ -173,8 +178,8 @@ function doPost(e) {
       sheet.appendRow(newRow);
     }
     
-    // Handle Email Notifications (Leads & Careers)
-    var IS_LEAD_FORM = ["ContactForm", "PartnerApps", "CareerApplications", "EbookDownloads", "ConsultationReqs", "SalesInquiries"].indexOf(sheetName) !== -1;
+    // Handle Email Notifications (Leads, Careers & Academy)
+    var IS_LEAD_FORM = ["ContactForm", "PartnerApps", "CareerApplications", "EbookDownloads", "ConsultationReqs", "SalesInquiries", "AcademyInquiries"].indexOf(sheetName) !== -1;
     if (IS_LEAD_FORM) {
       sendLeadEmails(data, sheetName);
     }
@@ -195,13 +200,14 @@ const EMAIL_CONFIG = {
   name: "ISI Security",
   website: "https://www.isisecurity.in",
   replyTo: "info@isisecurity.in",
-  internalEmails: [
-    "coordinator@isisecurity.in",
-    "v.vishal@isisecurity.in",
-    "rajkumar.s@isisecurity.in",
+  salesEmails: [
     "v.varshith@isisecurity.in",
-    "careers@isisecurity.in",
-    "hrms2026@isisecurity.in"
+    "v.vishal@isisecurity.in",
+    "bv@trustflow.in"
+  ],
+  careerEmails: [
+    "hrms2026@isisecurity.in",
+    "careers@isisecurity.in"
   ]
 };
 
@@ -247,6 +253,12 @@ function sendLeadEmails(data, sheetName) {
     subjectInternal = "🔔 New Sales Inquiry: " + (data.companyName || data["Company Name"] || "Unknown Company");
     htmlInternal = buildInternalHtml("New Sales Consultation Request", data);
   }
+  else if (sheetName === "AcademyInquiries") {
+    subjectUser = "🎓 Academy Inquiry Received – ISI Security";
+    htmlUser = buildUserHtml(userName, "Thank you for reaching out to ISI Academy (https://www.isisecurity.in/academy). Our Academic Advisor will review your requirements and get in touch with you shortly.");
+    subjectInternal = "🎓 New ISI Academy Inquiry: " + (data.name || data.Name || data.email || "Academy Inquiry");
+    htmlInternal = buildInternalHtml("New ISI Academy Inquiry (/academy)", data);
+  }
   else {
     subjectUser = "✅ Request Received – ISI Security";
     htmlUser = buildUserHtml(userName, "We've received your request and will follow up with you shortly.");
@@ -265,9 +277,13 @@ function sendLeadEmails(data, sheetName) {
     });
   } catch(e) { console.error("Failed to send user email", e); }
 
-  // Send Notification to Team
+  // Send Notification to Team (Routed based on submission type)
+  var targetRecipients = (sheetName === "CareerApplications")
+    ? EMAIL_CONFIG.careerEmails
+    : EMAIL_CONFIG.salesEmails;
+
   try {
-    EMAIL_CONFIG.internalEmails.forEach(function(email) {
+    targetRecipients.forEach(function(email) {
       var mailOptions = {
         to: email,
         subject: subjectInternal,
@@ -392,6 +408,7 @@ function resolveField(header, data) {
     "Exit Intent Triggered":  (data.exitIntentTriggered !== undefined) ? String(data.exitIntentTriggered) : "",
     "Ebook Downloaded":       (data.ebookDownloaded !== undefined) ? String(data.ebookDownloaded) : "",
     "Consultation Requested": (data.consultationRequested !== undefined) ? String(data.consultationRequested) : "",
+    "Interest Academy":       (data.interestAcademy !== undefined) ? String(data.interestAcademy) : "",
     "UTM Source":             data.utmSource     || data.utm_source  || data["UTM Source"]   || "",
     "UTM Medium":             data.utmMedium     || data.utm_medium  || data["UTM Medium"]   || "",
     "UTM Campaign":           data.utmCampaign   || data.utm_campaign|| data["UTM Campaign"] || "",
@@ -525,28 +542,21 @@ function cleanupLocalhost() {
   });
   console.log("✅ Localhost Cleanup Complete. Removed " + totalRemoved + " development records.");
 }
-function setupTriggers() {
-  ScriptApp.getProjectTriggers().forEach(function(t) {
-    var fn = t.getHandlerFunction();
-    if (['dailyReport', 'weeklyReport', 'checkWatchlist', 'recurringTask'].indexOf(fn) !== -1) {
-      ScriptApp.deleteTrigger(t);
-    }
+/** Removes all active time-driven triggers (cleans up duplicate report emails & Hari Krishna triggers) */
+function removeHariKrishnaTriggers() {
+  var triggers = ScriptApp.getProjectTriggers();
+  var count = 0;
+  triggers.forEach(function(t) {
+    ScriptApp.deleteTrigger(t);
+    count++;
   });
-  ScriptApp.newTrigger("dailyReport")
-    .timeBased()
-    .everyDays(1)
-    .atHour(8)
-    .create();
-  ScriptApp.newTrigger("weeklyReport")
-    .timeBased()
-    .onWeekDay(ScriptApp.WeekDay.FRIDAY)
-    .atHour(8)
-    .create();
-  ScriptApp.newTrigger("checkWatchlist")
-    .timeBased()
-    .everyMinutes(15)
-    .create();
-  console.log("✅ ISI Analytics Triggers created successfully!");
+  console.log("✅ Cleared " + count + " active triggers. Duplicate Hari Krishna report emails disabled.");
+}
+
+function setupTriggers() {
+  // Purge all old & duplicate report triggers to stop unwanted emails
+  removeHariKrishnaTriggers();
+  console.log("✅ Automatic email report triggers have been disabled to prevent duplicate/zero-data emails.");
 }
 function isBusinessHoursIST() {
   var now = new Date();

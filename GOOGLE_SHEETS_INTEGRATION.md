@@ -228,19 +228,20 @@ const EMAIL_CONFIG = {
   name: "ISI Security",
   website: "https://www.isisecurity.in",
   replyTo: "info@isisecurity.in",
-  internalEmails: [
-    "coordinator@isisecurity.in",
-    "v.vishal@isisecurity.in",
-    "rajkumar.s@isisecurity.in",
+  salesEmails: [
     "v.varshith@isisecurity.in",
-    "careers@isisecurity.in",
-    "hrms2026@isisecurity.in"
+    "v.vishal@isisecurity.in",
+    "bv@trustflow.in"
+  ],
+  careerEmails: [
+    "hrms2026@isisecurity.in",
+    "careers@isisecurity.in"
   ]
 };
 
 function sendLeadEmails(data, sheetName) {
-  var userEmail = data.email || data.Email || "";
-  var userName = data.name || data.Name || data["Full Name"] || "Valued User";
+  var userEmail = data.email || data.Email || data["Work Email"] || data.workEmail || "";
+  var userName = data.name || data.Name || data["Full Name"] || data.fullName || "Valued User";
   if (!userEmail) return;
 
   var subjectUser = "";
@@ -274,6 +275,18 @@ function sendLeadEmails(data, sheetName) {
       attachments.push(attachment);
     }
   }
+  else if (sheetName === "SalesInquiries") {
+    subjectUser = "✅ Sales Consultation Request Received – ISI Security";
+    htmlUser = buildUserHtml(userName, "We have received your consultation request. Our sales team is reviewing your requirements and will reach out to you shortly to assist.");
+    subjectInternal = "🔔 New Sales Inquiry: " + (data.companyName || data["Company Name"] || "Unknown Company");
+    htmlInternal = buildInternalHtml("New Sales Consultation Request", data);
+  }
+  else if (sheetName === "AcademyInquiries") {
+    subjectUser = "🎓 Academy Inquiry Received – ISI Security";
+    htmlUser = buildUserHtml(userName, "Thank you for reaching out to ISI Academy (https://www.isisecurity.in/academy). Our Academic Advisor will review your requirements and get in touch with you shortly.");
+    subjectInternal = "🎓 New ISI Academy Inquiry: " + (data.name || data.Name || data.email || "Academy Inquiry");
+    htmlInternal = buildInternalHtml("New ISI Academy Inquiry (/academy)", data);
+  }
   else {
     subjectUser = "✅ Request Received – ISI Security";
     htmlUser = buildUserHtml(userName, "We've received your request and will follow up with you shortly.");
@@ -292,9 +305,13 @@ function sendLeadEmails(data, sheetName) {
     });
   } catch(e) { console.error("Failed to send user email", e); }
 
-  // Send Notification to Team
+  // Send Notification to Team (Routed based on submission type)
+  var targetRecipients = (sheetName === "CareerApplications")
+    ? EMAIL_CONFIG.careerEmails
+    : EMAIL_CONFIG.salesEmails;
+
   try {
-    EMAIL_CONFIG.internalEmails.forEach(function(email) {
+    targetRecipients.forEach(function(email) {
       var mailOptions = {
         to: email,
         subject: subjectInternal,
