@@ -214,9 +214,8 @@ const EMAIL_CONFIG = {
 };
 
 function sendLeadEmails(data, sheetName) {
-  var userEmail = data.email || data.Email || data["Work Email"] || data.workEmail || "";
-  var userName = data.name || data.Name || data["Full Name"] || data.fullName || "Valued User";
-  if (!userEmail) return;
+  var userEmail = data.email || data.Email || data["Work Email"] || data.workEmail || data["work_email"] || "";
+  var userName = data.name || data.Name || data["Full Name"] || data.fullName || data["full_name"] || "Valued User";
 
   var subjectUser = "";
   var htmlUser = "";
@@ -227,32 +226,38 @@ function sendLeadEmails(data, sheetName) {
   if (sheetName === "ContactForm") {
     subjectUser = "✅ Inquiry Received – ISI Security";
     htmlUser = buildUserHtml(userName, "We've received your message and our team will get back to you shortly.");
-    subjectInternal = "🔔 New Security Lead: " + (data.company || data.Company || "Unknown Company");
+    subjectInternal = "🔔 New Security Lead: " + (data.company || data.Company || userName || "New Lead");
     htmlInternal = buildInternalHtml("New Contact Form Submission", data);
   }
   else if (sheetName === "PartnerApps") {
     subjectUser = "🤝 Partnership Application Received – ISI Security";
     htmlUser = buildUserHtml(userName, "Thank you for your interest in joining the ISI Partner Network. Our team is reviewing your application.");
-    subjectInternal = "🤝 New Partner Application: " + (data.company || data.Company || "");
+    subjectInternal = "🤝 New Partner Application: " + (data.company || data.Company || userName || "");
     htmlInternal = buildInternalHtml("New Partner Application", data);
   }
   else if (sheetName === "CareerApplications") {
     subjectUser = "📄 Application Received – ISI Security";
     htmlUser = buildUserHtml(userName, "We have received your career application. Our HR team will review your profile and reach out if there's a match.");
-    subjectInternal = "📄 New Career Application: " + (data.jobTitle || data["Job Title"] || "");
+    subjectInternal = "📄 New Career Application: " + (data.jobTitle || data["Job Title"] || userName || "Job Applicant");
     htmlInternal = buildInternalHtml("New Career Application", data);
     
-    // Attach Resume if present
+    // Safely attach Resume if present
     if (data.resumeBlob) {
-      var decoded = Utilities.base64Decode(data.resumeBlob);
-      var attachment = Utilities.newBlob(decoded, data.resumeMimeType, data.resumeFileName);
-      attachments.push(attachment);
+      try {
+        var decoded = Utilities.base64Decode(data.resumeBlob);
+        var mime = data.resumeMimeType || "application/pdf";
+        var fileName = data.resumeFileName || "Resume.pdf";
+        var attachment = Utilities.newBlob(decoded, mime, fileName);
+        attachments.push(attachment);
+      } catch (attachErr) {
+        console.error("Failed to decode resume attachment:", attachErr.toString());
+      }
     }
   }
   else if (sheetName === "SalesInquiries") {
     subjectUser = "✅ Sales Consultation Request Received – ISI Security";
     htmlUser = buildUserHtml(userName, "We have received your consultation request. Our sales team is reviewing your requirements and will reach out to you shortly to assist.");
-    subjectInternal = "🔔 New Sales Inquiry: " + (data.companyName || data["Company Name"] || "Unknown Company");
+    subjectInternal = "🔔 New Sales Inquiry: " + (data.companyName || data["Company Name"] || userName || "Sales Lead");
     htmlInternal = buildInternalHtml("New Sales Consultation Request", data);
   }
   else if (sheetName === "AcademyInquiries") {
@@ -268,18 +273,20 @@ function sendLeadEmails(data, sheetName) {
     htmlInternal = buildInternalHtml("New Form Submission (" + sheetName + ")", data);
   }
 
-  // Send Confirmation to User
-  try {
-    MailApp.sendEmail({
-      to: userEmail,
-      subject: subjectUser,
-      htmlBody: htmlUser,
-      name: EMAIL_CONFIG.name,
-      replyTo: EMAIL_CONFIG.replyTo
-    });
-  } catch(e) { console.error("Failed to send user email", e); }
+  // 1. Send Confirmation to User (if user provided an email)
+  if (userEmail) {
+    try {
+      MailApp.sendEmail({
+        to: userEmail,
+        subject: subjectUser,
+        htmlBody: htmlUser,
+        name: EMAIL_CONFIG.name,
+        replyTo: EMAIL_CONFIG.replyTo
+      });
+    } catch(e) { console.error("Failed to send user confirmation email:", e.toString()); }
+  }
 
-  // Send Notification to Team (Routed based on submission type)
+  // 2. Send Notification to Team (ALWAYS executes)
   var targetRecipients = (sheetName === "CareerApplications")
     ? EMAIL_CONFIG.careerEmails
     : EMAIL_CONFIG.salesEmails;
@@ -295,7 +302,7 @@ function sendLeadEmails(data, sheetName) {
       if (attachments.length > 0) mailOptions.attachments = attachments;
       MailApp.sendEmail(mailOptions);
     });
-  } catch(e) { console.error("Failed to send internal admin email", e); }
+  } catch(e) { console.error("Failed to send internal admin email:", e.toString()); }
 }
 
 function buildUserHtml(name, messageStr) {
