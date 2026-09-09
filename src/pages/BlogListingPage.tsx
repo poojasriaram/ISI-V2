@@ -2,12 +2,15 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { getAllBlogs, getFeaturedBlog } from "@/data/blogs-data";
-import { Search, Clock, ArrowRight, ShieldAlert, HeartPulse, User, Calendar, BookOpen, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Search, Clock, ArrowRight, ShieldAlert, Shield, HeartPulse, User, Calendar, BookOpen, ChevronRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const categories = [
-  "All Healthcare Insights",
+  "All Insights",
+  "Jewellery Chains",
+  "Banking Industry",
+  "Manufacturing",
   "Disaster Management & Preparedness",
   "Cyber-Physical Security & Resilience",
   "Hospital Workplace Safety & De-escalation"
@@ -17,7 +20,7 @@ const BlogListingPage = () => {
   const allPosts = getAllBlogs();
   const featuredPost = getFeaturedBlog();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Healthcare Insights");
+  const [selectedCategory, setSelectedCategory] = useState("All Insights");
 
   const filteredPosts = allPosts.filter((post) => {
     const matchesSearch =
@@ -26,7 +29,7 @@ const BlogListingPage = () => {
       post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesCategory =
-      selectedCategory === "All Healthcare Insights" || post.category === selectedCategory;
+      selectedCategory === "All Insights" || post.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -44,16 +47,16 @@ const BlogListingPage = () => {
         <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-400 text-sm font-medium mb-6 backdrop-blur-sm">
-              <HeartPulse className="w-4 h-4 text-blue-400" />
-              <span>Healthcare Leadership & Security Insights</span>
+              <Shield className="w-4 h-4 text-blue-400" />
+              <span>Enterprise Security & Industry Intelligence</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
-              Healthcare Disaster Vulnerability & Security Intelligence
+              Enterprise Security & Industry Threat Intelligence
             </h1>
 
             <p className="text-lg sm:text-xl text-slate-300 leading-relaxed mb-8">
-              Expert guides for hospital leadership, emergency planners, and security professionals on disaster resilience, cyber-physical safety, and workplace de-escalation.
+              Expert operational guides and strategic insights for leadership across Healthcare, Jewellery Retail Chains, Banking Networks, and Industrial Manufacturing.
             </p>
 
             {/* Search Bar */}
@@ -61,7 +64,7 @@ const BlogListingPage = () => {
               <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
               <Input
                 type="text"
-                placeholder="Search healthcare disaster guides, cyber risk, or de-escalation..."
+                placeholder="Search security challenges, AI video analytics, loss prevention, industrial safety..."
                 className="pl-12 pr-4 py-6 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base shadow-lg backdrop-blur-md"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -72,7 +75,7 @@ const BlogListingPage = () => {
       </section>
 
       {/* Featured Article Section */}
-      {featuredPost && !searchQuery && selectedCategory === "All Healthcare Insights" && (
+      {featuredPost && !searchQuery && selectedCategory === "All Insights" && (
         <section className="py-12 bg-slate-50 border-b border-slate-200">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-2 text-sm font-semibold text-blue-700 uppercase tracking-wider mb-6">
@@ -261,7 +264,7 @@ const BlogListingPage = () => {
               <Button
                 onClick={() => {
                   setSearchQuery("");
-                  setSelectedCategory("All Healthcare Insights");
+                  setSelectedCategory("All Insights");
                 }}
                 className="mt-4 bg-blue-600 text-white hover:bg-blue-700"
               >

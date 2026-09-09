@@ -39,7 +39,7 @@ const BlogDetailPage = () => {
             to="/blog"
             className="inline-flex items-center text-sm font-medium text-slate-300 hover:text-white gap-2 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 text-blue-400" /> Back to Healthcare Insights
+            <ArrowLeft className="w-4 h-4 text-blue-400" /> Back to All Insights
           </Link>
 
           <button
@@ -319,7 +319,7 @@ const BlogDetailPage = () => {
       {relatedBlogs.length > 0 && (
         <section className="py-16 bg-white border-t border-slate-200">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-            <h2 className="text-2xl font-bold text-slate-900 mb-8">Related Healthcare Resilience Guides</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-8">Related Industry Insights & Guides</h2>
             <div className="grid md:grid-cols-2 gap-8">
               {relatedBlogs.map((rel) => (
                 <div key={rel.id} className="flex gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 hover:shadow-md transition-shadow">

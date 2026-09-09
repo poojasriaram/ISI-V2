@@ -1,4 +1,7 @@
 import { BlogPost } from "@/types/blog";
+import { JEWELLERY_BLOGS } from "./blogs/jewellery-blogs";
+import { BANKING_BLOGS } from "./blogs/banking-blogs";
+import { MANUFACTURING_BLOGS } from "./blogs/manufacturing-blogs";
 
 export const HEALTHCARE_BLOGS: BlogPost[] = [
   {
@@ -519,16 +522,34 @@ export const HEALTHCARE_BLOGS: BlogPost[] = [
   }
 ];
 
-export const getAllBlogs = (): BlogPost[] => HEALTHCARE_BLOGS;
+export { JEWELLERY_BLOGS } from "./blogs/jewellery-blogs";
+export { BANKING_BLOGS } from "./blogs/banking-blogs";
+export { MANUFACTURING_BLOGS } from "./blogs/manufacturing-blogs";
+
+export const ALL_BLOGS: BlogPost[] = [
+  ...HEALTHCARE_BLOGS,
+  ...JEWELLERY_BLOGS,
+  ...BANKING_BLOGS,
+  ...MANUFACTURING_BLOGS
+];
+
+export const getAllBlogs = (): BlogPost[] => ALL_BLOGS;
 
 export const getBlogBySlug = (slug: string): BlogPost | undefined => {
-  return HEALTHCARE_BLOGS.find(blog => blog.slug === slug || blog.id === slug);
+  return ALL_BLOGS.find(blog => blog.slug === slug || blog.id === slug);
 };
 
 export const getFeaturedBlog = (): BlogPost => {
-  return HEALTHCARE_BLOGS.find(blog => blog.featured) || HEALTHCARE_BLOGS[0];
+  return ALL_BLOGS.find(blog => blog.featured) || ALL_BLOGS[0];
 };
 
 export const getRelatedBlogs = (currentSlug: string): BlogPost[] => {
-  return HEALTHCARE_BLOGS.filter(blog => blog.slug !== currentSlug);
+  const current = getBlogBySlug(currentSlug);
+  if (current) {
+    const sameCategory = ALL_BLOGS.filter(b => b.slug !== currentSlug && b.category === current.category);
+    if (sameCategory.length >= 2) return sameCategory.slice(0, 2);
+    const others = ALL_BLOGS.filter(b => b.slug !== currentSlug && b.category !== current.category);
+    return [...sameCategory, ...others].slice(0, 2);
+  }
+  return ALL_BLOGS.filter(blog => blog.slug !== currentSlug).slice(0, 2);
 };
