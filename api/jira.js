@@ -20,11 +20,11 @@ export default async function handler(req, res) {
   try {
     const lead = req.body || {};
 
-    const JIRA_DOMAIN = process.env.JIRA_DOMAIN || 'isisecurity.atlassian.net';
+    const JIRA_DOMAIN = process.env.JIRA_DOMAIN || 'praveenkumarraram.atlassian.net';
     const JIRA_EMAIL = process.env.JIRA_EMAIL || 'poojasri.aram@gmail.com';
     const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || 'ATATT3xFfGF0HB1UotLKd9u7BPre5gFXU-TOc7VugV_s8MLvu_bF_ux-0SyrE3RvZsztwclrd2jFOiBIuOu0Zg7FeeNdWlnLh4Si_exXZNSSlQNqhx8DHewkNPBoRkegQh5cDq-ZGJctIZhwDqUrQBdSBVO0HfIS0P3nyf27WRnBPT2zYLy7bxE=C3BDAF04';
-    const JIRA_PROJECT_KEY = process.env.JIRA_PROJECT_KEY || 'ISI';
-    const JIRA_ISSUE_TYPE = process.env.JIRA_ISSUE_TYPE || 'Task';
+    const JIRA_PROJECT_KEY = process.env.JIRA_PROJECT_KEY || 'DLF';
+    const JIRA_ISSUE_TYPE = process.env.JIRA_ISSUE_TYPE || 'Lead';
 
     // Normalize domain
     const cleanDomain = JIRA_DOMAIN.replace(/^https?:\/\//, '').replace(/\/+$/, '');
