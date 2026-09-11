@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export const SalesInquiryPage = () => {
   };
 
   const validateEmail = (value: string): boolean => {
-    const res = validateGeneralEmail(value);
+    const res = validateWorkEmail(value);
     setEmailError(res.message);
     return res.isValid;
   };

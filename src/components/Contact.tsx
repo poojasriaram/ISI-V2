@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { ContactFormData, FormErrors } from '@/types/contact';
 import { homeLocations } from "@/data/locations-data";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import { validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 
 export const Contact = () => {
   const { trackFormSubmission } = useAnalytics();
@@ -78,11 +78,11 @@ export const Contact = () => {
       newErrors.name = 'Name must be at least 2 characters';
     }
 
-    // Corporate / Personal Email: Required, allows Gmail, Outlook, Hotmail, Yahoo & Work domains
+    // Work Email: Required, strictly corporate/business domains (blocks gmail, yahoo, hotmail, etc.)
     if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
+      newErrors.email = 'Work email is required';
     } else {
-      const emailVal = validateGeneralEmail(formData.email);
+      const emailVal = validateWorkEmail(formData.email);
       if (!emailVal.isValid) {
         newErrors.email = emailVal.message;
       }
@@ -93,7 +93,7 @@ export const Contact = () => {
       newErrors.company = 'Company name is required';
     }
 
-    // Contact Number: Required
+    // Contact Number: Required (minimum 10 digits)
     if (!formData.phone.trim()) {
       newErrors.phone = 'Contact number is required';
     } else {
@@ -236,8 +236,8 @@ export const Contact = () => {
             </p>
           </div>
 
-          {/* Simple & Clean Contact Form Card */}
-          <div className="mb-16 max-w-4xl mx-auto">
+          {/* Simple Clean Single-Column Contact Form Card */}
+          <div className="mb-16 max-w-2xl mx-auto">
             <div className="bg-card border border-border/70 rounded-2xl p-6 sm:p-8 md:p-10 shadow-xl">
               
               {isSubmitted ? (
@@ -260,167 +260,152 @@ export const Contact = () => {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                   
-                  {/* Row 1: Full Name & Corporate Mail */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    {/* Full Name */}
-                    <div className="space-y-1.5">
-                      <label htmlFor="name" className="text-sm font-semibold text-foreground block">
-                        Full Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
-                          errors.name ? 'border-red-500 bg-red-500/5' : 'border-border'
-                        }`}
-                        placeholder="e.g. Rajesh Sharma"
-                        autoComplete="name"
-                      />
-                      {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
-                    </div>
-
-                    {/* Corporate Mail */}
-                    <div className="space-y-1.5">
-                      <label htmlFor="email" className="text-sm font-semibold text-foreground block">
-                        Corporate Mail ( Gmail , Outlook , hotmail , yahoo ) <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
-                          errors.email ? 'border-red-500 bg-red-500/5' : 'border-border'
-                        }`}
-                        placeholder="name@company.com or name@gmail.com"
-                        autoComplete="email"
-                      />
-                      {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
-                    </div>
-
+                  {/* Field 1: Full Name */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="name" className="text-sm font-semibold text-foreground block">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                        errors.name ? 'border-red-500 bg-red-500/5' : 'border-border'
+                      }`}
+                      placeholder="e.g. Rajesh Sharma"
+                      autoComplete="name"
+                    />
+                    {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                   </div>
 
-                  {/* Row 2: Company Name & Contact Number */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    {/* Company Name */}
-                    <div className="space-y-1.5">
-                      <label htmlFor="company" className="text-sm font-semibold text-foreground block">
-                        Company Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="company"
-                        value={formData.company}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
-                          errors.company ? 'border-red-500 bg-red-500/5' : 'border-border'
-                        }`}
-                        placeholder="Your Company Name"
-                        autoComplete="organization"
-                      />
-                      {errors.company && <p className="text-xs text-red-500">{errors.company}</p>}
-                    </div>
-
-                    {/* Contact Number */}
-                    <div className="space-y-1.5">
-                      <label htmlFor="phone" className="text-sm font-semibold text-foreground block">
-                        Contact Number <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
-                          errors.phone ? 'border-red-500 bg-red-500/5' : 'border-border'
-                        }`}
-                        placeholder="+91 98765 43210"
-                        autoComplete="tel"
-                      />
-                      {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
-                    </div>
-
+                  {/* Field 2: Work Email (Corporate / Business Email Only) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="email" className="text-sm font-semibold text-foreground block">
+                      Work Email <span className="text-xs font-normal text-muted-foreground">(Corporate / Business Email)</span> <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                        errors.email ? 'border-red-500 bg-red-500/5' : 'border-border'
+                      }`}
+                      placeholder="name@company.com"
+                      autoComplete="email"
+                    />
+                    {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                   </div>
 
-                  {/* Row 3: Designation ( Optional ) & Services Type ( Optional ) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    
-                    {/* Designation ( Optional ) */}
-                    <div className="space-y-1.5">
-                      <label htmlFor="designation" className="text-sm font-semibold text-foreground block">
-                        Designation <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="designation"
-                        value={formData.designation}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
-                        placeholder="e.g. Director, Manager, Consultant"
-                        autoComplete="organization-title"
-                      />
-                    </div>
+                  {/* Field 3: Company Name */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="company" className="text-sm font-semibold text-foreground block">
+                      Company Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                        errors.company ? 'border-red-500 bg-red-500/5' : 'border-border'
+                      }`}
+                      placeholder="Your Company Name"
+                      autoComplete="organization"
+                    />
+                    {errors.company && <p className="text-xs text-red-500">{errors.company}</p>}
+                  </div>
 
-                    {/* Services Type ( Optional ) */}
-                    <div className="space-y-1.5">
-                      <label htmlFor="serviceInterest" className="text-sm font-semibold text-foreground block">
-                        Services Type <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
-                      </label>
-                      <Select 
-                        value={formData.serviceInterest} 
-                        onValueChange={(value) => handleSelectChange('serviceInterest', value)} 
-                        disabled={isSubmitting}
+                  {/* Field 4: Contact Number (Min. 10 digits) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="phone" className="text-sm font-semibold text-foreground block">
+                      Contact Number <span className="text-xs font-normal text-muted-foreground">(Min. 10 digits)</span> <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                        errors.phone ? 'border-red-500 bg-red-500/5' : 'border-border'
+                      }`}
+                      placeholder="+91 98765 43210"
+                      autoComplete="tel"
+                    />
+                    {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+                  </div>
+
+                  {/* Field 5: Designation ( Optional ) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="designation" className="text-sm font-semibold text-foreground block">
+                      Designation <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="designation"
+                      value={formData.designation}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
+                      placeholder="e.g. Security Director, Facilities Manager, COO"
+                      autoComplete="organization-title"
+                    />
+                  </div>
+
+                  {/* Field 6: Services Type ( Optional ) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="serviceInterest" className="text-sm font-semibold text-foreground block">
+                      Services Type <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
+                    </label>
+                    <Select 
+                      value={formData.serviceInterest} 
+                      onValueChange={(value) => handleSelectChange('serviceInterest', value)} 
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger 
+                        id="serviceInterest" 
+                        className="w-full h-12 bg-background border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
                       >
-                        <SelectTrigger 
-                          id="serviceInterest" 
-                          className="w-full h-12 bg-background border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
-                        >
-                          <SelectValue placeholder="Select Service Type" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border border-border">
-                          <SelectItem value="Manned Guarding">Manned Guarding</SelectItem>
-                          <SelectItem value="Electronic Security & CCTV">Electronic Security & CCTV</SelectItem>
-                          <SelectItem value="Cash Logistics">Cash Logistics</SelectItem>
-                          <SelectItem value="Facility Management">Facility Management</SelectItem>
-                          <SelectItem value="Drone Services">Drone Services</SelectItem>
-                          <SelectItem value="Command Centers (SOC)">Command Centers (SOC)</SelectItem>
-                          <SelectItem value="Executive Protection">Executive Protection</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
+                        <SelectValue placeholder="Select Service Type" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border border-border">
+                        <SelectItem value="Manned Guarding">Manned Guarding</SelectItem>
+                        <SelectItem value="Electronic Security & CCTV">Electronic Security & CCTV</SelectItem>
+                        <SelectItem value="Cash Logistics">Cash Logistics</SelectItem>
+                        <SelectItem value="Facility Management">Facility Management</SelectItem>
+                        <SelectItem value="Drone Services">Drone Services</SelectItem>
+                        <SelectItem value="Command Centers (SOC)">Command Centers (SOC)</SelectItem>
+                        <SelectItem value="Executive Protection">Executive Protection</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  {/* Row 4: Your Message ( Optional ) */}
+                  {/* Field 7: Your Message ( Optional ) */}
                   <div className="space-y-1.5">
                     <label htmlFor="message" className="text-sm font-semibold text-foreground block">
                       Your Message <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
                     </label>
                     <textarea
                       id="message"
-                      rows={4}
+                      rows={3}
                       value={formData.message}
                       onChange={handleInputChange}
                       disabled={isSubmitting}
                       className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none text-foreground placeholder:text-muted-foreground/60"
-                      placeholder="Enter your message here..."
+                      placeholder="Share your security or facility requirements..."
                     ></textarea>
                   </div>
 
-                  {/* Privacy Policy Checkbox */}
-                  <div className="space-y-1.5">
+                  {/* Field 8: Privacy Policy Checkbox */}
+                  <div className="space-y-1.5 pt-1">
                     <div className="flex items-start gap-3 p-3.5 bg-muted/20 rounded-xl border border-border/50">
                       <Checkbox 
                         id="privacyConsent" 
@@ -439,16 +424,16 @@ export const Contact = () => {
                     {errors.privacyConsent && <p className="text-xs text-red-500">{errors.privacyConsent}</p>}
                   </div>
 
-                  {/* Submit Button */}
-                  <div className="pt-2 flex justify-center">
+                  {/* Field 9: Submit Button */}
+                  <div className="pt-2">
                     <Button
                       type="submit"
                       size="lg"
                       disabled={isSubmitting}
-                      className="w-full sm:w-auto min-w-[220px] h-12 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md"
+                      className="w-full h-12 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? 'Sending...' : 'Send Message'}
-                      <Send className="w-4 h-4 ml-2" />
+                      <Send className="w-4 h-4" />
                     </Button>
                   </div>
 
