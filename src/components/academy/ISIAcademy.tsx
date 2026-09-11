@@ -264,13 +264,13 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
     },
     {
       id: "degrees",
-      title: "Undergraduate Degrees",
+      title: "Undergraduate Degrees (Under Consideration **)",
       duration: "3-4 Years (Blended + Residency)",
       image: academyHeroImg,
-      badge: "B.Tech & B.Sc Degree Pathways",
-      desc: "Blended degree programs providing physical lab access, localized mentorship, and official support for IIT Madras & IIT Kanpur online degrees.",
-      highlights: ["B.Tech EV Engineering", "B.Tech/B.Sc Robotics & AI", "B.Tech/B.Sc Medical Instrumentation", "B.Sc Cybersecurity & Quantum", "B.Tech Data Center Engineering", "IIT Madras & IIT Kanpur Offline Support"],
-      count: "6 Degree Options"
+      badge: "Degree Pathways (Under Consideration **)",
+      desc: "Proposed blended degree pathways combining localized lab access, industry mentorship, and practical residency support (Subject to institutional affiliation & regulatory consideration).",
+      highlights: ["EV Engineering (Proposed)", "Robotics & AI (Proposed)", "Medical Instrumentation (Proposed)", "Cybersecurity & Quantum (Proposed)", "Data Center Engineering (Proposed)", "Residency & Lab Track"],
+      count: "Under Consideration **"
     },
     {
       id: "pg-diplomas",
@@ -777,7 +777,7 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
               Program Tier Hierarchy
             </h2>
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              Explore our structured academic hierarchy from 90-day targeted certificates to C-DAC PG Diplomas and blended undergraduate degrees.
+              Explore our structured academic hierarchy from 90-day targeted certificates to C-DAC PG Diplomas and proposed undergraduate degree tracks (Under Consideration **).
             </p>
           </div>
 
