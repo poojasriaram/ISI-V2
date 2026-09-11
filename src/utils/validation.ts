@@ -48,7 +48,7 @@ export const validateWorkEmail = (email: string): { isValid: boolean; message: s
  * Validate phone number format and ensure length >= 10 digits
  */
 export const validatePhoneNumber = (phone: string): { isValid: boolean; message: string } => {
-  const normalized = phone.replace(/[+\-\(\)\s]/g, '');
+  const normalized = phone.replace(/[+\-()\s]/g, '');
   const digits = normalized.replace(/\D/g, '');
   const hasInvalidChars = /[^0-9]/.test(normalized);
 

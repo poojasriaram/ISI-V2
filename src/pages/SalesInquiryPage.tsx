@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
-import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Shield, Building, User, Mail, Phone, MessageSquare, CheckCircle2 } from "lucide-react";
+import SEO from "@/components/SEO";
 
 import { HomeStats } from "@/components/HomeStats";
 import { HomeCustomers } from "@/components/HomeCustomers";
@@ -22,7 +22,6 @@ import { submitLeadToJira } from '@/services/jiraService';
 export const SalesInquiryPage = () => {
   useContentProtection();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const utmObj = getUtmParams();
@@ -57,7 +56,7 @@ export const SalesInquiryPage = () => {
   };
 
   const validateEmail = (value: string): boolean => {
-    const res = validateWorkEmail(value);
+    const res = validateGeneralEmail(value);
     setEmailError(res.message);
     return res.isValid;
   };
@@ -172,6 +171,11 @@ export const SalesInquiryPage = () => {
 
   return (
     <Layout noPadding={true} hideHeaderFooter={true}>
+      <SEO 
+        title="Integrated Facility Management & Security Solutions" 
+        description="Comprehensive facility management, manned guarding, surveillance, and automated operations for enterprises across India."
+        canonical="/lp/facility-management"
+      />
       {/* Hero Section */}
       <div className="w-full relative pt-0 bg-white overflow-hidden">
         <div className="relative w-full">
@@ -239,7 +243,7 @@ export const SalesInquiryPage = () => {
                     name="workEmail" 
                     type="email" 
                     className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${emailError ? 'border-red-500' : 'border-slate-200'}`}
-                    placeholder="Work email" 
+                    placeholder="Work / Corporate Email" 
                     value={workEmail}
                     onChange={handleEmailChange}
                     onBlur={handleEmailBlur}
@@ -317,7 +321,7 @@ export const SalesInquiryPage = () => {
                 name="workEmail" 
                 type="email" 
                 className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${emailError ? 'border-red-500' : 'border-slate-200'}`}
-                placeholder="Work email" 
+                placeholder="Work / Corporate Email" 
                 value={workEmail}
                 onChange={handleEmailChange}
                 onBlur={handleEmailBlur}

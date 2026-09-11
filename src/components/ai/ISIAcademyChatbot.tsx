@@ -195,7 +195,7 @@ export const ISIAcademyChatbot: React.FC = () => {
   const processLeadStep = async (userAnswer: string) => {
     let nextStep: LeadStep = 'idle';
     let promptText = "";
-    let updatedData = { ...leadData };
+    const updatedData = { ...leadData };
 
     if (leadStep === 'name') {
       updatedData.name = userAnswer;

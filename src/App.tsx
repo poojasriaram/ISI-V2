@@ -152,7 +152,12 @@ const appRoutes = [
   { path: "/lp/facility-management/thank-you", element: <ThankYouPage /> },
   { path: "/integratedservices", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/integratedservices/thank-you", element: <Navigate to="/lp/facility-management/thank-you" replace /> },
+  { path: "/integrated-services", element: <Navigate to="/lp/facility-management" replace /> },
+  { path: "/integrated-services/thank-you", element: <Navigate to="/lp/facility-management/thank-you" replace /> },
+  { path: "/services/integrated-services", element: <Navigate to="/lp/facility-management" replace /> },
+  { path: "/services/integratedservices", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/salesinquiry", element: <Navigate to="/lp/facility-management" replace /> },
+  { path: "/sales-inquiry", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/services", element: <Navigate to="/services/security" replace /> },
   { path: "/services/security", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/security/" /> },
   { path: "/services/integrated-facility-management", element: <ServiceCategoryPage categoryIdOverride="hard-fm" canonicalPathOverride="/services/integrated-facility-management/" /> },
@@ -167,7 +172,10 @@ const appRoutes = [
 
 const AppRouter = () => {
   const location = useLocation();
-  const isIntegratedServices = location.pathname === '/lp/facility-management' || location.pathname === '/integratedservices';
+  const isIntegratedServices = location.pathname.startsWith('/lp/facility-management') || 
+                               location.pathname.startsWith('/integratedservices') || 
+                               location.pathname.startsWith('/integrated-services') ||
+                               location.pathname.startsWith('/salesinquiry');
   const [showWidgets, setShowWidgets] = useState(false);
 
   useEffect(() => {

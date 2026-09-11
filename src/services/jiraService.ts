@@ -50,10 +50,20 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<{ succ
       body: JSON.stringify(fullPayload),
     });
 
-    const result = await response.json();
+    let result: any = { success: response.ok };
+    try {
+      const text = await response.text();
+      if (text) {
+        result = JSON.parse(text);
+      }
+    } catch {
+      // Non-JSON response (e.g. from static host or proxy)
+      result = { success: response.ok };
+    }
+
     return result;
   } catch (err: any) {
-    console.error('Error submitting lead to Jira:', err);
+    console.warn('Error submitting lead to Jira:', err);
     return {
       success: false,
       error: err.message || 'Failed to submit lead to Jira'

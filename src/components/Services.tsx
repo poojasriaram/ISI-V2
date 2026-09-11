@@ -109,7 +109,10 @@ interface ServicesProps {
 
 export const Services = ({ hideConsultation }: ServicesProps = {}) => {
   const location = useLocation();
-  const isIntegratedServices = location.pathname === '/lp/facility-management' || location.pathname === '/integratedservices';
+  const isIntegratedServices = location.pathname.startsWith('/lp/facility-management') || 
+                               location.pathname.startsWith('/integratedservices') || 
+                               location.pathname.startsWith('/integrated-services') ||
+                               location.pathname.startsWith('/salesinquiry');
   const shouldHideConsultation = hideConsultation ?? isIntegratedServices;
 
   return (

@@ -45,7 +45,7 @@ const stats = [
 const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: string; suffix?: string; prefix?: string }) => {
     const [count, setCount] = useState(0);
     const ref = useRef<HTMLDivElement>(null);
-    const targetValue = parseInt(value, 10);
+    const targetValue = parseInt(value.replace(/,/g, ''), 10) || 0;
 
     useEffect(() => {
         const observer = new IntersectionObserver(
