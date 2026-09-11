@@ -19,8 +19,8 @@ const CONFIG = {
   // Main Analytics & Multi-Form Tracking Spreadsheet ID
   MAIN_SPREADSHEET_ID: "1vHFp5FfF_kHCKNtGpigcDLbS2gm3ETy1xdYuuJAru60",
 
-  // Dedicated Ad Campaign Spreadsheet ID (If left empty, the script auto-creates/locates one)
-  AD_CAMPAIGN_SPREADSHEET_ID: "",
+  // Dedicated Ad Campaign Spreadsheet ID
+  AD_CAMPAIGN_SPREADSHEET_ID: "15OaMm3wf1esko6IZfpO74lnAZior8RGMwO2FiV_iz74",
 
   // Google Drive folder name to store career resumes
   CAREER_RESUMES_FOLDER_NAME: "ISI_Career_Resumes",
