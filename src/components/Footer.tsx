@@ -86,12 +86,16 @@ export const Footer = () => {
 
     setIsNewsletterSubmitting(true);
     try {
-      // Send Subscription via Node.js Server
-      await fetch('http://localhost:5000/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail }),
-      });
+      // Record subscription to Google Sheets and backend
+      trackFormSubmission('Newsletter_Subscriptions', { email: newsletterEmail });
+
+      try {
+        await fetch('http://localhost:5000/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: newsletterEmail }),
+        });
+      } catch { /* optional backend server */ }
 
       toast.success('Subscribed successfully!', {
         description: 'You will now receive our latest security updates directly in your inbox.',

@@ -127,7 +127,7 @@ export const Contact = () => {
 
     try {
       // Track submission to Google Sheets and Jira
-      trackFormSubmission('ContactForm', {
+      trackFormSubmission('Contact_Form', {
         name: formData.name.trim(),
         email: formData.email.trim(),
         company: formData.company.trim(),

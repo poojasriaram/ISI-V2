@@ -49,10 +49,10 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
         return;
     }
 
-    // Pulling Raw Data
-    var tSheet = db.getSheetByName("TrafficAnalytics");
-    var eSheet = db.getSheetByName("EngagementMetrics");
-    var ubSheet = db.getSheetByName("UserBehaviorLibrary");
+    // Pulling Raw Data (Support both new database underscore format and legacy tab names)
+    var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
+    var eSheet = db.getSheetByName("Engagement_Metrics") || db.getSheetByName("EngagementMetrics");
+    var ubSheet = db.getSheetByName("User_Behavior_Library") || db.getSheetByName("UserBehaviorLibrary");
 
     var tDataRaw = (tSheet && tSheet.getLastRow() > 0) ? tSheet.getDataRange().getValues() : [];
     var eDataRaw = (eSheet && eSheet.getLastRow() > 0) ? eSheet.getDataRange().getValues() : [];
@@ -697,7 +697,7 @@ function buildIdentityLinkerSheet(ubData, db) {
     if (!ubData || ubData.length < 2) return;
     var vidCol = ubData[0].indexOf("Visitor ID");
     var idents = {};
-    ["ContactForm", "PartnerApps", "ChatbotLeads", "AcademyInquiries"].forEach(function (tab) {
+    ["Contact_Form", "ContactForm", "Partner_Applications", "PartnerApps", "Chatbot_Leads", "ChatbotLeads", "Academy_Inquiries", "AcademyInquiries", "Sales_Inquiries", "SalesInquiries", "Google_Ad_Leads", "Career_Applications", "CareerApplications"].forEach(function (tab) {
         var s = db.getSheetByName(tab); if (!s) return;
         var d = s.getDataRange().getValues(), vC = d[0].indexOf("Visitor ID"), eC = d[0].indexOf("Email"), nC = d[0].indexOf("Name");
         if (vC > -1 && eC > -1) {

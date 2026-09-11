@@ -168,7 +168,7 @@ export default function SchoolSafetyLanding() {
         setEbookSubmitting(true);
         try {
             // Track submission to Google Sheets
-            trackFormSubmission('EbookDownloads', {
+            trackFormSubmission('Ebook_Downloads', {
                 ...ebookForm,
                 followUpStatus: 'New',
                 source: 'School Safety Landing'
@@ -211,7 +211,7 @@ export default function SchoolSafetyLanding() {
         setConsultationSubmitting(true);
         try {
             // Track submission to Google Sheets
-            trackFormSubmission('ConsultationReqs', {
+            trackFormSubmission('Consultation_Requests', {
                 ...consultationForm,
                 status: 'New'
             });

@@ -291,7 +291,7 @@ export const useAnalytics = () => {
                 elementInfo: `${event.filename}:${event.lineno}`,
                 metadata: { col: event.colno, stack: event.error?.stack }
             };
-            sendToGoogleSheets('BehaviorMetrics', errorData);
+            sendToGoogleSheets('Behavior_Metrics', errorData);
         };
 
         const handleRejection = (event: PromiseRejectionEvent) => {
@@ -303,7 +303,7 @@ export const useAnalytics = () => {
                 value: String(event.reason),
                 elementInfo: 'promise',
             };
-            sendToGoogleSheets('BehaviorMetrics', errorData);
+            sendToGoogleSheets('Behavior_Metrics', errorData);
         };
 
         window.addEventListener('error', handleError);
@@ -359,7 +359,7 @@ export const useAnalytics = () => {
             referrer: document.referrer || 'Direct',
         };
 
-        sendToGoogleSheets('TrafficAnalytics', data);
+        sendToGoogleSheets('Traffic_Analytics', data);
          
     }, [location]); // ← ONLY re-fire when location changes, NOT when IP loads
 
@@ -400,7 +400,7 @@ export const useAnalytics = () => {
             if (recentClicks.length >= 3) {
                 const isRage = recentClicks.every(i => Math.abs(i.x - e.clientX) < 50 && Math.abs(i.y - e.clientY) < 50);
                 if (isRage && recentClicks.length === 3) { // Only log once per burst
-                    sendToGoogleSheets('BehaviorMetrics', {
+                    sendToGoogleSheets('Behavior_Metrics', {
                         ...getBaseData(),
                         pageUrl: window.location.href,
                         category: 'UX Friction',
@@ -416,7 +416,7 @@ export const useAnalytics = () => {
             if (!isClickable && recentClicks.length >= 2) {
                 const isDead = recentClicks.every(i => Math.abs(i.x - e.clientX) < 50 && Math.abs(i.y - e.clientY) < 50);
                 if (isDead && recentClicks.length === 2) { // Log on 2nd dead click
-                    sendToGoogleSheets('BehaviorMetrics', {
+                    sendToGoogleSheets('Behavior_Metrics', {
                         ...getBaseData(),
                         pageUrl: window.location.href,
                         category: 'UX Friction',
@@ -436,7 +436,7 @@ export const useAnalytics = () => {
 
             // Native CTA Tracking
             if (target.tagName === 'BUTTON' || target.tagName === 'A' || target.closest('button') || target.closest('a')) {
-                sendToGoogleSheets('BehaviorMetrics', {
+                sendToGoogleSheets('Behavior_Metrics', {
                     ...getBaseData(),
                     pageUrl: window.location.href,
                     category: 'CTA Click',
@@ -559,10 +559,10 @@ export const useAnalytics = () => {
                 tree: constructLinearTree(navigationPath.current)
             };
 
-            sendToGoogleSheets('UserBehaviorLibrary', libraryData);
+            sendToGoogleSheets('User_Behavior_Library', libraryData);
 
             if (activeSeconds > 1) {
-                sendToGoogleSheets('EngagementMetrics', {
+                sendToGoogleSheets('Engagement_Metrics', {
                     ...getBaseData(),
                     pageUrl: window.location.href,
                     userAgent: navigator.userAgent,
@@ -592,7 +592,7 @@ export const useAnalytics = () => {
                 const formId = form?.id || form?.getAttribute('data-name') || 'unknown';
                 if (!formInteractions.current[formId]) {
                     formInteractions.current[formId] = { started: true, lastField: target.id || target.name, submitted: false };
-                    sendToGoogleSheets('BehaviorMetrics', {
+                    sendToGoogleSheets('Behavior_Metrics', {
                         ...getBaseData(),
                         pageUrl: window.location.href,
                         category: 'Form Focus',
@@ -653,8 +653,8 @@ export const useAnalytics = () => {
         trackFormSubmission: (sheetName: SheetName, formData: any  ) => {
             navigationPath.current.push({ path: `Action: Form Submitted [${sheetName}]`, timestamp: Date.now() });
             if (formInteractions.current[sheetName]) formInteractions.current[sheetName].submitted = true;
-            if (sheetName === 'PartnerApps') counters.current.partnerInquiries++;
-            if (sheetName === 'CareerApps') counters.current.careerInquiries++;
+            if (sheetName === 'Partner_Applications' || sheetName === 'PartnerApps') counters.current.partnerInquiries++;
+            if (sheetName === 'Career_Applications' || sheetName === 'CareerApps') counters.current.careerInquiries++;
             if (formData.email) localStorage.setItem('isi_user_email', formData.email);
 
             sendToGoogleSheets(sheetName, {
@@ -713,7 +713,7 @@ export const useAnalytics = () => {
                 entries.forEach(e => {
                     if (e.isIntersecting) {
                         navigationPath.current.push({ path: `Action: Viewed Element [${metricName}]`, timestamp: Date.now() });
-                        sendToGoogleSheets('BehaviorMetrics', {
+                        sendToGoogleSheets('Behavior_Metrics', {
                             ...getBaseData(),
                             pageUrl: window.location.href,
                             category: 'Element View',

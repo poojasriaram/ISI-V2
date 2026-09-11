@@ -555,7 +555,7 @@ export const useChatBot = () => {
 
         if (content.trim() === '/testairtable') {
             try {
-                trackFormSubmission('ChatbotLeads', {
+                trackFormSubmission('Chatbot_Leads', {
                     name: 'TEST_USER',
                     phone: '9999999999',
                     email: 'test@example.com',

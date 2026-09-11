@@ -40,7 +40,7 @@ export const ExitIntentPopup = () => {
         if (!feedback.trim()) return;
 
         // Track feedback
-        trackFormSubmission('ExitIntentFeedback', {
+        trackFormSubmission('Exit_Intent_Feedback', {
             feedback,
             url: window.location.href,
             timestamp: new Date().toISOString()
@@ -138,7 +138,7 @@ export const ExitIntentPopup = () => {
                                     <Button 
                                         type="button"
                                         onClick={() => {
-                                            trackFormSubmission('ExitIntentFeedback', {
+                                            trackFormSubmission('Exit_Intent_Feedback', {
                                                 feedback: 'Clicked WhatsApp from Exit Popup',
                                                 url: window.location.href,
                                                 timestamp: new Date().toISOString()

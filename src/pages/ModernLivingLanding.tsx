@@ -44,7 +44,7 @@ export default function ModernLivingLanding() {
         }
 
         setSubmitting(true);
-        trackFormSubmission('ContactForm', {
+        trackFormSubmission('Contact_Form', {
             ...form,
             source: 'Modern Living Landing'
         });

@@ -95,20 +95,79 @@ var masterMetrics = [
 ];
 
 var TAB_CONFIGS = {
-  "UserBehaviorLibrary": masterMetrics,
-  "TrafficAnalytics": [
+  // Canonical Database Format (with underscores)
+  "Contact_Form": [
+    "Name","Email","Company","Phone","Designation","Service Interest",
+    "Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Partner_Applications": [
+    "Name","Email","Company","Designation","Phone","Location","Partnership Type",
+    "Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Career_Applications": [
+    "Name","Email","Phone","Job Title","Resume File Name","Resume Drive Link","Drive File ID","Cover Letter",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Ebook_Downloads": [
+    "School Name","Role","Email","Phone","Source","Follow Up Status",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Consultation_Requests": [
+    "Name","School Name","Board","Number of Students","Primary Concern","Email",
+    "Phone","City","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Chatbot_Leads": [
+    "Name","Email","Phone","Existing Customer","Category","Message",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Organization","Variant","Timestamp"
+  ],
+  "Sales_Inquiries": [
+    "Full Name","Phone Number","Work Email","Company Name",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Academy_Inquiries": [
+    "Name","Email","Phone","Organization","Program / Course","Message",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Tender_RFQ": [
+    "Name","Email","Phone","Organization","Tender Scope","Budget","Deadline","Message",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Status","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Google_Ad_Leads": [
+    "Full Name","Phone Number","Work Email","Company Name",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "IP Location","IP Address","Organization","Variant","Timestamp"
+  ],
+  "Newsletter_Subscriptions": [
+    "Email","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Exit_Intent_Feedback": [
+    "Feedback","URL","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "Traffic_Analytics": [
     "Session ID","Visitor ID","Page Path","Page Title","Referrer","Traffic Source",
     "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "Organization","IP Location","IP Address","Variant","Timestamp"
   ],
-  "EngagementMetrics": [
+  "Engagement_Metrics": [
     "Session ID","Visitor ID","Page URL","Duration (sec)","Scroll Depth (%)","Click Count",
     "Engagement Score","CTA Clicked","Returning User","Is Hot Lead","Variant","Timestamp"
   ],
-  "BehaviorMetrics": [
+  "Behavior_Metrics": [
     "Session ID","Visitor ID","Page URL","Category","Metric Name","Value",
     "Element Info","Metadata","IP Location","IP Address","Variant","Timestamp"
   ],
+  "User_Behavior_Library": masterMetrics,
+
+  // Legacy Tab Compatibility Definitions
   "ContactForm": [
     "Name","Email","Company","Phone","Designation","Service Interest",
     "Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
@@ -154,52 +213,76 @@ var TAB_CONFIGS = {
     "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "Status","IP Location","IP Address","Variant","Timestamp"
   ],
-  "Google_Ad_Leads": [
-    "Full Name","Phone Number","Work Email","Company Name",
-    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
-    "IP Location","IP Address","Organization","Variant","Timestamp"
-  ],
   "AdCampaign": [
     "Full Name","Phone Number","Work Email","Company Name",
     "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "IP Location","IP Address","Organization","Variant","Timestamp"
-  ]
+  ],
+  "TrafficAnalytics": [
+    "Session ID","Visitor ID","Page Path","Page Title","Referrer","Traffic Source",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Organization","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "EngagementMetrics": [
+    "Session ID","Visitor ID","Page URL","Duration (sec)","Scroll Depth (%)","Click Count",
+    "Engagement Score","CTA Clicked","Returning User","Is Hot Lead","Variant","Timestamp"
+  ],
+  "BehaviorMetrics": [
+    "Session ID","Visitor ID","Page URL","Category","Metric Name","Value",
+    "Element Info","Metadata","IP Location","IP Address","Variant","Timestamp"
+  ],
+  "UserBehaviorLibrary": masterMetrics
 };
 
-// Common variations and aliases for Google Sheet tab names
+// Common variations and aliases for Google Sheet tab names (mapped to canonical database names)
 var SHEET_NAME_ALIASES = {
-  // Contact Form variations
-  "contactform": "ContactForm",
-  "contactforms": "ContactForm",
-  "contact": "ContactForm",
-  "contacts": "ContactForm",
-  "contactus": "ContactForm",
-  "contact_us": "ContactForm",
-  "contact_form": "ContactForm",
-  "contactleads": "ContactForm",
-  "contact_leads": "ContactForm",
-  "websiteleads": "ContactForm",
-  "website_leads": "ContactForm",
-  "leads": "ContactForm",
+  // Contact Form
+  "contactform": "Contact_Form",
+  "contact_form": "Contact_Form",
+  "contactforms": "Contact_Form",
+  "contact": "Contact_Form",
+  "contacts": "Contact_Form",
+  "contactus": "Contact_Form",
+  "contact_us": "Contact_Form",
+  "contactleads": "Contact_Form",
+  "contact_leads": "Contact_Form",
+  "websiteleads": "Contact_Form",
+  "website_leads": "Contact_Form",
+  "leads": "Contact_Form",
 
-  // Partner variations
-  "partnerapps": "PartnerApps",
-  "partners": "PartnerApps",
-  "partner": "PartnerApps",
-  "partner_applications": "PartnerApps",
-  "partnerapplications": "PartnerApps",
-  "partnerleads": "PartnerApps",
+  // Partner
+  "partnerapps": "Partner_Applications",
+  "partner_apps": "Partner_Applications",
+  "partner_applications": "Partner_Applications",
+  "partnerapplications": "Partner_Applications",
+  "partners": "Partner_Applications",
+  "partner": "Partner_Applications",
+  "partnerleads": "Partner_Applications",
 
-  // Career variations
-  "careerapplications": "CareerApplications",
-  "careers": "CareerApplications",
-  "career": "CareerApplications",
-  "careerapps": "CareerApplications",
-  "jobs": "CareerApplications",
-  "jobapplications": "CareerApplications",
-  "applicants": "CareerApplications",
+  // Career
+  "careerapplications": "Career_Applications",
+  "career_applications": "Career_Applications",
+  "careers": "Career_Applications",
+  "career": "Career_Applications",
+  "careerapps": "Career_Applications",
+  "career_apps": "Career_Applications",
+  "jobs": "Career_Applications",
+  "jobapplications": "Career_Applications",
+  "applicants": "Career_Applications",
 
-  // Google Ad Leads / Ad Campaign variations
+  // Ebook
+  "ebookdownloads": "Ebook_Downloads",
+  "ebook_downloads": "Ebook_Downloads",
+  "ebook": "Ebook_Downloads",
+  "ebooks": "Ebook_Downloads",
+
+  // Consultation
+  "consultationreqs": "Consultation_Requests",
+  "consultation_requests": "Consultation_Requests",
+  "consultations": "Consultation_Requests",
+  "consultation": "Consultation_Requests",
+
+  // Google Ad Leads / Ad Campaign
   "google_ad_leads": "Google_Ad_Leads",
   "googleadleads": "Google_Ad_Leads",
   "google_ads": "Google_Ad_Leads",
@@ -212,37 +295,55 @@ var SHEET_NAME_ALIASES = {
   "adleads": "Google_Ad_Leads",
 
   // Chatbot
-  "chatbotleads": "ChatbotLeads",
-  "chatbot": "ChatbotLeads",
-  "botleads": "ChatbotLeads",
-  "chatleads": "ChatbotLeads",
+  "chatbotleads": "Chatbot_Leads",
+  "chatbot_leads": "Chatbot_Leads",
+  "chatbot": "Chatbot_Leads",
+  "botleads": "Chatbot_Leads",
+  "chatleads": "Chatbot_Leads",
 
   // Sales
-  "salesinquiries": "SalesInquiries",
-  "sales": "SalesInquiries",
-  "salesleads": "SalesInquiries",
-  "salesinquiry": "SalesInquiries",
+  "salesinquiries": "Sales_Inquiries",
+  "sales_inquiries": "Sales_Inquiries",
+  "sales": "Sales_Inquiries",
+  "salesleads": "Sales_Inquiries",
+  "salesinquiry": "Sales_Inquiries",
 
   // Academy
-  "academyinquiries": "AcademyInquiries",
-  "academy": "AcademyInquiries",
-  "academy_inquiries": "AcademyInquiries",
-  "academyleads": "AcademyInquiries",
+  "academyinquiries": "Academy_Inquiries",
+  "academy_inquiries": "Academy_Inquiries",
+  "academy": "Academy_Inquiries",
+  "academyleads": "Academy_Inquiries",
 
   // Tender / RFQ
-  "tenderrfq": "TenderRFQ",
-  "tenders": "TenderRFQ",
-  "rfq": "TenderRFQ",
-  "tender": "TenderRFQ",
-  "rfqs": "TenderRFQ",
+  "tenderrfq": "Tender_RFQ",
+  "tender_rfq": "Tender_RFQ",
+  "tenders": "Tender_RFQ",
+  "rfq": "Tender_RFQ",
+  "tender": "Tender_RFQ",
+  "rfqs": "Tender_RFQ",
+
+  // Newsletter
+  "newslettersubs": "Newsletter_Subscriptions",
+  "newsletter_subscriptions": "Newsletter_Subscriptions",
+  "newsletter": "Newsletter_Subscriptions",
+  "subscriptions": "Newsletter_Subscriptions",
+
+  // Exit Intent
+  "exitintentfeedback": "Exit_Intent_Feedback",
+  "exit_intent_feedback": "Exit_Intent_Feedback",
+  "exitfeedback": "Exit_Intent_Feedback",
 
   // Analytics
-  "trafficanalytics": "TrafficAnalytics",
-  "traffic": "TrafficAnalytics",
-  "userbehaviorlibrary": "UserBehaviorLibrary",
-  "behaviorlibrary": "UserBehaviorLibrary",
-  "engagementmetrics": "EngagementMetrics",
-  "behaviormetrics": "BehaviorMetrics"
+  "trafficanalytics": "Traffic_Analytics",
+  "traffic_analytics": "Traffic_Analytics",
+  "traffic": "Traffic_Analytics",
+  "userbehaviorlibrary": "User_Behavior_Library",
+  "user_behavior_library": "User_Behavior_Library",
+  "behaviorlibrary": "User_Behavior_Library",
+  "engagementmetrics": "Engagement_Metrics",
+  "engagement_metrics": "Engagement_Metrics",
+  "behaviormetrics": "Behavior_Metrics",
+  "behavior_metrics": "Behavior_Metrics"
 };
 
 /**
@@ -442,6 +543,9 @@ function doPost(e) {
     
     // Handle Email Notifications (Leads, Careers, Partners, Academy, Sales, etc.)
     var LEAD_FORMS = [
+      "Contact_Form", "Partner_Applications", "Career_Applications", 
+      "Ebook_Downloads", "Consultation_Requests", "Sales_Inquiries", 
+      "Academy_Inquiries", "Chatbot_Leads", "Tender_RFQ", "Google_Ad_Leads",
       "ContactForm", "PartnerApps", "CareerApplications", 
       "EbookDownloads", "ConsultationReqs", "SalesInquiries", 
       "AcademyInquiries", "ChatbotLeads", "TenderRFQ"
@@ -691,6 +795,23 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.careerEmails
       };
 
+    case "Career_Applications":
+    case "CareerApplications":
+      return {
+        categoryName: "Talent Acquisition & Careers",
+        badgeText: "📄 CAREER APPLICATION",
+        badgeBg: "#059669",
+        badgeColor: "#ffffff",
+        leadName: name || "Applicant",
+        leadCompany: data["Job Title"] || data.jobTitle || "Career Candidate",
+        leadPhone: phone,
+        internalSubject: "📄 [New Job Application] " + (name || "Candidate") + " - " + (data["Job Title"] || data.jobTitle || "Application"),
+        userSubject: "📄 Career Application Received – ISI Security Careers",
+        userMessage: "We have received your career application. Our Talent Acquisition Team is reviewing your credentials and will reach out if your profile matches our requirements.",
+        recipients: EMAIL_CONFIG.careerEmails
+      };
+
+    case "Sales_Inquiries":
     case "SalesInquiries":
       return {
         categoryName: "Sales & Enterprise Lead Generation",
@@ -706,6 +827,7 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
+    case "Contact_Form":
     case "ContactForm":
       return {
         categoryName: "Direct Website Lead Generation",
@@ -721,6 +843,7 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
+    case "Partner_Applications":
     case "PartnerApps":
       return {
         categoryName: "Partner Network Lead Generation",
@@ -736,6 +859,7 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
+    case "Academy_Inquiries":
     case "AcademyInquiries":
       return {
         categoryName: "ISI Academy Lead Generation",
@@ -751,6 +875,7 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
+    case "Chatbot_Leads":
     case "ChatbotLeads":
       return {
         categoryName: "AI Chatbot Lead Generation",
@@ -766,6 +891,7 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
+    case "Consultation_Requests":
     case "ConsultationReqs":
       return {
         categoryName: "Campus & School Safety Consultation Lead Generation",
@@ -781,6 +907,7 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
+    case "Tender_RFQ":
     case "TenderRFQ":
       return {
         categoryName: "Tender & RFQ Lead Generation",
@@ -793,6 +920,22 @@ function getLeadCategoryMeta(sheetName, data) {
         internalSubject: "📋 [Tender RFQ Lead Generation] " + (data.organization || name || "New RFQ"),
         userSubject: "📋 Tender RFQ Submission Received – ISI Security Bid Management",
         userMessage: "Thank you for inviting ISI Security to tender. Our Tenders & Commercial Bids Division has received your RFQ documents.",
+        recipients: EMAIL_CONFIG.salesEmails
+      };
+
+    case "Google_Ad_Leads":
+    case "AdCampaign":
+      return {
+        categoryName: "Paid Ad Campaign Lead Generation",
+        badgeText: "🎯 PAID AD CAMPAIGN LEAD",
+        badgeBg: "#f59e0b",
+        badgeColor: "#ffffff",
+        leadName: name || "Ad Prospect",
+        leadCompany: company || "Corporate Client",
+        leadPhone: phone,
+        internalSubject: "🎯 [Ad Campaign Lead Generation] " + (name || "New Lead") + " - " + (data.utmCampaign || "Paid Campaign"),
+        userSubject: "✅ Consultation Request Received – ISI Security",
+        userMessage: "Thank you for your interest in ISI Security. We have received your consultation request and our Senior Security Specialist will connect with you shortly.",
         recipients: EMAIL_CONFIG.salesEmails
       };
 

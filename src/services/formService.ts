@@ -172,7 +172,7 @@ export const submitChatbotLead = async (
     category?: string
 ) => {
     try {
-        await sendToSheet('ChatbotLeads', {
+        await sendToSheet('Chatbot_Leads', {
             name,
             phone,
             email,
@@ -196,7 +196,7 @@ export const submitAcademyInquiry = async (data: {
     message?: string;
 }) => {
     try {
-        await sendToSheet('AcademyInquiries', {
+        await sendToSheet('Academy_Inquiries', {
             Name: data.name,
             Email: data.email,
             Phone: data.phone,
@@ -214,7 +214,7 @@ export const submitAcademyInquiry = async (data: {
 
 export const submitCareerApplication = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('CareerApplications', {
+        await sendToSheet('Career_Applications', {
             ...data,
             targetEmail: 'hrms2026@isisecurity.in',
             notifyEmail: 'hrms2026@isisecurity.in',
@@ -229,7 +229,7 @@ export const submitCareerApplication = async (data: Record<string, unknown>) => 
 
 export const submitTenderRFQ = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('TenderRFQ', data);
+        await sendToSheet('Tender_RFQ', data);
         return { success: true };
     } catch (error) {
         console.error('Error submitting tender RFQ:', error);

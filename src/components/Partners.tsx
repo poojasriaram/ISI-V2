@@ -135,7 +135,17 @@ export const Partners = () => {
     setIsSubmitting(true);
 
     try {
-      // Record form submission logic here (e.g. google sheets) if needed
+      // Record form submission to Google Sheets and Jira
+      trackFormSubmission('Partner_Applications', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        company: formData.company.trim(),
+        designation: formData.designation.trim(),
+        phone: formData.phone.trim(),
+        location: formData.location.trim(),
+        partnershipType: formData.partnershipType,
+        message: formData.message.trim(),
+      });
 
       toast.success('Application submitted successfully!', {
         description: 'Our partnership team has received your details and will contact you within 48 hours.',

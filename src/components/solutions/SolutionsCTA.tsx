@@ -40,13 +40,13 @@ export const SolutionsCTA = () => {
         }
         
         setSubmitting(true);
-        trackFormSubmission('ContactForm', {
+        trackFormSubmission('Sales_Inquiries', {
             ...form,
             source: 'Solutions Page Landing'
         });
         
         const data = {
-            sheetName: "SalesInquiries",
+            sheetName: "Sales_Inquiries",
             "Full Name": form.name,
             "Phone Number": form.phone,
             "Work Email": form.email,

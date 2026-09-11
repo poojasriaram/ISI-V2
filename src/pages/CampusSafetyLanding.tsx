@@ -100,7 +100,7 @@ export default function CampusSafetyLanding() {
 
         setEbookSubmitting(true);
         // Track submission to Google Sheets
-        trackFormSubmission('EbookDownloads', {
+        trackFormSubmission('Ebook_Downloads', {
             ...ebookForm,
             followUpStatus: 'New',
             source: 'Campus Safety Landing'
@@ -133,7 +133,7 @@ export default function CampusSafetyLanding() {
 
         setConsultationSubmitting(true);
         // Track submission to Google Sheets
-        trackFormSubmission('ConsultationReqs', {
+        trackFormSubmission('Consultation_Requests', {
             ...consultationForm,
             status: 'New'
         });
