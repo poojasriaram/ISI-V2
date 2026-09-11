@@ -93,7 +93,11 @@ async function sendToSheet(
         payload: sanitizedPayload
     });
 
-    await fetch(SHEETS_URL, {
+    const targetUrl = (sheetName === 'AdCampaign')
+        ? (import.meta.env.VITE_AD_CAMPAIGN_WEB_APP_URL || "https://script.google.com/macros/s/AKfycbwL1i7fOTIPdyo86zgI2AbAmeAowti2nJy7LftH2YY-MEUmir8gYOKyaS2BhrK8zNnC/exec")
+        : SHEETS_URL;
+
+    await fetch(targetUrl, {
         method: 'POST',
         mode: 'no-cors',
         headers: {

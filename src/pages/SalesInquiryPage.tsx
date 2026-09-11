@@ -122,17 +122,18 @@ export const SalesInquiryPage = () => {
     };
 
     try {
-      const scriptURL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
+      const scriptURL = import.meta.env.VITE_AD_CAMPAIGN_WEB_APP_URL || "https://script.google.com/macros/s/AKfycbwL1i7fOTIPdyo86zgI2AbAmeAowti2nJy7LftH2YY-MEUmir8gYOKyaS2BhrK8zNnC/exec";
       
-      const response = await fetch(scriptURL, {
+      await fetch(scriptURL, {
         method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        toast.success("Inquiry Submitted Successfully!", {
-          description: "Our sales team will get back to you within 24 hours.",
-        });
+      toast.success("Inquiry Submitted Successfully!", {
+        description: "Our sales team will get back to you within 24 hours.",
+      });
         const submittedName = fullName;
         
         setFullName('');
@@ -143,9 +144,6 @@ export const SalesInquiryPage = () => {
         setEmailError('');
         
         navigate('/lp/facility-management/thank-you', { state: { name: submittedName, fromIntegratedServices: true } });
-      } else {
-        throw new Error("Network response was not ok");
-      }
     } catch (error) {
       toast.error("Submission Failed", {
         description: "Something went wrong while submitting your request. Please try again.",
