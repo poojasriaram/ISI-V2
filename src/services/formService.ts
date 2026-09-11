@@ -1,4 +1,5 @@
 import { getUtmParams } from '../utils/utm';
+import { submitLeadToJira } from './jiraService';
 
 // src/services/formService.ts
 
@@ -39,7 +40,8 @@ function getIpContext(): { ipAddress: string; location: string; organization: st
 }
 
 /**
- * Generic sheet sender — wraps every form submission with IP context and UTM parameters.
+ * Generic sheet & Jira sender — wraps every form submission with IP context, UTM parameters,
+ * routes data to Google Sheets AND automatically creates a Lead in Jira Cloud!
  */
 async function sendToSheet(
     sheetName: string,
@@ -93,18 +95,70 @@ async function sendToSheet(
         payload: sanitizedPayload
     });
 
+    // 1. Send to Google Sheets Webhook
     const targetUrl = (sheetName === 'AdCampaign')
         ? (import.meta.env.VITE_AD_CAMPAIGN_WEB_APP_URL || "https://script.google.com/macros/s/AKfycbwL1i7fOTIPdyo86zgI2AbAmeAowti2nJy7LftH2YY-MEUmir8gYOKyaS2BhrK8zNnC/exec")
         : SHEETS_URL;
 
-    await fetch(targetUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body
-    });
+    if (targetUrl) {
+        try {
+            await fetch(targetUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body
+            });
+        } catch (e) {
+            console.warn('[SHEETS SUBMISSION ERROR]', e);
+        }
+    }
+
+    // 2. Automatically Capture Lead in Jira Cloud (Direct_Lead_Flow)
+    try {
+        const leadName = String(
+            sanitizedPayload.name || sanitizedPayload.Name || sanitizedPayload.fullName || 
+            sanitizedPayload.FullName || sanitizedPayload.contactPerson || 'Website Lead'
+        );
+        const leadEmail = String(
+            sanitizedPayload.email || sanitizedPayload.Email || sanitizedPayload.workEmail || 
+            sanitizedPayload.WorkEmail || ''
+        );
+        const leadPhone = String(
+            sanitizedPayload.phone || sanitizedPayload.Phone || sanitizedPayload.phoneNumber || 
+            sanitizedPayload.mobile || ''
+        );
+        const leadCompany = String(
+            sanitizedPayload.company || sanitizedPayload.Company || sanitizedPayload.organization || 
+            sanitizedPayload.Organization || ''
+        );
+        const leadService = String(
+            sanitizedPayload.service || sanitizedPayload.Service || sanitizedPayload.serviceInterest || 
+            sanitizedPayload.serviceRequested || sanitizedPayload["Program / Course"] || sheetName
+        );
+        const leadMessage = String(
+            sanitizedPayload.message || sanitizedPayload.Message || sanitizedPayload.requirements || 
+            sanitizedPayload.topic || 'Form submission from website.'
+        );
+
+        if (leadName || leadEmail || leadPhone) {
+            submitLeadToJira({
+                name: leadName,
+                email: leadEmail,
+                phone: leadPhone,
+                company: leadCompany,
+                serviceRequested: leadService,
+                message: leadMessage,
+                formName: sheetName,
+                ...utmCtx,
+                location: ipCtx.location,
+                ipAddress: ipCtx.ipAddress
+            }).catch(jiraErr => console.warn('[JIRA CAPTURE ERROR]', jiraErr));
+        }
+    } catch (jiraWrapErr) {
+        console.warn('[JIRA WRAPPER ERROR]', jiraWrapErr);
+    }
 }
 
 
