@@ -2,9 +2,27 @@
  * ═════════════════════════════════════════════════════════════════════════════
  * ISI ENTERPRISE ANALYTICS DASHBOARD (SHEET 2) - ULTIMATE LIGHT EDITION
  * ═════════════════════════════════════════════════════════════════════════════
- * This script runs entirely in your NEW Analytics Sheet (Sheet 2).
+ * This script runs entirely in your Analytics Sheet (Sheet 2).
  * It reads raw data from Sheet 1 via Apps Script, cleanses development traffic,
- * and mathematically builds 15 completely automated professional tabs.
+ * and mathematically builds 16 automated professional SQL-database formatted tabs.
+ *
+ * ALL TAB NAMES ARE STANDARDIZED TO DATABASE FORMAT (UNDERSCORE_SEPARATED):
+ * 1.  Mission_Control
+ * 2.  Executive_KPIs
+ * 3.  Ad_Intelligence
+ * 4.  Geo_Map_Profile
+ * 5.  Pareto_80_20
+ * 6.  Daily_Heatmap
+ * 7.  Growth_Momentum
+ * 8.  Visitor_Ratio
+ * 9.  Tech_Profile
+ * 10. Identity_Linker
+ * 11. Std_Deviation
+ * 12. Sankey_Flow
+ * 13. Broken_Link_QA
+ * 14. Co_Occurrence_Matrix
+ * 15. Funnel_Drop_Off
+ * 16. Lead_Scoring_Engine
  */
 
 // 🔴 SHEET 1 ID (DATA COLLECTION SHEET WHERE WEBHOOK SAVES DATA)
@@ -49,7 +67,7 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
         return;
     }
 
-    // Pulling Raw Data (Support both new database underscore format and legacy tab names)
+    // Pulling Raw Data (Supports both database underscore format and legacy tab names)
     var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
     var eSheet = db.getSheetByName("Engagement_Metrics") || db.getSheetByName("EngagementMetrics");
     var ubSheet = db.getSheetByName("User_Behavior_Library") || db.getSheetByName("UserBehaviorLibrary");
@@ -80,7 +98,7 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
     var devRecordsPurged = (tDataRaw.length - tData.length) + (ubDataRaw.length - ubData.length);
     // ──────────────────────────────────
 
-    // Build all 16 tabs safely
+    // Build all 16 tabs with standardized database names
     try { buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged); } catch (err) { console.error("Tab 1 Error: " + err.toString()); }
     try { buildExecutiveDashboard(tData, eData); } catch (err) { console.error("Tab 2 Error: " + err.toString()); }
     try { buildAdPerformanceIntelligenceSheet(tData, db); } catch (err) { console.error("Tab 3 Error: " + err.toString()); }
@@ -98,7 +116,7 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
     try { buildFunnelDropOffSheet(tData, db); } catch (err) { console.error("Tab 15 Error: " + err.toString()); }
     try { buildLeadScoringEngine(tData, eData); } catch (err) { console.error("Tab 16 Error: " + err.toString()); }
 
-    if (ui) ui.alert("✅ SUCCESS! 16 Analytics Tabs (Including Ad Performance Intelligence) Built & Sanitized.\n\n" + devRecordsPurged + " localhost records were purged from this session.");
+    if (ui) ui.alert("✅ SUCCESS! 16 Database-Formatted Analytics Tabs Built & Sanitized.\n\n" + devRecordsPurged + " localhost records were purged from this session.");
 }
 
 /** 
@@ -161,11 +179,11 @@ function setColWidths(sh, startCol, widths) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 1: MISSION CONTROL (SINGLE PANE OF GLASS)
+// TAB 1: MISSION CONTROL
 // ══════════════════════════════════════════════════════════════════════════════
 function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
-    var sh = getOrCreateTab("🛰️ Mission Control");
-    styleTitle(sh, "🛰️ CENTRAL COMMAND & MISSION CONTROL", 12, C.t);
+    var sh = getOrCreateTab("Mission_Control");
+    styleTitle(sh, "CENTRAL COMMAND & MISSION CONTROL", 12, C.t);
     sh.getRange("A1:Z100").setBackground(C.bg);
     setColWidths(sh, 1, [20, 180, 180, 180, 180, 180, 20].concat(new Array(10).fill(100)));
 
@@ -220,11 +238,11 @@ function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
     var chatCount = 0;
     if (db) {
         try {
-            var cSheet = db.getSheetByName("CareerApplications") || db.getSheetByName("Careers");
+            var cSheet = db.getSheetByName("Career_Applications") || db.getSheetByName("CareerApplications") || db.getSheetByName("Careers");
             if (cSheet && cSheet.getLastRow() > 1) careerSubmissions = cSheet.getLastRow() - 1;
         } catch(e) {}
         try {
-            var cbSheet = db.getSheetByName("ChatbotLeads");
+            var cbSheet = db.getSheetByName("Chatbot_Leads") || db.getSheetByName("ChatbotLeads");
             if (cbSheet && cbSheet.getLastRow() > 1) chatCount = cbSheet.getLastRow() - 1;
         } catch(e) {}
     }
@@ -235,18 +253,18 @@ function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
     };
 
     // ── MASTER HUD ROW 1 (TRAFFIC & SESSIONS) ──
-    drawMegaStat(4, 2, "🌐 GLOBAL TRAFFIC", totalVisits.toLocaleString(), 1, C.pu);
-    drawMegaStat(4, 3, "📈 NUMBER OF SESSIONS", totalSessions.toLocaleString(), 1, C.c);
-    drawMegaStat(4, 4, "🔄 REPEAT VISITORS", returnUsers.toLocaleString() + " (" + repeatVisitorPct + ")", 1, C.o);
-    drawMegaStat(4, 5, "⏱ AVG SESSION DURATION", avgDurationFormatted, 1, C.g);
-    drawMegaStat(4, 6, "🔥 HOT LEADS", hotLeads, 1, C.re, C.w);
+    drawMegaStat(4, 2, "GLOBAL TRAFFIC", totalVisits.toLocaleString(), 1, C.pu);
+    drawMegaStat(4, 3, "NUMBER OF SESSIONS", totalSessions.toLocaleString(), 1, C.c);
+    drawMegaStat(4, 4, "REPEAT VISITORS", returnUsers.toLocaleString() + " (" + repeatVisitorPct + ")", 1, C.o);
+    drawMegaStat(4, 5, "AVG SESSION DURATION", avgDurationFormatted, 1, C.g);
+    drawMegaStat(4, 6, "HOT LEADS", hotLeads, 1, C.re, C.w);
 
     // ── MASTER HUD ROW 2 (LEADS & CONVERSIONS) ──
-    drawMegaStat(8, 2, "🎯 GOOGLE LEADS", googleLeadCount.toLocaleString(), 1, "#1e40af");
-    drawMegaStat(8, 3, "📄 CAREER SUBMISSIONS", careerSubmissions.toLocaleString(), 1, "#0d9488");
-    drawMegaStat(8, 4, "💬 NUMBER OF CHATS", chatCount.toLocaleString(), 1, "#7c3aed");
-    drawMegaStat(8, 5, "👤 UNIQUE VISITORS", uniqueUsers.toLocaleString(), 1, "#475569");
-    drawMegaStat(8, 6, "🧹 DEV RECORDS PURGED", (devRecordsPurged || 0).toLocaleString(), 1, "#0f172a");
+    drawMegaStat(8, 2, "GOOGLE LEADS", googleLeadCount.toLocaleString(), 1, "#1e40af");
+    drawMegaStat(8, 3, "CAREER SUBMISSIONS", careerSubmissions.toLocaleString(), 1, "#0d9488");
+    drawMegaStat(8, 4, "NUMBER OF CHATS", chatCount.toLocaleString(), 1, "#7c3aed");
+    drawMegaStat(8, 5, "UNIQUE VISITORS", uniqueUsers.toLocaleString(), 1, "#475569");
+    drawMegaStat(8, 6, "DEV RECORDS PURGED", (devRecordsPurged || 0).toLocaleString(), 1, "#0f172a");
 
     // ── GAUGE & PIE CHARTS ──
     sh.getRange(12, 2, 1, 5).merge().setValue("SYSTEM VITALS & ACQUISITION HEALTH").setBackground(C.p).setFontColor(C.t).setFontWeight("bold").setHorizontalAlignment("center");
@@ -291,158 +309,11 @@ function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 3: AD PERFORMANCE INTELLIGENCE (META, YOUTUBE, GOOGLE SEARCH, AFFILIATE)
-// ══════════════════════════════════════════════════════════════════════════════
-function buildAdPerformanceIntelligenceSheet(tData, db) {
-    var sh = getOrCreateTab("🎯 Ad Intelligence");
-    styleTitle(sh, "🎯 ISI AD PERFORMANCE INTELLIGENCE (META, YOUTUBE, GOOGLE SEARCH, AFFILIATE)", 10, "#003380");
-    sh.getRange("A1:Z100").setBackground(C.bg);
-    setColWidths(sh, 1, [20, 180, 140, 130, 130, 130, 220, 160, 20]);
-
-    if (!tData || tData.length < 2) {
-        sh.getRange(4, 2).setValue("Waiting for campaign traffic data...").setFontColor(C.m);
-        return;
-    }
-
-    var tHead = tData[0];
-    var sCol = tHead.indexOf("Traffic Source");
-    var utmSrcCol = tHead.indexOf("UTM Source");
-    var utmCampCol = tHead.indexOf("UTM Campaign");
-    var pathCol = tHead.indexOf("Page Path");
-
-    // Pull Ad Leads from AdCampaignLeads or Contact/Sales if available
-    var adLeadsData = [];
-    if (db) {
-        try {
-            var adSheet = db.getSheetByName("Google_Ad_Leads") || db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
-            if (adSheet && adSheet.getLastRow() > 1) {
-                adLeadsData = adSheet.getDataRange().getValues();
-            }
-        } catch(e) {}
-    }
-
-    var adStats = {
-        meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0, campaigns: {} },
-        youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0, campaigns: {} },
-        google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0, campaigns: {} },
-        affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0, campaigns: {} }
-    };
-
-    // Analyze traffic data
-    for (var i = 1; i < tData.length; i++) {
-        var src = String(tData[i][sCol] || "").toLowerCase();
-        var utmSrc = String(tData[i][utmSrcCol] || "").toLowerCase();
-        var camp = String(tData[i][utmCampCol] || tData[i][pathCol] || "General");
-
-        if (utmSrc.includes("fb") || utmSrc.includes("facebook") || utmSrc.includes("meta") || utmSrc.includes("instagram") || utmSrc.includes("ig") || src.includes("facebook") || src.includes("instagram")) {
-            adStats.meta.clicks++;
-            adStats.meta.campaigns[camp] = (adStats.meta.campaigns[camp] || 0) + 1;
-        } else if (utmSrc.includes("youtube") || utmSrc.includes("yt") || src.includes("youtube")) {
-            adStats.youtube.clicks++;
-            adStats.youtube.campaigns[camp] = (adStats.youtube.campaigns[camp] || 0) + 1;
-        } else if (utmSrc.includes("google") || utmSrc.includes("adwords") || utmSrc.includes("gads") || utmSrc.includes("cpc") || src.includes("google")) {
-            adStats.google.clicks++;
-            adStats.google.campaigns[camp] = (adStats.google.campaigns[camp] || 0) + 1;
-        } else if (utmSrc.includes("affiliate") || utmSrc.includes("partner") || utmSrc.includes("referral") || utmSrc.includes("aff")) {
-            adStats.affiliate.clicks++;
-            adStats.affiliate.campaigns[camp] = (adStats.affiliate.campaigns[camp] || 0) + 1;
-        }
-    }
-
-    // Match leads from AdCampaignLeads tab
-    if (adLeadsData.length > 1) {
-        var lHead = adLeadsData[0];
-        var lSrcCol = lHead.indexOf("UTM Source");
-        var lCampCol = lHead.indexOf("UTM Campaign");
-        for (var j = 1; j < adLeadsData.length; j++) {
-            var lSrc = String(adLeadsData[j][lSrcCol] || "").toLowerCase();
-            if (lSrc.includes("fb") || lSrc.includes("facebook") || lSrc.includes("meta") || lSrc.includes("instagram")) {
-                adStats.meta.leads++;
-            } else if (lSrc.includes("youtube") || lSrc.includes("yt")) {
-                adStats.youtube.leads++;
-            } else if (lSrc.includes("google") || lSrc.includes("cpc")) {
-                adStats.google.leads++;
-            } else if (lSrc.includes("affiliate") || lSrc.includes("partner")) {
-                adStats.affiliate.leads++;
-            }
-        }
-    }
-
-    var totalPaidClicks = adStats.meta.clicks + adStats.youtube.clicks + adStats.google.clicks + adStats.affiliate.clicks;
-    var totalPaidLeads = adStats.meta.leads + adStats.youtube.leads + adStats.google.leads + adStats.affiliate.leads;
-    var blendedCvr = totalPaidClicks > 0 ? (totalPaidLeads / totalPaidClicks * 100).toFixed(2) + "%" : "0.00%";
-
-    var drawMegaStat = function (row, col, title, value, span, color, textcolor) {
-        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
-        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(22);
-    };
-
-    // ── MEGA STAT SCORECARDS ──
-    drawMegaStat(4, 2, "🎯 TOTAL AD CLICKS", totalPaidClicks.toLocaleString(), 1, "#003380");
-    drawMegaStat(4, 3, "🔥 TOTAL AD LEADS", totalPaidLeads.toLocaleString(), 1, C.o);
-    drawMegaStat(4, 4, "📈 BLENDED AD CVR", blendedCvr, 1, C.g);
-    drawMegaStat(4, 5, "🏆 TOP PAID CHANNEL", totalPaidClicks > 0 ? "Google / Meta" : "Pending", 2, C.pu);
-
-    // ── 4-CHANNEL PERFORMANCE INTELLIGENCE TABLE ──
-    var tableHeaders = [
-        "Ad Channel", "Channel Type", "Clicks / Traffic", "Leads Generated", "Conversion Rate (%)", "Top Campaign / Page", "Performance Status"
-    ];
-
-    var getTopCamp = function(campObj) {
-        var keys = Object.keys(campObj);
-        if (keys.length === 0) return "Direct / Site";
-        return keys.sort(function(a,b){ return campObj[b] - campObj[a]; })[0];
-    };
-
-    var getStatus = function(clicks, leads) {
-        if (leads >= 5) return "🔥 High Performing";
-        if (clicks > 50) return "⚡ Steady Volume";
-        if (clicks > 0) return "🔍 Monitoring";
-        return "⚠️ Awaiting Traffic";
-    };
-
-    var channels = [adStats.meta, adStats.youtube, adStats.google, adStats.affiliate];
-    var tableRows = channels.map(function(ch) {
-        var cvr = ch.clicks > 0 ? (ch.leads / ch.clicks * 100).toFixed(2) + "%" : "0.00%";
-        return [
-            ch.name,
-            ch.type,
-            ch.clicks,
-            ch.leads,
-            cvr,
-            getTopCamp(ch.campaigns),
-            getStatus(ch.clicks, ch.leads)
-        ];
-    });
-
-    sh.getRange(8, 2, 1, tableHeaders.length).merge().setValue("AD PERFORMANCE INTELLIGENCE BREAKDOWN TABLE").setBackground("#003380").setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
-    sh.getRange(9, 2, 1, tableHeaders.length).setValues([tableHeaders]).setBackground(C.p).setFontColor(C.t).setFontWeight("bold").setHorizontalAlignment("center");
-    sh.getRange(10, 2, tableRows.length, tableHeaders.length).setValues(tableRows).setBackground(C.r1).setFontColor(C.t).setHorizontalAlignment("center");
-
-    // Highlight rows
-    for (var r = 0; r < tableRows.length; r++) {
-        if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, tableHeaders.length).setBackground(C.r2);
-    }
-
-    // Insert Comparison Chart
-    try {
-        var chartRange = sh.getRange(9, 2, 5, 4);
-        var barChart = sh.newChart().setChartType(Charts.ChartType.COLUMN).addRange(chartRange)
-            .setPosition(16, 2, 0, 0).setOption("title", "Ad Channel Clicks vs Leads Performance").setOption("width", 720).setOption("height", 280)
-            .setOption("backgroundColor", C.bg).build();
-        sh.insertChart(barChart);
-    } catch(e) {
-        console.error("Ad Chart Error: " + e.toString());
-    }
-}
-
-
-// ══════════════════════════════════════════════════════════════════════════════
 // TAB 2: EXECUTIVE DASHBOARD
 // ══════════════════════════════════════════════════════════════════════════════
 function buildExecutiveDashboard(tData, eData) {
-    var sh = getOrCreateTab("🚦 Executive KPIs");
-    styleTitle(sh, "🚦 Executive Dashboard & Core Performance Metrics", 10, C.pu);
+    var sh = getOrCreateTab("Executive_KPIs");
+    styleTitle(sh, "Executive Dashboard & Core Performance Metrics", 10, C.pu);
     setColWidths(sh, 1, [250, 100, 100, 40, 600, 40, 250, 100, 100, 40, 600]);
 
     if (!tData || tData.length < 2) {
@@ -506,7 +377,7 @@ function buildExecutiveDashboard(tData, eData) {
     var avgSessionSeconds = totalSessionsWithTime > 0 ? (totalSeconds / totalSessionsWithTime).toFixed(1) + "s" : "0s";
     var topPageName = topPages.length > 0 ? topPages[0][0] : "N/A";
 
-    sh.getRange(4, 1, 1, 9).merge().setValue("⚡ CENTRAL COMMAND SCORECARD ⚡").setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(14);
+    sh.getRange(4, 1, 1, 9).merge().setValue("CENTRAL COMMAND SCORECARD").setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(14);
     sh.getRange(5, 1).setValue("Total Visits").setBackground(C.p).setFontWeight("bold").setHorizontalAlignment("center");
     sh.getRange(6, 1).setValue(totalVisits).setBackground(C.bg).setFontColor(C.pu).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(18);
     sh.getRange(5, 2, 1, 2).merge().setValue("Unique Visitors").setBackground(C.p).setFontWeight("bold").setHorizontalAlignment("center");
@@ -544,11 +415,157 @@ function buildExecutiveDashboard(tData, eData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 3: GEO MAP PROFILE
+// TAB 3: AD PERFORMANCE INTELLIGENCE (META, YOUTUBE, GOOGLE SEARCH, AFFILIATE)
+// ══════════════════════════════════════════════════════════════════════════════
+function buildAdPerformanceIntelligenceSheet(tData, db) {
+    var sh = getOrCreateTab("Ad_Intelligence");
+    styleTitle(sh, "ISI AD PERFORMANCE INTELLIGENCE (META, YOUTUBE, GOOGLE SEARCH, AFFILIATE)", 10, "#003380");
+    sh.getRange("A1:Z100").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 180, 140, 130, 130, 130, 220, 160, 20]);
+
+    if (!tData || tData.length < 2) {
+        sh.getRange(4, 2).setValue("Waiting for campaign traffic data...").setFontColor(C.m);
+        return;
+    }
+
+    var tHead = tData[0];
+    var sCol = tHead.indexOf("Traffic Source");
+    var utmSrcCol = tHead.indexOf("UTM Source");
+    var utmCampCol = tHead.indexOf("UTM Campaign");
+    var pathCol = tHead.indexOf("Page Path");
+
+    // Pull Ad Leads from Google_Ad_Leads tab
+    var adLeadsData = [];
+    if (db) {
+        try {
+            var adSheet = db.getSheetByName("Google_Ad_Leads") || db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
+            if (adSheet && adSheet.getLastRow() > 1) {
+                adLeadsData = adSheet.getDataRange().getValues();
+            }
+        } catch(e) {}
+    }
+
+    var adStats = {
+        meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0, campaigns: {} },
+        youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0, campaigns: {} },
+        google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0, campaigns: {} },
+        affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0, campaigns: {} }
+    };
+
+    // Analyze traffic data
+    for (var i = 1; i < tData.length; i++) {
+        var src = String(tData[i][sCol] || "").toLowerCase();
+        var utmSrc = String(tData[i][utmSrcCol] || "").toLowerCase();
+        var camp = String(tData[i][utmCampCol] || tData[i][pathCol] || "General");
+
+        if (utmSrc.includes("fb") || utmSrc.includes("facebook") || utmSrc.includes("meta") || utmSrc.includes("instagram") || utmSrc.includes("ig") || src.includes("facebook") || src.includes("instagram")) {
+            adStats.meta.clicks++;
+            adStats.meta.campaigns[camp] = (adStats.meta.campaigns[camp] || 0) + 1;
+        } else if (utmSrc.includes("youtube") || utmSrc.includes("yt") || src.includes("youtube")) {
+            adStats.youtube.clicks++;
+            adStats.youtube.campaigns[camp] = (adStats.youtube.campaigns[camp] || 0) + 1;
+        } else if (utmSrc.includes("google") || utmSrc.includes("adwords") || utmSrc.includes("gads") || utmSrc.includes("cpc") || src.includes("google")) {
+            adStats.google.clicks++;
+            adStats.google.campaigns[camp] = (adStats.google.campaigns[camp] || 0) + 1;
+        } else if (utmSrc.includes("affiliate") || utmSrc.includes("partner") || utmSrc.includes("referral") || utmSrc.includes("aff")) {
+            adStats.affiliate.clicks++;
+            adStats.affiliate.campaigns[camp] = (adStats.affiliate.campaigns[camp] || 0) + 1;
+        }
+    }
+
+    // Match leads from Google_Ad_Leads tab
+    if (adLeadsData.length > 1) {
+        var lHead = adLeadsData[0];
+        var lSrcCol = lHead.indexOf("UTM Source");
+        var lCampCol = lHead.indexOf("UTM Campaign");
+        for (var j = 1; j < adLeadsData.length; j++) {
+            var lSrc = String(adLeadsData[j][lSrcCol] || "").toLowerCase();
+            if (lSrc.includes("fb") || lSrc.includes("facebook") || lSrc.includes("meta") || lSrc.includes("instagram")) {
+                adStats.meta.leads++;
+            } else if (lSrc.includes("youtube") || lSrc.includes("yt")) {
+                adStats.youtube.leads++;
+            } else if (lSrc.includes("google") || lSrc.includes("cpc")) {
+                adStats.google.leads++;
+            } else if (lSrc.includes("affiliate") || lSrc.includes("partner")) {
+                adStats.affiliate.leads++;
+            }
+        }
+    }
+
+    var totalPaidClicks = adStats.meta.clicks + adStats.youtube.clicks + adStats.google.clicks + adStats.affiliate.clicks;
+    var totalPaidLeads = adStats.meta.leads + adStats.youtube.leads + adStats.google.leads + adStats.affiliate.leads;
+    var blendedCvr = totalPaidClicks > 0 ? (totalPaidLeads / totalPaidClicks * 100).toFixed(2) + "%" : "0.00%";
+
+    var drawMegaStat = function (row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(22);
+    };
+
+    // ── MEGA STAT SCORECARDS ──
+    drawMegaStat(4, 2, "TOTAL AD CLICKS", totalPaidClicks.toLocaleString(), 1, "#003380");
+    drawMegaStat(4, 3, "TOTAL AD LEADS", totalPaidLeads.toLocaleString(), 1, C.o);
+    drawMegaStat(4, 4, "BLENDED AD CVR", blendedCvr, 1, C.g);
+    drawMegaStat(4, 5, "TOP PAID CHANNEL", totalPaidClicks > 0 ? "Google / Meta" : "Pending", 2, C.pu);
+
+    // ── 4-CHANNEL PERFORMANCE INTELLIGENCE TABLE ──
+    var tableHeaders = [
+        "Ad Channel", "Channel Type", "Clicks / Traffic", "Leads Generated", "Conversion Rate (%)", "Top Campaign / Page", "Performance Status"
+    ];
+
+    var getTopCamp = function(campObj) {
+        var keys = Object.keys(campObj);
+        if (keys.length === 0) return "Direct / Site";
+        return keys.sort(function(a,b){ return campObj[b] - campObj[a]; })[0];
+    };
+
+    var getStatus = function(clicks, leads) {
+        if (leads >= 5) return "🔥 High Performing";
+        if (clicks > 50) return "⚡ Steady Volume";
+        if (clicks > 0) return "🔍 Monitoring";
+        return "⚠️ Awaiting Traffic";
+    };
+
+    var channels = [adStats.meta, adStats.youtube, adStats.google, adStats.affiliate];
+    var tableRows = channels.map(function(ch) {
+        var cvr = ch.clicks > 0 ? (ch.leads / ch.clicks * 100).toFixed(2) + "%" : "0.00%";
+        return [
+            ch.name,
+            ch.type,
+            ch.clicks,
+            ch.leads,
+            cvr,
+            getTopCamp(ch.campaigns),
+            getStatus(ch.clicks, ch.leads)
+        ];
+    });
+
+    sh.getRange(8, 2, 1, tableHeaders.length).merge().setValue("AD PERFORMANCE INTELLIGENCE BREAKDOWN TABLE").setBackground("#003380").setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
+    sh.getRange(9, 2, 1, tableHeaders.length).setValues([tableHeaders]).setBackground(C.p).setFontColor(C.t).setFontWeight("bold").setHorizontalAlignment("center");
+    sh.getRange(10, 2, tableRows.length, tableHeaders.length).setValues(tableRows).setBackground(C.r1).setFontColor(C.t).setHorizontalAlignment("center");
+
+    // Highlight rows
+    for (var r = 0; r < tableRows.length; r++) {
+        if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, tableHeaders.length).setBackground(C.r2);
+    }
+
+    // Insert Comparison Chart
+    try {
+        var chartRange = sh.getRange(9, 2, 5, 4);
+        var barChart = sh.newChart().setChartType(Charts.ChartType.COLUMN).addRange(chartRange)
+            .setPosition(16, 2, 0, 0).setOption("title", "Ad Channel Clicks vs Leads Performance").setOption("width", 720).setOption("height", 280)
+            .setOption("backgroundColor", C.bg).build();
+        sh.insertChart(barChart);
+    } catch(e) {
+        console.error("Ad Chart Error: " + e.toString());
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TAB 4: GEO MAP PROFILE
 // ══════════════════════════════════════════════════════════════════════════════
 function buildGeoMapProfile(tData) {
-    var sh = getOrCreateTab("🗺️ Geo Map");
-    styleTitle(sh, "🗺️ Geographic Map Intensity & Traffic Profile", 8, C.c);
+    var sh = getOrCreateTab("Geo_Map_Profile");
+    styleTitle(sh, "Geographic Map Intensity & Traffic Profile", 8, C.c);
     setColWidths(sh, 1, [150, 100, 100, 150, 200, 100, 150]);
     if (!tData || tData.length < 2) return;
     var hd = tData[0], ipCol = hd.indexOf("IP Address"), locCol = hd.indexOf("IP Location");
@@ -570,11 +587,11 @@ function buildGeoMapProfile(tData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 4: PARETO 80-20
+// TAB 5: PARETO 80-20
 // ══════════════════════════════════════════════════════════════════════════════
 function buildTrafficAndPagesPareto(tData) {
-    var sh = getOrCreateTab("📏 Pareto (80-20)");
-    styleTitle(sh, "📏 80/20 Pareto Analysis", 9, C.re);
+    var sh = getOrCreateTab("Pareto_80_20");
+    styleTitle(sh, "80/20 Pareto Analysis", 9, C.re);
     setColWidths(sh, 1, [200, 100, 100, 120, 50, 180, 100, 100, 120]);
     if (!tData || tData.length < 2) return;
     var hd = tData[0], pCol = hd.indexOf("Page Path"), sCol = hd.indexOf("Traffic Source");
@@ -592,11 +609,11 @@ function buildTrafficAndPagesPareto(tData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 5: HEATMAP SHEET
+// TAB 6: HEATMAP SHEET
 // ══════════════════════════════════════════════════════════════════════════════
 function buildHeatmapSheet(tData) {
-    var sh = getOrCreateTab("🕒 Daily Heatmap");
-    styleTitle(sh, "🕒 Traffic Heatmaps & Multi-Year Calendar", 55, C.g);
+    var sh = getOrCreateTab("Daily_Heatmap");
+    styleTitle(sh, "Traffic Heatmaps & Multi-Year Calendar", 55, C.g);
     if (!tData || tData.length < 2) return;
     var tsCol = tData[0].indexOf("Timestamp");
     var mx = []; for (var d = 0; d < 7; d++) mx[d] = new Array(24).fill(0);
@@ -622,11 +639,11 @@ function buildHeatmapSheet(tData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 6: GROWTH GRAPH
+// TAB 7: GROWTH GRAPH
 // ══════════════════════════════════════════════════════════════════════════════
 function buildGrowthGraphSheet(tData) {
-    var sh = getOrCreateTab("📈 Growth & Momentum");
-    styleTitle(sh, "📈 Traffic Growth & Day-over-Day Momentum", 7, C.pu);
+    var sh = getOrCreateTab("Growth_Momentum");
+    styleTitle(sh, "Traffic Growth & Day-over-Day Momentum", 7, C.pu);
     if (!tData || tData.length < 2) return;
     var tsCol = tData[0].indexOf("Timestamp");
     var daily = {};
@@ -653,11 +670,11 @@ function buildGrowthGraphSheet(tData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 7: REPEAT VISITOR RATIO
+// TAB 8: REPEAT VISITOR RATIO
 // ══════════════════════════════════════════════════════════════════════════════
 function buildRepeatVisitorRatioSheet(tData) {
-    var sh = getOrCreateTab("👥 Visitor Ratio");
-    styleTitle(sh, "👥 Acquisition vs. Retention Ratio", 6, C.c);
+    var sh = getOrCreateTab("Visitor_Ratio");
+    styleTitle(sh, "Acquisition vs. Retention Ratio", 6, C.c);
     if (!tData || tData.length < 2) return;
     var ipCol = tData[0].indexOf("IP Address"), ipCounts = {};
     for (var i = 1; i < tData.length; i++) if (tData[i][ipCol]) ipCounts[tData[i][ipCol]] = (ipCounts[tData[i][ipCol]] || 0) + 1;
@@ -670,11 +687,11 @@ function buildRepeatVisitorRatioSheet(tData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 8: TECH PROFILE
+// TAB 9: TECH PROFILE
 // ══════════════════════════════════════════════════════════════════════════════
 function buildTechProfile(ubData) {
-    var sh = getOrCreateTab("📱 Tech Profile");
-    styleTitle(sh, "📱 Technical Footprint & Devices", 8, C.o);
+    var sh = getOrCreateTab("Tech_Profile");
+    styleTitle(sh, "Technical Footprint & Devices", 8, C.o);
     if (!ubData || ubData.length < 2) return;
     var hd = ubData[0], osC = hd.indexOf("OS"), vwC = hd.indexOf("Viewport"), cnC = hd.indexOf("Connection Type");
     var os = {}, vw = {}, cn = {};
@@ -689,11 +706,11 @@ function buildTechProfile(ubData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 9: IDENTITY LINKER
+// TAB 10: IDENTITY LINKER
 // ══════════════════════════════════════════════════════════════════════════════
 function buildIdentityLinkerSheet(ubData, db) {
-    var sh = getOrCreateTab("🔗 Identity Linker");
-    styleTitle(sh, "🔗 Unmasking Anonymous Traffic", 8, C.re);
+    var sh = getOrCreateTab("Identity_Linker");
+    styleTitle(sh, "Unmasking Anonymous Traffic", 8, C.re);
     if (!ubData || ubData.length < 2) return;
     var vidCol = ubData[0].indexOf("Visitor ID");
     var idents = {};
@@ -712,11 +729,11 @@ function buildIdentityLinkerSheet(ubData, db) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 10: STD DEV SHEET
+// TAB 11: STD DEV SHEET
 // ══════════════════════════════════════════════════════════════════════════════
 function buildStdDevSheet(eData) {
-    var sh = getOrCreateTab("📊 Std Deviation");
-    styleTitle(sh, "📊 Engagement Stat Volatility", 6, C.pu);
+    var sh = getOrCreateTab("Std_Deviation");
+    styleTitle(sh, "Engagement Stat Volatility", 6, C.pu);
     if (!eData || eData.length < 2) return;
     var sCol = eData[0].indexOf("Engagement Score");
     var sc = []; for (var i = 1; i < eData.length; i++) if (eData[i][sCol]) sc.push(Number(eData[i][sCol]));
@@ -727,11 +744,11 @@ function buildStdDevSheet(eData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 11: SANKEY PATHS
+// TAB 12: SANKEY PATHS
 // ══════════════════════════════════════════════════════════════════════════════
 function buildSankeySheet(tData) {
-    var sh = getOrCreateTab("🌊 Sankey Flow");
-    styleTitle(sh, "🌊 Top Journey Pathing", 6, C.c);
+    var sh = getOrCreateTab("Sankey_Flow");
+    styleTitle(sh, "Top Journey Pathing", 6, C.c);
     if (!tData || tData.length < 2) return;
     var sidC = tData[0].indexOf("Session ID"), pC = tData[0].indexOf("Page Path"), tsC = tData[0].indexOf("Timestamp");
     var sesh = {}; for (var i = 1; i < tData.length; i++) {
@@ -747,12 +764,12 @@ function buildSankeySheet(tData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 12: BROKEN LINK QA
+// TAB 13: BROKEN LINK QA
 // ══════════════════════════════════════════════════════════════════════════════
 function buildBrokenLinkSheet() {
     if (SITE_BASE_URL.includes("yourwebsite")) return;
-    var sh = getOrCreateTab("🤖 Broken Link QA");
-    styleTitle(sh, "🤖 Automated Internal Audit", 5, C.re);
+    var sh = getOrCreateTab("Broken_Link_QA");
+    styleTitle(sh, "Automated Internal Audit", 5, C.re);
     var paths = ["/", "/about", "/services", "/contact", "/careers", "/academy"];
     sh.getRange(3, 1, 1, 3).setValues([["URL", "Status", "Latency"]]).setBackground(C.re).setFontColor(C.w);
     paths.forEach(function(p, i) {
@@ -770,11 +787,11 @@ function buildBrokenLinkSheet() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 13: CO-OCCURRENCE MATRIX (Professional Build)
+// TAB 14: CO-OCCURRENCE MATRIX
 // ══════════════════════════════════════════════════════════════════════════════
 function buildCoOccurrenceMatrix(tData, eData) {
-    var sh = getOrCreateTab("🔀 Co-Occurrence");
-    styleTitle(sh, "🔀 Dynamic Page Interconnectivity Matrix", 15, C.pu);
+    var sh = getOrCreateTab("Co_Occurrence_Matrix");
+    styleTitle(sh, "Dynamic Page Interconnectivity Matrix", 15, C.pu);
     if (!tData || tData.length < 2) return;
     var tHead = tData[0], sCol = tHead.indexOf("Session ID"), pCol = tHead.indexOf("Page Path");
     var eHead = (eData && eData.length > 0) ? eData[0] : [], eSess = eHead.indexOf("Session ID"), eDur = eHead.indexOf("Duration (sec)");
@@ -815,11 +832,11 @@ function buildCoOccurrenceMatrix(tData, eData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 14: FUNNEL DROP-OFF
+// TAB 15: FUNNEL DROP-OFF
 // ══════════════════════════════════════════════════════════════════════════════
 function buildFunnelDropOffSheet(tData, db) {
-    var sh = getOrCreateTab("🔻 Funnel Drops");
-    styleTitle(sh, "🔻 Multi-Stage Conversion Funnel", 6, C.o);
+    var sh = getOrCreateTab("Funnel_Drop_Off");
+    styleTitle(sh, "Multi-Stage Conversion Funnel", 6, C.o);
     if (!tData || tData.length < 2) return;
     var uV = new Set(), sV = new Set(), cV = new Set();
     var pCol = tData[0].indexOf("Page Path"), ipCol = tData[0].indexOf("IP Address");
@@ -835,11 +852,11 @@ function buildFunnelDropOffSheet(tData, db) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TAB 15: LEAD SCORING ENGINE (Ultimate Version)
+// TAB 16: LEAD SCORING ENGINE
 // ══════════════════════════════════════════════════════════════════════════════
 function buildLeadScoringEngine(tData, eData) {
-    var sh = getOrCreateTab("🎯 Lead Scoring");
-    styleTitle(sh, "🎯 AI-Driven Lead Scoring Engine", 8, C.re);
+    var sh = getOrCreateTab("Lead_Scoring_Engine");
+    styleTitle(sh, "AI-Driven Lead Scoring Engine", 8, C.re);
     if (!tData || tData.length < 2) return;
     
     var ipCol = tData[0].indexOf("IP Address"), pCol = tData[0].indexOf("Page Path"), sCol = tData[0].indexOf("Session ID");
@@ -878,7 +895,7 @@ function buildLeadScoringEngine(tData, eData) {
 function REMOVE_ALL_TRIGGERS() {
     var triggers = ScriptApp.getProjectTriggers();
     triggers.forEach(function(t) { ScriptApp.deleteTrigger(t); });
-    Browser.msgBox("✅ All automated email triggers removed! Duplicate emails from Hari Krishna / old triggers are disabled.");
+    Browser.msgBox("✅ All automated email triggers removed! Duplicate emails from old triggers are disabled.");
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -896,7 +913,7 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         return;
     }
 
-    var tSheet = db.getSheetByName("TrafficAnalytics");
+    var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
     var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
     
     var adSheet = db.getSheetByName("Google_Ad_Leads") || db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
@@ -980,7 +997,7 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         '<!DOCTYPE html><html><body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
         '<div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">',
         '<div style="background:#003380;padding:25px;color:#ffffff;text-align:center;">',
-        '<h2 style="margin:0;font-size:20px;">🎯 ISI Ad Performance Intelligence Report</h2>',
+        '<h2 style="margin:0;font-size:20px;">ISI Ad Performance Intelligence Report</h2>',
         '<p style="margin:6px 0 0 0;color:#93c5fd;font-size:13px;">Executive Multi-Channel Attribution Digest</p>',
         '</div>',
         '<div style="padding:25px;">',
@@ -1009,7 +1026,7 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
 
     recipients.forEach(function(em) {
         try {
-            MailApp.sendEmail(em, "📊 [ISI Ad Intelligence] Multi-Channel Performance Report", "", {
+            MailApp.sendEmail(em, "[ISI Ad Intelligence] Multi-Channel Performance Report", "", {
                 htmlBody: emailHtml,
                 name: "ISI Ad Performance Intelligence"
             });
@@ -1027,7 +1044,7 @@ function BUILD_AD_PERFORMANCE_ONLY() {
     var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
     buildAdPerformanceIntelligenceSheet(tData, db);
     var ui = SpreadsheetApp.getUi();
-    if (ui) ui.alert("✅ '🎯 Ad Intelligence' Tab Updated Successfully!");
+    if (ui) ui.alert("✅ 'Ad_Intelligence' Tab Updated Successfully!");
 }
 
 /**
@@ -1109,15 +1126,82 @@ function RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT() {
     if (ui) ui.alert("✅ Sheet 1 Migration Complete", summary, ui.ButtonSet.OK);
 }
 
+/**
+ * Renames all existing dashboard tabs in Sheet 2 (current sheet) from emoji/legacy names to clean SQL database underscore format.
+ */
+function RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT() {
+    var ui = SpreadsheetApp.getUi();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return;
+
+    var DASHBOARD_MAPPING = {
+        "🛰️ Mission Control": "Mission_Control",
+        "Mission Control": "Mission_Control",
+        "🚦 Executive KPIs": "Executive_KPIs",
+        "Executive KPIs": "Executive_KPIs",
+        "🎯 Ad Intelligence": "Ad_Intelligence",
+        "Ad Intelligence": "Ad_Intelligence",
+        "🗺️ Geo Map": "Geo_Map_Profile",
+        "Geo Map": "Geo_Map_Profile",
+        "📏 Pareto (80-20)": "Pareto_80_20",
+        "Pareto (80-20)": "Pareto_80_20",
+        "🕒 Daily Heatmap": "Daily_Heatmap",
+        "Daily Heatmap": "Daily_Heatmap",
+        "📈 Growth & Momentum": "Growth_Momentum",
+        "Growth & Momentum": "Growth_Momentum",
+        "👥 Visitor Ratio": "Visitor_Ratio",
+        "Visitor Ratio": "Visitor_Ratio",
+        "📱 Tech Profile": "Tech_Profile",
+        "Tech Profile": "Tech_Profile",
+        "🔗 Identity Linker": "Identity_Linker",
+        "Identity Linker": "Identity_Linker",
+        "📊 Std Deviation": "Std_Deviation",
+        "Std Deviation": "Std_Deviation",
+        "🌊 Sankey Flow": "Sankey_Flow",
+        "Sankey Flow": "Sankey_Flow",
+        "🤖 Broken Link QA": "Broken_Link_QA",
+        "Broken Link QA": "Broken_Link_QA",
+        "🔀 Co-Occurrence": "Co_Occurrence_Matrix",
+        "Co-Occurrence": "Co_Occurrence_Matrix",
+        "🔻 Funnel Drops": "Funnel_Drop_Off",
+        "Funnel Drops": "Funnel_Drop_Off",
+        "🎯 Lead Scoring": "Lead_Scoring_Engine",
+        "Lead Scoring": "Lead_Scoring_Engine"
+    };
+
+    var sheets = ss.getSheets();
+    var renamedCount = 0;
+    var logList = [];
+
+    sheets.forEach(function(sheet) {
+        var oldName = sheet.getName().trim();
+        var newName = DASHBOARD_MAPPING[oldName];
+
+        if (newName && newName !== oldName) {
+            var existingTarget = ss.getSheetByName(newName);
+            if (!existingTarget) {
+                sheet.setName(newName);
+                renamedCount++;
+                logList.push("✔ Renamed: '" + oldName + "' ➔ '" + newName + "'");
+            } else {
+                logList.push("⚠ Skipped: '" + newName + "' already exists in Sheet 2.");
+            }
+        }
+    });
+
+    var summary = "🎉 Renamed " + renamedCount + " dashboard tab(s) in Sheet 2 to Database Format!\n\n" + (logList.join("\n") || "All tabs in Sheet 2 are already in database format.");
+    console.log(summary);
+    if (ui) ui.alert("✅ Sheet 2 Migration Complete", summary, ui.ButtonSet.OK);
+}
+
 function onOpen() {
     SpreadsheetApp.getUi()
         .createMenu('🚀 ISI ANALYTICS')
         .addItem('🔄 Refresh All 16 Dashboards', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
-        .addItem('🏷️ Rename Sheet 1 Tabs to Database Format (_)', 'RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT')
+        .addItem('🏷️ Rename Sheet 2 Dashboard Tabs to Database Format (_)', 'RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT')
+        .addItem('🏷️ Rename Sheet 1 Raw Data Tabs to Database Format (_)', 'RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT')
         .addItem('🎯 Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
         .addItem('📧 Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_MAILER')
         .addItem('🧹 Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')
         .addToUi();
 }
-
-
