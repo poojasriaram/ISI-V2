@@ -153,6 +153,7 @@ const appRoutes = [
   { path: "/integratedservices", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/integratedservices/thank-you", element: <Navigate to="/lp/facility-management/thank-you" replace /> },
   { path: "/salesinquiry", element: <Navigate to="/lp/facility-management" replace /> },
+  { path: "/services", element: <Navigate to="/services/security" replace /> },
   { path: "/services/security", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/security/" /> },
   { path: "/services/integrated-facility-management", element: <ServiceCategoryPage categoryIdOverride="hard-fm" canonicalPathOverride="/services/integrated-facility-management/" /> },
   { path: "/services/skill-development-manpower", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/skill-development-manpower/" /> },
