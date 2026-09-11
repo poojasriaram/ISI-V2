@@ -131,6 +131,8 @@ export type SheetName =
     | 'EbookDownloads'
     | 'ConsultationReqs'
     | 'ChatbotLeads'
+    | 'Google_Ad_Leads'
+    | 'AdCampaign'
     | 'TrafficAnalytics'
     | 'EngagementMetrics'
     | 'BehaviorMetrics'

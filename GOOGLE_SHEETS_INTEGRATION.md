@@ -20,8 +20,8 @@ This project implements enterprise tracking with **60+ Master Metrics**, A/B tes
    - The Apps Script now automatically detects and writes to renamed tabs in your Google Sheet (e.g. `Contacts`, `Contact Us`, `Contact Leads`, `Leads`, `Website Leads`, `Career`, `Careers`, `Ad Campaign`, `Chatbot`, `Academy`, etc.).
    - No more missing sheet errors if you customize tab names in your Google Spreadsheet!
 
-3. **🎯 Dedicated Ad Campaign Google Sheet**:
-   - `AdCampaign` leads are automatically routed to a **separate, dedicated Google Sheet** ("ISI Security - Ad Campaign Leads") to keep paid campaign acquisition completely isolated from general analytics.
+3. **🎯 Dedicated Ad Campaign Google Sheet (`Google_Ad_Leads`)**:
+   - `Google_Ad_Leads` (or `AdCampaign`) leads are automatically routed to a **separate, dedicated Google Sheet** ("ISI Security - Ad Campaign Leads") under the tab **`Google_Ad_Leads`** to keep paid campaign acquisition completely isolated from general analytics.
 
 4. **📄 Google Drive Resume Archiving & Monthly Digest**:
    - Candidate resumes are automatically saved directly into a dedicated Google Drive folder (`ISI_Career_Resumes`).
@@ -30,7 +30,7 @@ This project implements enterprise tracking with **60+ Master Metrics**, A/B tes
 
 5. **💎 Enhanced Executive Email Design**:
    - Branded lead category alerts:
-     - `🎯 [Ad Campaign Lead Generation]`
+     - `🎯 [Google Ad Lead Generation]`
      - `🔔 [Contact Form Lead Generation]`
      - `📄 [Career Application Lead Generation]`
      - `💼 [Sales Lead Generation]`

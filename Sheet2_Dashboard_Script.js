@@ -314,7 +314,7 @@ function buildAdPerformanceIntelligenceSheet(tData, db) {
     var adLeadsData = [];
     if (db) {
         try {
-            var adSheet = db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
+            var adSheet = db.getSheetByName("Google_Ad_Leads") || db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
             if (adSheet && adSheet.getLastRow() > 1) {
                 adLeadsData = adSheet.getDataRange().getValues();
             }
@@ -899,7 +899,7 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
     var tSheet = db.getSheetByName("TrafficAnalytics");
     var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
     
-    var adSheet = db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
+    var adSheet = db.getSheetByName("Google_Ad_Leads") || db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
     var adLeadsData = (adSheet && adSheet.getLastRow() > 0) ? adSheet.getDataRange().getValues() : [];
 
     var adStats = {

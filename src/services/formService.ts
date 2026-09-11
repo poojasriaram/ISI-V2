@@ -68,8 +68,8 @@ async function sendToSheet(
         // Form data first
         ...sanitizedPayload,
 
-        // Include UTM values ONLY for AdCampaign submissions
-        ...(sheetName === 'AdCampaign' ? utmCtx : {}),
+        // Include UTM values for Google_Ad_Leads and AdCampaign submissions
+        ...(sheetName === 'Google_Ad_Leads' || sheetName === 'AdCampaign' ? utmCtx : {}),
 
         // IP information
         ipAddress:
@@ -96,7 +96,8 @@ async function sendToSheet(
     });
 
     // 1. Send to Google Sheets Webhook
-    const targetUrl = (sheetName === 'AdCampaign')
+    const isAdCampaign = sheetName === 'Google_Ad_Leads' || sheetName === 'AdCampaign';
+    const targetUrl = isAdCampaign
         ? (import.meta.env.VITE_AD_CAMPAIGN_WEB_APP_URL || "https://script.google.com/macros/s/AKfycbwL1i7fOTIPdyo86zgI2AbAmeAowti2nJy7LftH2YY-MEUmir8gYOKyaS2BhrK8zNnC/exec")
         : SHEETS_URL;
 
@@ -238,7 +239,7 @@ export const submitTenderRFQ = async (data: Record<string, unknown>) => {
 
 export const submitAdCampaignLead = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('AdCampaign', data);
+        await sendToSheet('Google_Ad_Leads', data);
         return { success: true };
     } catch (error) {
         console.error('Error submitting Ad Campaign lead:', error);

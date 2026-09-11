@@ -108,7 +108,7 @@ export const SalesInquiryPage = () => {
     setIsSubmitting(true);
     
     const data = {
-      sheetName: "AdCampaign",
+      sheetName: "Google_Ad_Leads",
       "Full Name": fullName,
       "Phone Number": phoneNumber,
       "Work Email": workEmail,
@@ -139,7 +139,7 @@ export const SalesInquiryPage = () => {
         company: companyName,
         serviceRequested: 'Facility Management & Integrated Solutions',
         message: 'Sales inquiry from landing page',
-        formName: 'AdCampaign',
+        formName: 'Google_Ad_Leads',
         utmSource,
         utmMedium,
         utmCampaign,

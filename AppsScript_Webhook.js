@@ -154,6 +154,11 @@ var TAB_CONFIGS = {
     "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "Status","IP Location","IP Address","Variant","Timestamp"
   ],
+  "Google_Ad_Leads": [
+    "Full Name","Phone Number","Work Email","Company Name",
+    "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "IP Location","IP Address","Organization","Variant","Timestamp"
+  ],
   "AdCampaign": [
     "Full Name","Phone Number","Work Email","Company Name",
     "UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
@@ -194,13 +199,17 @@ var SHEET_NAME_ALIASES = {
   "jobapplications": "CareerApplications",
   "applicants": "CareerApplications",
 
-  // Ad campaign
-  "adcampaign": "AdCampaign",
-  "ad_campaign": "AdCampaign",
-  "adcampaignleads": "AdCampaign",
-  "campaigns": "AdCampaign",
-  "campaignleads": "AdCampaign",
-  "adleads": "AdCampaign",
+  // Google Ad Leads / Ad Campaign variations
+  "google_ad_leads": "Google_Ad_Leads",
+  "googleadleads": "Google_Ad_Leads",
+  "google_ads": "Google_Ad_Leads",
+  "googleads": "Google_Ad_Leads",
+  "adcampaign": "Google_Ad_Leads",
+  "ad_campaign": "Google_Ad_Leads",
+  "adcampaignleads": "Google_Ad_Leads",
+  "campaigns": "Google_Ad_Leads",
+  "campaignleads": "Google_Ad_Leads",
+  "adleads": "Google_Ad_Leads",
 
   // Chatbot
   "chatbotleads": "ChatbotLeads",
@@ -302,22 +311,33 @@ function doPost(e) {
     }
 
     // =====================================================================================
-    // ROUTE A: AD CAMPAIGN LEADS -> CAPTURE IN DEDICATED SEPARATE SPREADSHEET
+    // ROUTE A: GOOGLE AD / CAMPAIGN LEADS -> CAPTURE IN DEDICATED SEPARATE SPREADSHEET
     // =====================================================================================
-    if (sheetName === "AdCampaign" || sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "adcampaign") {
+    var isAdLead = sheetName === "Google_Ad_Leads" || 
+                   sheetName === "AdCampaign" || 
+                   sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "googleadleads" ||
+                   sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "adcampaign" ||
+                   sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "googleads";
+
+    if (isAdLead) {
       var adSpreadsheet = getAdCampaignSpreadsheet();
-      var adSheet = findSheetFlexible(adSpreadsheet, "AdCampaignLeads") || adSpreadsheet.getSheetByName("AdCampaignLeads") || adSpreadsheet.getActiveSheet();
+      var adSheet = findSheetFlexible(adSpreadsheet, "Google_Ad_Leads") || 
+                    findSheetFlexible(adSpreadsheet, "AdCampaignLeads") || 
+                    findSheetFlexible(adSpreadsheet, "AdCampaign") || 
+                    adSpreadsheet.getSheetByName("Google_Ad_Leads") || 
+                    adSpreadsheet.getSheetByName("AdCampaignLeads") || 
+                    adSpreadsheet.getActiveSheet();
       
       // Setup headers if sheet is brand new
       if (adSheet.getLastRow() === 0) {
-        var adHeaders = TAB_CONFIGS["AdCampaign"];
+        var adHeaders = TAB_CONFIGS["Google_Ad_Leads"] || TAB_CONFIGS["AdCampaign"];
         adSheet.getRange(1, 1, 1, adHeaders.length)
                .setValues([adHeaders])
                .setFontWeight("bold")
                .setBackground("#003380")
                .setFontColor("#ffffff");
         adSheet.setFrozenRows(1);
-        adSheet.setName("AdCampaignLeads");
+        adSheet.setName("Google_Ad_Leads");
       }
       
       var adHeadersList = adSheet.getRange(1, 1, 1, Math.max(adSheet.getLastColumn(), 1)).getValues()[0];
@@ -327,8 +347,8 @@ function doPost(e) {
       
       adSheet.appendRow(adRow);
       
-      // Send dedicated Ad Campaign Lead Generation alert email
-      sendLeadEmails(data, "AdCampaign", adSpreadsheet.getUrl());
+      // Send dedicated Google Ad / Campaign Lead Generation alert email
+      sendLeadEmails(data, "Google_Ad_Leads", adSpreadsheet.getUrl());
       
       return ContentService.createTextOutput("Saved to Dedicated Ad Campaign Sheet: " + adSpreadsheet.getName()).setMimeType(ContentService.MimeType.TEXT);
     }
@@ -469,8 +489,8 @@ function getAdCampaignSpreadsheet() {
   // Create brand new dedicated Google Sheet
   var newSheet = SpreadsheetApp.create("ISI Security - Ad Campaign Leads");
   var targetTab = newSheet.getActiveSheet();
-  targetTab.setName("AdCampaignLeads");
-  var headers = TAB_CONFIGS["AdCampaign"];
+  targetTab.setName("Google_Ad_Leads");
+  var headers = TAB_CONFIGS["Google_Ad_Leads"] || TAB_CONFIGS["AdCampaign"];
   targetTab.getRange(1, 1, 1, headers.length)
            .setValues([headers])
            .setFontWeight("bold")
@@ -640,16 +660,17 @@ function getLeadCategoryMeta(sheetName, data) {
   var phone = data.phone || data.Phone || data["Phone Number"] || "";
 
   switch (sheetName) {
+    case "Google_Ad_Leads":
     case "AdCampaign":
       return {
-        categoryName: "Ad Campaign Lead Generation",
-        badgeText: "🎯 PAID AD CAMPAIGN LEAD",
+        categoryName: "Google Ad & Campaign Lead Generation",
+        badgeText: "🎯 GOOGLE AD CAMPAIGN LEAD",
         badgeBg: "#f59e0b",
         badgeColor: "#ffffff",
         leadName: name || "New Ad Lead",
         leadCompany: company || "Direct Business Lead",
         leadPhone: phone,
-        internalSubject: "🎯 [Ad Campaign Lead Generation] New Prospect: " + (name ? name + (company ? " (" + company + ")" : "") : "New Ad Inquiry"),
+        internalSubject: "🎯 [Google Ad Lead Generation] New Prospect: " + (name ? name + (company ? " (" + company + ")" : "") : "New Ad Inquiry"),
         userSubject: "✅ Consultation Request Received – ISI Security",
         userMessage: "Thank you for expressing interest in ISI Security through our campaign. Our Senior Security Consultant has received your details and will connect with you shortly.",
         recipients: EMAIL_CONFIG.adCampaignEmails
@@ -1470,10 +1491,10 @@ function countLeadsInPeriod(ss, startDate, endDate) {
     }
   }
 
-  // Also query AdCampaign sheet if present
+  // Also query Google_Ad_Leads / AdCampaign sheet if present
   try {
     var adSS = getAdCampaignSpreadsheet();
-    var adSh = adSS.getSheetByName("AdCampaignLeads") || adSS.getActiveSheet();
+    var adSh = adSS.getSheetByName("Google_Ad_Leads") || adSS.getSheetByName("AdCampaignLeads") || adSS.getSheetByName("AdCampaign") || adSS.getActiveSheet();
     var adData = adSh.getDataRange().getValues();
     if (adData.length >= 2) {
       var adTsCol = adData[0].indexOf("Timestamp");
