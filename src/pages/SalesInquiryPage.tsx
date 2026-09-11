@@ -17,6 +17,7 @@ import salesImg from "@/assets/Sales inquiry.png";
 import isiLogo from "@/assets/isi-logo.webp";
 
 import { getUtmParams } from '@/utils/utm';
+import { submitLeadToJira } from '@/services/jiraService';
 
 export const SalesInquiryPage = () => {
   useContentProtection();
@@ -130,6 +131,22 @@ export const SalesInquiryPage = () => {
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(data),
       });
+
+      // Capture lead in Jira Cloud
+      submitLeadToJira({
+        name: fullName,
+        email: workEmail,
+        phone: phoneNumber,
+        company: companyName,
+        serviceRequested: 'Facility Management & Integrated Solutions',
+        message: 'Sales inquiry from landing page',
+        formName: 'AdCampaign',
+        utmSource,
+        utmMedium,
+        utmCampaign,
+        utmTerm,
+        utmContent
+      }).catch(err => console.warn('[JIRA SALES CAPTURE ERROR]', err));
 
       toast.success("Inquiry Submitted Successfully!", {
         description: "Our sales team will get back to you within 24 hours.",
