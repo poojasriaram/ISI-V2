@@ -581,64 +581,162 @@ function buildAdCampaignDashboard() {
 }
 
 // =========================================================================================
-// 7. WEEKLY AD CAMPAIGN DIGEST FOR LEADERSHIP
+// 7. ISI AD PERFORMANCE INTELLIGENCE (MAILER - SENDER)
 // =========================================================================================
 
-function weeklyAdCampaignDigest() {
+/**
+ * Executive Mailer: Sends the comprehensive Multi-Channel Ad Performance Intelligence Report
+ * (Meta, YouTube, Google Search, Affiliate) to leadership.
+ */
+function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
   var ss = getAdSpreadsheet();
   var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME);
-  if (!sheet) return;
+  if (!sheet || sheet.getLastRow() < 2) {
+    console.warn("No ad campaign leads available to generate performance digest.");
+    return;
+  }
 
   var data = sheet.getDataRange().getValues();
-  if (data.length < 2) return;
-
   var headers = data[0];
-  var tsCol   = headers.indexOf("Timestamp");
-  var compCol = headers.indexOf("Company Name");
+  var tsCol = headers.indexOf("Timestamp");
   var campCol = headers.indexOf("UTM Campaign");
+  var srcCol = headers.indexOf("UTM Source");
+  var nameCol = headers.indexOf("Full Name");
+  var emailCol = headers.indexOf("Work Email");
+  var phoneCol = headers.indexOf("Phone Number");
 
   var now = new Date();
   var sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
+  var totalLeads = data.length - 1;
   var weekLeads = 0;
   var campaigns = {};
 
+  var channelStats = {
+    meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", leads: 0, weekLeads: 0, topCampaign: "-" },
+    youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", leads: 0, weekLeads: 0, topCampaign: "-" },
+    google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", leads: 0, weekLeads: 0, topCampaign: "-" },
+    affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", leads: 0, weekLeads: 0, topCampaign: "-" }
+  };
+
+  var metaCamps = {}, ytCamps = {}, googleCamps = {}, affCamps = {};
+
   for (var i = 1; i < data.length; i++) {
     var ts = new Date(data[i][tsCol]);
-    if (ts && ts >= sevenDaysAgo) {
-      weekLeads++;
-      var c = data[i][campCol] || "General";
-      campaigns[c] = (campaigns[c] || 0) + 1;
+    var isRecent = ts && ts >= sevenDaysAgo;
+    if (isRecent) weekLeads++;
+
+    var c = data[i][campCol] || "General";
+    campaigns[c] = (campaigns[c] || 0) + 1;
+
+    var s = String(data[i][srcCol] || "").toLowerCase();
+    if (s.includes("fb") || s.includes("facebook") || s.includes("meta") || s.includes("instagram") || s.includes("ig")) {
+      channelStats.meta.leads++;
+      if (isRecent) channelStats.meta.weekLeads++;
+      metaCamps[c] = (metaCamps[c] || 0) + 1;
+    } else if (s.includes("youtube") || s.includes("yt")) {
+      channelStats.youtube.leads++;
+      if (isRecent) channelStats.youtube.weekLeads++;
+      ytCamps[c] = (ytCamps[c] || 0) + 1;
+    } else if (s.includes("google") || s.includes("cpc") || s.includes("adwords") || s.includes("search")) {
+      channelStats.google.leads++;
+      if (isRecent) channelStats.google.weekLeads++;
+      googleCamps[c] = (googleCamps[c] || 0) + 1;
+    } else {
+      channelStats.affiliate.leads++;
+      if (isRecent) channelStats.affiliate.weekLeads++;
+      affCamps[c] = (affCamps[c] || 0) + 1;
     }
   }
 
-  var breakdownHtml = Object.keys(campaigns).map(function(k) {
-    return '<li><strong>' + k + ':</strong> ' + campaigns[k] + ' leads</li>';
+  var getTop = function(obj) {
+    var keys = Object.keys(obj);
+    if (keys.length === 0) return "Direct Campaign";
+    return keys.sort(function(a,b){ return obj[b] - obj[a]; })[0];
+  };
+
+  channelStats.meta.topCampaign = getTop(metaCamps);
+  channelStats.youtube.topCampaign = getTop(ytCamps);
+  channelStats.google.topCampaign = getTop(googleCamps);
+  channelStats.affiliate.topCampaign = getTop(affCamps);
+
+  var channelList = [channelStats.meta, channelStats.youtube, channelStats.google, channelStats.affiliate];
+
+  var tableRowsHtml = channelList.map(function(ch, idx) {
+    var bg = idx % 2 === 0 ? "#ffffff" : "#f8fafc";
+    var share = totalLeads > 0 ? (ch.leads / totalLeads * 100).toFixed(1) + "%" : "0.0%";
+    return [
+      '<tr style="background:' + bg + ';border-bottom:1px solid #e2e8f0;">',
+      '<td style="padding:12px;font-weight:bold;color:#1e293b;">' + ch.name + '</td>',
+      '<td style="padding:12px;color:#64748b;font-size:12px;">' + ch.type + '</td>',
+      '<td style="padding:12px;text-align:center;font-weight:bold;color:#f59e0b;font-size:14px;">' + ch.leads + '</td>',
+      '<td style="padding:12px;text-align:center;font-weight:bold;color:#10b981;">' + ch.weekLeads + '</td>',
+      '<td style="padding:12px;text-align:center;color:#475569;font-weight:bold;">' + share + '</td>',
+      '<td style="padding:12px;color:#1e293b;font-size:12px;">' + ch.topCampaign + '</td>',
+      '</tr>'
+    ].join('');
   }).join('');
 
-  var subject = "📊 [Weekly Ad Campaign Performance] " + weekLeads + " New Leads Generated";
+  var subject = "🎯 [ISI Ad Intelligence] Multi-Channel Performance Report - " + totalLeads + " Leads Captured";
+
   var html = [
     '<!DOCTYPE html><html><body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
-    '<div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">',
+    '<div style="max-width:680px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">',
     '<div style="background:#003380;padding:25px;color:#ffffff;text-align:center;">',
-    '<h2 style="margin:0;">Weekly Ad Campaign Summary</h2>',
-    '<p style="margin:6px 0 0 0;color:#93c5fd;">ISI Security Paid Acquisition Report</p>',
+    '<h2 style="margin:0;font-size:22px;">🎯 ISI Ad Performance Intelligence Report</h2>',
+    '<p style="margin:6px 0 0 0;color:#93c5fd;font-size:13px;">Executive Multi-Channel Attribution Digest (Meta, YouTube, Google, Affiliate)</p>',
     '</div>',
     '<div style="padding:25px;">',
-    '<h3 style="color:#0f172a;margin-top:0;">Total Leads Captured: <span style="color:#f59e0b;">' + weekLeads + '</span></h3>',
-    '<h4 style="color:#64748b;margin-bottom:8px;">Breakdown by Campaign:</h4>',
-    '<ul style="color:#334155;line-height:1.7;">' + (breakdownHtml || '<li>No leads captured this week</li>') + '</ul>',
+    
+    // KPI Cards
+    '<div style="display:flex;gap:12px;margin-bottom:24px;">',
+    '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px;flex:1;text-align:center;">',
+    '<div style="color:#1e40af;font-size:11px;font-weight:bold;letter-spacing:0.5px;">ALL-TIME LEADS</div>',
+    '<div style="color:#1e3a8a;font-size:22px;font-weight:bold;margin-top:4px;">' + totalLeads + '</div>',
+    '</div>',
+    '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:14px;flex:1;text-align:center;">',
+    '<div style="color:#b45309;font-size:11px;font-weight:bold;letter-spacing:0.5px;">LAST 7 DAYS</div>',
+    '<div style="color:#78350f;font-size:22px;font-weight:bold;margin-top:4px;">' + weekLeads + '</div>',
+    '</div>',
+    '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px;flex:1;text-align:center;">',
+    '<div style="color:#047857;font-size:11px;font-weight:bold;letter-spacing:0.5px;">TOP CHANNEL</div>',
+    '<div style="color:#064e3b;font-size:15px;font-weight:bold;margin-top:8px;">' + channelList.sort(function(a,b){return b.leads-a.leads;})[0].name + '</div>',
+    '</div>',
+    '</div>',
+
+    '<h3 style="color:#0f172a;font-size:15px;margin:20px 0 10px 0;">📊 Ad Performance Intelligence Table</h3>',
+    '<table style="width:100%;border-collapse:collapse;margin-bottom:25px;font-size:13px;">',
+    '<tr style="background:#003380;color:#ffffff;">',
+    '<th style="padding:10px;text-align:left;">Channel</th>',
+    '<th style="padding:10px;text-align:left;">Type</th>',
+    '<th style="padding:10px;text-align:center;">Total Leads</th>',
+    '<th style="padding:10px;text-align:center;">7-Day Leads</th>',
+    '<th style="padding:10px;text-align:center;">Lead Share</th>',
+    '<th style="padding:10px;text-align:left;">Top Campaign</th>',
+    '</tr>',
+    tableRowsHtml,
+    '</table>',
+
     '<div style="text-align:center;margin-top:25px;">',
-    '<a href="' + ss.getUrl() + '" style="background:#003380;color:#ffffff;padding:12px 25px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;">Open Ad Campaign Google Sheet</a>',
+    '<a href="' + ss.getUrl() + '" style="background:#003380;color:#ffffff;padding:12px 28px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;">Open ISI Ad Campaign Google Sheet</a>',
     '</div>',
     '</div>',
-    '</div>',
-    '</body></html>'
+    '</div></body></html>'
   ].join('\n');
 
   AD_CONFIG.EMAIL.weeklyReportRecipients.forEach(function(email) {
-    MailApp.sendEmail(email, subject, "", { htmlBody: html, name: "ISI Ad Intelligence" });
+    try {
+      MailApp.sendEmail(email, subject, "", { htmlBody: html, name: "ISI Ad Intelligence Engine" });
+    } catch(e) {
+      console.error("Failed to send ad intelligence digest to " + email + ": " + e.toString());
+    }
   });
+
+  console.log("✅ ISI Ad Performance Intelligence report sent to leadership team.");
+}
+
+function weeklyAdCampaignDigest() {
+  SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER();
 }
 
 // =========================================================================================
@@ -716,4 +814,14 @@ function formatAndResetAdSheet() {
   }
 
   console.log("✅ Headers successfully initialized in Row 1 of AdCampaignLeads tab!");
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('🎯 AD INTELLIGENCE')
+    .addItem('📊 Build/Refresh Ad Dashboard', 'buildAdCampaignDashboard')
+    .addItem('📧 Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER')
+    .addItem('⚙️ Format Headers & Table', 'formatAndResetAdSheet')
+    .addItem('🧪 Test Ad Lead Submission', 'testAdLeadSubmission')
+    .addToUi();
 }

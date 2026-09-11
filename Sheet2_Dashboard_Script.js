@@ -80,24 +80,25 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
     var devRecordsPurged = (tDataRaw.length - tData.length) + (ubDataRaw.length - ubData.length);
     // ──────────────────────────────────
 
-    // Build all 15 tabs safely
+    // Build all 16 tabs safely
     try { buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged); } catch (err) { console.error("Tab 1 Error: " + err.toString()); }
     try { buildExecutiveDashboard(tData, eData); } catch (err) { console.error("Tab 2 Error: " + err.toString()); }
-    try { buildGeoMapProfile(tData); } catch (err) { console.error("Tab 3 Error: " + err.toString()); }
-    try { buildTrafficAndPagesPareto(tData); } catch (err) { console.error("Tab 4 Error: " + err.toString()); }
-    try { buildHeatmapSheet(tData); } catch (err) { console.error("Tab 5 Error: " + err.toString()); }
-    try { buildGrowthGraphSheet(tData); } catch (err) { console.error("Tab 6 Error: " + err.toString()); }
-    try { buildRepeatVisitorRatioSheet(tData); } catch (err) { console.error("Tab 7 Error: " + err.toString()); }
-    try { buildTechProfile(ubData); } catch (err) { console.error("Tab 8 Error: " + err.toString()); }
-    try { buildIdentityLinkerSheet(ubData, db); } catch (err) { console.error("Tab 9 Error: " + err.toString()); }
-    try { buildStdDevSheet(eData); } catch (err) { console.error("Tab 10 Error: " + err.toString()); }
-    try { buildSankeySheet(tData); } catch (err) { console.error("Tab 11 Error: " + err.toString()); }
-    try { buildBrokenLinkSheet(); } catch (err) { console.error("Tab 12 Error: " + err.toString()); }
-    try { buildCoOccurrenceMatrix(tData, eData); } catch (err) { console.error("Tab 13 Error: " + err.toString()); }
-    try { buildFunnelDropOffSheet(tData, db); } catch (err) { console.error("Tab 14 Error: " + err.toString()); }
-    try { buildLeadScoringEngine(tData, eData); } catch (err) { console.error("Tab 15 Error: " + err.toString()); }
+    try { buildAdPerformanceIntelligenceSheet(tData, db); } catch (err) { console.error("Tab 3 Error: " + err.toString()); }
+    try { buildGeoMapProfile(tData); } catch (err) { console.error("Tab 4 Error: " + err.toString()); }
+    try { buildTrafficAndPagesPareto(tData); } catch (err) { console.error("Tab 5 Error: " + err.toString()); }
+    try { buildHeatmapSheet(tData); } catch (err) { console.error("Tab 6 Error: " + err.toString()); }
+    try { buildGrowthGraphSheet(tData); } catch (err) { console.error("Tab 7 Error: " + err.toString()); }
+    try { buildRepeatVisitorRatioSheet(tData); } catch (err) { console.error("Tab 8 Error: " + err.toString()); }
+    try { buildTechProfile(ubData); } catch (err) { console.error("Tab 9 Error: " + err.toString()); }
+    try { buildIdentityLinkerSheet(ubData, db); } catch (err) { console.error("Tab 10 Error: " + err.toString()); }
+    try { buildStdDevSheet(eData); } catch (err) { console.error("Tab 11 Error: " + err.toString()); }
+    try { buildSankeySheet(tData); } catch (err) { console.error("Tab 12 Error: " + err.toString()); }
+    try { buildBrokenLinkSheet(); } catch (err) { console.error("Tab 13 Error: " + err.toString()); }
+    try { buildCoOccurrenceMatrix(tData, eData); } catch (err) { console.error("Tab 14 Error: " + err.toString()); }
+    try { buildFunnelDropOffSheet(tData, db); } catch (err) { console.error("Tab 15 Error: " + err.toString()); }
+    try { buildLeadScoringEngine(tData, eData); } catch (err) { console.error("Tab 16 Error: " + err.toString()); }
 
-    if (ui) ui.alert("✅ SUCCESS! 15 Analytics Tabs Built & Sanitized.\n\n" + devRecordsPurged + " localhost records were purged from this session.");
+    if (ui) ui.alert("✅ SUCCESS! 16 Analytics Tabs (Including Ad Performance Intelligence) Built & Sanitized.\n\n" + devRecordsPurged + " localhost records were purged from this session.");
 }
 
 /** 
@@ -166,27 +167,36 @@ function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
     var sh = getOrCreateTab("🛰️ Mission Control");
     styleTitle(sh, "🛰️ CENTRAL COMMAND & MISSION CONTROL", 12, C.t);
     sh.getRange("A1:Z100").setBackground(C.bg);
-    setColWidths(sh, 1, [20, 200, 200, 200, 200, 200, 20].concat(new Array(10).fill(100)));
+    setColWidths(sh, 1, [20, 180, 180, 180, 180, 180, 20].concat(new Array(10).fill(100)));
 
     if (!tData || tData.length < 2) {
         sh.getRange(4, 2).setValue("Waiting for traffic data in Sheet 1...").setFontColor(C.m);
         return;
     }
 
-    var tHead = tData[0], ipCol = tHead.indexOf("IP Address"), pCol = tHead.indexOf("Page Path"), sCol = tHead.indexOf("Traffic Source");
+    var tHead = tData[0], ipCol = tHead.indexOf("IP Address"), pCol = tHead.indexOf("Page Path"), sCol = tHead.indexOf("Traffic Source"), sessCol = tHead.indexOf("Session ID"), utmSrcCol = tHead.indexOf("UTM Source");
     var eDurCol = (eData && eData.length > 0) ? eData[0].indexOf("Duration (sec)") : -1;
     var ubHotCol = (ubData && ubData.length > 0) ? ubData[0].indexOf("Hot Lead Flag") : -1;
 
     var totalVisits = tData.length - 1;
-    var ipCounts = {}, sources = {};
+    var ipCounts = {}, sources = {}, sessions = new Set();
+    var googleLeadCount = 0;
+
     for (var i = 1; i < tData.length; i++) {
-        var ip = tData[i][ipCol], s = tData[i][sCol] || "Direct";
+        var ip = tData[i][ipCol], s = tData[i][sCol] || "Direct", sess = tData[i][sessCol];
+        var utm = String(tData[i][utmSrcCol] || "").toLowerCase();
         if (ip) ipCounts[ip] = (ipCounts[ip] || 0) + 1;
+        if (sess) sessions.add(sess);
         sources[s] = (sources[s] || 0) + 1;
+        if (utm.includes("google") || s.toLowerCase().includes("google")) {
+            googleLeadCount++;
+        }
     }
 
+    var totalSessions = sessions.size || totalVisits;
     var uniqueUsers = Object.keys(ipCounts).length;
     var returnUsers = Object.keys(ipCounts).filter(function (k) { return ipCounts[k] > 1; }).length;
+    var repeatVisitorPct = uniqueUsers > 0 ? (returnUsers / uniqueUsers * 100).toFixed(1) + "%" : "0%";
 
     var totalSecs = 0, timedSessions = 0;
     if (eDurCol > -1) {
@@ -196,6 +206,7 @@ function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
         }
     }
     var avgSecs = timedSessions > 0 ? Math.round(totalSecs / timedSessions) : 0;
+    var avgDurationFormatted = avgSecs >= 60 ? Math.floor(avgSecs / 60) + "m " + (avgSecs % 60) + "s" : avgSecs + "s";
 
     var hotLeads = 0;
     if (ubHotCol > -1) {
@@ -204,59 +215,227 @@ function buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged) {
         }
     }
 
+    // Pull Career Submissions & Chats counts from DB
+    var careerSubmissions = 0;
+    var chatCount = 0;
+    if (db) {
+        try {
+            var cSheet = db.getSheetByName("CareerApplications") || db.getSheetByName("Careers");
+            if (cSheet && cSheet.getLastRow() > 1) careerSubmissions = cSheet.getLastRow() - 1;
+        } catch(e) {}
+        try {
+            var cbSheet = db.getSheetByName("ChatbotLeads");
+            if (cbSheet && cbSheet.getLastRow() > 1) chatCount = cbSheet.getLastRow() - 1;
+        } catch(e) {}
+    }
+
     var drawMegaStat = function (row, col, title, value, span, color, textcolor) {
-        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(10);
-        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(26);
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(22);
     };
 
-    // ── MASTER HUD ──
+    // ── MASTER HUD ROW 1 (TRAFFIC & SESSIONS) ──
     drawMegaStat(4, 2, "🌐 GLOBAL TRAFFIC", totalVisits.toLocaleString(), 1, C.pu);
-    drawMegaStat(4, 3, "👤 UNIQUE TARGETS", uniqueUsers.toLocaleString(), 1, C.c);
-    drawMegaStat(4, 4, "⏱ AVG ENGAGEMENT", avgSecs + "s", 1, C.g);
-    drawMegaStat(4, 5, "🔄 LOYALTY SURGE", returnUsers.toLocaleString(), 1, C.o);
-    drawMegaStat(4, 6, "🔥 HOT LEADS DETECTED", hotLeads, 1, C.re, C.w);
+    drawMegaStat(4, 3, "📈 NUMBER OF SESSIONS", totalSessions.toLocaleString(), 1, C.c);
+    drawMegaStat(4, 4, "🔄 REPEAT VISITORS", returnUsers.toLocaleString() + " (" + repeatVisitorPct + ")", 1, C.o);
+    drawMegaStat(4, 5, "⏱ AVG SESSION DURATION", avgDurationFormatted, 1, C.g);
+    drawMegaStat(4, 6, "🔥 HOT LEADS", hotLeads, 1, C.re, C.w);
 
-    // ── GAUGE CHARTS ──
-    sh.getRange(8, 2, 1, 5).merge().setValue("SYSTEM VITALS & ACQUISITION HEALTH").setBackground(C.p).setFontColor(C.t).setFontWeight("bold").setHorizontalAlignment("center");
+    // ── MASTER HUD ROW 2 (LEADS & CONVERSIONS) ──
+    drawMegaStat(8, 2, "🎯 GOOGLE LEADS", googleLeadCount.toLocaleString(), 1, "#1e40af");
+    drawMegaStat(8, 3, "📄 CAREER SUBMISSIONS", careerSubmissions.toLocaleString(), 1, "#0d9488");
+    drawMegaStat(8, 4, "💬 NUMBER OF CHATS", chatCount.toLocaleString(), 1, "#7c3aed");
+    drawMegaStat(8, 5, "👤 UNIQUE VISITORS", uniqueUsers.toLocaleString(), 1, "#475569");
+    drawMegaStat(8, 6, "🧹 DEV RECORDS PURGED", (devRecordsPurged || 0).toLocaleString(), 1, "#0f172a");
+
+    // ── GAUGE & PIE CHARTS ──
+    sh.getRange(12, 2, 1, 5).merge().setValue("SYSTEM VITALS & ACQUISITION HEALTH").setBackground(C.p).setFontColor(C.t).setFontWeight("bold").setHorizontalAlignment("center");
 
     var retentionPct = uniqueUsers > 0 ? Math.round(returnUsers / uniqueUsers * 100) : 0;
     
     // Setup Gauge 1 Data (Label + Value)
-    sh.getRange(9, 2).setValue("Retention %").setFontColor(C.bg);
-    sh.getRange(10, 2).setValue(retentionPct).setFontColor(C.bg); 
+    sh.getRange(13, 2).setValue("Repeat %").setFontColor(C.bg);
+    sh.getRange(14, 2).setValue(retentionPct).setFontColor(C.bg); 
     try {
-        var gauge1 = sh.newChart().setChartType(Charts.ChartType.GAUGE).addRange(sh.getRange(9, 2, 2, 1))
-            .setPosition(9, 2, 0, 0).setOption("title", "Retention %").setOption("width", 200).setOption("height", 200)
-            .setOption("greenFrom", 30).setOption("greenTo", 100).setOption("redFrom", 0).setOption("redTo", 15).build();
+        var gauge1 = sh.newChart().setChartType(Charts.ChartType.GAUGE).addRange(sh.getRange(13, 2, 2, 1))
+            .setPosition(13, 2, 0, 0).setOption("title", "Repeat Visitor %").setOption("width", 180).setOption("height", 180)
+            .setOption("greenFrom", 25).setOption("greenTo", 100).setOption("redFrom", 0).setOption("redTo", 10).build();
         sh.insertChart(gauge1);
     } catch(e) { console.error("Gauge1 error: " + e.toString()); }
 
     // Setup Gauge 2 Data (Label + Value)
-    sh.getRange(9, 3).setValue("Avg Secs").setFontColor(C.bg);
-    sh.getRange(10, 3).setValue(avgSecs).setFontColor(C.bg);
+    sh.getRange(13, 3).setValue("Avg Secs").setFontColor(C.bg);
+    sh.getRange(14, 3).setValue(avgSecs).setFontColor(C.bg);
     try {
-        var gauge2 = sh.newChart().setChartType(Charts.ChartType.GAUGE).addRange(sh.getRange(9, 3, 2, 1))
-            .setPosition(9, 3, 0, 0).setOption("title", "Avg Secs").setOption("width", 200).setOption("height", 200)
+        var gauge2 = sh.newChart().setChartType(Charts.ChartType.GAUGE).addRange(sh.getRange(13, 3, 2, 1))
+            .setPosition(13, 3, 0, 0).setOption("title", "Avg Secs").setOption("width", 180).setOption("height", 180)
             .setOption("max", 200).setOption("greenFrom", 60).setOption("greenTo", 200).setOption("yellowFrom", 30).setOption("yellowTo", 60).build();
         sh.insertChart(gauge2);
     } catch(e) { console.error("Gauge2 error: " + e.toString()); }
 
     var srcRows = Object.keys(sources).map(function (k) { return [k, sources[k]]; }).sort(function (a, b) { return b[1] - a[1] });
     if (srcRows.length > 0) {
-        sh.getRange(25, 2, srcRows.length, 2).setValues(srcRows).setFontColor(C.bg);
+        sh.getRange(28, 2, srcRows.length, 2).setValues(srcRows).setFontColor(C.bg);
         try {
-            var pie = sh.newChart().setChartType(Charts.ChartType.PIE).addRange(sh.getRange(25, 2, srcRows.length, 2))
-                .setPosition(9, 4, 0, 0).setOption("title", "Acquisition Radar").setOption("pieHole", 0.5)
-                .setOption("backgroundColor", C.bg).setOption("width", 400).setOption("height", 300).build();
+            var pie = sh.newChart().setChartType(Charts.ChartType.PIE).addRange(sh.getRange(28, 2, srcRows.length, 2))
+                .setPosition(13, 4, 0, 0).setOption("title", "Traffic Acquisition Radar").setOption("pieHole", 0.45)
+                .setOption("backgroundColor", C.bg).setOption("width", 380).setOption("height", 260).build();
             sh.insertChart(pie);
         } catch(e) { console.error("Pie error: " + e.toString()); }
     }
 
     // ── LIVE STATUS TERMINAL ──
-    sh.getRange(21, 2, 1, 5).merge().setValue("TERMINAL FEED").setBackground(C.t).setFontColor(C.g).setFontWeight("bold").setFontFamily("Courier New");
-    sh.getRange(22, 2, 5, 5).merge().setBackground("#000000").setFontColor("#00ff00").setFontFamily("Courier New").setVerticalAlignment("top").setWrap(true)
-        .setValue("> DATALINK ESTABLISHED... \n> " + totalVisits + " LOGS PARSED SUCCESSFULLY... \n> PURGE STATUS: " + (devRecordsPurged || 0) + " LOCAL COPIES DELETED... \n> PREDICTIVE ENGINE ENGAGED... \n> " + hotLeads + " ANONYMOUS LEADS UNMASKED... \n> AWAITING FURTHER DIRECTIVES.");
+    sh.getRange(24, 2, 1, 5).merge().setValue("SYSTEM LOG & CONVERSION STATUS").setBackground(C.t).setFontColor(C.g).setFontWeight("bold").setFontFamily("Courier New");
+    sh.getRange(25, 2, 4, 5).merge().setBackground("#000000").setFontColor("#00ff00").setFontFamily("Courier New").setVerticalAlignment("top").setWrap(true)
+        .setValue("> DATALINK ESTABLISHED... \n> " + totalVisits + " TOTAL VISITS & " + totalSessions + " SESSIONS PARSED \n> GOOGLE LEADS: " + googleLeadCount + " | CAREERS: " + careerSubmissions + " | CHATS: " + chatCount + "\n> REPEAT VISITORS: " + returnUsers + " (" + repeatVisitorPct + ") | AVG DURATION: " + avgDurationFormatted + "\n> LOCALHOST DEV RECORDS PURGED: " + (devRecordsPurged || 0));
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TAB 3: AD PERFORMANCE INTELLIGENCE (META, YOUTUBE, GOOGLE SEARCH, AFFILIATE)
+// ══════════════════════════════════════════════════════════════════════════════
+function buildAdPerformanceIntelligenceSheet(tData, db) {
+    var sh = getOrCreateTab("🎯 Ad Intelligence");
+    styleTitle(sh, "🎯 ISI AD PERFORMANCE INTELLIGENCE (META, YOUTUBE, GOOGLE SEARCH, AFFILIATE)", 10, "#003380");
+    sh.getRange("A1:Z100").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 180, 140, 130, 130, 130, 220, 160, 20]);
+
+    if (!tData || tData.length < 2) {
+        sh.getRange(4, 2).setValue("Waiting for campaign traffic data...").setFontColor(C.m);
+        return;
+    }
+
+    var tHead = tData[0];
+    var sCol = tHead.indexOf("Traffic Source");
+    var utmSrcCol = tHead.indexOf("UTM Source");
+    var utmCampCol = tHead.indexOf("UTM Campaign");
+    var pathCol = tHead.indexOf("Page Path");
+
+    // Pull Ad Leads from AdCampaignLeads or Contact/Sales if available
+    var adLeadsData = [];
+    if (db) {
+        try {
+            var adSheet = db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
+            if (adSheet && adSheet.getLastRow() > 1) {
+                adLeadsData = adSheet.getDataRange().getValues();
+            }
+        } catch(e) {}
+    }
+
+    var adStats = {
+        meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0, campaigns: {} },
+        youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0, campaigns: {} },
+        google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0, campaigns: {} },
+        affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0, campaigns: {} }
+    };
+
+    // Analyze traffic data
+    for (var i = 1; i < tData.length; i++) {
+        var src = String(tData[i][sCol] || "").toLowerCase();
+        var utmSrc = String(tData[i][utmSrcCol] || "").toLowerCase();
+        var camp = String(tData[i][utmCampCol] || tData[i][pathCol] || "General");
+
+        if (utmSrc.includes("fb") || utmSrc.includes("facebook") || utmSrc.includes("meta") || utmSrc.includes("instagram") || utmSrc.includes("ig") || src.includes("facebook") || src.includes("instagram")) {
+            adStats.meta.clicks++;
+            adStats.meta.campaigns[camp] = (adStats.meta.campaigns[camp] || 0) + 1;
+        } else if (utmSrc.includes("youtube") || utmSrc.includes("yt") || src.includes("youtube")) {
+            adStats.youtube.clicks++;
+            adStats.youtube.campaigns[camp] = (adStats.youtube.campaigns[camp] || 0) + 1;
+        } else if (utmSrc.includes("google") || utmSrc.includes("adwords") || utmSrc.includes("gads") || utmSrc.includes("cpc") || src.includes("google")) {
+            adStats.google.clicks++;
+            adStats.google.campaigns[camp] = (adStats.google.campaigns[camp] || 0) + 1;
+        } else if (utmSrc.includes("affiliate") || utmSrc.includes("partner") || utmSrc.includes("referral") || utmSrc.includes("aff")) {
+            adStats.affiliate.clicks++;
+            adStats.affiliate.campaigns[camp] = (adStats.affiliate.campaigns[camp] || 0) + 1;
+        }
+    }
+
+    // Match leads from AdCampaignLeads tab
+    if (adLeadsData.length > 1) {
+        var lHead = adLeadsData[0];
+        var lSrcCol = lHead.indexOf("UTM Source");
+        var lCampCol = lHead.indexOf("UTM Campaign");
+        for (var j = 1; j < adLeadsData.length; j++) {
+            var lSrc = String(adLeadsData[j][lSrcCol] || "").toLowerCase();
+            if (lSrc.includes("fb") || lSrc.includes("facebook") || lSrc.includes("meta") || lSrc.includes("instagram")) {
+                adStats.meta.leads++;
+            } else if (lSrc.includes("youtube") || lSrc.includes("yt")) {
+                adStats.youtube.leads++;
+            } else if (lSrc.includes("google") || lSrc.includes("cpc")) {
+                adStats.google.leads++;
+            } else if (lSrc.includes("affiliate") || lSrc.includes("partner")) {
+                adStats.affiliate.leads++;
+            }
+        }
+    }
+
+    var totalPaidClicks = adStats.meta.clicks + adStats.youtube.clicks + adStats.google.clicks + adStats.affiliate.clicks;
+    var totalPaidLeads = adStats.meta.leads + adStats.youtube.leads + adStats.google.leads + adStats.affiliate.leads;
+    var blendedCvr = totalPaidClicks > 0 ? (totalPaidLeads / totalPaidClicks * 100).toFixed(2) + "%" : "0.00%";
+
+    var drawMegaStat = function (row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(22);
+    };
+
+    // ── MEGA STAT SCORECARDS ──
+    drawMegaStat(4, 2, "🎯 TOTAL AD CLICKS", totalPaidClicks.toLocaleString(), 1, "#003380");
+    drawMegaStat(4, 3, "🔥 TOTAL AD LEADS", totalPaidLeads.toLocaleString(), 1, C.o);
+    drawMegaStat(4, 4, "📈 BLENDED AD CVR", blendedCvr, 1, C.g);
+    drawMegaStat(4, 5, "🏆 TOP PAID CHANNEL", totalPaidClicks > 0 ? "Google / Meta" : "Pending", 2, C.pu);
+
+    // ── 4-CHANNEL PERFORMANCE INTELLIGENCE TABLE ──
+    var tableHeaders = [
+        "Ad Channel", "Channel Type", "Clicks / Traffic", "Leads Generated", "Conversion Rate (%)", "Top Campaign / Page", "Performance Status"
+    ];
+
+    var getTopCamp = function(campObj) {
+        var keys = Object.keys(campObj);
+        if (keys.length === 0) return "Direct / Site";
+        return keys.sort(function(a,b){ return campObj[b] - campObj[a]; })[0];
+    };
+
+    var getStatus = function(clicks, leads) {
+        if (leads >= 5) return "🔥 High Performing";
+        if (clicks > 50) return "⚡ Steady Volume";
+        if (clicks > 0) return "🔍 Monitoring";
+        return "⚠️ Awaiting Traffic";
+    };
+
+    var channels = [adStats.meta, adStats.youtube, adStats.google, adStats.affiliate];
+    var tableRows = channels.map(function(ch) {
+        var cvr = ch.clicks > 0 ? (ch.leads / ch.clicks * 100).toFixed(2) + "%" : "0.00%";
+        return [
+            ch.name,
+            ch.type,
+            ch.clicks,
+            ch.leads,
+            cvr,
+            getTopCamp(ch.campaigns),
+            getStatus(ch.clicks, ch.leads)
+        ];
+    });
+
+    sh.getRange(8, 2, 1, tableHeaders.length).merge().setValue("AD PERFORMANCE INTELLIGENCE BREAKDOWN TABLE").setBackground("#003380").setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
+    sh.getRange(9, 2, 1, tableHeaders.length).setValues([tableHeaders]).setBackground(C.p).setFontColor(C.t).setFontWeight("bold").setHorizontalAlignment("center");
+    sh.getRange(10, 2, tableRows.length, tableHeaders.length).setValues(tableRows).setBackground(C.r1).setFontColor(C.t).setHorizontalAlignment("center");
+
+    // Highlight rows
+    for (var r = 0; r < tableRows.length; r++) {
+        if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, tableHeaders.length).setBackground(C.r2);
+    }
+
+    // Insert Comparison Chart
+    try {
+        var chartRange = sh.getRange(9, 2, 5, 4);
+        var barChart = sh.newChart().setChartType(Charts.ChartType.COLUMN).addRange(chartRange)
+            .setPosition(16, 2, 0, 0).setOption("title", "Ad Channel Clicks vs Leads Performance").setOption("width", 720).setOption("height", 280)
+            .setOption("backgroundColor", C.bg).build();
+        sh.insertChart(barChart);
+    } catch(e) {
+        console.error("Ad Chart Error: " + e.toString());
+    }
+}
+
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TAB 2: EXECUTIVE DASHBOARD
@@ -702,10 +881,162 @@ function REMOVE_ALL_TRIGGERS() {
     Browser.msgBox("✅ All automated email triggers removed! Duplicate emails from Hari Krishna / old triggers are disabled.");
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// 📧 ISI AD PERFORMANCE INTELLIGENCE (MAILER - SENDER)
+// ══════════════════════════════════════════════════════════════════════════════
+function SEND_ISI_AD_PERFORMANCE_MAILER() {
+    var ui = null;
+    try { ui = SpreadsheetApp.getUi(); } catch(e) {}
+
+    var db = null;
+    try {
+        db = SpreadsheetApp.openById(DATA_SHEET_ID);
+    } catch(e) {
+        if (ui) ui.alert("❌ Error opening Data Sheet: " + e.toString());
+        return;
+    }
+
+    var tSheet = db.getSheetByName("TrafficAnalytics");
+    var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
+    
+    var adSheet = db.getSheetByName("AdCampaignLeads") || db.getSheetByName("AdCampaign");
+    var adLeadsData = (adSheet && adSheet.getLastRow() > 0) ? adSheet.getDataRange().getValues() : [];
+
+    var adStats = {
+        meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0 },
+        youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0 },
+        google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0 },
+        affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0 }
+    };
+
+    var sCol = tData.length > 0 ? tData[0].indexOf("Traffic Source") : -1;
+    var utmSrcCol = tData.length > 0 ? tData[0].indexOf("UTM Source") : -1;
+
+    for (var i = 1; i < tData.length; i++) {
+        var src = String(tData[i][sCol] || "").toLowerCase();
+        var utmSrc = String(tData[i][utmSrcCol] || "").toLowerCase();
+
+        if (utmSrc.includes("fb") || utmSrc.includes("facebook") || utmSrc.includes("meta") || utmSrc.includes("instagram") || src.includes("facebook")) {
+            adStats.meta.clicks++;
+        } else if (utmSrc.includes("youtube") || utmSrc.includes("yt") || src.includes("youtube")) {
+            adStats.youtube.clicks++;
+        } else if (utmSrc.includes("google") || utmSrc.includes("adwords") || utmSrc.includes("gads") || utmSrc.includes("cpc") || src.includes("google")) {
+            adStats.google.clicks++;
+        } else if (utmSrc.includes("affiliate") || utmSrc.includes("partner") || utmSrc.includes("referral")) {
+            adStats.affiliate.clicks++;
+        }
+    }
+
+    if (adLeadsData.length > 1) {
+        var lSrcCol = adLeadsData[0].indexOf("UTM Source");
+        for (var j = 1; j < adLeadsData.length; j++) {
+            var lSrc = String(adLeadsData[j][lSrcCol] || "").toLowerCase();
+            if (lSrc.includes("fb") || lSrc.includes("facebook") || lSrc.includes("meta") || lSrc.includes("instagram")) adStats.meta.leads++;
+            else if (lSrc.includes("youtube") || lSrc.includes("yt")) adStats.youtube.leads++;
+            else if (lSrc.includes("google") || lSrc.includes("cpc")) adStats.google.leads++;
+            else if (lSrc.includes("affiliate") || lSrc.includes("partner")) adStats.affiliate.leads++;
+        }
+    }
+
+    var totalClicks = adStats.meta.clicks + adStats.youtube.clicks + adStats.google.clicks + adStats.affiliate.clicks;
+    var totalLeads = adStats.meta.leads + adStats.youtube.leads + adStats.google.leads + adStats.affiliate.leads;
+    var cvr = totalClicks > 0 ? (totalLeads / totalClicks * 100).toFixed(2) + "%" : "0.00%";
+
+    var recipients = [
+        "bv@trustflow.in",
+        "v.varshith@isisecurity.in",
+        "v.vishal@isisecurity.in",
+        "pooja@deeptrust.tech",
+        "poojasri.aram@gmail.com"
+    ];
+
+    var tableHtml = [
+        '<table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;">',
+        '<tr style="background:#003380;color:#ffffff;">',
+        '<th style="padding:10px;text-align:left;">Ad Channel</th>',
+        '<th style="padding:10px;text-align:left;">Platform Type</th>',
+        '<th style="padding:10px;text-align:center;">Clicks</th>',
+        '<th style="padding:10px;text-align:center;">Leads</th>',
+        '<th style="padding:10px;text-align:center;">CVR (%)</th>',
+        '</tr>'
+    ];
+
+    [adStats.meta, adStats.youtube, adStats.google, adStats.affiliate].forEach(function(c, idx) {
+        var rowBg = idx % 2 === 0 ? "#ffffff" : "#f8fafc";
+        var cCvr = c.clicks > 0 ? (c.leads / c.clicks * 100).toFixed(2) + "%" : "0.00%";
+        tableHtml.push(
+            '<tr style="background:' + rowBg + ';border-bottom:1px solid #e2e8f0;">' +
+            '<td style="padding:10px;font-weight:bold;color:#1e293b;">' + c.name + '</td>' +
+            '<td style="padding:10px;color:#64748b;">' + c.type + '</td>' +
+            '<td style="padding:10px;text-align:center;font-weight:bold;">' + c.clicks + '</td>' +
+            '<td style="padding:10px;text-align:center;font-weight:bold;color:#f59e0b;">' + c.leads + '</td>' +
+            '<td style="padding:10px;text-align:center;font-weight:bold;color:#10b981;">' + cCvr + '</td>' +
+            '</tr>'
+        );
+    });
+    tableHtml.push('</table>');
+
+    var emailHtml = [
+        '<!DOCTYPE html><html><body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
+        '<div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">',
+        '<div style="background:#003380;padding:25px;color:#ffffff;text-align:center;">',
+        '<h2 style="margin:0;font-size:20px;">🎯 ISI Ad Performance Intelligence Report</h2>',
+        '<p style="margin:6px 0 0 0;color:#93c5fd;font-size:13px;">Executive Multi-Channel Attribution Digest</p>',
+        '</div>',
+        '<div style="padding:25px;">',
+        '<div style="display:flex;gap:10px;margin-bottom:20px;">',
+        '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;flex:1;text-align:center;">',
+        '<div style="color:#1e40af;font-size:11px;font-weight:bold;">TOTAL PAID CLICKS</div>',
+        '<div style="color:#1e3a8a;font-size:20px;font-weight:bold;margin-top:4px;">' + totalClicks + '</div>',
+        '</div>',
+        '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;flex:1;text-align:center;">',
+        '<div style="color:#b45309;font-size:11px;font-weight:bold;">TOTAL PAID LEADS</div>',
+        '<div style="color:#78350f;font-size:20px;font-weight:bold;margin-top:4px;">' + totalLeads + '</div>',
+        '</div>',
+        '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px;flex:1;text-align:center;">',
+        '<div style="color:#047857;font-size:11px;font-weight:bold;">BLENDED CVR</div>',
+        '<div style="color:#064e3b;font-size:20px;font-weight:bold;margin-top:4px;">' + cvr + '</div>',
+        '</div>',
+        '</div>',
+        '<h3 style="color:#0f172a;font-size:14px;margin-bottom:8px;">Channel Performance Breakdown</h3>',
+        tableHtml.join(''),
+        '<div style="text-align:center;margin-top:25px;">',
+        '<a href="https://docs.google.com/spreadsheets/d/' + DATA_SHEET_ID + '" style="background:#003380;color:#ffffff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;">Open Google Sheet Analytics</a>',
+        '</div>',
+        '</div>',
+        '</div></body></html>'
+    ].join('');
+
+    recipients.forEach(function(em) {
+        try {
+            MailApp.sendEmail(em, "📊 [ISI Ad Intelligence] Multi-Channel Performance Report", "", {
+                htmlBody: emailHtml,
+                name: "ISI Ad Performance Intelligence"
+            });
+        } catch(err) {
+            console.error("Error sending to " + em + ": " + err.toString());
+        }
+    });
+
+    if (ui) ui.alert("✅ ISI Ad Performance Intelligence report sent to:\n" + recipients.join("\n"));
+}
+
+function BUILD_AD_PERFORMANCE_ONLY() {
+    var db = SpreadsheetApp.openById(DATA_SHEET_ID);
+    var tSheet = db.getSheetByName("TrafficAnalytics");
+    var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
+    buildAdPerformanceIntelligenceSheet(tData, db);
+    var ui = SpreadsheetApp.getUi();
+    if (ui) ui.alert("✅ '🎯 Ad Intelligence' Tab Updated Successfully!");
+}
+
 function onOpen() {
     SpreadsheetApp.getUi()
         .createMenu('🚀 ISI ANALYTICS')
-        .addItem('🔄 Refresh Dashboard', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
+        .addItem('🔄 Refresh All 16 Dashboards', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
+        .addItem('🎯 Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
+        .addItem('📧 Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_MAILER')
         .addItem('🧹 Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')
         .addToUi();
 }
+
