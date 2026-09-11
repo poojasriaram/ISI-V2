@@ -1023,17 +1023,97 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
 
 function BUILD_AD_PERFORMANCE_ONLY() {
     var db = SpreadsheetApp.openById(DATA_SHEET_ID);
-    var tSheet = db.getSheetByName("TrafficAnalytics");
+    var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
     var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
     buildAdPerformanceIntelligenceSheet(tData, db);
     var ui = SpreadsheetApp.getUi();
     if (ui) ui.alert("✅ '🎯 Ad Intelligence' Tab Updated Successfully!");
 }
 
+/**
+ * Renames all raw data tabs in Sheet 1 (Data Collection Sheet) to the database underscore format.
+ */
+function RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT() {
+    var ui = SpreadsheetApp.getUi();
+    var db;
+    try {
+        db = SpreadsheetApp.openById(DATA_SHEET_ID);
+    } catch(e) {
+        if (ui) ui.alert("❌ Error opening Sheet 1: " + e.toString());
+        return;
+    }
+
+    var MAPPING = {
+        "ContactForm": "Contact_Form",
+        "PartnerApps": "Partner_Applications",
+        "CareerApps": "Career_Applications",
+        "CareerApplications": "Career_Applications",
+        "EbookDownloads": "Ebook_Downloads",
+        "ConsultationReqs": "Consultation_Requests",
+        "ChatbotLeads": "Chatbot_Leads",
+        "SalesInquiries": "Sales_Inquiries",
+        "AcademyInquiries": "Academy_Inquiries",
+        "TenderRFQ": "Tender_RFQ",
+        "AdCampaign": "Google_Ad_Leads",
+        "AdCampaignLeads": "Google_Ad_Leads",
+        "GoogleAdLeads": "Google_Ad_Leads",
+        "NewsletterSubs": "Newsletter_Subscriptions",
+        "ExitIntentFeedback": "Exit_Intent_Feedback",
+        "TrafficAnalytics": "Traffic_Analytics",
+        "EngagementMetrics": "Engagement_Metrics",
+        "BehaviorMetrics": "Behavior_Metrics",
+        "UserBehaviorLibrary": "User_Behavior_Library"
+    };
+
+    var sheets = db.getSheets();
+    var renamedCount = 0;
+    var logList = [];
+
+    sheets.forEach(function(sheet) {
+        var oldName = sheet.getName().trim();
+        var newName = MAPPING[oldName];
+        if (!newName) {
+            var norm = oldName.toLowerCase().replace(/[\s\-_]/g, '');
+            if (norm === "contactform") newName = "Contact_Form";
+            else if (norm === "partnerapps" || norm === "partnerapplications") newName = "Partner_Applications";
+            else if (norm === "careerapps" || norm === "careerapplications") newName = "Career_Applications";
+            else if (norm === "ebookdownloads") newName = "Ebook_Downloads";
+            else if (norm === "consultationreqs") newName = "Consultation_Requests";
+            else if (norm === "chatbotleads") newName = "Chatbot_Leads";
+            else if (norm === "salesinquiries") newName = "Sales_Inquiries";
+            else if (norm === "academyinquiries") newName = "Academy_Inquiries";
+            else if (norm === "tenderrfq") newName = "Tender_RFQ";
+            else if (norm === "adcampaign" || norm === "adcampaignleads" || norm === "googleadleads") newName = "Google_Ad_Leads";
+            else if (norm === "newslettersubs" || norm === "newslettersubscriptions") newName = "Newsletter_Subscriptions";
+            else if (norm === "exitintentfeedback") newName = "Exit_Intent_Feedback";
+            else if (norm === "trafficanalytics") newName = "Traffic_Analytics";
+            else if (norm === "engagementmetrics") newName = "Engagement_Metrics";
+            else if (norm === "behaviormetrics") newName = "Behavior_Metrics";
+            else if (norm === "userbehaviorlibrary") newName = "User_Behavior_Library";
+        }
+
+        if (newName && newName !== oldName) {
+            var existingTarget = db.getSheetByName(newName);
+            if (!existingTarget) {
+                sheet.setName(newName);
+                renamedCount++;
+                logList.push("✔ Renamed: '" + oldName + "' ➔ '" + newName + "'");
+            } else {
+                logList.push("⚠ Skipped: '" + newName + "' already exists in Sheet 1.");
+            }
+        }
+    });
+
+    var summary = "🎉 Renamed " + renamedCount + " raw data tab(s) in Sheet 1 to Database Format!\n\n" + (logList.join("\n") || "All tabs in Sheet 1 are already in database format.");
+    console.log(summary);
+    if (ui) ui.alert("✅ Sheet 1 Migration Complete", summary, ui.ButtonSet.OK);
+}
+
 function onOpen() {
     SpreadsheetApp.getUi()
         .createMenu('🚀 ISI ANALYTICS')
         .addItem('🔄 Refresh All 16 Dashboards', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
+        .addItem('🏷️ Rename Sheet 1 Tabs to Database Format (_)', 'RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT')
         .addItem('🎯 Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
         .addItem('📧 Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_MAILER')
         .addItem('🧹 Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')

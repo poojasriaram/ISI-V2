@@ -2860,3 +2860,103 @@ function sendAllSamplePreviewEmailsToPooja() {
   console.log("🎉 All 14 sample preview emails successfully delivered to: " + targetEmail);
 }
 
+// =========================================================================================
+// 16. ONE-CLICK SHEET TAB RENAMER (MIGRATE TO DATABASE UNDERSCORE FORMAT)
+// =========================================================================================
+
+/**
+ * Run this function to automatically rename all existing tabs in your Google Sheet
+ * to the standardized database underscore format (e.g. ContactForm -> Contact_Form,
+ * TrafficAnalytics -> Traffic_Analytics, etc.) without losing any data!
+ */
+function RENAME_ALL_EXISTING_SHEET_TABS_TO_DATABASE_FORMAT() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    try {
+      ss = SpreadsheetApp.openById(CONFIG.MAIN_SPREADSHEET_ID);
+    } catch(e) {
+      console.error("Could not find spreadsheet:", e.toString());
+      return;
+    }
+  }
+
+  var MAPPING = {
+    "ContactForm": "Contact_Form",
+    "PartnerApps": "Partner_Applications",
+    "CareerApps": "Career_Applications",
+    "CareerApplications": "Career_Applications",
+    "EbookDownloads": "Ebook_Downloads",
+    "ConsultationReqs": "Consultation_Requests",
+    "ChatbotLeads": "Chatbot_Leads",
+    "SalesInquiries": "Sales_Inquiries",
+    "AcademyInquiries": "Academy_Inquiries",
+    "TenderRFQ": "Tender_RFQ",
+    "AdCampaign": "Google_Ad_Leads",
+    "AdCampaignLeads": "Google_Ad_Leads",
+    "GoogleAdLeads": "Google_Ad_Leads",
+    "NewsletterSubs": "Newsletter_Subscriptions",
+    "ExitIntentFeedback": "Exit_Intent_Feedback",
+    "TrafficAnalytics": "Traffic_Analytics",
+    "EngagementMetrics": "Engagement_Metrics",
+    "BehaviorMetrics": "Behavior_Metrics",
+    "UserBehaviorLibrary": "User_Behavior_Library"
+  };
+
+  var sheets = ss.getSheets();
+  var renamedCount = 0;
+  var logList = [];
+
+  sheets.forEach(function(sheet) {
+    var oldName = sheet.getName().trim();
+    var newName = MAPPING[oldName];
+    
+    if (!newName) {
+      var norm = oldName.toLowerCase().replace(/[\s\-_]/g, '');
+      if (norm === "contactform") newName = "Contact_Form";
+      else if (norm === "partnerapps" || norm === "partnerapplications") newName = "Partner_Applications";
+      else if (norm === "careerapps" || norm === "careerapplications") newName = "Career_Applications";
+      else if (norm === "ebookdownloads") newName = "Ebook_Downloads";
+      else if (norm === "consultationreqs") newName = "Consultation_Requests";
+      else if (norm === "chatbotleads") newName = "Chatbot_Leads";
+      else if (norm === "salesinquiries") newName = "Sales_Inquiries";
+      else if (norm === "academyinquiries") newName = "Academy_Inquiries";
+      else if (norm === "tenderrfq") newName = "Tender_RFQ";
+      else if (norm === "adcampaign" || norm === "adcampaignleads" || norm === "googleadleads") newName = "Google_Ad_Leads";
+      else if (norm === "newslettersubs" || norm === "newslettersubscriptions") newName = "Newsletter_Subscriptions";
+      else if (norm === "exitintentfeedback") newName = "Exit_Intent_Feedback";
+      else if (norm === "trafficanalytics") newName = "Traffic_Analytics";
+      else if (norm === "engagementmetrics") newName = "Engagement_Metrics";
+      else if (norm === "behaviormetrics") newName = "Behavior_Metrics";
+      else if (norm === "userbehaviorlibrary") newName = "User_Behavior_Library";
+    }
+
+    if (newName && newName !== oldName) {
+      var existingTarget = ss.getSheetByName(newName);
+      if (!existingTarget) {
+        sheet.setName(newName);
+        renamedCount++;
+        logList.push("✔ Renamed: '" + oldName + "' ➔ '" + newName + "'");
+      } else {
+        logList.push("⚠ Skipped: '" + newName + "' already exists in spreadsheet.");
+      }
+    }
+  });
+
+  var summary = "🎉 Renamed " + renamedCount + " existing sheet tab(s) to Database Format!\n\n" + (logList.join("\n") || "All tabs are already in database format.");
+  console.log(summary);
+
+  try {
+    SpreadsheetApp.getUi().alert("✅ Sheet Tab Migration Complete", summary, SpreadsheetApp.getUi().ButtonSet.OK);
+  } catch(e) {
+    // Non-UI context
+  }
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('🎯 ISI WEBHOOK & SHEETS')
+    .addItem('🏷️ Rename All Tabs to Database Format (_)', 'RENAME_ALL_EXISTING_SHEET_TABS_TO_DATABASE_FORMAT')
+    .addItem('📧 Send Sample Notification Previews', 'SEND_ALL_EXECUTIVE_NOTIFICATION_PREVIEWS')
+    .addToUi();
+}
+
