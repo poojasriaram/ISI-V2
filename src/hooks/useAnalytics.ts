@@ -9,6 +9,7 @@ import {
     BaseTrackingData
 } from '@/types/analytics';
 import { getUtmParams, captureUtmParams } from '@/utils/utm';
+import { submitLeadToJira } from '@/services/jiraService';
 
 const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
 
@@ -662,6 +663,48 @@ export const useAnalytics = () => {
                 ipLocation: getBaseData().location,
                 status: 'New'
             });
+
+            // Automatically create Lead Issue in Jira Cloud for lead forms
+            try {
+                const leadName = String(
+                    formData.name || formData.Name || formData.fullName || 
+                    formData.FullName || formData.contactPerson || 'Website Lead'
+                );
+                const leadEmail = String(
+                    formData.email || formData.Email || formData.workEmail || 
+                    formData.WorkEmail || ''
+                );
+                const leadPhone = String(
+                    formData.phone || formData.Phone || formData.phoneNumber || 
+                    formData.mobile || ''
+                );
+                const leadCompany = String(
+                    formData.company || formData.Company || formData.organization || 
+                    formData.Organization || formData.schoolName || ''
+                );
+                const leadService = String(
+                    formData.serviceInterest || formData.serviceRequested || formData.service || 
+                    formData.servicesType || formData.program || sheetName
+                );
+                const leadMessage = String(
+                    formData.message || formData.Message || formData.requirements || 
+                    formData.primaryConcern || formData.feedback || 'Inquiry from website.'
+                );
+
+                if (leadName || leadEmail || leadPhone) {
+                    submitLeadToJira({
+                        name: leadName,
+                        email: leadEmail,
+                        phone: leadPhone,
+                        company: leadCompany,
+                        serviceRequested: leadService,
+                        message: leadMessage,
+                        formName: sheetName
+                    }).catch(jiraErr => console.warn('[JIRA CAPTURE ERROR]', jiraErr));
+                }
+            } catch (jiraErr) {
+                console.warn('[JIRA TRIGGER ERROR]', jiraErr);
+            }
         },
         observeElement: (elementId: string, metricName: string) => {
             const el = document.getElementById(elementId);
