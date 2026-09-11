@@ -248,6 +248,7 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       duration: "90 Days (3 Months)",
       image: cyberRangeImg,
       badge: "Targeted Skill Acceleration",
+      btnText: "Explore Certificate Programs",
       desc: "Targeted 90-day intensive technical certificates designed for fast-track skill acquisition in specialized domain areas.",
       highlights: ["EV Battery Tech & BMS", "Cybersecurity & DPDPA", "IoT Edge Computing", "Smart City & 5G IoT", "Drone Ops & Analytics", "Robotics & Automation", "Quantum Computing", "Medical IT & Health Informatics", "Cisco CCNA Prep", "DC Facility Operations"],
       count: "10 Programs Available"
@@ -258,16 +259,19 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       duration: "6 Months (3M Academic + 3M Residency)",
       image: evLabImg,
       badge: "Comprehensive Mastery + Residency",
+      btnText: "Explore Diploma Programs",
       desc: "Deep 6-month hands-on diplomas culminating in a mandatory 3-Month Guaranteed Industry Residency deployment.",
       highlights: ["EV Tech & Maintenance", "MEP & Smart Building HVAC", "IoT Embedded Systems (C-DAC)", "Cyber Security & Forensics (C-DAC)", "Medical Instrumentation", "Data Center DCIM Ops", "Commercial Drone Surveying", "Cloud Security DevSecOps"],
       count: "8 Programs Available"
     },
     {
       id: "degrees",
-      title: "Undergraduate Degrees (Under Consideration **)",
+      title: "Undergraduate Degrees",
       duration: "3-4 Years (Blended + Residency)",
       image: academyHeroImg,
-      badge: "Degree Pathways (Under Consideration **)",
+      badge: "Degree Pathways • Under Consideration **",
+      btnText: "Enquire for Degree Tracks",
+      isUnderConsideration: true,
       desc: "Proposed blended degree pathways combining localized lab access, industry mentorship, and practical residency support (Subject to institutional affiliation & regulatory consideration).",
       highlights: ["EV Engineering (Proposed)", "Robotics & AI (Proposed)", "Medical Instrumentation (Proposed)", "Cybersecurity & Quantum (Proposed)", "Data Center Engineering (Proposed)", "Residency & Lab Track"],
       count: "Under Consideration **"
@@ -278,6 +282,7 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       duration: "24 Weeks to 1 Year",
       image: quantumImg,
       badge: "C-DAC Official & Proprietary PG Diplomas",
+      btnText: "Explore PG Diplomas",
       desc: "Official C-DAC affiliated PG Diplomas (delivering PGCP-ITISS, PG-DCSF, PG-DIoT, PG-DESD, PG-DAC via C-CAT) & Advanced Proprietary PG Diplomas.",
       highlights: ["Official C-DAC PG-DCSF", "Official C-DAC PG-DESD", "Official C-DAC PG-DIoT", "Official C-DAC PG-DAC", "Advanced EV Systems & Auto Cyber", "Quantum Cryptography & Secure Comms", "Medical IT Systems Analytics", "DC Green Infrastructure"],
       count: "9 PG Diplomas"
@@ -807,11 +812,14 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
                 {/* CONTENT BOTTOM */}
                 <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                   <div className="space-y-2">
-                    <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider block">
+                    <span className={cn(
+                      "text-[11px] font-bold uppercase tracking-wider block",
+                      tier.isUnderConsideration ? "text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 inline-block" : "text-blue-700"
+                    )}>
                       {tier.badge}
                     </span>
-                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {tier.title}
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex items-center justify-between gap-2">
+                      <span>{tier.title}</span>
                     </h3>
                     <p className="text-xs text-slate-600 leading-relaxed">
                       {tier.desc}
@@ -824,7 +832,10 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
                     </span>
                     <div className="flex flex-wrap gap-1">
                       {tier.highlights.slice(0, 4).map((hl, hIdx) => (
-                        <span key={hIdx} className="text-[10px] px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 font-medium">
+                        <span key={hIdx} className={cn(
+                          "text-[10px] px-2 py-0.5 rounded-md font-medium",
+                          tier.isUnderConsideration ? "bg-amber-50/90 text-amber-800 border border-amber-200/60" : "bg-blue-50 text-blue-800"
+                        )}>
                           {hl}
                         </span>
                       ))}
@@ -832,15 +843,25 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
                   </div>
 
                   <Button 
-                    onClick={() => handleEnquire(`Program Tier Category: ${tier.title}`)}
-                    className="w-full rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white text-xs py-5"
+                    onClick={() => handleEnquire(`Program Tier Category: ${tier.title} ${tier.isUnderConsideration ? '(Under Consideration **)' : ''}`)}
+                    className={cn(
+                      "w-full rounded-xl font-bold text-white text-xs py-5 transition-all shadow-xs hover:shadow-md",
+                      tier.isUnderConsideration ? "bg-slate-900 hover:bg-blue-700" : "bg-blue-600 hover:bg-blue-700"
+                    )}
                   >
-                    <span>Explore {tier.title}</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
+                    <span>{tier.btnText || `Explore ${tier.title}`}</span>
+                    <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Button>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* DISCLAIMER NOTE */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-slate-500 max-w-3xl mx-auto italic bg-white/70 backdrop-blur-xs py-3 px-6 rounded-xl border border-slate-200 shadow-xs">
+              ** <span className="font-semibold text-slate-700">Institutional Notice:</span> Undergraduate degree programs are proposed academic pathways currently under institutional consideration and subject to formal university affiliations and regulatory approvals.
+            </p>
           </div>
 
         </div>
