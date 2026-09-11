@@ -2,12 +2,12 @@ export interface ContactFormData {
     name: string;
     email: string;
     company: string;
-    designation: string;
     phone: string;
-    location: string;
-    serviceInterest: string;
+    designation?: string;
+    serviceInterest?: string;
+    message?: string;
+    location?: string;
     source?: string;
-    message: string;
     privacyConsent: boolean;
 }
 
@@ -15,10 +15,11 @@ export interface FormErrors {
     name?: string;
     email?: string;
     company?: string;
-    designation?: string;
     phone?: string;
-    location?: string;
+    designation?: string;
     serviceInterest?: string;
     message?: string;
+    location?: string;
     privacyConsent?: string;
 }
+

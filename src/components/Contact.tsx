@@ -1,5 +1,18 @@
 import { useState, useMemo } from 'react';
-import { MapPin, Phone, Mail, User, Building2, MapPinIcon, MessageSquare, Globe, Send, CheckCircle2 } from 'lucide-react';
+import { 
+  MapPin, 
+  Phone, 
+  Mail, 
+  User, 
+  Building2, 
+  Briefcase, 
+  MessageSquare, 
+  ShieldCheck, 
+  Send, 
+  CheckCircle2, 
+  Clock, 
+  Lock
+} from 'lucide-react';
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
@@ -7,27 +20,26 @@ import { toast } from "sonner";
 import { ContactFormData, FormErrors } from '@/types/contact';
 import { homeLocations } from "@/data/locations-data";
 import { useAnalytics } from "@/hooks/useAnalytics";
-
-import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
 
 export const Contact = () => {
   const { trackFormSubmission } = useAnalytics();
+  
   // Form state
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
     company: '',
-    designation: '',
     phone: '',
-    location: '',
+    designation: '',
     serviceInterest: '',
-    source: '',
     message: '',
     privacyConsent: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -59,29 +71,31 @@ export const Contact = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
+    // Full Name: Required
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = 'Full Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
     }
 
+    // Corporate / Personal Email: Required, allows Gmail, Outlook, Hotmail, Yahoo & Work domains
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email address is required';
     } else {
-      const emailVal = validateWorkEmail(formData.email);
+      const emailVal = validateGeneralEmail(formData.email);
       if (!emailVal.isValid) {
         newErrors.email = emailVal.message;
       }
     }
 
+    // Company Name: Required
     if (!formData.company.trim()) {
       newErrors.company = 'Company name is required';
     }
 
-    if (!formData.designation.trim()) {
-      newErrors.designation = 'Designation is required';
-    }
-
+    // Contact Number: Required
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = 'Contact number is required';
     } else {
       const phoneVal = validatePhoneNumber(formData.phone);
       if (!phoneVal.isValid) {
@@ -89,21 +103,12 @@ export const Contact = () => {
       }
     }
 
-    if (!formData.location.trim()) {
-      newErrors.location = 'Location is required';
-    }
-
-    if (!formData.serviceInterest) {
-      newErrors.serviceInterest = 'Please select a service';
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
-    }
-
+    // Privacy Consent: Required
     if (!formData.privacyConsent) {
-      newErrors.privacyConsent = 'You must agree to the privacy policy';
+      newErrors.privacyConsent = 'You must agree to the privacy policy & terms';
     }
+
+    // Designation, Services Type, and Message are all OPTIONAL
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -114,22 +119,28 @@ export const Contact = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Please fill in all required fields correctly');
+      toast.error('Please check the required fields highlighted in red.');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Log form data (Airtable integration removed)
-      console.log('Contact Form Submission:', formData);
+      // Track submission to Google Sheets and Jira
+      trackFormSubmission('ContactForm', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        company: formData.company.trim(),
+        phone: formData.phone.trim(),
+        designation: formData.designation?.trim() || 'Not specified',
+        serviceInterest: formData.serviceInterest || 'General Inquiry',
+        message: formData.message?.trim() || 'No additional message provided',
+      });
 
-      // Track submission to Google Sheets
-      trackFormSubmission('ContactForm', formData);
-
-      toast.success('Thank you for contacting us!', {
-        description: 'We have received your message and will get back to you within 24 hours.',
-        duration: 5000,
+      setIsSubmitted(true);
+      toast.success('Thank you for reaching out to ISI Security!', {
+        description: 'Our enterprise security consulting team will review your inquiry and connect within 24 hours.',
+        duration: 6000,
       });
 
       // Reset form
@@ -137,24 +148,23 @@ export const Contact = () => {
         name: '',
         email: '',
         company: '',
-        designation: '',
         phone: '',
-        location: '',
+        designation: '',
         serviceInterest: '',
-        source: '',
         message: '',
         privacyConsent: false,
       });
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('Failed to submit form', {
-        description: 'Please try again later or contact us directly.',
+      toast.error('Failed to send message', {
+        description: 'Please try again or call our 24/7 national operations hotline directly.',
         duration: 7000,
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
   // Office filtering state
   const [selectedRegion, setSelectedRegion] = useState<string>("All Regions");
   const [selectedState, setSelectedState] = useState<string>("All States");
@@ -201,314 +211,331 @@ export const Contact = () => {
 
   return (
     <>
-      <section className="min-h-screen bg-background relative overflow-hidden pt-12 pb-10">
-        {/* Premium Background Elements */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background -z-10" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-full blur-[150px] -z-10" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-500/10 to-primary/10 rounded-full blur-[120px] -z-10" />
+      <section className="min-h-screen bg-background relative overflow-hidden pt-12 pb-16">
+        {/* Background Ambient Cyber Glows */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background -z-10" />
+        <div className="absolute top-10 right-10 w-[550px] h-[550px] bg-gradient-to-br from-primary/15 via-blue-600/10 to-transparent rounded-full blur-[140px] -z-10 pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-[480px] h-[480px] bg-gradient-to-tr from-cyan-500/10 via-primary/10 to-transparent rounded-full blur-[130px] -z-10 pointer-events-none" />
 
-        <div className="container mx-auto px-4 max-w-7xl">
+        <div className="container mx-auto px-4 max-w-6xl">
 
-          {/* Hero Section */}
-          <div className="text-center mb-8 relative">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold border border-primary/20 mb-6">
-              <span className="relative flex h-2 w-2">
+          {/* Hero Header */}
+          <div className="text-center mb-10 relative">
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-semibold border border-primary/20 mb-5 shadow-sm backdrop-blur-md">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
               </span>
-              Get in Touch
+              <span>Enterprise Security Consultation</span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-              Let's Build Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-cyan-500">Security Future</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight text-foreground">
+              Connect With Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-500 to-cyan-400">Security Experts</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Share your requirements and our security experts will craft a tailored solution for your organization
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Tailored guarding, automated surveillance, cash transit, and risk management solutions engineered for enterprise scale across India.
             </p>
           </div>
 
-          {/* Contact Form - Premium Card */}
-          <div className="mb-12 relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-blue-500/20 to-cyan-500/20 rounded-3xl blur-xl opacity-50" />
-
-            <div className="relative bg-card/80 backdrop-blur-xl border border-border/50 rounded-3xl p-8 md:p-12 shadow-2xl">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Row 1: Personal & Company Info */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <User className="w-4 h-4 text-primary" />
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.name ? 'border-red-500' : 'border-border/50'}`}
-                      placeholder="John Doe"
-                    />
-                    {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+          {/* Simple & Clean Contact Form Card */}
+          <div className="mb-16 max-w-4xl mx-auto">
+            <div className="bg-card border border-border/70 rounded-2xl p-6 sm:p-8 md:p-10 shadow-xl">
+              
+              {isSubmitted ? (
+                <div className="py-10 px-4 text-center space-y-4 animate-in fade-in duration-300">
+                  <div className="w-14 h-14 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-8 h-8" />
                   </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-primary" />
-                      Corporate Email <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.email ? 'border-red-500' : 'border-border/50'}`}
-                      placeholder="john@company.com"
-                    />
-                    {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="company" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-primary" />
-                      Company Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="company"
-                      value={formData.company}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.company ? 'border-red-500' : 'border-border/50'}`}
-                      placeholder="Your Company"
-                    />
-                    {errors.company && <p className="text-xs text-red-500">{errors.company}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="designation" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <User className="w-4 h-4 text-primary" />
-                      Designation <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="designation"
-                      value={formData.designation}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.designation ? 'border-red-500' : 'border-border/50'}`}
-                      placeholder="Your Role"
-                    />
-                    {errors.designation && <p className="text-xs text-red-500">{errors.designation}</p>}
+                  <h3 className="text-2xl font-bold text-foreground">Message Sent Successfully!</h3>
+                  <p className="text-muted-foreground max-w-md mx-auto text-sm">
+                    Thank you, <span className="font-semibold text-foreground">{formData.name}</span>. We have received your inquiry and our team will get in touch with you shortly.
+                  </p>
+                  <div className="pt-2">
+                    <Button 
+                      onClick={() => setIsSubmitted(false)}
+                      variant="outline"
+                      className="rounded-xl"
+                    >
+                      Send Another Message
+                    </Button>
                   </div>
                 </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                  
+                  {/* Row 1: Full Name & Corporate Mail */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    
+                    {/* Full Name */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="name" className="text-sm font-semibold text-foreground block">
+                        Full Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                          errors.name ? 'border-red-500 bg-red-500/5' : 'border-border'
+                        }`}
+                        placeholder="e.g. Rajesh Sharma"
+                        autoComplete="name"
+                      />
+                      {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+                    </div>
 
-                {/* Row 2: Contact Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="phone" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-primary" />
-                      Contact Number <span className="text-red-500">*</span>
+                    {/* Corporate Mail */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="email" className="text-sm font-semibold text-foreground block">
+                        Corporate Mail ( Gmail , Outlook , hotmail , yahoo ) <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                          errors.email ? 'border-red-500 bg-red-500/5' : 'border-border'
+                        }`}
+                        placeholder="name@company.com or name@gmail.com"
+                        autoComplete="email"
+                      />
+                      {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+                    </div>
+
+                  </div>
+
+                  {/* Row 2: Company Name & Contact Number */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    
+                    {/* Company Name */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="company" className="text-sm font-semibold text-foreground block">
+                        Company Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="company"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                          errors.company ? 'border-red-500 bg-red-500/5' : 'border-border'
+                        }`}
+                        placeholder="Your Company Name"
+                        autoComplete="organization"
+                      />
+                      {errors.company && <p className="text-xs text-red-500">{errors.company}</p>}
+                    </div>
+
+                    {/* Contact Number */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="phone" className="text-sm font-semibold text-foreground block">
+                        Contact Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
+                          errors.phone ? 'border-red-500 bg-red-500/5' : 'border-border'
+                        }`}
+                        placeholder="+91 98765 43210"
+                        autoComplete="tel"
+                      />
+                      {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+                    </div>
+
+                  </div>
+
+                  {/* Row 3: Designation ( Optional ) & Services Type ( Optional ) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    
+                    {/* Designation ( Optional ) */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="designation" className="text-sm font-semibold text-foreground block">
+                        Designation <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="designation"
+                        value={formData.designation}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
+                        placeholder="e.g. Director, Manager, Consultant"
+                        autoComplete="organization-title"
+                      />
+                    </div>
+
+                    {/* Services Type ( Optional ) */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="serviceInterest" className="text-sm font-semibold text-foreground block">
+                        Services Type <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
+                      </label>
+                      <Select 
+                        value={formData.serviceInterest} 
+                        onValueChange={(value) => handleSelectChange('serviceInterest', value)} 
+                        disabled={isSubmitting}
+                      >
+                        <SelectTrigger 
+                          id="serviceInterest" 
+                          className="w-full h-12 bg-background border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
+                        >
+                          <SelectValue placeholder="Select Service Type" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border border-border">
+                          <SelectItem value="Manned Guarding">Manned Guarding</SelectItem>
+                          <SelectItem value="Electronic Security & CCTV">Electronic Security & CCTV</SelectItem>
+                          <SelectItem value="Cash Logistics">Cash Logistics</SelectItem>
+                          <SelectItem value="Facility Management">Facility Management</SelectItem>
+                          <SelectItem value="Drone Services">Drone Services</SelectItem>
+                          <SelectItem value="Command Centers (SOC)">Command Centers (SOC)</SelectItem>
+                          <SelectItem value="Executive Protection">Executive Protection</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                  </div>
+
+                  {/* Row 4: Your Message ( Optional ) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="message" className="text-sm font-semibold text-foreground block">
+                      Your Message <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
                     </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      value={formData.phone}
+                    <textarea
+                      id="message"
+                      rows={4}
+                      value={formData.message}
                       onChange={handleInputChange}
                       disabled={isSubmitting}
-                      className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.phone ? 'border-red-500' : 'border-border/50'}`}
-                      placeholder="+91 XXXXX XXXXX"
-                    />
-                    {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+                      className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none text-foreground placeholder:text-muted-foreground/60"
+                      placeholder="Enter your message here..."
+                    ></textarea>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="location" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <MapPinIcon className="w-4 h-4 text-primary" />
-                      Location <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
+                  {/* Privacy Policy Checkbox */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-start gap-3 p-3.5 bg-muted/20 rounded-xl border border-border/50">
+                      <Checkbox 
+                        id="privacyConsent" 
+                        checked={formData.privacyConsent} 
+                        onCheckedChange={handleCheckboxChange} 
+                        disabled={isSubmitting} 
+                        className="mt-0.5" 
+                      />
+                      <label htmlFor="privacyConsent" className="text-xs sm:text-sm text-muted-foreground leading-relaxed cursor-pointer select-none">
+                        I agree to the{" "}
+                        <a href="/privacypolicy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Privacy Policy</a>
+                        {" "}and{" "}
+                        <a href="/termsofservice" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Terms of Service</a>.
+                      </label>
+                    </div>
+                    {errors.privacyConsent && <p className="text-xs text-red-500">{errors.privacyConsent}</p>}
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-2 flex justify-center">
+                    <Button
+                      type="submit"
+                      size="lg"
                       disabled={isSubmitting}
-                      className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none hover:border-primary/30 ${errors.location ? 'border-red-500' : 'border-border/50'}`}
-                      placeholder="City, State"
-                    />
-                    {errors.location && <p className="text-xs text-red-500">{errors.location}</p>}
+                      className="w-full sm:w-auto min-w-[220px] h-12 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md"
+                    >
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                      <Send className="w-4 h-4 ml-2" />
+                    </Button>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="service" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                      Service Interest <span className="text-red-500">*</span>
-                    </label>
-                    <Select value={formData.serviceInterest} onValueChange={(value) => handleSelectChange('serviceInterest', value)} disabled={isSubmitting}>
-                      <SelectTrigger id="service" className={`w-full h-12 bg-background/50 border rounded-xl hover:border-primary/30 transition-colors ${errors.serviceInterest ? 'border-red-500' : 'border-border/50'}`}>
-                        <SelectValue placeholder="Select Service" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Manned Guarding">Manned Guarding</SelectItem>
-                        <SelectItem value="Electronic Security">Electronic Security</SelectItem>
-                        <SelectItem value="Cash Management">Cash Management</SelectItem>
-                        <SelectItem value="Facility Management">Facility Management</SelectItem>
-                        <SelectItem value="Drone Services">Drone Services</SelectItem>
-                        <SelectItem value="Command Centers">Command Centers</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.serviceInterest && <p className="text-xs text-red-500">{errors.serviceInterest}</p>}
-                  </div>
+                </form>
+              )}
 
-                  <div className="space-y-2">
-                    <label htmlFor="source" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-primary" />
-                      How did you find us?
-                    </label>
-                    <Select value={formData.source} onValueChange={(value) => handleSelectChange('source', value)} disabled={isSubmitting}>
-                      <SelectTrigger id="source" className="w-full h-12 bg-background/50 border-border/50 rounded-xl hover:border-primary/30 transition-colors">
-                        <SelectValue placeholder="Select Source" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Google Search">Google Search</SelectItem>
-                        <SelectItem value="LinkedIn">LinkedIn</SelectItem>
-                        <SelectItem value="Referral">Referral</SelectItem>
-                        <SelectItem value="Social Media">Social Media</SelectItem>
-                        <SelectItem value="Advertisement">Advertisement</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Message Field */}
-                <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-primary" />
-                    Your Message <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={5}
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                    className={`w-full px-4 py-3 bg-background/50 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none hover:border-primary/30 ${errors.message ? 'border-red-500' : 'border-border/50'}`}
-                    placeholder="Tell us about your security requirements..."
-                  ></textarea>
-                  {errors.message && <p className="text-xs text-red-500">{errors.message}</p>}
-                </div>
-
-                {/* Privacy Policy */}
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl border border-border/30">
-                    <Checkbox id="privacy" checked={formData.privacyConsent} onCheckedChange={handleCheckboxChange} disabled={isSubmitting} className="mt-0.5" />
-                    <label htmlFor="privacy" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                      I agree to the{" "}
-                      <a href="/privacypolicy" className="text-primary hover:underline font-medium">Privacy Policy</a>
-                      {" "}and{" "}
-                      <a href="/termsofservice" className="text-primary hover:underline font-medium">Terms & Conditions</a>
-                    </label>
-                  </div>
-                  {errors.privacyConsent && <p className="text-xs text-red-500">{errors.privacyConsent}</p>}
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex justify-center pt-4">
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isSubmitting}
-                    className="px-12 h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
-                    <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              </form>
             </div>
           </div>
 
           {/* Quick Contact Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
-            <div className="group bg-gradient-to-br from-card to-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                <Phone className="w-6 h-6 text-primary group-hover:text-white" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-16">
+            <div className="group bg-gradient-to-br from-card to-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-105 transition-all duration-300">
+                <Phone className="w-6 h-6 text-primary group-hover:text-primary-foreground" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Call Us</h3>
-              <p className="text-muted-foreground text-sm mb-3">Available 24/7 for emergencies</p>
-              <a href="tel:+917708887878" className="text-primary font-semibold hover:underline">+91 77088 87878</a>
+              <h3 className="font-bold text-lg mb-1 text-foreground">Call Directly</h3>
+              <p className="text-muted-foreground text-xs mb-3">Available 24/7/365 for inquiries & emergencies</p>
+              <a href="tel:+917708887878" className="text-primary font-bold hover:underline text-base">+91 77088 87878</a>
             </div>
 
-            <div className="group bg-gradient-to-br from-card to-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                <Mail className="w-6 h-6 text-primary group-hover:text-white" />
+            <div className="group bg-gradient-to-br from-card to-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-105 transition-all duration-300">
+                <Mail className="w-6 h-6 text-primary group-hover:text-primary-foreground" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Email Us</h3>
-              <p className="text-muted-foreground text-sm mb-3">We'll respond within 24 hours</p>
-              <a href="mailto:info@isisecurity.in" className="text-primary font-semibold hover:underline">info@isisecurity.in</a>
+              <h3 className="font-bold text-lg mb-1 text-foreground">Email Desk</h3>
+              <p className="text-muted-foreground text-xs mb-3">Guaranteed executive response within 24h</p>
+              <a href="mailto:info@isisecurity.in" className="text-primary font-bold hover:underline text-base">info@isisecurity.in</a>
             </div>
 
-            <div className="group bg-gradient-to-br from-card to-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                <MapPin className="w-6 h-6 text-primary group-hover:text-white" />
+            <div className="group bg-gradient-to-br from-card to-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-105 transition-all duration-300">
+                <MapPin className="w-6 h-6 text-primary group-hover:text-primary-foreground" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Visit Us</h3>
-              <p className="text-muted-foreground text-sm mb-3">Corporate Office, Chennai</p>
-              <p className="text-primary font-semibold text-sm">No 97/2, SUNDARAM STREET CHINMAYA NAGAR STAGE 1 , Chennai City Corporation, Tamil Nadu, India - 600092</p>
+              <h3 className="font-bold text-lg mb-1 text-foreground">Corporate Headquarters</h3>
+              <p className="text-muted-foreground text-xs mb-2">Corporate Office, Chennai</p>
+              <p className="text-foreground text-xs leading-relaxed">No 97/2, Sundaram Street, Chinmaya Nagar Stage 1, Chennai, TN - 600092</p>
             </div>
           </div>
 
           {/* Our Offices Section */}
-          <div className="relative">
+          <div className="relative pt-6">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold border border-primary/20 mb-6">
-                <MapPin className="w-4 h-4" />
-                Pan-India Presence
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold border border-primary/20 mb-4">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Pan-India Strategic Network</span>
               </div>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Our Offices</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                With a strong presence across India, we are always within reach to serve your security needs
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 text-foreground">Operational Hubs & Branches</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+                With verified hubs across India, our rapid response forces and regional branch managers are always within reach.
               </p>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 justify-center mb-12">
-              <div className="w-full md:w-56">
-                <label className="text-sm font-semibold mb-2 block text-muted-foreground">Select Region</label>
+            {/* Region / State / City Filters */}
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-10 max-w-3xl mx-auto">
+              <div className="w-full sm:w-1/3">
+                <label className="text-xs font-semibold mb-1.5 block text-muted-foreground">Region</label>
                 <Select value={selectedRegion} onValueChange={handleRegionChange}>
-                  <SelectTrigger className="bg-card/50 border-border/50 h-12 rounded-xl">
+                  <SelectTrigger className="bg-card/70 border-border/60 h-11 rounded-xl">
                     <SelectValue placeholder="All Regions" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border border-border/80">
                     {regions.map(region => (
                       <SelectItem key={region} value={region}>{region}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full md:w-56">
-                <label className="text-sm font-semibold mb-2 block text-muted-foreground">Select State</label>
+              <div className="w-full sm:w-1/3">
+                <label className="text-xs font-semibold mb-1.5 block text-muted-foreground">State</label>
                 <Select value={selectedState} onValueChange={handleStateChange}>
-                  <SelectTrigger className="bg-card/50 border-border/50 h-12 rounded-xl">
+                  <SelectTrigger className="bg-card/70 border-border/60 h-11 rounded-xl">
                     <SelectValue placeholder="All States" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border border-border/80">
                     {states.map(state => (
                       <SelectItem key={state} value={state}>{state}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full md:w-56">
-                <label className="text-sm font-semibold mb-2 block text-muted-foreground">Select City</label>
+              <div className="w-full sm:w-1/3">
+                <label className="text-xs font-semibold mb-1.5 block text-muted-foreground">City</label>
                 <Select value={selectedCity} onValueChange={setSelectedCity}>
-                  <SelectTrigger className="bg-card/50 border-border/50 h-12 rounded-xl">
+                  <SelectTrigger className="bg-card/70 border-border/60 h-11 rounded-xl">
                     <SelectValue placeholder="All Cities" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border border-border/80">
                     {cities.map(city => (
                       <SelectItem key={city} value={city}>{city}</SelectItem>
                     ))}
@@ -517,43 +544,44 @@ export const Contact = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 min-h-[400px]">
+            {/* Office Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {filteredOffices.length > 0 ? (
-                filteredOffices.map((office, index) => (
-                  <div key={office.id} className="group bg-card/40 hover:bg-card/60 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                        <MapPin className="w-5 h-5 text-primary group-hover:text-white" />
+                filteredOffices.map((office) => (
+                  <div key={office.id} className="group bg-card/50 hover:bg-card/80 backdrop-blur-sm p-6 rounded-2xl border border-border/60 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-105 transition-all duration-300">
+                          <MapPin className="w-5 h-5 text-primary group-hover:text-primary-foreground" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-sm sm:text-base text-foreground">{office.title}</h3>
+                          <p className="text-[11px] text-primary font-semibold uppercase tracking-wider">{office.city}, {office.state}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-bold text-base">{office.title}</h3>
-                        <p className="text-xs text-primary font-semibold uppercase">{office.city}, {office.state}</p>
-                      </div>
-                    </div>
 
-                    <div className="space-y-4 text-sm flex-grow">
-                      <div className="text-muted-foreground leading-relaxed">
+                      <div className="space-y-1 text-xs text-muted-foreground leading-relaxed my-3">
                         {office.address.map((line, i) => (
                           <p key={i} className={line === "Coming Soon" ? "text-primary font-bold animate-pulse" : ""}>{line}</p>
                         ))}
                       </div>
                     </div>
 
-                    <div className="border-t border-border/50 pt-4 mt-4 space-y-2">
+                    <div className="border-t border-border/50 pt-3 mt-3 space-y-1.5 text-xs">
                       {office.phone && (
-                        <div className="flex items-center gap-2 text-muted-foreground group/contact">
-                          <Phone className="w-4 h-4 text-primary/70 flex-shrink-0" />
-                          <span className="font-medium hover:text-primary transition-colors cursor-pointer text-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                          <Phone className="w-3.5 h-3.5 text-primary/80 flex-shrink-0" />
+                          <a href={`tel:${office.phone.replace(/\s+/g, '')}`} className="font-medium hover:underline">
                             {office.phone}
-                          </span>
+                          </a>
                         </div>
                       )}
                       {office.email && (
-                        <div className="flex items-center gap-2 text-muted-foreground group/contact">
-                          <Mail className="w-4 h-4 text-primary/70 flex-shrink-0" />
-                          <span className="font-medium hover:text-primary transition-colors cursor-pointer text-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                          <Mail className="w-3.5 h-3.5 text-primary/80 flex-shrink-0" />
+                          <a href={`mailto:${office.email}`} className="font-medium hover:underline">
                             {office.email}
-                          </span>
+                          </a>
                         </div>
                       )}
                     </div>
@@ -561,14 +589,19 @@ export const Contact = () => {
                   </div>
                 ))
               ) : (
-                <div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                    <MapPin className="w-8 h-8 text-muted-foreground" />
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-center bg-card/30 rounded-3xl border border-dashed border-border/60">
+                  <div className="w-14 h-14 bg-muted/50 rounded-2xl flex items-center justify-center mb-3 text-muted-foreground">
+                    <MapPin className="w-7 h-7" />
                   </div>
-                  <h3 className="text-xl font-bold">No offices found</h3>
-                  <p className="text-muted-foreground">Try adjusting your filters to find an office in your area.</p>
-                  <Button variant="link" onClick={() => { setSelectedRegion("All Regions"); setSelectedCity("All Cities"); }} className="mt-4 text-primary">
-                    Clear all filters
+                  <h3 className="text-lg font-bold text-foreground">No offices found in this selection</h3>
+                  <p className="text-muted-foreground text-xs max-w-sm mt-1">Try resetting the region and state filters or call our central support desk.</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => { setSelectedRegion("All Regions"); setSelectedState("All States"); setSelectedCity("All Cities"); }} 
+                    className="mt-4 rounded-xl text-primary border-primary/30"
+                  >
+                    Clear All Filters
                   </Button>
                 </div>
               )}

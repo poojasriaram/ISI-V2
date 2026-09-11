@@ -110,8 +110,8 @@ var TAB_CONFIGS = {
     "Element Info","Metadata","IP Location","IP Address","Variant","Timestamp"
   ],
   "ContactForm": [
-    "Name","Email","Company","Designation","Phone","Location","Service Interest",
-    "Source","Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
+    "Name","Email","Company","Phone","Designation","Service Interest",
+    "Message","UTM Source","UTM Medium","UTM Campaign","UTM Term","UTM Content",
     "Status","IP Location","IP Address","Variant","Timestamp"
   ],
   "PartnerApps": [
@@ -161,6 +161,110 @@ var TAB_CONFIGS = {
   ]
 };
 
+// Common variations and aliases for Google Sheet tab names
+var SHEET_NAME_ALIASES = {
+  // Contact Form variations
+  "contactform": "ContactForm",
+  "contactforms": "ContactForm",
+  "contact": "ContactForm",
+  "contacts": "ContactForm",
+  "contactus": "ContactForm",
+  "contact_us": "ContactForm",
+  "contact_form": "ContactForm",
+  "contactleads": "ContactForm",
+  "contact_leads": "ContactForm",
+  "websiteleads": "ContactForm",
+  "website_leads": "ContactForm",
+  "leads": "ContactForm",
+
+  // Partner variations
+  "partnerapps": "PartnerApps",
+  "partners": "PartnerApps",
+  "partner": "PartnerApps",
+  "partner_applications": "PartnerApps",
+  "partnerapplications": "PartnerApps",
+  "partnerleads": "PartnerApps",
+
+  // Career variations
+  "careerapplications": "CareerApplications",
+  "careers": "CareerApplications",
+  "career": "CareerApplications",
+  "careerapps": "CareerApplications",
+  "jobs": "CareerApplications",
+  "jobapplications": "CareerApplications",
+  "applicants": "CareerApplications",
+
+  // Ad campaign
+  "adcampaign": "AdCampaign",
+  "ad_campaign": "AdCampaign",
+  "adcampaignleads": "AdCampaign",
+  "campaigns": "AdCampaign",
+  "campaignleads": "AdCampaign",
+  "adleads": "AdCampaign",
+
+  // Chatbot
+  "chatbotleads": "ChatbotLeads",
+  "chatbot": "ChatbotLeads",
+  "botleads": "ChatbotLeads",
+  "chatleads": "ChatbotLeads",
+
+  // Sales
+  "salesinquiries": "SalesInquiries",
+  "sales": "SalesInquiries",
+  "salesleads": "SalesInquiries",
+  "salesinquiry": "SalesInquiries",
+
+  // Academy
+  "academyinquiries": "AcademyInquiries",
+  "academy": "AcademyInquiries",
+  "academy_inquiries": "AcademyInquiries",
+  "academyleads": "AcademyInquiries",
+
+  // Tender / RFQ
+  "tenderrfq": "TenderRFQ",
+  "tenders": "TenderRFQ",
+  "rfq": "TenderRFQ",
+  "tender": "TenderRFQ",
+  "rfqs": "TenderRFQ",
+
+  // Analytics
+  "trafficanalytics": "TrafficAnalytics",
+  "traffic": "TrafficAnalytics",
+  "userbehaviorlibrary": "UserBehaviorLibrary",
+  "behaviorlibrary": "UserBehaviorLibrary",
+  "engagementmetrics": "EngagementMetrics",
+  "behaviormetrics": "BehaviorMetrics"
+};
+
+/**
+ * Intelligently finds a tab in the spreadsheet matching exact name, alias, or case-insensitive name.
+ */
+function findSheetFlexible(spreadsheet, requestedName) {
+  if (!spreadsheet || !requestedName) return null;
+
+  // 1. Direct exact match
+  var sheet = spreadsheet.getSheetByName(requestedName);
+  if (sheet) return sheet;
+
+  // 2. Normalized alias match
+  var norm = requestedName.toLowerCase().replace(/[\s\-_]/g, '');
+  var canonical = SHEET_NAME_ALIASES[norm] || requestedName;
+  sheet = spreadsheet.getSheetByName(canonical);
+  if (sheet) return sheet;
+
+  // 3. Scan all tabs in spreadsheet and compare normalized names
+  var allSheets = spreadsheet.getSheets();
+  for (var i = 0; i < allSheets.length; i++) {
+    var curName = allSheets[i].getName();
+    var curNorm = curName.toLowerCase().replace(/[\s\-_]/g, '');
+    if (curNorm === norm || curNorm === (canonical || '').toLowerCase().replace(/[\s\-_]/g, '')) {
+      return allSheets[i];
+    }
+  }
+
+  return null;
+}
+
 // =========================================================================================
 // 3. MAIN WEBHOOK ENDPOINT (doPost)
 // =========================================================================================
@@ -200,9 +304,9 @@ function doPost(e) {
     // =====================================================================================
     // ROUTE A: AD CAMPAIGN LEADS -> CAPTURE IN DEDICATED SEPARATE SPREADSHEET
     // =====================================================================================
-    if (sheetName === "AdCampaign") {
+    if (sheetName === "AdCampaign" || sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "adcampaign") {
       var adSpreadsheet = getAdCampaignSpreadsheet();
-      var adSheet = adSpreadsheet.getSheetByName("AdCampaignLeads") || adSpreadsheet.getActiveSheet();
+      var adSheet = findSheetFlexible(adSpreadsheet, "AdCampaignLeads") || adSpreadsheet.getSheetByName("AdCampaignLeads") || adSpreadsheet.getActiveSheet();
       
       // Setup headers if sheet is brand new
       if (adSheet.getLastRow() === 0) {
@@ -233,11 +337,19 @@ function doPost(e) {
     // ROUTE B: ALL OTHER FORMS & ANALYTICS -> MAIN SPREADSHEET
     // =====================================================================================
     var ss = SpreadsheetApp.openById(CONFIG.MAIN_SPREADSHEET_ID);
-    var sheet = ss.getSheetByName(sheetName);
+    var sheet = findSheetFlexible(ss, sheetName);
     
-    // Auto-create tab if missing in main sheet
+    // Auto-create tab or initialize headers if sheet is empty
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
+      var defaultHeaders = TAB_CONFIGS[sheetName] || Object.keys(data).filter(function(k) { return k !== 'sheetName'; });
+      sheet.getRange(1, 1, 1, defaultHeaders.length)
+           .setValues([defaultHeaders])
+           .setFontWeight("bold")
+           .setBackground("#1a1a2e")
+           .setFontColor("#ffffff");
+      sheet.setFrozenRows(1);
+    } else if (sheet.getLastRow() === 0) {
       var defaultHeaders = TAB_CONFIGS[sheetName] || Object.keys(data).filter(function(k) { return k !== 'sheetName'; });
       sheet.getRange(1, 1, 1, defaultHeaders.length)
            .setValues([defaultHeaders])
@@ -1576,6 +1688,23 @@ function sendReportEmail(subject, htmlBody, charts) {
 
 function resolveField(header, data) {
   var explicitMap = {
+    "Name":                   data.name         || data.fullName    || data["Full Name"]    || data["FullName"] || "",
+    "Full Name":              data.name         || data.fullName    || data["Full Name"]    || data["FullName"] || "",
+    "Email":                  data.email        || data.workEmail   || data["Work Email"]   || data["Corporate Email"] || "",
+    "Work Email":             data.email        || data.workEmail   || data["Work Email"]   || data["Corporate Email"] || "",
+    "Corporate Email":        data.email        || data.workEmail   || data["Work Email"]   || data["Corporate Email"] || "",
+    "Phone":                  data.phone        || data.phoneNumber || data["Phone Number"] || data["Contact Number"] || "",
+    "Phone Number":           data.phone        || data.phoneNumber || data["Phone Number"] || data["Contact Number"] || "",
+    "Contact Number":         data.phone        || data.phoneNumber || data["Phone Number"] || data["Contact Number"] || "",
+    "Company":                data.company      || data.companyName || data["Company Name"] || data["organization"] || "",
+    "Company Name":           data.company      || data.companyName || data["Company Name"] || data["organization"] || "",
+    "Designation":            data.designation  || data.role        || data["Designation"]  || data["Role"] || "",
+    "Service Interest":       data.serviceInterest || data.service || data.servicesType    || data["Services Type"] || data["Service Interest"] || "",
+    "Services Type":          data.serviceInterest || data.service || data.servicesType    || data["Services Type"] || data["Service Interest"] || "",
+    "Message":                data.message      || data.yourMessage || data["Your Message"] || data["Message"] || "",
+    "Your Message":           data.message      || data.yourMessage || data["Your Message"] || data["Message"] || "",
+    "Location":               data.location     || data.ipLocation  || data["Location"]     || data["IP Location"]  || "",
+    "Source":                 data.source       || data.utmSource   || data["Source"]       || "Website Direct",
     "IP Location":            data.location     || data.ipLocation  || data["IP Location"]  || "",
     "IP Address":             data.ipAddress     || data.ip_address  || data["IP Address"]   || "",
     "Organization":           data.organization  || data.org         || data["Organization"] || "",
