@@ -53,6 +53,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 import academyHeroImg from '@/assets/academy_hero_tech_security.jpg';
 import enterpriseImg from '@/assets/academy_enterprise_workforce.jpg';
