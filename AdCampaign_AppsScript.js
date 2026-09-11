@@ -23,7 +23,7 @@ const AD_CONFIG = {
   SPREADSHEET_ID: "15OaMm3wf1esko6IZfpO74lnAZior8RGMwO2FiV_iz74",
 
   // Sheet Tab Name
-  TAB_NAME: "AdCampaignLeads",
+  TAB_NAME: "Google_Ad_Leads",
 
   // Email Notification Settings
   EMAIL: {
@@ -93,7 +93,7 @@ const AD_HEADERS = [
  */
 function doGet(e) {
   var ss = getAdSpreadsheet();
-  var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME);
+  var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME) || ss.getSheetByName("Google_Ad_Leads") || ss.getSheetByName("AdCampaignLeads");
   var totalLeads = sheet ? Math.max(sheet.getLastRow() - 1, 0) : 0;
   
   var html = [
@@ -158,7 +158,7 @@ function doPost(e) {
     }
 
     var ss = getAdSpreadsheet();
-    var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME);
+    var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME) || ss.getSheetByName("Google_Ad_Leads") || ss.getSheetByName("AdCampaignLeads");
 
     // Auto-create tab if missing
     if (!sheet) {
@@ -491,11 +491,11 @@ function buildAdCampaignDashboard() {
 
   // KPI Summary Metric Bar
   dash.setRowHeight(3, 38);
-  dash.getRange("A3").setFormula('=IFERROR("🔥 Total Ad Leads: "&COUNTA(AdCampaignLeads!A:A)-1,0)')
+  dash.getRange("A3").setFormula('=IFERROR("🔥 Total Ad Leads: "&COUNTA(Google_Ad_Leads!A:A)-1,0)')
       .setBackground("#1e293b").setFontColor(ACCENT).setFontSize(10).setFontWeight("bold");
-  dash.getRange("B3").setFormula('=IFERROR("🏢 Unique Companies: "&COUNTUNIQUE(AdCampaignLeads!D:D)-1,0)')
+  dash.getRange("B3").setFormula('=IFERROR("🏢 Unique Companies: "&COUNTUNIQUE(Google_Ad_Leads!D:D)-1,0)')
       .setBackground("#1e293b").setFontColor("#38bdf8").setFontSize(10).setFontWeight("bold");
-  dash.getRange("C3").setFormula('=IFERROR("⚡ Enterprise Leads: "&COUNTIF(AdCampaignLeads!K:K,"*Enterprise*"),0)')
+  dash.getRange("C3").setFormula('=IFERROR("⚡ Enterprise Leads: "&COUNTIF(Google_Ad_Leads!K:K,"*Enterprise*"),0)')
       .setBackground("#1e293b").setFontColor("#4ade80").setFontSize(10).setFontWeight("bold");
   dash.setFrozenRows(3);
 
@@ -510,7 +510,7 @@ function buildAdCampaignDashboard() {
   });
 
   dash.getRange(S1 + 2, 1).setFormula(
-    '=IFERROR(QUERY(AdCampaignLeads!A:P,' +
+    '=IFERROR(QUERY(Google_Ad_Leads!A:P,' +
     '"SELECT G, COUNT(G) WHERE G != \'\' GROUP BY G ORDER BY COUNT(G) DESC LIMIT 10 LABEL G \'Campaign\', COUNT(G) \'Leads\'",0),{"No data yet",""})'
   );
 
@@ -548,7 +548,7 @@ function buildAdCampaignDashboard() {
   });
 
   dash.getRange(S2 + 2, 1).setFormula(
-    '=IFERROR(QUERY(AdCampaignLeads!A:P,' +
+    '=IFERROR(QUERY(Google_Ad_Leads!A:P,' +
     '"SELECT E, COUNT(E) WHERE E != \'\' GROUP BY E ORDER BY COUNT(E) DESC LIMIT 10 LABEL E \'Source\', COUNT(E) \'Leads\'",0),{"No data yet",""})'
   );
 
@@ -590,7 +590,7 @@ function buildAdCampaignDashboard() {
  */
 function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
   var ss = getAdSpreadsheet();
-  var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME);
+  var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME) || ss.getSheetByName("Google_Ad_Leads") || ss.getSheetByName("AdCampaignLeads");
   if (!sheet || sheet.getLastRow() < 2) {
     console.warn("No ad campaign leads available to generate performance digest.");
     return;
@@ -792,7 +792,7 @@ function setupAdCampaignWeeklyTrigger() {
  */
 function formatAndResetAdSheet() {
   var ss = getAdSpreadsheet();
-  var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME);
+  var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME) || ss.getSheetByName("Google_Ad_Leads") || ss.getSheetByName("AdCampaignLeads");
   if (!sheet) {
     sheet = ss.insertSheet(AD_CONFIG.TAB_NAME);
   }
@@ -813,7 +813,7 @@ function formatAndResetAdSheet() {
     sheet.setColumnWidth(col, 160);
   }
 
-  console.log("✅ Headers successfully initialized in Row 1 of AdCampaignLeads tab!");
+  console.log("✅ Headers successfully initialized in Row 1 of Google_Ad_Leads tab!");
 }
 
 function onOpen() {
