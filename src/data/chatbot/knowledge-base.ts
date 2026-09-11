@@ -53,6 +53,12 @@ export const isiKnowledgeBase: KnowledgeBase = {
             name: "Advanced Tech & Consulting",
             keywords: ["drone", "thermal", "background", "bgv", "consulting", "audit", "risk"],
             description: "We offer Advanced Security Technologies like Drone Surveillance (Thermal/AI), API-integrated Background Verification, and expert Risk Consulting & Audits."
+        },
+        {
+            id: 'academy',
+            name: "ISI Academy & Security Workforce Development",
+            keywords: ["academy", "course", "training", "learn", "certification", "cdac", "ieee", "upskilling", "career", "residency", "diploma", "syllabus"],
+            description: "ISI Academy provides industry-led security learning, certified programs in Physical & Electronic Security, Cyber-Physical Systems, Leadership, and Corporate Workforce enablement across 6+ Tamil Nadu campuses."
         }
     ],
     rules: [
@@ -135,6 +141,17 @@ export const isiKnowledgeBase: KnowledgeBase = {
                 { label: "Corporate Consult", value: "callback", type: "contact" },
                 { label: "Facility IFM", value: "facility management", type: "quickReply" }
             ]
+        },
+        {
+            triggers: ["academy", "course", "training", "learn", "study", "certif", "upskill", "student", "degree", "diploma", "syllabus", "admission", "fees", "cdac", "ieee", "security training", "guard training", "supervisor training", "career in security", "residency"],
+            domain: "ISI Academy & Learning Programs",
+            acknowledgment: "ISI Academy is our specialized training institute delivering industry-certified programs in physical security, cyber-physical defense, AI surveillance, and executive leadership.",
+            targetServiceId: "academy",
+            quickReplies: [
+                { label: "Explore Academy", value: "/academy", type: "link" },
+                { label: "Talk to Academy Advisor", value: "academy consultation", type: "contact" },
+                { label: "View Programs", value: "academy programs", type: "quickReply" }
+            ]
         }
     ],
     salesScripts: {
@@ -146,6 +163,7 @@ export const isiKnowledgeBase: KnowledgeBase = {
             command_center: "Continuous remote monitoring fundamentally shifts security from reactive to proactive. Let's arrange a demonstration of our SOC capabilities—would you prefer a call later today or tomorrow?",
             facility_management: "Managing a large facility effectively is all about integration and consistency. Would you like to speak with an IFM specialist about optimizing your current setup?",
             advanced_tech: "Advanced tech deployments need tailored solutions. Let me arrange a 5-minute technical consultation with our specialist to review your specific requirements. Can I get your number?",
+            academy: "ISI Academy offers hands-on, certified courses ranging from foundational security management to advanced cyber-physical labs. Would you like an Academy Counselor to share program brochures and intake details?",
             general: "Every organization has unique risks. Honestly, for a project of this scale, a 5-minute chat with one of our specialists would be much more helpful than me typing here. Can I get your first name?"
         },
         objectionHandlers: {

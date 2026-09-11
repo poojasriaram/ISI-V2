@@ -150,6 +150,15 @@ const PAGE_SPECIFIC_GREETINGS: Record<string, Greeting> = {
         actions: [
             { label: "Speak to Arya", value: "callback", type: "contact" }
         ]
+    },
+    '/academy': {
+        text: "Welcome to ISI Academy! I'm here to help you explore our industry-certified security courses, 3-month residencies, and corporate workforce enablement across our 6 Tamil Nadu campuses. How can I guide you today?",
+        actions: [
+            { label: "Explore Programs", value: "academy programs", type: "quickReply" },
+            { label: "Talk to Advisor", value: "academy consultation", type: "contact" },
+            { label: "Corporate Training", value: "corporate training", type: "quickReply" },
+            { label: "Call Academy", value: "tel:+917708887878", type: "link" }
+        ]
     }
 };
 
@@ -457,6 +466,27 @@ export const useChatBot = () => {
                 text: "Honestly, for a project of this scale, a 5-minute chat with one of our specialists would be much more helpful than me typing here. Can I get your first name?",
                 actions: [
                     { label: "Call Me Instead", value: "tel:+917708887878", type: "link" }
+                ]
+            };
+        }
+
+        if (lowerInput.includes('academy program') || lowerInput.includes('academy courses') || lowerInput === 'academy programs') {
+            return {
+                text: "ISI Academy features 7 comprehensive industry tracks:\n• Security Operations & SOC Analysis\n• Electronic & Integrated Systems (CCTV, VMS, Access Control)\n• Cyber-Physical Defense & IoT Security\n• AI Video Analytics & Surveillance\n• Executive Security Leadership & Risk Governance\n\nAll programs include practical lab simulations and a mandatory 3-Month Industry Residency across 6 TN campuses.",
+                actions: [
+                    { label: "Talk to Advisor", value: "callback", type: "contact" },
+                    { label: "Visit Academy Page", value: "/academy", type: "link" },
+                    { label: "Corporate Training", value: "corporate training", type: "quickReply" }
+                ]
+            };
+        }
+
+        if (lowerInput.includes('corporate training') || lowerInput.includes('workforce training')) {
+            return {
+                text: "We provide tailored enterprise workforce development to upskill security personnel, shift supervisors, and operations teams with custom SOP simulations and accredited curricula. Shall we arrange an Academy Advisor consultation for your organization?",
+                actions: [
+                    { label: "Book Consultation", value: "callback", type: "contact" },
+                    { label: "Visit Academy Page", value: "/academy", type: "link" }
                 ]
             };
         }
