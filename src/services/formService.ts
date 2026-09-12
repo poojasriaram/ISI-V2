@@ -1,7 +1,7 @@
+// src/services/formService.ts
 import { getUtmParams } from '../utils/utm';
 import { submitLeadToJira } from './jiraService';
-
-// src/services/formService.ts
+import { generateLeadNumber, normalizeLeadSource } from '../utils/leadNumber';
 
 const SHEETS_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
 
@@ -40,15 +40,95 @@ function getIpContext(): { ipAddress: string; location: string; organization: st
 }
 
 /**
- * Generic sheet & Jira sender — wraps every form submission with IP context, UTM parameters,
- * routes data to Google Sheets AND automatically creates a Lead in Jira Cloud!
+ * Core form & lead pipeline:
+ * 1. Generates unique Lead Number (ISI-XXXXXX) for business leads
+ * 2. Normalizes Lead Source (Google Ads, YouTube, Meta / FB, Organic, Affiliate, Community)
+ * 3. Dispatches lead to Jira Cloud backend (with parent lead + 7 subtasks)
+ * 4. Logs to Google Sheets with Jira tracking status
  */
-async function sendToSheet(
+export async function sendToSheet(
     sheetName: string,
     payload: Record<string, unknown>
-): Promise<void> {
+): Promise<{ success: boolean; leadNumber?: string; jiraKey?: string }> {
     const ipCtx = getIpContext();
     const utmCtx = getUtmParams();
+    const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const normalizedSource = normalizeLeadSource(utmCtx.utmSource, typeof document !== 'undefined' ? document.referrer : '', pageUrl);
+
+    const sheetNameLower = sheetName.toLowerCase();
+    const isCareer = sheetNameLower.includes('career') || sheetNameLower.includes('job');
+    const isTraining = sheetNameLower.includes('training') || sheetNameLower.includes('course');
+    const isAcademy = sheetNameLower.includes('academy');
+    const isNonLead = sheetNameLower.includes('newsletter') || sheetNameLower.includes('exit_intent') || sheetNameLower.includes('behavior');
+
+    const isBusinessLead = !isCareer && !isTraining && !isAcademy && !isNonLead;
+    const leadNumber = isBusinessLead ? generateLeadNumber() : (isAcademy ? `ACAD-${generateLeadNumber().replace('ISI-', '')}` : undefined);
+
+    let jiraStatus = 'Not Applicable';
+    let jiraKey = '';
+    let jiraUrl = '';
+    let jiraError = '';
+
+    // 1. If Business Lead -> Call Jira Integration First
+    if (isBusinessLead) {
+        try {
+            const leadName = String(
+                payload.name || payload.Name || payload.fullName || 
+                payload.FullName || payload.contactPerson || 'Website Lead'
+            );
+            const leadEmail = String(
+                payload.email || payload.Email || payload.workEmail || 
+                payload.WorkEmail || ''
+            );
+            const leadPhone = String(
+                payload.phone || payload.Phone || payload.phoneNumber || 
+                payload.mobile || ''
+            );
+            const leadCompany = String(
+                payload.company || payload.Company || payload.organization || 
+                payload.Organization || payload.schoolName || ''
+            );
+            const leadService = String(
+                payload.service || payload.Service || payload.serviceInterest || 
+                payload.serviceRequested || payload["Program / Course"] || sheetName
+            );
+            const leadMessage = String(
+                payload.message || payload.Message || payload.requirements || 
+                payload.topic || payload.primaryConcern || 'Form submission from website.'
+            );
+
+            if (leadName || leadEmail || leadPhone) {
+                const jiraRes = await submitLeadToJira({
+                    leadNumber,
+                    name: leadName,
+                    email: leadEmail,
+                    phone: leadPhone,
+                    company: leadCompany,
+                    serviceRequested: leadService,
+                    message: leadMessage,
+                    formName: sheetName,
+                    pageUrl,
+                    pageTitle: typeof document !== 'undefined' ? document.title : '',
+                    ...utmCtx,
+                    location: ipCtx.location,
+                    ipAddress: ipCtx.ipAddress
+                });
+
+                if (jiraRes.success && jiraRes.issueKey) {
+                    jiraStatus = 'Created';
+                    jiraKey = jiraRes.issueKey;
+                    jiraUrl = jiraRes.issueUrl || '';
+                } else if (!jiraRes.ignored) {
+                    jiraStatus = 'Failed';
+                    jiraError = jiraRes.error || 'Unknown Jira Error';
+                }
+            }
+        } catch (jiraWrapErr: any) {
+            console.warn('[JIRA WRAPPER ERROR]', jiraWrapErr);
+            jiraStatus = 'Failed';
+            jiraError = jiraWrapErr.message || 'Jira Submission Error';
+        }
+    }
 
     const sanitizedPayload = { ...payload };
 
@@ -64,38 +144,37 @@ async function sendToSheet(
 
     const body = JSON.stringify({
         sheetName,
+        leadNumber: leadNumber || 'N/A',
+        "Lead Number": leadNumber || 'N/A',
+        "Lead Source": normalizedSource,
+        source: normalizedSource,
+        pageUrl,
 
-        // Form data first
+        // Jira Metadata
+        jiraStatus,
+        jiraKey,
+        jiraUrl,
+        jiraError,
+        "Jira Issue Key": jiraKey,
+        "Jira Status": jiraStatus,
+
+        // Form data
         ...sanitizedPayload,
 
-        // Include UTM values for Google_Ad_Leads and AdCampaign submissions
-        ...(sheetName === 'Google_Ad_Leads' || sheetName === 'AdCampaign' ? utmCtx : {}),
+        // Include UTM values
+        ...utmCtx,
 
         // IP information
-        ipAddress:
-            sanitizedPayload.ipAddress || ipCtx.ipAddress,
+        ipAddress: sanitizedPayload.ipAddress || ipCtx.ipAddress,
+        location: sanitizedPayload.location || ipCtx.location,
+        organization: sanitizedPayload.organization || ipCtx.organization,
 
-        location:
-            sanitizedPayload.location || ipCtx.location,
-
-        organization:
-            sanitizedPayload.organization || ipCtx.organization,
-
-        // Variant
-        variant:
-            localStorage.getItem('isi_variant') || 'original',
-
-        // Timestamp
+        // Variant & Timestamp
+        variant: localStorage.getItem('isi_variant') || 'original',
         timestamp: getISTTimestamp()
     });
 
-    console.log('[FORM SUBMISSION]', {
-        sheetName,
-        utmCtx,
-        payload: sanitizedPayload
-    });
-
-    // 1. Send to Google Sheets Webhook
+    // Send to Google Sheets Webhook
     const isAdCampaign = sheetName === 'Google_Ad_Leads' || sheetName === 'AdCampaign';
     const targetUrl = isAdCampaign
         ? (import.meta.env.VITE_AD_CAMPAIGN_WEB_APP_URL || "https://script.google.com/macros/s/AKfycbwL1i7fOTIPdyo86zgI2AbAmeAowti2nJy7LftH2YY-MEUmir8gYOKyaS2BhrK8zNnC/exec")
@@ -116,52 +195,12 @@ async function sendToSheet(
         }
     }
 
-    // 2. Automatically Capture Lead in Jira Cloud (Direct_Lead_Flow)
-    try {
-        const leadName = String(
-            sanitizedPayload.name || sanitizedPayload.Name || sanitizedPayload.fullName || 
-            sanitizedPayload.FullName || sanitizedPayload.contactPerson || 'Website Lead'
-        );
-        const leadEmail = String(
-            sanitizedPayload.email || sanitizedPayload.Email || sanitizedPayload.workEmail || 
-            sanitizedPayload.WorkEmail || ''
-        );
-        const leadPhone = String(
-            sanitizedPayload.phone || sanitizedPayload.Phone || sanitizedPayload.phoneNumber || 
-            sanitizedPayload.mobile || ''
-        );
-        const leadCompany = String(
-            sanitizedPayload.company || sanitizedPayload.Company || sanitizedPayload.organization || 
-            sanitizedPayload.Organization || ''
-        );
-        const leadService = String(
-            sanitizedPayload.service || sanitizedPayload.Service || sanitizedPayload.serviceInterest || 
-            sanitizedPayload.serviceRequested || sanitizedPayload["Program / Course"] || sheetName
-        );
-        const leadMessage = String(
-            sanitizedPayload.message || sanitizedPayload.Message || sanitizedPayload.requirements || 
-            sanitizedPayload.topic || 'Form submission from website.'
-        );
-
-        if (leadName || leadEmail || leadPhone) {
-            submitLeadToJira({
-                name: leadName,
-                email: leadEmail,
-                phone: leadPhone,
-                company: leadCompany,
-                serviceRequested: leadService,
-                message: leadMessage,
-                formName: sheetName,
-                ...utmCtx,
-                location: ipCtx.location,
-                ipAddress: ipCtx.ipAddress
-            }).catch(jiraErr => console.warn('[JIRA CAPTURE ERROR]', jiraErr));
-        }
-    } catch (jiraWrapErr) {
-        console.warn('[JIRA WRAPPER ERROR]', jiraWrapErr);
-    }
+    return {
+        success: true,
+        leadNumber,
+        jiraKey
+    };
 }
-
 
 export const submitChatbotLead = async (
     name: string,
@@ -172,7 +211,7 @@ export const submitChatbotLead = async (
     category?: string
 ) => {
     try {
-        await sendToSheet('Chatbot_Leads', {
+        return await sendToSheet('Chatbot_Leads', {
             name,
             phone,
             email,
@@ -181,31 +220,36 @@ export const submitChatbotLead = async (
             "Category": category || 'N/A',
             status: 'New Lead'
         });
-        return { success: true };
     } catch (error) {
         console.error('Error submitting chatbot lead:', error);
         throw error;
     }
 };
+
 export const submitAcademyInquiry = async (data: {
     name: string;
     email: string;
     phone: string;
     organization?: string;
     program?: string;
+    role?: string;
+    experience?: string;
+    learningGoal?: string;
     message?: string;
 }) => {
     try {
-        await sendToSheet('Academy_Inquiries', {
+        return await sendToSheet('Academy_Inquiries', {
             Name: data.name,
             Email: data.email,
             Phone: data.phone,
             Organization: data.organization || 'Individual',
             "Program / Course": data.program || 'General Academy Inquiry',
-            Message: data.message || 'No additional notes',
+            Role: data.role || 'N/A',
+            Experience: data.experience || 'N/A',
+            "Learning Goal": data.learningGoal || 'N/A',
+            Message: data.message || 'Academy Chatbot Lead',
             Status: 'New Lead'
         });
-        return { success: true };
     } catch (error) {
         console.error('Error submitting Academy inquiry:', error);
         throw error;
@@ -214,13 +258,12 @@ export const submitAcademyInquiry = async (data: {
 
 export const submitCareerApplication = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('Career_Applications', {
+        return await sendToSheet('Career_Applications', {
             ...data,
             targetEmail: 'hrms2026@isisecurity.in',
             notifyEmail: 'hrms2026@isisecurity.in',
             emailTo: 'hrms2026@isisecurity.in'
         });
-        return { success: true };
     } catch (error) {
         console.error('Error submitting career application:', error);
         throw error;
@@ -229,8 +272,7 @@ export const submitCareerApplication = async (data: Record<string, unknown>) => 
 
 export const submitTenderRFQ = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('Tender_RFQ', data);
-        return { success: true };
+        return await sendToSheet('Tender_RFQ', data);
     } catch (error) {
         console.error('Error submitting tender RFQ:', error);
         throw error;
@@ -239,11 +281,28 @@ export const submitTenderRFQ = async (data: Record<string, unknown>) => {
 
 export const submitAdCampaignLead = async (data: Record<string, unknown>) => {
     try {
-        await sendToSheet('Google_Ad_Leads', data);
-        return { success: true };
+        return await sendToSheet('Google_Ad_Leads', data);
     } catch (error) {
         console.error('Error submitting Ad Campaign lead:', error);
         throw error;
     }
 };
 
+export const submitBusinessLead = async (data: {
+    name: string;
+    email: string;
+    phone: string;
+    requirement?: string;
+    company?: string;
+    message?: string;
+    formName?: string;
+}) => {
+    return await sendToSheet(data.formName || 'Contact_Form', {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company || 'N/A',
+        serviceRequested: data.requirement || 'General Security Inquiry',
+        message: data.message || `Inquiry for ${data.requirement || 'Services'}`
+    });
+};

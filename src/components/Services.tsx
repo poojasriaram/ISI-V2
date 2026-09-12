@@ -208,7 +208,7 @@ export const Services = ({ hideConsultation }: ServicesProps = {}) => {
               <h4 className="text-xl font-bold text-foreground mb-4">Need a tailored approach?</h4>
               <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
                   <Button size="lg" className="gap-2 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform group px-8 h-12">
-                      Schedule an Expert Consultation
+                      Speak with Our Security Experts
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Button>
               </Link>

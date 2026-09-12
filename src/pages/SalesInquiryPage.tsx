@@ -18,6 +18,7 @@ import isiLogo from "@/assets/isi-logo.webp";
 
 import { getUtmParams } from '@/utils/utm';
 import { submitLeadToJira } from '@/services/jiraService';
+import { generateLeadNumber } from '@/utils/leadNumber';
 
 export const SalesInquiryPage = () => {
   useContentProtection();
@@ -106,9 +107,12 @@ export const SalesInquiryPage = () => {
     }
 
     setIsSubmitting(true);
+    const leadNumber = generateLeadNumber();
     
     const data = {
       sheetName: "Google_Ad_Leads",
+      leadNumber,
+      "Lead Number": leadNumber,
       "Full Name": fullName,
       "Phone Number": phoneNumber,
       "Work Email": workEmail,
@@ -131,14 +135,15 @@ export const SalesInquiryPage = () => {
         body: JSON.stringify(data),
       });
 
-      // Capture lead in Jira Cloud
+      // Capture business lead in Jira Cloud (Parent + 7 subtasks)
       submitLeadToJira({
+        leadNumber,
         name: fullName,
         email: workEmail,
         phone: phoneNumber,
         company: companyName,
         serviceRequested: 'Facility Management & Integrated Solutions',
-        message: 'Sales inquiry from landing page',
+        message: 'Sales inquiry from Integrated Services landing page',
         formName: 'Google_Ad_Leads',
         utmSource,
         utmMedium,
@@ -148,7 +153,7 @@ export const SalesInquiryPage = () => {
       }).catch(err => console.warn('[JIRA SALES CAPTURE ERROR]', err));
 
       toast.success("Inquiry Submitted Successfully!", {
-        description: "Our sales team will get back to you within 24 hours.",
+        description: `Lead Reference: ${leadNumber}. Our sales team will get back to you within 24 hours.`,
       });
         const submittedName = fullName;
         
@@ -159,7 +164,7 @@ export const SalesInquiryPage = () => {
         setPhoneError('');
         setEmailError('');
         
-        navigate('/lp/facility-management/thank-you', { state: { name: submittedName, fromIntegratedServices: true } });
+        navigate('/lp/facility-management/thank-you', { state: { name: submittedName, leadNumber, fromIntegratedServices: true } });
     } catch (error) {
       toast.error("Submission Failed", {
         description: "Something went wrong while submitting your request. Please try again.",
@@ -205,7 +210,7 @@ export const SalesInquiryPage = () => {
                   className="h-10 w-auto object-contain"
                 />
               </div>
-              <h2 className="text-xl font-semibold text-slate-900 mb-6 text-center">Schedule a Free Consultation</h2>
+              <h2 className="text-xl font-semibold text-slate-900 mb-6 text-center">Request an Enterprise Quote</h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="hidden" name="utm_source" value={utmSource} />
@@ -229,7 +234,7 @@ export const SalesInquiryPage = () => {
                     required 
                     name="phoneNumber" 
                     type="tel" 
-                    className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${phoneError ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${phoneError ? 'border-red-500' : 'border-slate-200'}`} 
                     placeholder="Phone Number" 
                     value={phoneNumber}
                     onChange={handlePhoneChange}
@@ -242,7 +247,7 @@ export const SalesInquiryPage = () => {
                     required 
                     name="workEmail" 
                     type="email" 
-                    className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${emailError ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${emailError ? 'border-red-500' : 'border-slate-200'}`} 
                     placeholder="Work / Corporate Email" 
                     value={workEmail}
                     onChange={handleEmailChange}
@@ -284,7 +289,7 @@ export const SalesInquiryPage = () => {
               className="h-10 w-auto object-contain"
             />
           </div>
-          <h2 className="text-xl font-semibold text-slate-900 mb-6 text-center">Schedule a Free Consultation</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6 text-center">Request an Enterprise Quote</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input type="hidden" name="utm_source" value={utmSource} />
             <input type="hidden" name="utm_medium" value={utmMedium} />

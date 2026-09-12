@@ -63,8 +63,8 @@ export const SolutionsCTA = () => {
             });
 
             if (response.ok) {
-                toast.success('Consultation Request Received!', {
-                    description: 'Our senior security consultant will contact you shortly.'
+                toast.success('Enquiry Received!', {
+                    description: 'Our security team will contact you shortly.'
                 });
                 const submittedName = form.name;
                 setForm({ name: '', companyType: '', email: '', phone: '', message: '' });
@@ -84,7 +84,7 @@ export const SolutionsCTA = () => {
 
     const ctaData = {
         title: "Ready to Secure Your Operations?",
-        subtitle: "Schedule a personalized consultation with our industry experts to design a security architecture tailored to your precise needs.",
+        subtitle: "Connect with our industry experts to design a security architecture tailored to your precise needs.",
         points: [
             "Comprehensive Risk Assessment",
             "Tailored Technology Integration",

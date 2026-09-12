@@ -10,6 +10,7 @@ import {
 } from '@/types/analytics';
 import { getUtmParams, captureUtmParams } from '@/utils/utm';
 import { submitLeadToJira } from '@/services/jiraService';
+import { generateLeadNumber } from '@/utils/leadNumber';
 
 const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
 
@@ -657,53 +658,66 @@ export const useAnalytics = () => {
             if (sheetName === 'Career_Applications' || sheetName === 'CareerApps') counters.current.careerInquiries++;
             if (formData.email) localStorage.setItem('isi_user_email', formData.email);
 
+            const isBusinessLead = !sheetName.toLowerCase().includes('career') && 
+                                   !sheetName.toLowerCase().includes('job') && 
+                                   !sheetName.toLowerCase().includes('academy') && 
+                                   !sheetName.toLowerCase().includes('training') && 
+                                   !sheetName.toLowerCase().includes('newsletter') && 
+                                   !sheetName.toLowerCase().includes('exit_intent');
+            const leadNumber = isBusinessLead ? generateLeadNumber() : undefined;
+
             sendToGoogleSheets(sheetName, {
                 ...getBaseData(),
+                leadNumber: leadNumber || 'N/A',
+                "Lead Number": leadNumber || 'N/A',
                 ...formData,
                 ipLocation: getBaseData().location,
                 status: 'New'
             });
 
-            // Automatically create Lead Issue in Jira Cloud for lead forms
-            try {
-                const leadName = String(
-                    formData.name || formData.Name || formData.fullName || 
-                    formData.FullName || formData.contactPerson || 'Website Lead'
-                );
-                const leadEmail = String(
-                    formData.email || formData.Email || formData.workEmail || 
-                    formData.WorkEmail || ''
-                );
-                const leadPhone = String(
-                    formData.phone || formData.Phone || formData.phoneNumber || 
-                    formData.mobile || ''
-                );
-                const leadCompany = String(
-                    formData.company || formData.Company || formData.organization || 
-                    formData.Organization || formData.schoolName || ''
-                );
-                const leadService = String(
-                    formData.serviceInterest || formData.serviceRequested || formData.service || 
-                    formData.servicesType || formData.program || sheetName
-                );
-                const leadMessage = String(
-                    formData.message || formData.Message || formData.requirements || 
-                    formData.primaryConcern || formData.feedback || 'Inquiry from website.'
-                );
+            // Automatically create Lead Issue in Jira Cloud for business lead forms
+            if (isBusinessLead) {
+                try {
+                    const leadName = String(
+                        formData.name || formData.Name || formData.fullName || 
+                        formData.FullName || formData.contactPerson || 'Website Lead'
+                    );
+                    const leadEmail = String(
+                        formData.email || formData.Email || formData.workEmail || 
+                        formData.WorkEmail || ''
+                    );
+                    const leadPhone = String(
+                        formData.phone || formData.Phone || formData.phoneNumber || 
+                        formData.mobile || ''
+                    );
+                    const leadCompany = String(
+                        formData.company || formData.Company || formData.organization || 
+                        formData.Organization || formData.schoolName || ''
+                    );
+                    const leadService = String(
+                        formData.serviceInterest || formData.serviceRequested || formData.service || 
+                        formData.servicesType || formData.program || sheetName
+                    );
+                    const leadMessage = String(
+                        formData.message || formData.Message || formData.requirements || 
+                        formData.primaryConcern || formData.feedback || 'Inquiry from website.'
+                    );
 
-                if (leadName || leadEmail || leadPhone) {
-                    submitLeadToJira({
-                        name: leadName,
-                        email: leadEmail,
-                        phone: leadPhone,
-                        company: leadCompany,
-                        serviceRequested: leadService,
-                        message: leadMessage,
-                        formName: sheetName
-                    }).catch(jiraErr => console.warn('[JIRA CAPTURE ERROR]', jiraErr));
+                    if (leadName || leadEmail || leadPhone) {
+                        submitLeadToJira({
+                            leadNumber,
+                            name: leadName,
+                            email: leadEmail,
+                            phone: leadPhone,
+                            company: leadCompany,
+                            serviceRequested: leadService,
+                            message: leadMessage,
+                            formName: sheetName
+                        }).catch(jiraErr => console.warn('[JIRA CAPTURE ERROR]', jiraErr));
+                    }
+                } catch (jiraErr) {
+                    console.warn('[JIRA TRIGGER ERROR]', jiraErr);
                 }
-            } catch (jiraErr) {
-                console.warn('[JIRA TRIGGER ERROR]', jiraErr);
             }
         },
         observeElement: (elementId: string, metricName: string) => {

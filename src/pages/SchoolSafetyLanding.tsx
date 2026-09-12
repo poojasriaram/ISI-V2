@@ -863,7 +863,7 @@ export default function SchoolSafetyLanding() {
                                         disabled={consultationSubmitting}
                                         className="w-full bg-indigo-600 text-white py-3 rounded font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
                                     >
-                                        {consultationSubmitting ? 'Submitting...' : 'Request Consultation'}
+                                        {consultationSubmitting ? 'Submitting...' : 'Submit Enquiry'}
                                     </button>
                                 </form>
                             </div>

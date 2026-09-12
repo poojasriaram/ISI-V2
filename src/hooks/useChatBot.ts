@@ -55,7 +55,7 @@ const PAGE_SPECIFIC_GREETINGS: Record<string, Greeting> = {
         actions: [
             { label: "Transformation Journey", value: "roadmap", type: "quickReply" },
             { label: "The 4 Pillars", value: "pillars", type: "quickReply" },
-            { label: "Request Consultation", value: "callback", type: "contact" }
+            { label: "Request Callback", value: "callback", type: "contact" }
         ]
     },
     // Adding the specific logic for the new pages here as well

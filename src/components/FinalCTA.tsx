@@ -23,7 +23,7 @@ export const FinalCTA = () => {
             Looking for a Reliable <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Security Partner?</span>
           </h2>
           <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
-            Schedule a consultation with our experts and discover the right integrated security solution for your organization.
+            Connect with our experts and discover the right integrated security solution for your organization.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">

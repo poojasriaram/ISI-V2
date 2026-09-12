@@ -1,7 +1,9 @@
 // src/services/jiraService.ts
 import { getUtmParams } from '../utils/utm';
+import { generateLeadNumber, normalizeLeadSource } from '../utils/leadNumber';
 
 export interface JiraLeadPayload {
+  leadNumber?: string;
   name: string;
   email: string;
   phone?: string;
@@ -10,15 +12,55 @@ export interface JiraLeadPayload {
   message?: string;
   formName?: string;
   category?: string;
+  pageUrl?: string;
+  pageTitle?: string;
   [key: string]: unknown;
 }
 
+export interface JiraLeadResponse {
+  success: boolean;
+  ignored?: boolean;
+  leadNumber?: string;
+  normalizedSource?: string;
+  issueKey?: string;
+  issueId?: string;
+  issueUrl?: string;
+  dueDate?: string;
+  subtasks?: Array<{ name: string; key?: string; id?: string; status: string }>;
+  error?: string;
+}
+
 /**
- * Submits lead data to the Jira integration endpoint (/api/jira).
- * Works on Vercel Serverless Functions, Next.js API, or local Express server.
+ * Submits business lead data to the Jira integration endpoint (/api/jira).
+ * Automatically excludes career, training, and academy flows.
  */
-export async function submitLeadToJira(payload: JiraLeadPayload): Promise<{ success: boolean; issueKey?: string; issueUrl?: string; error?: string }> {
+export async function submitLeadToJira(payload: JiraLeadPayload): Promise<JiraLeadResponse> {
   try {
+    const formNameLower = String(payload.formName || '').toLowerCase();
+    const pageUrl = payload.pageUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    const pageLower = pageUrl.toLowerCase();
+
+    // Enforce client-side exclusion check
+    if (
+      formNameLower.includes('career') ||
+      formNameLower.includes('job') ||
+      formNameLower.includes('resume') ||
+      formNameLower.includes('training') ||
+      formNameLower.includes('course') ||
+      formNameLower.includes('academy') ||
+      formNameLower.includes('newsletter') ||
+      formNameLower.includes('exit_intent') ||
+      pageLower.includes('/career') ||
+      pageLower.includes('/courses') ||
+      pageLower.includes('/academy')
+    ) {
+      return {
+        success: true,
+        ignored: true,
+        error: undefined
+      };
+    }
+
     const utm = getUtmParams();
     let location = 'Unknown';
     let ipAddress = '';
@@ -34,7 +76,15 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<{ succ
       // ignore
     }
 
+    const leadNumber = payload.leadNumber || generateLeadNumber();
+    const normalizedSource = normalizeLeadSource(utm.utmSource, typeof document !== 'undefined' ? document.referrer : '', pageUrl);
+
     const fullPayload = {
+      leadNumber,
+      normalizedSource,
+      pageUrl,
+      pageTitle: typeof document !== 'undefined' ? document.title : '',
+      referrer: typeof document !== 'undefined' ? document.referrer : '',
       ...payload,
       ...utm,
       location,
@@ -50,15 +100,14 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<{ succ
       body: JSON.stringify(fullPayload),
     });
 
-    let result: any = { success: response.ok };
+    let result: JiraLeadResponse = { success: response.ok, leadNumber };
     try {
       const text = await response.text();
       if (text) {
         result = JSON.parse(text);
       }
     } catch {
-      // Non-JSON response (e.g. from static host or proxy)
-      result = { success: response.ok };
+      result = { success: response.ok, leadNumber };
     }
 
     return result;
@@ -66,6 +115,7 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<{ succ
     console.warn('Error submitting lead to Jira:', err);
     return {
       success: false,
+      leadNumber: payload.leadNumber,
       error: err.message || 'Failed to submit lead to Jira'
     };
   }

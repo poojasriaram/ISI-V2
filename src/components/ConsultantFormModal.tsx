@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { X, User, Mail, Phone, MapPin, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
+import { submitBusinessLead } from '@/services/formService';
 
 interface ConsultantFormModalProps {
     isOpen: boolean;
@@ -40,16 +41,27 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
 
         setIsSubmitting(true);
 
-        // Simulate submission
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+            const res = await submitBusinessLead({
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                requirement: 'Expert Advisory',
+                message: formData.message || `Location: ${formData.location || 'Not Specified'}`,
+                formName: 'Consultant_Inquiry'
+            });
 
-        toast.success('Consultation request sent!', {
-            description: "Our security consultant will contact you shortly."
-        });
+            toast.success('Enquiry Received!', {
+                description: `Ref: ${res.leadNumber || 'ISI-Lead'}. Our security team will contact you shortly.`
+            });
 
-        setIsSubmitting(false);
-        setErrors({});
-        onClose();
+            setErrors({});
+            onClose();
+        } catch (err) {
+            toast.error('Submission failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -60,7 +72,7 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
             >
                 <div className="px-6 py-5 bg-gradient-to-r from-primary/10 to-transparent border-b border-border flex justify-between items-center">
                     <div>
-                        <h3 className="text-xl font-bold">Speak to a Consultant</h3>
+                        <h3 className="text-xl font-bold">Get in Touch with ISI</h3>
                         <p className="text-xs text-muted-foreground mt-1">Get expert security advice tailored to your needs</p>
                     </div>
                     <button

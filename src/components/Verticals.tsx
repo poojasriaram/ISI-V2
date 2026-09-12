@@ -147,7 +147,7 @@ export const Verticals = ({ isSidebar = false }: VerticalsProps) => {
                             onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')}
                             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold px-8 py-6 rounded-xl shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300"
                         >
-                            Schedule a Consultation
+                            Speak with Industry Specialists
                             <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
                         <Button

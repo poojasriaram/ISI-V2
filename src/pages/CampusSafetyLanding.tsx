@@ -232,7 +232,7 @@ export default function CampusSafetyLanding() {
                                         }} />
                                     </div>
                                     <Button type="submit" disabled={consultationSubmitting} className="w-full h-16 text-lg rounded-xl mt-6 shadow-xl shadow-primary/20">
-                                        {consultationSubmitting ? "Initiating protocol..." : "Request Tactical Consultation"}
+                                        {consultationSubmitting ? "Submitting Inquiry..." : "Submit Safety Inquiry"}
                                     </Button>
                                     <p className="text-[10px] text-center text-muted-foreground mt-4 font-bold tracking-widest uppercase">
                                         End-to-end encryption active • DPDP compliant

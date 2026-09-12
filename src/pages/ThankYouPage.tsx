@@ -7,6 +7,7 @@ import { useEffect } from "react";
 const ThankYouPage = () => {
   const location = useLocation();
   const userName = location.state?.name || "there";
+  const leadNumber = location.state?.leadNumber;
   const isFromIntegratedServices = location.state?.fromIntegratedServices || location.pathname === '/lp/facility-management/thank-you' || location.pathname === '/integratedservices/thank-you';
 
   useEffect(() => {
@@ -20,9 +21,15 @@ const ThankYouPage = () => {
         <div className="text-center max-w-2xl mx-auto px-4">
           <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
           <h1 className="text-4xl font-bold text-slate-900 mb-4">Thank You, {userName}!</h1>
-          <p className="text-lg text-slate-600 mb-8">
+          <p className="text-lg text-slate-600 mb-4">
             Your inquiry has been successfully received. Our team will get back to you shortly.
           </p>
+          {leadNumber && (
+            <div className="mb-8 inline-block px-4 py-2 bg-slate-100 rounded-lg border border-slate-200">
+              <span className="text-xs text-slate-500 block font-medium">Lead Reference ID</span>
+              <span className="text-base font-bold font-mono text-primary">{leadNumber}</span>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/">
               <Button className="bg-[#1a56db] hover:bg-[#1e40af] text-white text-base py-6 px-8 rounded-md shadow-md transition-all">

@@ -256,7 +256,7 @@ export const Hero = () => {
                   size="lg"
                   className="w-full gap-2 text-base h-14 px-8 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full bg-primary text-white group"
                 >
-                  Request a Free Security Consultation
+                  Get an Instant Security Quote
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
