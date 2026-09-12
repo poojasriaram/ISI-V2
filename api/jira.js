@@ -149,6 +149,7 @@ export default async function handler(req, res) {
     const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || 'ATATT3xFfGF0HB1UotLKd9u7BPre5gFXU-TOc7VugV_s8MLvu_bF_ux-0SyrE3RvZsztwclrd2jFOiBIuOu0Zg7FeeNdWlnLh4Si_exXZNSSlQNqhx8DHewkNPBoRkegQh5cDq-ZGJctIZhwDqUrQBdSBVO0HfIS0P3nyf27WRnBPT2zYLy7bxE=C3BDAF04';
     const JIRA_PROJECT_KEY = process.env.JIRA_PROJECT_KEY || 'DLF';
     const JIRA_ISSUE_TYPE = process.env.JIRA_ISSUE_TYPE || 'Lead';
+    const JIRA_ASSIGNEE_ID = process.env.JIRA_ASSIGNEE_ID || '712020:337de21e-1eb1-4e2a-aace-dbf10d3bf264'; // Pooja
 
     const cleanDomain = JIRA_DOMAIN.replace(/^https?:\/\//, '').replace(/\/+$/, '');
     const authString = Buffer.from(`${JIRA_EMAIL.trim()}:${JIRA_API_TOKEN.trim()}`).toString('base64');
@@ -348,6 +349,9 @@ export default async function handler(req, res) {
           name: JIRA_ISSUE_TYPE.trim()
         },
         duedate: leadDueDate, // Dynamic Created Date + 1 Day (YYYY-MM-DD)
+        assignee: {
+          accountId: JIRA_ASSIGNEE_ID
+        },
         description: {
           type: 'doc',
           version: 1,
@@ -411,6 +415,9 @@ export default async function handler(req, res) {
             duedate: subtaskDueDate,
             priority: {
               name: step.priority || 'Medium'
+            },
+            assignee: {
+              accountId: JIRA_ASSIGNEE_ID
             },
             description: {
               type: 'doc',
