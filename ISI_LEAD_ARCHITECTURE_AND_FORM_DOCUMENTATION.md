@@ -50,13 +50,13 @@ flowchart TD
     subgraph Jira_DLF["4. Jira Cloud Project DLF (Direct_Lead_Flow)"]
         ParentLead["Parent Issue: Lead (DLF-XX)<br>Due Date: Created + 24h<br>Summary: [Lead ISI-XXXXXX] Name - Service"]
         subgraph Subtask_Pipeline["7 Automated Subtasks Pipeline"]
-            S1["1. Contacted (+24h, High)"]
-            S2["2. Follow-up 1 (+48h, High)"]
-            S3["3. Requirements Gathered (+48h, Med)"]
+            S1["1. Contact (+24h, High)"]
+            S2["2. Follow Up 1 (+48h, High)"]
+            S3["3. Gather Requirements (+48h, Med)"]
             S4["4. Site Visit (+48h, Med)"]
-            S5["5. Quote Submitted (+24h, Med)"]
-            S6["6. Closed (+24h, Med)"]
-            S7["7. Handed over to Operations (+24h, Med)"]
+            S5["5. Submit Quote (+24h, Med)"]
+            S6["6. Close Deal (+24h, Med)"]
+            S7["7. Handover to Operations (+24h, Med)"]
         end
     end
 
@@ -125,25 +125,25 @@ mindmap
       ADF Rich Description
       Real-Time Lead Status
     7 Automated Subtasks
-      1. Contacted
+      1. Contact
         SLA: 24h
         Priority: High
-      2. Follow-up 1
+      2. Follow Up 1
         SLA: 48h
         Priority: High
-      3. Requirements Gathered
+      3. Gather Requirements
         SLA: 48h
         Priority: Medium
       4. Site Visit
         SLA: 48h
         Priority: Medium
-      5. Quote Submitted
+      5. Submit Quote
         SLA: 24h
         Priority: Medium
-      6. Closed
+      6. Close Deal
         SLA: 24h
         Priority: Medium
-      7. Handed over to Operations
+      7. Handover to Operations
         SLA: 24h
         Priority: Medium
 ```
@@ -156,23 +156,23 @@ Each parent lead in Jira Cloud initiates a sequential 7-step fulfillment lifecyc
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Contacted: Lead Ingested (DLF Created)
+    [*] --> Contact: Lead Ingested (DLF Created)
     
-    state "1. Contacted (SLA: +24h | Priority: High)" as Contacted
-    state "2. Follow-up 1 (SLA: +48h | Priority: High)" as FollowUp
-    state "3. Requirements Gathered (SLA: +48h | Priority: Med)" as Requirements
+    state "1. Contact (SLA: +24h | Priority: High)" as Contact
+    state "2. Follow Up 1 (SLA: +48h | Priority: High)" as FollowUp
+    state "3. Gather Requirements (SLA: +48h | Priority: Med)" as Requirements
     state "4. Site Visit (SLA: +48h | Priority: Med)" as SiteVisit
-    state "5. Quote Submitted (SLA: +24h | Priority: Med)" as Quote
-    state "6. Closed (SLA: +24h | Priority: Med)" as Closed
-    state "7. Handed over to Operations (SLA: +24h | Priority: Med)" as Operations
+    state "5. Submit Quote (SLA: +24h | Priority: Med)" as Quote
+    state "6. Close Deal (SLA: +24h | Priority: Med)" as CloseDeal
+    state "7. Handover to Operations (SLA: +24h | Priority: Med)" as Operations
 
-    Contacted --> FollowUp: Customer unreached after first dial
-    Contacted --> Requirements: Customer reached & engaged
+    Contact --> FollowUp: Customer unreached after first dial
+    Contact --> Requirements: Customer reached & engaged
     FollowUp --> Requirements: Customer re-engaged on touchpoint 2
     Requirements --> SiteVisit: Facility scope defined, survey scheduled
     SiteVisit --> Quote: Guarding post audit & pricing calculated
-    Quote --> Closed: Commercial terms accepted & contract signed
-    Closed --> Operations: Guard deployment, uniform issue & post roster
+    Quote --> CloseDeal: Commercial terms accepted & contract signed
+    CloseDeal --> Operations: Guard deployment, uniform issue & post roster
     Operations --> [*]: Fulfillment Active
 ```
 
@@ -217,15 +217,15 @@ All traffic sources and UTM parameters are normalized into 6 distinct attributio
 
 When a parent `Lead` issue is created in Jira project `DLF`, the API automatically generates the following 7 subtasks:
 
-| # | Subtask Name | SLA Timeframe | Dynamic Due Date Rule | Priority | Assignee Group | Operational Objective |
+| # | Subtask Name (Task Action Format) | SLA Timeframe | Dynamic Due Date Rule | Priority | Assignee Group | Operational Objective |
 | :---: | :--- | :---: | :---: | :---: | :---: | :--- |
-| **1** | **Contacted** | 24 Hours | Created Date + 24h | `High` | Sales SDR / Front Desk | First outreach touchpoint via phone and WhatsApp within SLA window. |
-| **2** | **Follow-up 1** | 48 Hours | Created Date + 48h | `High` | Sales SDR | Secondary follow-up call/email if customer was initially unreached. |
-| **3** | **Requirements Gathered** | 48 Hours | Created Date + 48h | `Medium` | Security Solution Specialist | Identify exact facility type, guard count, shift hours, and risk factors. |
+| **1** | **Contact** | 24 Hours | Created Date + 24h | `High` | Sales SDR / Front Desk | First outreach touchpoint via phone and WhatsApp within SLA window. |
+| **2** | **Follow Up 1** | 48 Hours | Created Date + 48h | `High` | Sales SDR | Secondary follow-up call/email if customer was initially unreached. |
+| **3** | **Gather Requirements** | 48 Hours | Created Date + 48h | `Medium` | Security Solution Specialist | Identify exact facility type, guard count, shift hours, and risk factors. |
 | **4** | **Site Visit** | 48 Hours | Created Date + 48h | `Medium` | Field Operations Manager | Conduct physical survey, perimeter inspection, and post layout audit. |
-| **5** | **Quote Submitted** | 24 Hours | Created Date + 24h | `Medium` | Commercial Estimator | Deliver formal enterprise rate proposal, SLA agreement, and pricing. |
-| **6** | **Closed** | 24 Hours | Created Date + 24h | `Medium` | Key Account Manager | Finalize negotiations, sign Master Service Agreement (MSA) & NDA. |
-| **7** | **Handed over to Operations** | 24 Hours | Created Date + 24h | `Medium` | Operations Field Commander | Guard deployment, uniform fitting, attendance biometric onboarding. |
+| **5** | **Submit Quote** | 24 Hours | Created Date + 24h | `Medium` | Commercial Estimator | Deliver formal enterprise rate proposal, SLA agreement, and pricing. |
+| **6** | **Close Deal** | 24 Hours | Created Date + 24h | `Medium` | Key Account Manager | Finalize negotiations, sign Master Service Agreement (MSA) & NDA. |
+| **7** | **Handover to Operations** | 24 Hours | Created Date + 24h | `Medium` | Operations Field Commander | Guard deployment, uniform fitting, attendance biometric onboarding. |
 
 ---
 

@@ -1,14 +1,14 @@
 // api/jira.js - Vercel Serverless API Route for Jira Cloud Integration & Subtask Workflow
 
-// Standard Lead Subtask Workflow Configuration
+// Standard Lead Subtask Workflow Configuration (Imperative Task Format)
 const LEAD_WORKFLOW = [
-  { name: 'Contacted', dueHours: 24, priority: 'High' },
-  { name: 'Follow-up 1', dueHours: 48, priority: 'High' },
-  { name: 'Requirements Gathered', dueHours: 48, priority: 'Medium' },
+  { name: 'Contact', dueHours: 24, priority: 'High' },
+  { name: 'Follow Up 1', dueHours: 48, priority: 'High' },
+  { name: 'Gather Requirements', dueHours: 48, priority: 'Medium' },
   { name: 'Site Visit', dueHours: 48, priority: 'Medium' },
-  { name: 'Quote Submitted', dueHours: 24, priority: 'Medium' },
-  { name: 'Closed', dueHours: 24, priority: 'Medium' },
-  { name: 'Handed over to Operations', dueHours: 24, priority: 'Medium' }
+  { name: 'Submit Quote', dueHours: 24, priority: 'Medium' },
+  { name: 'Close Deal', dueHours: 24, priority: 'Medium' },
+  { name: 'Handover to Operations', dueHours: 24, priority: 'Medium' }
 ];
 
 /**
