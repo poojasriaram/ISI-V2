@@ -32,4 +32,6 @@ __pycache__/
 !.env.example
 *.zip
 *.tar
+*.tar.gz
+*.tgz
 scratch/
