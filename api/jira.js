@@ -11,6 +11,8 @@ const LEAD_WORKFLOW = [
   { name: 'Handover to Operations', dueHours: 24, priority: 'Medium' }
 ];
 
+let globalServerSequence = 0;
+
 /**
  * Normalizes lead source into one of the 6 standard categories:
  * 1. Google Ads
@@ -157,7 +159,7 @@ export default async function handler(req, res) {
     // ═══════════════════════════════════════════════════════════════════════════
     // 3. LEAD NUMBER & ATTRIBUTION NORMALIZATION
     // ═══════════════════════════════════════════════════════════════════════════
-    const leadNumber = lead.leadNumber || lead.LeadNumber || `ISI-${Math.floor(100000 + Math.random() * 900000)}`;
+    const leadNumber = lead.leadNumber || lead.LeadNumber || `ISI-${String(++globalServerSequence).padStart(6, '0')}`;
     const normalizedSource = normalizeSource(
       lead.utm_source || lead.utmSource,
       lead.referrer,
