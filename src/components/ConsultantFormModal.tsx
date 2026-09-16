@@ -47,8 +47,7 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
                 email: formData.email,
                 phone: formData.phone,
                 requirement: 'Expert Advisory',
-                message: formData.message || `Location: ${formData.location || 'Not Specified'}`,
-                formName: 'Consultant_Inquiry'
+                message: formData.message || `Location: ${formData.location || 'Not Specified'}`
             });
 
             toast.success('Enquiry Received!', {

@@ -48,7 +48,7 @@ flowchart TD
 
     %% Destinations
     subgraph Jira_DLF["4. Jira Cloud Project DLF (Direct_Lead_Flow)"]
-        ParentLead["Parent Issue: Lead (DLF-XX)<br>Due Date: Created + 24h<br>Summary: [Lead ISI-XXXXXX] Name - Service"]
+        ParentLead["Parent Issue: Lead (DLF-XX)<br>Due Date: Created + 24h<br>Summary: [ISI Lead ISI-XXXXXX] Name - Service"]
         subgraph Subtask_Pipeline["7 Automated Subtasks Pipeline"]
             S1["1. Contact (+24h, High)"]
             S2["2. Follow Up 1 (+48h, High)"]

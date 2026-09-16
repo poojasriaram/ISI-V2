@@ -336,7 +336,7 @@ export default async function handler(req, res) {
       }
     );
 
-    const summaryTitle = `[Lead ${leadNumber}] ${leadName} - ${leadService}`;
+    const summaryTitle = `[ISI Lead ${leadNumber}] ${leadName} - ${leadService}`;
 
     // ═══════════════════════════════════════════════════════════════════════════
     // 4. CREATE JIRA PARENT ISSUE

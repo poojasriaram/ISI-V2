@@ -132,31 +132,28 @@ export async function sendToSheet(
 
     const sanitizedPayload = { ...payload };
 
-    // Prevent Google Sheets formula injection
+    // Prevent Google Sheets formula injection (skip binary blobs - they never land in a cell as-is,
+    // and base64 can legitimately start with '+', which would otherwise corrupt the attachment)
+    const blobKeys = new Set([
+        'resumeBlob', 'resume', 'resumeBase64', 'fileBlob', 'attachmentBlob', 'attachment',
+        'ResumeBlob', 'Resume', 'Resume Blob', 'resume_blob'
+    ]);
     for (const key in sanitizedPayload) {
         if (
-            typeof sanitizedPayload[key] === 'string' &&
-            /^[+=\-@]/.test(sanitizedPayload[key] as string)
+            blobKeys.has(key) ||
+            typeof sanitizedPayload[key] !== 'string'
         ) {
+            continue;
+        }
+        if (/^[+=\-@]/.test(sanitizedPayload[key] as string)) {
             sanitizedPayload[key] = `'${sanitizedPayload[key]}`;
         }
     }
 
-    const body = JSON.stringify({
+    const bodyObj: Record<string, unknown> = {
         sheetName,
-        leadNumber: leadNumber || 'N/A',
-        "Lead Number": leadNumber || 'N/A',
-        "Lead Source": normalizedSource,
         source: normalizedSource,
         pageUrl,
-
-        // Jira Metadata
-        jiraStatus,
-        jiraKey,
-        jiraUrl,
-        jiraError,
-        "Jira Issue Key": jiraKey,
-        "Jira Status": jiraStatus,
 
         // Form data
         ...sanitizedPayload,
@@ -172,7 +169,19 @@ export async function sendToSheet(
         // Variant & Timestamp
         variant: localStorage.getItem('isi_variant') || 'original',
         timestamp: getISTTimestamp()
-    });
+    };
+
+    if (isBusinessLead) {
+        bodyObj.leadNumber = leadNumber;
+        bodyObj.jiraStatus = jiraStatus;
+        bodyObj.jiraKey = jiraKey;
+        bodyObj.jiraUrl = jiraUrl;
+        bodyObj.jiraError = jiraError;
+    } else if (isAcademy) {
+        bodyObj.leadNumber = leadNumber;
+    }
+
+    const body = JSON.stringify(bodyObj);
 
     // Send to Google Sheets Webhook
     const isAdCampaign = sheetName === 'Google_Ad_Leads' || sheetName === 'AdCampaign';

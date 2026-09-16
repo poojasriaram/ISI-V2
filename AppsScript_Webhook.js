@@ -20,13 +20,7 @@ const CONFIG = {
   MAIN_SPREADSHEET_ID: "1vHFp5FfF_kHCKNtGpigcDLbS2gm3ETy1xdYuuJAru60",
 
   // Dedicated Ad Campaign Spreadsheet ID
-  AD_CAMPAIGN_SPREADSHEET_ID: "15OaMm3wf1esko6IZfpO74lnAZior8RGMwO2FiV_iz74",
-
-  // Google Drive folder name to store career resumes
-  CAREER_RESUMES_FOLDER_NAME: "ISI_Career_Resumes",
-
-  // (Optional) Explicit Google Drive Folder ID if you already created one
-  CAREER_RESUMES_FOLDER_ID: ""
+  AD_CAMPAIGN_SPREADSHEET_ID: "15OaMm3wf1esko6IZfpO74lnAZior8RGMwO2FiV_iz74"
 };
 
 const EMAIL_CONFIG = {
@@ -439,142 +433,153 @@ function doPost(e) {
                    sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "adcampaign" ||
                    sheetName.toLowerCase().replace(/[\s\-_]/g, '') === "googleads";
 
-    if (isAdLead) {
-      var adSpreadsheet = getAdCampaignSpreadsheet();
-      var adSheet = findSheetFlexible(adSpreadsheet, "Google_Ad_Leads") || 
-                    findSheetFlexible(adSpreadsheet, "AdCampaignLeads") || 
-                    findSheetFlexible(adSpreadsheet, "AdCampaign") || 
-                    adSpreadsheet.getSheetByName("Google_Ad_Leads") || 
-                    adSpreadsheet.getSheetByName("AdCampaignLeads") || 
-                    adSpreadsheet.getActiveSheet();
-      
-      // Setup headers if sheet is brand new
-      if (adSheet.getLastRow() === 0) {
-        var adHeaders = TAB_CONFIGS["Google_Ad_Leads"] || TAB_CONFIGS["AdCampaign"];
-        adSheet.getRange(1, 1, 1, adHeaders.length)
-               .setValues([adHeaders])
-               .setFontWeight("bold")
-               .setBackground("#003380")
-               .setFontColor("#ffffff");
-        adSheet.setFrozenRows(1);
-        adSheet.setName("Google_Ad_Leads");
-      }
-      
-      var adHeadersList = adSheet.getRange(1, 1, 1, Math.max(adSheet.getLastColumn(), 1)).getValues()[0];
-      var adRow = adHeadersList.map(function(header) {
-        return resolveField(header, data);
-      });
-      
-      adSheet.appendRow(adRow);
-      
-      // Send dedicated Google Ad / Campaign Lead Generation alert email
-      sendLeadEmails(data, "Google_Ad_Leads", adSpreadsheet.getUrl());
-      
-      return ContentService.createTextOutput("Saved to Dedicated Ad Campaign Sheet: " + adSpreadsheet.getName()).setMimeType(ContentService.MimeType.TEXT);
-    }
+    var isCareerApp = sheetName === "Career_Applications" || 
+                      sheetName === "CareerApplications" || 
+                      sheetName.toLowerCase().indexOf("career") !== -1 ||
+                      sheetName.toLowerCase().indexOf("job") !== -1;
 
     // =====================================================================================
-    // ROUTE B: ALL OTHER FORMS & ANALYTICS -> MAIN SPREADSHEET
+    // STEP 1: DISPATCH EMAILS & RESUME ATTACHMENTS IMMEDIATELY (ZERO-DELAY EMAIL PRIORITY)
     // =====================================================================================
-    var ss = SpreadsheetApp.openById(CONFIG.MAIN_SPREADSHEET_ID);
-    var sheet = findSheetFlexible(ss, sheetName);
-    
-    // Auto-create tab or initialize headers if sheet is empty
-    if (!sheet) {
-      sheet = ss.insertSheet(sheetName);
-      var defaultHeaders = TAB_CONFIGS[sheetName] || Object.keys(data).filter(function(k) { return k !== 'sheetName'; });
-      sheet.getRange(1, 1, 1, defaultHeaders.length)
-           .setValues([defaultHeaders])
-           .setFontWeight("bold")
-           .setBackground("#1a1a2e")
-           .setFontColor("#ffffff");
-      sheet.setFrozenRows(1);
-    } else if (sheet.getLastRow() === 0) {
-      var defaultHeaders = TAB_CONFIGS[sheetName] || Object.keys(data).filter(function(k) { return k !== 'sheetName'; });
-      sheet.getRange(1, 1, 1, defaultHeaders.length)
-           .setValues([defaultHeaders])
-           .setFontWeight("bold")
-           .setBackground("#1a1a2e")
-           .setFontColor("#ffffff");
-      sheet.setFrozenRows(1);
-    }
-    
-    // Career Applications: Save resume to Google Drive if attached
-    var resumeDriveUrl = "";
-    var resumeFileId = "";
-    if (sheetName === "CareerApplications" && data.resumeBlob) {
-      try {
-        var driveFile = saveResumeToDrive(data);
-        if (driveFile) {
-          resumeDriveUrl = driveFile.getUrl();
-          resumeFileId = driveFile.getId();
-          data.resumeDriveLink = resumeDriveUrl;
-          data.driveFileId = resumeFileId;
-        }
-      } catch (driveErr) {
-        console.error("Error saving resume to Drive:", driveErr.toString());
-      }
-    }
-    
-    var lastCol = Math.max(sheet.getLastColumn(), 1);
-    var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-    
-    var newRow = headers.map(function(header) {
-      if (header === "Resume Blob" || header === "resumeBlob") return "Archived to Drive / Email";
-      if (header === "Resume Drive Link" || header === "resumeDriveLink") return resumeDriveUrl;
-      if (header === "Drive File ID" || header === "driveFileId") return resumeFileId;
-      return resolveField(header, data);
-    });
-    
-    // Logic for Upsert/Dedup (Library & Analytics)
-    var shouldUpsert = (sheetName === "UserBehaviorLibrary" || sheetName === "EngagementMetrics");
-    var shouldDedup  = (sheetName === "TrafficAnalytics");
-    var lastRow = sheet.getLastRow();
-    var rowSaved = false;
-    
-    if ((shouldUpsert || shouldDedup) && lastRow > 1) {
-      var sessionCol = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
-      if (shouldUpsert) {
-        var rowIndex = sessionCol.indexOf(data.sessionId);
-        if (rowIndex !== -1) {
-          sheet.getRange(rowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
-          rowSaved = true;
-        }
-      }
-      if (!rowSaved && shouldDedup) {
-        var pagePathColIndex = headers.indexOf("Page Path");
-        if (pagePathColIndex !== -1 && data.sessionId && data.pagePath) {
-          var pageCol = sheet.getRange(2, pagePathColIndex + 1, lastRow - 1, 1).getValues().flat();
-          for (var i = 0; i < sessionCol.length; i++) {
-            if (sessionCol[i] === data.sessionId && pageCol[i] === data.pagePath) {
-              sheet.getRange(i + 2, 1, 1, newRow.length).setValues([newRow]);
-              rowSaved = true;
-              break;
-            }
-          }
-        }
-      }
-    }
-    
-    if (!rowSaved) {
-      sheet.appendRow(newRow);
-    }
-    
-    // Handle Email Notifications (Leads, Careers, Partners, Academy, Sales, etc.)
     var LEAD_FORMS = [
       "Contact_Form", "Partner_Applications", "Career_Applications", 
       "Ebook_Downloads", "Consultation_Requests", "Sales_Inquiries", 
       "Academy_Inquiries", "Chatbot_Leads", "Tender_RFQ", "Google_Ad_Leads",
+      "Global_Lead_Form", "LEADS",
       "ContactForm", "PartnerApps", "CareerApplications", 
       "EbookDownloads", "ConsultationReqs", "SalesInquiries", 
       "AcademyInquiries", "ChatbotLeads", "TenderRFQ"
     ];
     
-    if (LEAD_FORMS.indexOf(sheetName) !== -1) {
-      sendLeadEmails(data, sheetName, ss.getUrl());
+    var emailSent = false;
+    if (LEAD_FORMS.indexOf(sheetName) !== -1 || isCareerApp) {
+      try {
+        var defaultSheetUrl = isAdLead 
+          ? "https://docs.google.com/spreadsheets/d/" + CONFIG.AD_CAMPAIGN_SPREADSHEET_ID
+          : "https://docs.google.com/spreadsheets/d/" + CONFIG.MAIN_SPREADSHEET_ID;
+        sendLeadEmails(data, sheetName, defaultSheetUrl);
+        emailSent = true;
+        console.log("⚡ [Email Priority] Email successfully dispatched for: " + sheetName);
+      } catch (emailErr) {
+        console.error("❌ Failed to dispatch email in Step 1:", emailErr.toString());
+      }
     }
-    
-    return ContentService.createTextOutput(rowSaved ? "Updated/Deduped" : "Saved").setMimeType(ContentService.MimeType.TEXT);
+
+    // =====================================================================================
+    // STEP 2: LOG DATA TO GOOGLE SHEETS (PROTECTED AGAINST SPREADSHEET SERVICE TIMEOUTS)
+    // =====================================================================================
+    var rowSaved = false;
+
+    try {
+      if (isAdLead) {
+        var adSpreadsheet = getAdCampaignSpreadsheet();
+        var adSheet = findSheetFlexible(adSpreadsheet, "Google_Ad_Leads") || 
+                      findSheetFlexible(adSpreadsheet, "AdCampaignLeads") || 
+                      findSheetFlexible(adSpreadsheet, "AdCampaign") || 
+                      adSpreadsheet.getSheetByName("Google_Ad_Leads") || 
+                      adSpreadsheet.getSheetByName("AdCampaignLeads") || 
+                      adSpreadsheet.getActiveSheet();
+        
+        // Setup headers if sheet is brand new
+        if (adSheet.getLastRow() === 0) {
+          var adHeaders = TAB_CONFIGS["Google_Ad_Leads"] || TAB_CONFIGS["AdCampaign"];
+          adSheet.getRange(1, 1, 1, adHeaders.length)
+                 .setValues([adHeaders])
+                 .setFontWeight("bold")
+                 .setBackground("#003380")
+                 .setFontColor("#ffffff");
+          adSheet.setFrozenRows(1);
+          adSheet.setName("Google_Ad_Leads");
+        }
+        
+        var adHeadersList = adSheet.getRange(1, 1, 1, Math.max(adSheet.getLastColumn(), 1)).getValues()[0];
+        var adRow = adHeadersList.map(function(header) {
+          return resolveField(header, data);
+        });
+        
+        adSheet.appendRow(adRow);
+        rowSaved = true;
+      } else {
+        var ss = null;
+        try {
+          ss = SpreadsheetApp.getActiveSpreadsheet();
+        } catch (activeErr) {}
+        if (!ss) {
+          ss = SpreadsheetApp.openById(CONFIG.MAIN_SPREADSHEET_ID);
+        }
+
+        var sheet = findSheetFlexible(ss, sheetName);
+        
+        // Auto-create tab or initialize headers if sheet is empty
+        if (!sheet) {
+          sheet = ss.insertSheet(sheetName);
+          var defaultHeaders = TAB_CONFIGS[sheetName] || Object.keys(data).filter(function(k) { return k !== 'sheetName'; });
+          sheet.getRange(1, 1, 1, defaultHeaders.length)
+               .setValues([defaultHeaders])
+               .setFontWeight("bold")
+               .setBackground("#1a1a2e")
+               .setFontColor("#ffffff");
+          sheet.setFrozenRows(1);
+        } else if (sheet.getLastRow() === 0) {
+          var defaultHeaders = TAB_CONFIGS[sheetName] || Object.keys(data).filter(function(k) { return k !== 'sheetName'; });
+          sheet.getRange(1, 1, 1, defaultHeaders.length)
+               .setValues([defaultHeaders])
+               .setFontWeight("bold")
+               .setBackground("#1a1a2e")
+               .setFontColor("#ffffff");
+          sheet.setFrozenRows(1);
+        }
+        
+        var hasResumeBlob = !!(data.resumeBlob || data.resume || data.resumeBase64 || data.fileBlob || data.attachmentBlob);
+        var lastCol = Math.max(sheet.getLastColumn(), 1);
+        var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+        
+        var newRow = headers.map(function(header) {
+          if (header === "Resume Blob" || header === "resumeBlob") return hasResumeBlob ? "Attached to Email" : "None";
+          if (header === "Resume Drive Link" || header === "resumeDriveLink") return hasResumeBlob ? "Attached to Email" : "None";
+          if (header === "Drive File ID" || header === "driveFileId") return hasResumeBlob ? "Direct Email Attachment" : "";
+          return resolveField(header, data);
+        });
+        
+        // Logic for Upsert/Dedup (Library & Analytics)
+        var shouldUpsert = (sheetName === "UserBehaviorLibrary" || sheetName === "EngagementMetrics");
+        var shouldDedup  = (sheetName === "TrafficAnalytics");
+        var lastRow = sheet.getLastRow();
+        
+        if ((shouldUpsert || shouldDedup) && lastRow > 1) {
+          var sessionCol = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
+          if (shouldUpsert) {
+            var rowIndex = sessionCol.indexOf(data.sessionId);
+            if (rowIndex !== -1) {
+              sheet.getRange(rowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
+              rowSaved = true;
+            }
+          }
+          if (!rowSaved && shouldDedup) {
+            var pagePathColIndex = headers.indexOf("Page Path");
+            if (pagePathColIndex !== -1 && data.sessionId && data.pagePath) {
+              var pageCol = sheet.getRange(2, pagePathColIndex + 1, lastRow - 1, 1).getValues().flat();
+              for (var i = 0; i < sessionCol.length; i++) {
+                if (sessionCol[i] === data.sessionId && pageCol[i] === data.pagePath) {
+                  sheet.getRange(i + 2, 1, 1, newRow.length).setValues([newRow]);
+                  rowSaved = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        
+        if (!rowSaved) {
+          sheet.appendRow(newRow);
+          rowSaved = true;
+        }
+      }
+    } catch (sheetErr) {
+      console.warn("⚠️ Google Sheets service error/timeout (email was already processed): " + sheetErr.toString());
+    }
+
+    return ContentService.createTextOutput(emailSent ? "Email Sent & Processed" : (rowSaved ? "Saved" : "OK")).setMimeType(ContentService.MimeType.TEXT);
     
   } catch (err) {
     console.error("doPost critical error:", err.toString());
@@ -659,63 +664,96 @@ function removeAdCampaignTabFromMainSheet() {
 }
 
 // =========================================================================================
-// 5. GOOGLE DRIVE RESUME STORAGE
+// 5. RESUME ATTACHMENT DECODER (DIRECT EMAIL ATTACHMENT - NO GOOGLE DRIVE)
 // =========================================================================================
 
 /**
- * Saves candidate's resume base64 blob directly to a dedicated Google Drive folder.
+ * Sanitizes base64 string by stripping data URI prefix, whitespaces, and newlines.
+ * Also handles URL-safe base64 encoding and missing padding.
  */
-function saveResumeToDrive(data) {
-  if (!data.resumeBlob) return null;
+function extractCleanBase64(raw) {
+  if (!raw || typeof raw !== "string") return null;
+  var str = raw.trim();
+  if (str.indexOf("base64,") !== -1) {
+    str = str.split("base64,")[1];
+  }
+  // Remove spaces, line breaks, carriage returns
+  str = str.replace(/[\r\n\s]/g, "");
+  // Fix URL-safe base64 encoding if present (- to +, _ to /)
+  str = str.replace(/-/g, "+").replace(/_/g, "/");
+  // Pad missing base64 characters with '='
+  while (str.length % 4 !== 0) {
+    str += "=";
+  }
+  return str.length > 10 ? str : null;
+}
+
+/**
+ * Decodes candidate's base64 resume and creates a binary Blob for direct email attachment.
+ * Supports PDF, DOC, and DOCX while preserving the original filename and MIME type.
+ */
+function getAttachmentBlobs(data, defaultName) {
+  var attachments = [];
+  if (!data || typeof data !== "object") return attachments;
+
+  var rawBase64 = data.resumeBlob || data.resume || data.resumeBase64 || data.fileBlob || 
+                  data.attachmentBlob || data.attachment || data.ResumeBlob || data.Resume || 
+                  data["Resume Blob"] || data.resume_blob || "";
+  var cleanBase64 = extractCleanBase64(rawBase64);
   
-  var folder;
-  if (CONFIG.CAREER_RESUMES_FOLDER_ID) {
+  if (cleanBase64) {
     try {
-      folder = DriveApp.getFolderById(CONFIG.CAREER_RESUMES_FOLDER_ID);
-    } catch (e) {
-      console.warn("Could not open folder by ID:", e.toString());
+      var candidateName = (data.name || data.Name || data["Full Name"] || data.fullName || defaultName || "Candidate").replace(/[^a-zA-Z0-9_\s]/g, "").trim();
+      var origFileName = data.resumeFileName || data.fileName || data.filename || data["Resume File Name"] || 
+                         data.ResumeFileName || data.resumefilename || (candidateName + "_Resume.pdf");
+      var cleanFileName = origFileName.replace(/[/\\?%*:|"<>]/g, "_");
+      if (!cleanFileName || cleanFileName.trim() === "") {
+        cleanFileName = candidateName + "_Resume.pdf";
+      }
+      
+      var ext = "";
+      var extMatch = cleanFileName.match(/\.([0-9a-zA-Z]+)$/i);
+      if (extMatch) ext = extMatch[1].toLowerCase();
+      
+      var mimeMap = {
+        "pdf": "application/pdf",
+        "doc": "application/msword",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "png": "image/png",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "txt": "text/plain"
+      };
+      var mime = data.resumeMimeType || data.mimeType || data.ResumeMimeType || (ext ? mimeMap[ext] : null) || "application/pdf";
+      
+      var decodedBytes = Utilities.base64Decode(cleanBase64);
+      if (decodedBytes && decodedBytes.length > 0) {
+        var resumeBlob = Utilities.newBlob(decodedBytes, mime, cleanFileName);
+        attachments.push(resumeBlob);
+        console.log("📎 Resume attached directly to email: " + cleanFileName + " (" + decodedBytes.length + " bytes, " + mime + ")");
+      } else {
+        console.warn("⚠️ Utilities.base64Decode returned 0 bytes for resume.");
+      }
+    } catch (err) {
+      console.error("❌ Failed to decode resume attachment: " + err.toString());
     }
+  } else {
+    console.log("ℹ️ No resume base64 payload provided with this submission.");
   }
-  
-  if (!folder) {
-    var folders = DriveApp.getFoldersByName(CONFIG.CAREER_RESUMES_FOLDER_NAME);
-    if (folders.hasNext()) {
-      folder = folders.next();
-    } else {
-      folder = DriveApp.createFolder(CONFIG.CAREER_RESUMES_FOLDER_NAME);
-      console.log("📁 Created Google Drive Folder: " + CONFIG.CAREER_RESUMES_FOLDER_NAME);
-    }
-  }
-  
-  var candidateName = (data.name || data.Name || data.fullName || "Candidate").replace(/[^a-zA-Z0-9_\s]/g, "");
-  var jobTitle = (data.jobTitle || data["Job Title"] || "Role").replace(/[^a-zA-Z0-9_\s]/g, "");
-  var origFileName = data.resumeFileName || "Resume.pdf";
-  var extMatch = origFileName.match(/\.[0-9a-z]+$/i);
-  var ext = extMatch ? extMatch[0] : ".pdf";
-  
-  var now = new Date();
-  var dateStr = Utilities.formatDate(now, "Asia/Kolkata", "yyyy-MM-dd");
-  var newFileName = candidateName + " - " + jobTitle + " - " + dateStr + ext;
-  
-  var decoded = Utilities.base64Decode(data.resumeBlob);
-  var mime = data.resumeMimeType || "application/pdf";
-  var blob = Utilities.newBlob(decoded, mime, newFileName);
-  
-  var driveFile = folder.createFile(blob);
-  driveFile.setDescription("Resume submitted by " + candidateName + " for " + jobTitle + " on " + dateStr);
-  return driveFile;
+  return attachments;
 }
 
 // =========================================================================================
-// 6. ENHANCED EMAIL DISPATCHER WITH EXPLICIT CATEGORY LABELS
+// 6. ENHANCED EMAIL DISPATCHER WITH DIRECT ATTACHMENTS
 // =========================================================================================
 
 /**
- * Dispatches beautifully styled notification emails for all lead types.
+ * Dispatches notification emails with direct binary attachments for career applications.
+ * Sends individually to each recipient to avoid any single recipient failure breaking delivery.
  */
 function sendLeadEmails(data, sheetName, spreadsheetUrl) {
   var userEmail = data.email || data.Email || data["Work Email"] || data.workEmail || data["work_email"] || "";
-  var userName  = data.name || data.Name || data["Full Name"] || data.fullName || data["full_name"] || "Valued Customer";
+  var userName  = data.name || data.Name || data["Full Name"] || data.fullName || data["full_name"] || "Valued Applicant";
 
   var leadMeta = getLeadCategoryMeta(sheetName, data);
   
@@ -724,23 +762,12 @@ function sendLeadEmails(data, sheetName, spreadsheetUrl) {
   
   var subjectInternal = leadMeta.internalSubject;
   var htmlInternal = buildInternalLeadHtml(leadMeta, data, spreadsheetUrl);
-  var attachments = [];
-
-  // Resume attachment for Career Applications
-  if (sheetName === "CareerApplications" && data.resumeBlob) {
-    try {
-      var decoded = Utilities.base64Decode(data.resumeBlob);
-      var mime = data.resumeMimeType || "application/pdf";
-      var fileName = data.resumeFileName || (userName + "_Resume.pdf");
-      var attachment = Utilities.newBlob(decoded, mime, fileName);
-      attachments.push(attachment);
-    } catch (attachErr) {
-      console.error("Failed to decode resume attachment:", attachErr.toString());
-    }
-  }
+  
+  // Extract attachments (resume decoded directly into Blob)
+  var attachments = getAttachmentBlobs(data, userName);
 
   // 1. Send Auto-Confirmation to the User
-  if (userEmail) {
+  if (userEmail && userEmail.indexOf("@") !== -1) {
     try {
       MailApp.sendEmail({
         to: userEmail,
@@ -749,27 +776,73 @@ function sendLeadEmails(data, sheetName, spreadsheetUrl) {
         name: EMAIL_CONFIG.name,
         replyTo: EMAIL_CONFIG.replyTo
       });
+      console.log("✅ Sent user confirmation email to: " + userEmail);
     } catch(e) { 
-      console.error("Failed to send user confirmation email:", e.toString()); 
+      try {
+        GmailApp.sendEmail(userEmail, subjectUser, "", {
+          htmlBody: htmlUser,
+          name: EMAIL_CONFIG.name,
+          replyTo: EMAIL_CONFIG.replyTo
+        });
+        console.log("✅ [GmailApp] Sent user confirmation to: " + userEmail);
+      } catch (gmailErr) {
+        console.error("Failed to send user confirmation email:", e.toString());
+      }
     }
   }
 
-  // 2. Send Alert to the Internal Team
-  var targetRecipients = leadMeta.recipients;
-  try {
-    targetRecipients.forEach(function(email) {
-      var mailOptions = {
-        to: email,
-        subject: subjectInternal,
-        htmlBody: htmlInternal,
-        name: "ISI Lead Engine • " + leadMeta.categoryName
-      };
-      if (attachments.length > 0) mailOptions.attachments = attachments;
-      MailApp.sendEmail(mailOptions);
+  // 2. Send Alert to the Internal Team with direct resume attachment
+  var targetRecipients = leadMeta.recipients || [];
+  if (targetRecipients.length > 0) {
+    targetRecipients.forEach(function(recipient) {
+      if (!recipient || typeof recipient !== "string" || recipient.trim() === "" || recipient.indexOf("@") === -1) {
+        return;
+      }
+      var cleanRecipient = recipient.trim();
+      try {
+        // Create new blob instances for each recipient
+        var recipientBlobs = [];
+        if (attachments && attachments.length > 0) {
+          recipientBlobs = attachments.map(function(blob) {
+            try {
+              return Utilities.newBlob(blob.getBytes(), blob.getContentType(), blob.getName());
+            } catch (bErr) {
+              return blob;
+            }
+          });
+        }
+
+        var mailOptions = {
+          to: cleanRecipient,
+          subject: subjectInternal,
+          htmlBody: htmlInternal,
+          name: "ISI Lead Engine • " + leadMeta.categoryName,
+          replyTo: (userEmail && userEmail.indexOf("@") !== -1) ? userEmail : EMAIL_CONFIG.replyTo
+        };
+        if (recipientBlobs.length > 0) {
+          mailOptions.attachments = recipientBlobs;
+        }
+
+        try {
+          MailApp.sendEmail(mailOptions);
+          console.log("✅ [MailApp] Sent to: " + cleanRecipient + " [Attachments: " + recipientBlobs.length + "]");
+        } catch (mailAppErr) {
+          console.warn("⚠️ MailApp failed for " + cleanRecipient + " (" + mailAppErr.toString() + "). Attempting GmailApp fallback...");
+          var gmailOptions = {
+            htmlBody: htmlInternal,
+            name: "ISI Lead Engine • " + leadMeta.categoryName,
+            replyTo: (userEmail && userEmail.indexOf("@") !== -1) ? userEmail : EMAIL_CONFIG.replyTo
+          };
+          if (recipientBlobs.length > 0) {
+            gmailOptions.attachments = recipientBlobs;
+          }
+          GmailApp.sendEmail(cleanRecipient, subjectInternal, "", gmailOptions);
+          console.log("✅ [GmailApp Fallback] Sent to: " + cleanRecipient + " [Attachments: " + recipientBlobs.length + "]");
+        }
+      } catch(recipientErr) { 
+        console.error("❌ Failed to deliver email to recipient " + cleanRecipient + ": " + recipientErr.toString()); 
+      }
     });
-    console.log("✅ Sent internal lead notification: " + leadMeta.categoryName + " -> " + targetRecipients.join(", "));
-  } catch(e) { 
-    console.error("Failed to send internal team email:", e.toString()); 
   }
 }
 
@@ -799,32 +872,17 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.adCampaignEmails
       };
 
-    case "CareerApplications":
-      return {
-        categoryName: "Career Application & Resume Submission",
-        badgeText: "📄 CAREER APPLICATION & RESUME",
-        badgeBg: "#6366f1",
-        badgeColor: "#ffffff",
-        leadName: name || "Candidate Applicant",
-        leadCompany: "Applied for: " + (role || "Security Specialist"),
-        leadPhone: phone,
-        internalSubject: "📄 [Career Application Lead Generation] " + (name || "Applicant") + " – " + (role || "General Application"),
-        userSubject: "📄 Career Application Received – ISI Security Careers",
-        userMessage: "We have received your career application. Our Talent Acquisition Team is reviewing your credentials and will reach out if your profile matches our requirements.",
-        recipients: EMAIL_CONFIG.careerEmails
-      };
-
     case "Career_Applications":
     case "CareerApplications":
       return {
-        categoryName: "Talent Acquisition & Careers",
-        badgeText: "📄 CAREER APPLICATION",
-        badgeBg: "#059669",
+        categoryName: "Career Applications & Resumes",
+        badgeText: "📄 CAREER APPLICATION & RESUME",
+        badgeBg: "#10b981",
         badgeColor: "#ffffff",
-        leadName: name || "Applicant",
-        leadCompany: data["Job Title"] || data.jobTitle || "Career Candidate",
+        leadName: name || "Candidate Applicant",
+        leadCompany: role || "Security Role",
         leadPhone: phone,
-        internalSubject: "📄 [New Job Application] " + (name || "Candidate") + " - " + (data["Job Title"] || data.jobTitle || "Application"),
+        internalSubject: "📄 [Career Application Lead Generation] " + (name || "Applicant") + " – " + (role || "Open Position"),
         userSubject: "📄 Career Application Received – ISI Security Careers",
         userMessage: "We have received your career application. Our Talent Acquisition Team is reviewing your credentials and will reach out if your profile matches our requirements.",
         recipients: EMAIL_CONFIG.careerEmails
@@ -848,6 +906,8 @@ function getLeadCategoryMeta(sheetName, data) {
 
     case "Contact_Form":
     case "ContactForm":
+    case "Global_Lead_Form":
+    case "LEADS":
       return {
         categoryName: "Direct Website Lead Generation",
         badgeText: "🔔 DIRECT WEBSITE INQUIRY",
@@ -942,26 +1002,10 @@ function getLeadCategoryMeta(sheetName, data) {
         recipients: EMAIL_CONFIG.salesEmails
       };
 
-    case "Google_Ad_Leads":
-    case "AdCampaign":
-      return {
-        categoryName: "Paid Ad Campaign Lead Generation",
-        badgeText: "🎯 PAID AD CAMPAIGN LEAD",
-        badgeBg: "#f59e0b",
-        badgeColor: "#ffffff",
-        leadName: name || "Ad Prospect",
-        leadCompany: company || "Corporate Client",
-        leadPhone: phone,
-        internalSubject: "🎯 [Ad Campaign Lead Generation] " + (name || "New Lead") + " - " + (data.utmCampaign || "Paid Campaign"),
-        userSubject: "✅ Consultation Request Received – ISI Security",
-        userMessage: "Thank you for your interest in ISI Security. We have received your consultation request and our Senior Security Specialist will connect with you shortly.",
-        recipients: EMAIL_CONFIG.salesEmails
-      };
-
     default:
       return {
-        categoryName: sheetName + " Lead Generation",
-        badgeText: "🔔 " + sheetName.toUpperCase() + " LEAD",
+        categoryName: sheetName.replace(/_/g, ' ') + " Lead Generation",
+        badgeText: "🔔 " + sheetName.toUpperCase().replace(/_/g, ' ') + " LEAD",
         badgeBg: "#475569",
         badgeColor: "#ffffff",
         leadName: name || "Website User",
@@ -985,22 +1029,58 @@ function getLeadCategoryMeta(sheetName, data) {
 function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
   var phone = data.phone || data.Phone || data["Phone Number"] || data.phoneNumber || "";
   var email = data.email || data.Email || data["Work Email"] || data.workEmail || "";
-  var name  = data.name || data.Name || data["Full Name"] || data.fullName || "Prospective Client";
-  var location = data.location || data.ipLocation || data["IP Location"] || "India";
+  var name  = data.name || data.Name || data["Full Name"] || data.fullName || "Prospective Applicant / Client";
+  var location = data.location || data.ipLocation || data["IP Location"] || data["City"] || "India";
   var timestamp = normalizeTimestamp(data.timestamp || data.Timestamp);
-  var resumeLink = data.resumeDriveLink || "";
+  var resumeName = data.resumeFileName || data.fileName || data["Resume File Name"] || "";
+  var coverLetter = data.coverLetter || data["Cover Letter"] || "";
+  var jobTitle = data.jobTitle || data["Job Title"] || meta.leadCompany || "";
 
-  // Rows for main form data
+  var isCareer = (meta.categoryName.indexOf("Career") !== -1 || meta.categoryName.indexOf("Talent") !== -1);
+
+  // Deduplicate and filter fields cleanly
+  var seenKeys = {};
   var formRows = "";
   var utmRows = "";
 
-  for (var key in data) {
-    if (["sheetName", "resumeBlob", "resumeMimeType", "targetEmail", "notifyEmail", "emailTo", "driveFileId"].indexOf(key) !== -1) continue;
-    if (!data[key] || typeof data[key] === "object") continue;
+  // Helper to standardize key names for deduplication
+  function normalizeKey(k) {
+    return k.toLowerCase().replace(/[\s\-_]/g, '');
+  }
 
-    var isUtm = key.toLowerCase().indexOf("utm") !== -1;
-    var prettyKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); }).trim();
-    var valStr = String(data[key]).replace(/\n/g, "<br>");
+  // Blacklist of internal/binary keys
+  var ignoredKeys = [
+    "sheetname", "resumeblob", "resumemimetype", "targetemail", "notifyemail", "emailto",
+    "drivefileid", "resumedrivelink", "resume", "resumebase64", "fileblob", "attachmentblob", "attachment"
+  ];
+
+  for (var rawKey in data) {
+    var normKey = normalizeKey(rawKey);
+    if (ignoredKeys.indexOf(normKey) !== -1) continue;
+    if (seenKeys[normKey]) continue; // Skip duplicates (e.g. "leadNumber" and "Lead Number")
+    
+    var val = data[rawKey];
+    if (val === undefined || val === null || val === "" || typeof val === "object") continue;
+    
+    // For career submissions, hide meaningless N/A Jira / Lead Number fields
+    if (isCareer && (normKey === "leadnumber" || normKey === "jirastatus" || normKey === "jiraissuekey" || normKey === "jirakey" || normKey === "jiraurl" || normKey === "jiraerror")) {
+      if (val === "N/A" || val === "Not Applicable" || val === "") continue;
+    }
+
+    seenKeys[normKey] = true;
+
+    var isUtm = normKey.indexOf("utm") !== -1;
+    var prettyKey = rawKey.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); }).replace(/_/g, ' ').trim();
+    
+    // Format display names nicely
+    if (normKey === "leadnumber") prettyKey = "Lead Number";
+    if (normKey === "leadsource") prettyKey = "Lead Source";
+    if (normKey === "pageurl") prettyKey = "Page URL";
+    if (normKey === "ipaddress") prettyKey = "IP Address";
+    if (normKey === "resumefilename") prettyKey = "Resume File Name";
+    if (normKey === "jobtitle") prettyKey = "Job Title";
+
+    var valStr = String(val).replace(/\n/g, "<br>");
 
     if (isUtm) {
       utmRows += '<div style="margin-bottom:6px;font-size:12px;color:#334155;">' +
@@ -1014,7 +1094,7 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
     }
   }
 
-  // Quick Action Buttons
+  // Quick Action Buttons (No Drive button)
   var actionButtons = '<div style="margin-top:25px;display:flex;gap:10px;flex-wrap:wrap;">';
   if (phone) {
     actionButtons += '<a href="tel:' + phone + '" style="background:#003380;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">📞 Call ' + phone + '</a>';
@@ -1022,13 +1102,31 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
   if (email) {
     actionButtons += '<a href="mailto:' + email + '?subject=Re: ' + encodeURIComponent(meta.categoryName + ' - ISI Security') + '" style="background:#059669;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">✉️ Reply via Email</a>';
   }
-  if (resumeLink) {
-    actionButtons += '<a href="' + resumeLink + '" target="_blank" style="background:#6366f1;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">📄 View Resume in Drive</a>';
-  }
   if (spreadsheetUrl) {
     actionButtons += '<a href="' + spreadsheetUrl + '" target="_blank" style="background:#334155;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-bottom:8px;">📊 Open Google Sheet</a>';
   }
   actionButtons += '</div>';
+
+  var resumeAttachmentNotice = "";
+  if (resumeName || data.resumeBlob) {
+    resumeAttachmentNotice = 
+      '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;">' +
+      '  <span style="font-size:22px;margin-right:12px;">📎</span>' +
+      '  <div>' +
+      '    <div style="font-weight:700;color:#065f46;font-size:13px;">Resume Attached to this Email</div>' +
+      '    <div style="color:#047857;font-size:12px;margin-top:2px;"><strong>Document:</strong> ' + (resumeName || 'Candidate_Resume.pdf') + ' (Download directly from email attachments)</div>' +
+      '  </div>' +
+      '</div>';
+  }
+
+  var coverLetterSection = "";
+  if (coverLetter) {
+    coverLetterSection = 
+      '<div style="margin-bottom:20px;padding:16px;background:#f8fafc;border-left:4px solid #6366f1;border-radius:4px;">' +
+      '  <h4 style="margin:0 0 6px 0;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#4338ca;font-weight:700;">📝 Candidate Cover Letter</h4>' +
+      '  <div style="font-size:13px;color:#334155;line-height:1.6;font-style:italic;">"' + String(coverLetter).replace(/\n/g, '<br>') + '"</div>' +
+      '</div>';
+  }
 
   var utmSection = utmRows ? (
     '<div style="margin-top:20px;padding:15px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;">' +
@@ -1060,9 +1158,15 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
     '    <div style="padding: 25px 25px 10px 25px;">',
     '      <div style="background: #f8fafc; border-left: 4px solid #003380; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">',
     '        <div style="font-size: 18px; font-weight: 700; color: #0f172a;">' + name + '</div>',
-    '        <div style="color: #475569; font-size: 14px; margin-top: 4px;">' + (meta.leadCompany ? '🏢 ' + meta.leadCompany + ' • ' : '') + '📍 ' + location + '</div>',
+    '        <div style="color: #475569; font-size: 14px; margin-top: 4px;">' + (jobTitle ? '💼 ' + jobTitle + ' • ' : '') + '📍 ' + location + '</div>',
     '        <div style="color: #64748b; font-size: 12px; margin-top: 6px;">⏱ ' + timestamp + '</div>',
     '      </div>',
+    '',
+    '      <!-- RESUME ATTACHMENT BANNER -->',
+    '      ' + resumeAttachmentNotice,
+    '',
+    '      <!-- COVER LETTER (IF PROVIDED) -->',
+    '      ' + coverLetterSection,
     '',
     '      <!-- FORM DATA TABLE -->',
     '      <h4 style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #003380; font-weight: 700;">Submission Parameters</h4>',
@@ -2094,7 +2198,7 @@ function clearAllProjectTriggers() {
 
 function setupAllTriggers() {
   clearAllProjectTriggers();
-  
+
   // 1. Daily Report at 8:30 AM IST
   ScriptApp.newTrigger("dailyReport")
     .timeBased()
@@ -3103,7 +3207,51 @@ function onOpen() {
     .addItem('⏰ Setup Automated Reports & Triggers', 'setupAllTriggers')
     .addItem('🧹 Clear All Triggers', 'clearAllProjectTriggers')
     .addSeparator()
+    .addItem('📄 Test Career Application with Resume Attachment', 'TEST_CAREER_APPLICATION_WITH_RESUME')
     .addItem('📧 Send Sample Notification Previews', 'SEND_ALL_EXECUTIVE_NOTIFICATION_PREVIEWS')
     .addToUi();
 }
+
+/**
+ * Self-Test Function: Simulates a career submission with a sample base64 PDF resume.
+ * Run this directly inside Google Apps Script Editor to verify Drive storage and email attachment.
+ */
+function TEST_CAREER_APPLICATION_WITH_RESUME() {
+  console.log("🚀 Running Test Career Application with Resume...");
+
+  // Minimal valid 1-page sample PDF in base64
+  var samplePdfBase64 = "JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNhbXBsZSBSZXN1bWUpCi9Qcm9kdWNlciAoR1VNQk8pCj4+CmVuZG9iaiA=" +
+                        "yIDAgb2JqCjw8Ci9UeXBlIC9DYXRhbG9nCi9QYWdlcyAzIDAgUgo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZXMK" +
+                        "L0tpZHMgWzQgMCBSXQovQ291bnQgMQo+PgplbmRvYmoKNCAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZ" +
+                        "WRpYUJveCBbMCAwIDMwMCAxNDRdCi9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKNSAwIG9iago8PAovTGVuZ3RoIDU1Cj4+Cn" +
+                        "N0cmVhbQpCVAovRjEgMTggVGYKNTAgMTAwIFRECihoZWxsbyB3b3JsZCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAg" +
+                        "NgowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA3OSAwMDAwMCBuIAowMDAwMDAwMTM2ID" +
+                        "AwMDAwIG4gCjAwMDAwMDAxOTkgMDAwMDAgbiAKMDAwMDAwMDI4NiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDYKL1Jvb3Qg" +
+                        "MiAwIFIKPj4Kc3RhcnR4cmVmCjM5MgolJUVPRg==";
+
+  var mockEvent = {
+    postData: {
+      contents: JSON.stringify({
+        sheetName: "Career_Applications",
+        name: "Test Candidate (Admin)",
+        email: "poojasri.aram@gmail.com",
+        phone: "+91 98765 43210",
+        jobTitle: "HR Executive / Security Consultant",
+        location: "Chennai, Tamil Nadu, India",
+        coverLetter: "I am passionate about corporate and physical security excellence. Please find my attached resume.",
+        resumeFileName: "Candidate_Resume_Test.pdf",
+        resumeMimeType: "application/pdf",
+        resumeBlob: samplePdfBase64,
+        organization: "ISI Security Web Portal",
+        pageUrl: "https://www.isisecurity.in/career",
+        timestamp: normalizeTimestamp(new Date())
+      })
+    }
+  };
+
+  var res = doPost(mockEvent);
+  console.log("✅ Career Test Result: " + res.getContent());
+  return res.getContent();
+}
+
 

@@ -65,6 +65,8 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
         }
         if (!resume) {
             newErrors.resume = 'Resume is required';
+        } else if (resume.size > 10 * 1024 * 1024) {
+            newErrors.resume = 'Resume file size must be under 10MB';
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -76,17 +78,26 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
         setIsSubmitting(true);
 
         try {
-            // Convert resume to base64
-            const reader = new FileReader();
-            const base64Promise = new Promise<string>((resolve) => {
+            // Convert resume to base64 safely
+            const resumeBase64 = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
                 reader.onload = () => {
-                    const base64String = (reader.result as string).split(',')[1];
+                    const res = (reader.result as string) || '';
+                    const base64String = res.includes(',') ? res.split(',')[1] : res;
                     resolve(base64String);
                 };
+                reader.onerror = () => reject(new Error('Failed to read resume file'));
                 reader.readAsDataURL(resume);
             });
 
-            const resumeBase64 = await base64Promise;
+            // Resolve correct MIME type (PDF, DOC, DOCX)
+            const resolveMimeType = (file: File): string => {
+                if (file.type && file.type !== 'application/octet-stream') return file.type;
+                const ext = file.name.split('.').pop()?.toLowerCase();
+                if (ext === 'docx') return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                if (ext === 'doc') return 'application/msword';
+                return 'application/pdf';
+            };
 
             await submitCareerApplication({
                 name: formData.name,
@@ -95,12 +106,14 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
                 jobTitle: jobTitle || formData.jobTitle,
                 coverLetter: formData.coverLetter,
                 resumeFileName: resume.name,
-                resumeMimeType: resume.type,
-                resumeBlob: resumeBase64 // Send as base64
+                resumeMimeType: resolveMimeType(resume),
+                resumeBlob: resumeBase64
             });
 
+            trackFormSubmission('Career_Applications', true);
+
             toast.success('Application submitted successfully!', {
-                description: 'Our HR team has received your application and will review it soon.',
+                description: 'Our HR team has received your application with attached resume.',
                 duration: 5000,
             });
 
@@ -118,8 +131,9 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
             setErrors({});
         } catch (error) {
             console.error('Career application error:', error);
+            trackFormSubmission('Career_Applications', false);
             toast.error('Failed to submit application', {
-                description: 'Please try again later.',
+                description: 'Please check your connection and try again.',
                 duration: 7000,
             });
         } finally {
