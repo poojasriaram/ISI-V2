@@ -812,9 +812,16 @@ function sendLeadEmails(data, sheetName, spreadsheetUrl) {
           });
         }
 
+        var plainTextBody = "Candidate: " + (data.name || "Applicant") + "\n" +
+                            "Position: " + (data.jobTitle || "Open Position") + "\n" +
+                            "Email: " + (userEmail || "N/A") + "\n" +
+                            "Phone: " + (data.phone || "N/A") + "\n\n" +
+                            "Please find the attached resume document (" + (data.resumeFileName || "Resume") + ") enclosed with this email.";
+
         var mailOptions = {
           to: cleanRecipient,
           subject: subjectInternal,
+          body: plainTextBody,
           htmlBody: htmlInternal,
           name: "ISI Lead Engine • " + leadMeta.categoryName,
           replyTo: (userEmail && userEmail.indexOf("@") !== -1) ? userEmail : EMAIL_CONFIG.replyTo
@@ -823,11 +830,9 @@ function sendLeadEmails(data, sheetName, spreadsheetUrl) {
           mailOptions.attachments = recipientBlobs;
         }
 
+        var sent = false;
+        // Attempt 1: GmailApp (native Gmail multipart attachment engine)
         try {
-          MailApp.sendEmail(mailOptions);
-          console.log("✅ [MailApp] Sent to: " + cleanRecipient + " [Attachments: " + recipientBlobs.length + "]");
-        } catch (mailAppErr) {
-          console.warn("⚠️ MailApp failed for " + cleanRecipient + " (" + mailAppErr.toString() + "). Attempting GmailApp fallback...");
           var gmailOptions = {
             htmlBody: htmlInternal,
             name: "ISI Lead Engine • " + leadMeta.categoryName,
@@ -836,8 +841,22 @@ function sendLeadEmails(data, sheetName, spreadsheetUrl) {
           if (recipientBlobs.length > 0) {
             gmailOptions.attachments = recipientBlobs;
           }
-          GmailApp.sendEmail(cleanRecipient, subjectInternal, "", gmailOptions);
-          console.log("✅ [GmailApp Fallback] Sent to: " + cleanRecipient + " [Attachments: " + recipientBlobs.length + "]");
+          GmailApp.sendEmail(cleanRecipient, subjectInternal, plainTextBody, gmailOptions);
+          console.log("✅ [GmailApp] Delivered to: " + cleanRecipient + " [Attachments: " + recipientBlobs.length + "]");
+          sent = true;
+        } catch (gmailErr) {
+          console.warn("⚠️ GmailApp failed for " + cleanRecipient + " (" + gmailErr.toString() + "). Falling back to MailApp...");
+        }
+
+        // Attempt 2: MailApp (Standard Apps Script Mailer Fallback)
+        if (!sent) {
+          try {
+            MailApp.sendEmail(mailOptions);
+            console.log("✅ [MailApp] Delivered to: " + cleanRecipient + " [Attachments: " + recipientBlobs.length + "]");
+            sent = true;
+          } catch (mailAppErr) {
+            console.error("❌ MailApp also failed for " + cleanRecipient + ": " + mailAppErr.toString());
+          }
         }
       } catch(recipientErr) { 
         console.error("❌ Failed to deliver email to recipient " + cleanRecipient + ": " + recipientErr.toString()); 
