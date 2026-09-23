@@ -4,7 +4,7 @@ import {
     CheckCircle2, Clock, Landmark, Building2, LayoutPanelLeft,
     MonitorDot, Cpu, BarChart3, Bell, Train, Ship, Users2, Factory,
     Star, Database, Lock, Eye, Leaf, Search, Milestone, PhoneCall,
-    Scan, Cog
+    Scan, Cog, GraduationCap
 } from "lucide-react";
 
 export interface CapabilitiesStatistic {
