@@ -58,7 +58,8 @@ import {
   Key,
   Coins,
   Truck,
-  Building
+  Building,
+  Cog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
