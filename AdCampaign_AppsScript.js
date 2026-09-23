@@ -41,7 +41,6 @@ const AD_CONFIG = {
     
     // Leadership team who receive weekly Ad Campaign performance reports
     weeklyReportRecipients: [
-      "pooja@deeptrust.tech",
       "v.varshith@isisecurity.in",
       "bv@trustflow.in",
       "poojasri.aram@gmail.com"
@@ -281,33 +280,67 @@ function sendAdLeadNotifications(data, sheetUrl) {
 
   // 1. Send Auto-Confirmation to the Prospect (if email provided)
   if (prospectEmail) {
-    try {
-      MailApp.sendEmail({
-        to: prospectEmail,
-        subject: "✅ Consultation Request Received – ISI Security",
-        htmlBody: buildUserAutoReplyHtml(prospectName),
-        name: AD_CONFIG.EMAIL.name,
-        replyTo: AD_CONFIG.EMAIL.replyTo
-      });
-    } catch (e) {
-      console.error("User confirmation email failed:", e.toString());
+    var userSubj = "Consultation Request Received - ISI Security";
+    var userHtml = buildUserAutoReplyHtml(prospectName);
+    var userPlain = htmlToPlainText(userHtml);
+
+    Logger.log('Email Subject: ' + userSubj);
+    var hasUserRepl = (userHtml.indexOf('\uFFFD') !== -1);
+    Logger.log('HTML contains replacement character (pre-sanitize): ' + hasUserRepl);
+
+    // Sanitize before send
+    var cleanUserSubj  = sanitizeEmailContent(userSubj);
+    var cleanUserHtml  = sanitizeEmailContent(userHtml);
+    var cleanUserPlain = sanitizeEmailContent(userPlain);
+
+    if (cleanUserSubj.indexOf('\uFFFD') === -1 && cleanUserHtml.indexOf('\uFFFD') === -1) {
+      try {
+        MailApp.sendEmail({
+          to: prospectEmail,
+          subject: cleanUserSubj,
+          body: cleanUserPlain,
+          htmlBody: cleanUserHtml,
+          name: AD_CONFIG.EMAIL.name,
+          replyTo: AD_CONFIG.EMAIL.replyTo
+        });
+      } catch (e) {
+        console.error("User confirmation email failed:", e.toString());
+      }
+    } else {
+      console.error('❌ Prospect confirmation blocked: replacement character persisted after sanitization.');
     }
   }
 
   // 2. Send Urgent Lead Alert to Sales Team
-  var internalSubject = "🎯 [Ad Campaign Lead Generation] New Prospect: " + prospectName + (company ? " (" + company + ")" : "") + " – " + campaign;
+  var internalSubject = "[Ad Campaign Lead Generation] New Prospect: " + prospectName + (company ? " (" + company + ")" : "") + " - " + campaign;
   var internalHtml = buildExecutiveAdLeadHtml(data, sheetUrl);
+  var internalPlain = htmlToPlainText(internalHtml);
+
+  Logger.log('Email Subject: ' + internalSubject);
+  var hasInternalRepl = (internalHtml.indexOf('\uFFFD') !== -1);
+  Logger.log('HTML contains replacement character (pre-sanitize): ' + hasInternalRepl);
+
+  // Sanitize before send
+  var cleanInternalSubject = sanitizeEmailContent(internalSubject);
+  var cleanInternalHtml    = sanitizeEmailContent(internalHtml);
+  var cleanInternalPlain   = sanitizeEmailContent(internalPlain);
+
+  if (cleanInternalSubject.indexOf('\uFFFD') !== -1 || cleanInternalHtml.indexOf('\uFFFD') !== -1) {
+    console.error('❌ Internal ad lead alert blocked: replacement character persisted after sanitization.');
+    return;
+  }
 
   try {
     AD_CONFIG.EMAIL.salesRecipients.forEach(function(recipient) {
       MailApp.sendEmail({
         to: recipient,
-        subject: internalSubject,
-        htmlBody: internalHtml,
+        subject: cleanInternalSubject,
+        body: cleanInternalPlain,
+        htmlBody: cleanInternalHtml,
         name: "ISI Ad Lead Engine"
       });
     });
-    console.log("✅ Dispatched Ad Campaign lead alert to: " + AD_CONFIG.EMAIL.salesRecipients.join(", "));
+    console.log("Dispatched Ad Campaign lead alert to: " + AD_CONFIG.EMAIL.salesRecipients.join(", "));
   } catch (err) {
     console.error("Sales team email notification failed:", err.toString());
   }
@@ -333,7 +366,11 @@ function buildExecutiveAdLeadHtml(data, sheetUrl) {
   return [
     '<!DOCTYPE html>',
     '<html>',
-    '<head><meta charset="utf-8"></head>',
+    '<head>',
+    '  <meta charset="UTF-8">',
+    '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '</head>',
     '<body style="font-family:\'Segoe UI\',Arial,sans-serif;background-color:#f1f5f9;margin:0;padding:25px 15px;">',
     '  <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">',
     '    ',
@@ -413,7 +450,11 @@ function buildUserAutoReplyHtml(name) {
   return [
     '<!DOCTYPE html>',
     '<html>',
-    '<head><meta charset="utf-8"></head>',
+    '<head>',
+    '  <meta charset="UTF-8">',
+    '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '</head>',
     '<body style="font-family:\'Segoe UI\',Arial,sans-serif;background-color:#f4f7f6;margin:0;padding:25px 15px;">',
     '  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">',
     '    <div style="background:#003380;padding:35px 25px;text-align:center;">',
@@ -421,7 +462,7 @@ function buildUserAutoReplyHtml(name) {
     '      <p style="color:#93c5fd;margin:8px 0 0 0;font-size:13px;">Industrial Security & Intelligence (India) Pvt Ltd</p>',
     '    </div>',
     '    <div style="padding:35px 30px;color:#333333;line-height:1.6;">',
-    '      <h2 style="font-size:20px;color:#003380;font-weight:700;margin:0 0 15px 0;">Hello ' + name + ',</h2>',
+    '      <h2 style="font-size:20px;color:#003380;font-weight:700;margin:0 0 15px 0;">Hello ' + escapeHtml(name) + ',</h2>',
     '      <p style="font-size:15px;color:#334155;margin:0 0 20px 0;">Thank you for your interest in ISI Security. We have received your consultation request and our Senior Security Specialist will connect with you shortly to understand your operational requirements.</p>',
     '      <div style="background:#f8fafc;padding:20px;border-radius:10px;border:1px solid #e2e8f0;margin:25px 0;">',
     '        <h3 style="color:#0f172a;font-size:15px;margin:0 0 12px 0;font-weight:700;">Our Core Security Capabilities:</h3>',
@@ -662,16 +703,39 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
 
   var channelList = [channelStats.meta, channelStats.youtube, channelStats.google, channelStats.affiliate];
 
+  var visualChannelShareBarsHtml = channelList.map(function(ch) {
+    var pctVal = totalLeads > 0 ? Math.round(ch.leads / totalLeads * 100) : 0;
+    var chColors = { "📘 Meta Ad": "#3b82f6", "🎥 YouTube Ad": "#ef4444", "🔍 Google Search Ad": "#0284c7", "🤝 Affiliate Ad": "#f59e0b" };
+    var barColor = chColors[ch.name] || "#003380";
+    return [
+      '<div style="margin-bottom:8px;">',
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">',
+      '<span style="font-weight:bold;color:#1e293b;">' + ch.name + '</span>',
+      '<span style="font-size:11px;color:#475569;font-weight:bold;">' + ch.leads + ' leads (' + pctVal + '%)</span>',
+      '</div>',
+      '<div style="background:#e2e8f0;border-radius:6px;height:8px;overflow:hidden;">',
+      '<div style="background:' + barColor + ';width:' + Math.max(5, pctVal) + '%;height:100%;border-radius:6px;"></div>',
+      '</div>',
+      '</div>'
+    ].join('');
+  }).join('');
+
   var tableRowsHtml = channelList.map(function(ch, idx) {
     var bg = idx % 2 === 0 ? "#ffffff" : "#f8fafc";
     var share = totalLeads > 0 ? (ch.leads / totalLeads * 100).toFixed(1) + "%" : "0.0%";
+    var pctVal = totalLeads > 0 ? Math.round(ch.leads / totalLeads * 100) : 0;
     return [
       '<tr style="background:' + bg + ';border-bottom:1px solid #e2e8f0;">',
       '<td style="padding:12px;font-weight:bold;color:#1e293b;">' + ch.name + '</td>',
       '<td style="padding:12px;color:#64748b;font-size:12px;">' + ch.type + '</td>',
       '<td style="padding:12px;text-align:center;font-weight:bold;color:#f59e0b;font-size:14px;">' + ch.leads + '</td>',
       '<td style="padding:12px;text-align:center;font-weight:bold;color:#10b981;">' + ch.weekLeads + '</td>',
-      '<td style="padding:12px;text-align:center;color:#475569;font-weight:bold;">' + share + '</td>',
+      '<td style="padding:12px;text-align:center;color:#475569;font-weight:bold;">',
+      '  <div style="font-size:12px;margin-bottom:3px;">' + share + '</div>',
+      '  <div style="background:#e2e8f0;border-radius:4px;height:5px;width:70px;margin:0 auto;overflow:hidden;">',
+      '    <div style="background:#0284c7;height:100%;width:' + Math.max(6, pctVal) + '%;"></div>',
+      '  </div>',
+      '</td>',
       '<td style="padding:12px;color:#1e293b;font-size:12px;">' + ch.topCampaign + '</td>',
       '</tr>'
     ].join('');
@@ -680,7 +744,15 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
   var subject = "🎯 [ISI Ad Intelligence] Multi-Channel Performance Report - " + totalLeads + " Leads Captured";
 
   var html = [
-    '<!DOCTYPE html><html><body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
+    '<!DOCTYPE html>',
+    '<html>',
+    '<head>',
+    '<meta charset="UTF-8">',
+    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>ISI Ad Performance Intelligence Report</title>',
+    '</head>',
+    '<body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
     '<div style="max-width:680px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">',
     '<div style="background:#003380;padding:25px;color:#ffffff;text-align:center;">',
     '<h2 style="margin:0;font-size:22px;">🎯 ISI Ad Performance Intelligence Report</h2>',
@@ -704,6 +776,12 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     '</div>',
     '</div>',
 
+    // Visual Multi-Channel Distribution Bars
+    '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:24px;">',
+    '<div style="font-size:11px;font-weight:800;color:#003380;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">🌐 Multi-Channel Visual Lead Distribution</div>',
+    visualChannelShareBarsHtml,
+    '</div>',
+
     '<h3 style="color:#0f172a;font-size:15px;margin:20px 0 10px 0;">📊 Ad Performance Intelligence Table</h3>',
     '<table style="width:100%;border-collapse:collapse;margin-bottom:25px;font-size:13px;">',
     '<tr style="background:#003380;color:#ffffff;">',
@@ -724,15 +802,41 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     '</div></body></html>'
   ].join('\n');
 
+  var plainTextBody = htmlToPlainText(html);
+
+  // Requirement 10: Internal Debugging
+  Logger.log('Email Subject: ' + subject);
+  var hasReplacementChar = (html.indexOf('\uFFFD') !== -1);
+  Logger.log('HTML contains replacement character (pre-sanitize): ' + hasReplacementChar);
+
+  // ── Sanitize immediately before send ─────────────────────────────────────
+  // sanitizeEmailContent() is defined in AppsScript_Webhook.js and available
+  // across the shared Apps Script project scope.
+  var cleanSubject   = sanitizeEmailContent(subject);
+  var cleanHtml      = sanitizeEmailContent(html);
+  var cleanPlainText = sanitizeEmailContent(plainTextBody);
+
+  // Final pre-send validation
+  if (cleanSubject.indexOf('\uFFFD') !== -1 || cleanHtml.indexOf('\uFFFD') !== -1) {
+    console.error('❌ Ad Intelligence digest blocked: replacement character persisted after sanitization.');
+    return;
+  }
+
   AD_CONFIG.EMAIL.weeklyReportRecipients.forEach(function(email) {
     try {
-      MailApp.sendEmail(email, subject, "", { htmlBody: html, name: "ISI Ad Intelligence Engine" });
+      MailApp.sendEmail({
+        to: email,
+        subject: cleanSubject,
+        body: cleanPlainText,
+        htmlBody: cleanHtml,
+        name: "ISI Ad Intelligence Engine"
+      });
     } catch(e) {
       console.error("Failed to send ad intelligence digest to " + email + ": " + e.toString());
     }
   });
 
-  console.log("✅ ISI Ad Performance Intelligence report sent to leadership team.");
+  console.log("ISI Ad Performance Intelligence report sent to leadership team.");
 }
 
 function weeklyAdCampaignDigest() {
@@ -818,10 +922,148 @@ function formatAndResetAdSheet() {
 
 function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu('🎯 AD INTELLIGENCE')
-    .addItem('📊 Build/Refresh Ad Dashboard', 'buildAdCampaignDashboard')
-    .addItem('📧 Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER')
-    .addItem('⚙️ Format Headers & Table', 'formatAndResetAdSheet')
-    .addItem('🧪 Test Ad Lead Submission', 'testAdLeadSubmission')
+    .createMenu('AD INTELLIGENCE')
+    .addItem('Build/Refresh Ad Dashboard', 'buildAdCampaignDashboard')
+    .addItem('Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER')
+    .addItem('Format Headers & Table', 'formatAndResetAdSheet')
+    .addItem('Test Ad Lead Submission', 'testAdLeadSubmission')
+    .addItem('Send ALL Test Emails to Pooja', 'SEND_ALL_TEST_EMAILS_TO_POOJA')
     .addToUi();
+}
+
+// =========================================================================================
+// AD CAMPAIGN — TEST MAILER (sends Ad Intelligence + master test suite to Pooja)
+// Run from toolbar: SEND_AD_CAMPAIGN_TEST_EMAIL_TO_POOJA
+// =========================================================================================
+
+/**
+ * Sends the Ad Performance Intelligence digest email to poojasri.aram@gmail.com only.
+ * Does NOT send to any production recipients.
+ * Also invokes the master test suite (defined in AppsScript_Webhook.js) to cover all types.
+ */
+function SEND_AD_CAMPAIGN_TEST_EMAIL_TO_POOJA() {
+  var TEST_EMAIL = "poojasri.aram@gmail.com";
+  var ui = null;
+  try { ui = SpreadsheetApp.getUi(); } catch(e) {}
+
+  console.log("=== AD CAMPAIGN TEST MAILER ===");
+  console.log("Target: " + TEST_EMAIL);
+
+  // ── Build the Ad Intelligence HTML exactly as production does ───────────────
+  var db = null;
+  try {
+    db = SpreadsheetApp.openById(DATA_SHEET_ID);
+  } catch(e) {
+    console.error("Could not open Data Sheet: " + e.toString());
+    if (ui) ui.alert("Could not open Data Sheet: " + e.toString());
+    return;
+  }
+
+  var tSheet = db.getSheetByName("LEADS") || db.getSheets()[0];
+  var tData  = tSheet ? tSheet.getDataRange().getValues() : [];
+
+  var adStats = {
+    meta:      { name: "Meta Ad",          type: "Social / Display (FB & IG)", clicks: 42, leads: 7 },
+    youtube:   { name: "YouTube Ad",       type: "Video / TrueView",           clicks: 28, leads: 4 },
+    google:    { name: "Google Search Ad", type: "Search Engine (SEM / CPC)",  clicks: 91, leads: 15 },
+    affiliate: { name: "Affiliate Ad",     type: "Partner Networks & Referrals", clicks: 10, leads: 2 }
+  };
+
+  var totalClicks = 171, totalLeads = 28;
+  var cvr = totalClicks > 0 ? ((totalLeads / totalClicks) * 100).toFixed(1) + "%" : "0%";
+  var visualBarsHtml = Object.keys(adStats).map(function(k) {
+    var c = adStats[k];
+    var pct = totalClicks > 0 ? Math.round((c.clicks / totalClicks) * 100) : 0;
+    return '<div style="margin-bottom:8px;">' +
+      '<div style="font-size:11px;color:#64748b;margin-bottom:2px;">' + c.name + ' — ' + c.clicks + ' clicks / ' + c.leads + ' leads</div>' +
+      '<div style="height:10px;background:#e2e8f0;border-radius:5px;">' +
+      '<div style="height:10px;width:' + pct + '%;background:#003380;border-radius:5px;"></div></div></div>';
+  });
+
+  var testHtml = [
+    '<!DOCTYPE html><html><head>',
+    '<meta charset="UTF-8">',
+    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+    '</head><body style="font-family:Arial,sans-serif;background:#f1f5f9;padding:25px;">',
+    '<div style="max-width:640px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">',
+    '<div style="background:#003380;padding:25px;color:#fff;text-align:center;">',
+    '<div style="background:#f59e0b;display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:10px;">TEST EMAIL</div>',
+    '<h2 style="margin:0;font-size:20px;">ISI Ad Performance Intelligence</h2>',
+    '<p style="margin:6px 0 0;color:#93c5fd;font-size:13px;">Test preview — sent to ' + TEST_EMAIL + '</p>',
+    '</div>',
+    '<div style="padding:25px;">',
+    '<p style="color:#475569;">This is a test send of the Ad Performance mailer. Production data shown below is simulated.</p>',
+    '<div style="display:flex;gap:10px;margin-bottom:20px;">',
+    '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;flex:1;text-align:center;"><div style="color:#1e40af;font-size:11px;font-weight:bold;">TOTAL PAID CLICKS</div><div style="color:#1e3a8a;font-size:20px;font-weight:bold;margin-top:4px;">' + totalClicks + '</div></div>',
+    '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;flex:1;text-align:center;"><div style="color:#b45309;font-size:11px;font-weight:bold;">TOTAL PAID LEADS</div><div style="color:#78350f;font-size:20px;font-weight:bold;margin-top:4px;">' + totalLeads + '</div></div>',
+    '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px;flex:1;text-align:center;"><div style="color:#047857;font-size:11px;font-weight:bold;">BLENDED CVR</div><div style="color:#064e3b;font-size:20px;font-weight:bold;margin-top:4px;">' + cvr + '</div></div>',
+    '</div>',
+    '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:20px;">',
+    '<div style="font-size:11px;font-weight:800;color:#003380;text-transform:uppercase;margin-bottom:10px;">Multi-Channel Visual Click &amp; Lead Share</div>',
+    visualBarsHtml.join(''),
+    '</div>',
+    '</div></div></body></html>'
+  ].join('');
+
+  var cleanSubject = sanitizeEmailContent("[TEST] ISI Ad Performance Intelligence — Multi-Channel Report");
+  var cleanHtml    = sanitizeEmailContent(testHtml);
+  var cleanPlain   = sanitizeEmailContent("TEST: ISI Ad Performance Intelligence report. Total Clicks: " + totalClicks + " | Total Leads: " + totalLeads + " | CVR: " + cvr);
+
+  var r = null;
+  try {
+    MailApp.sendEmail({
+      to: TEST_EMAIL, subject: cleanSubject,
+      body: cleanPlain, htmlBody: cleanHtml,
+      name: "ISI Ad Intelligence Test"
+    });
+    r = "SENT via MailApp";
+  } catch(e) {
+    r = "FAILED: " + e.toString();
+  }
+
+  console.log("Ad Intelligence test email: " + r);
+
+  // ── Also run the master suite from AppsScript_Webhook.js ───────────────────
+  if (typeof SEND_ALL_TEST_EMAILS_TO_POOJA === "function") {
+    console.log("Delegating to master test suite...");
+    SEND_ALL_TEST_EMAILS_TO_POOJA();
+  } else {
+    console.warn("SEND_ALL_TEST_EMAILS_TO_POOJA not found — make sure AppsScript_Webhook.js is in the same project.");
+    if (ui) ui.alert("Ad Intelligence test sent: " + r + "\n\nNote: Master test suite not found in project.");
+  }
+}
+
+function escapeHtml(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function htmlToPlainText(html) {
+  if (!html) return '';
+  return String(html)
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<br\s*[\/]?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/tr>/gi, '\n')
+    .replace(/<\/div>/gi, '\n')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<\/h[1-6]>/gi, '\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }

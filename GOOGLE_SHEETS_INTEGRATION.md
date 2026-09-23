@@ -32,7 +32,7 @@ This project implements enterprise tracking with **60+ Master Metrics**, A/B tes
    - Branded lead category alerts:
      - `🎯 [Google Ad Lead Generation]`
      - `🔔 [Contact Form Lead Generation]`
-     - `📄 [Career Application Lead Generation]`
+     - `📄 [Career Application] (Career Application - [Applicant Name] - [Open Position])`
      - `💼 [Sales Lead Generation]`
      - `🤝 [Partner Application Lead Generation]`
      - `🎓 [Academy Training Lead Generation]`

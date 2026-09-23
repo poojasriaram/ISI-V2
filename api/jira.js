@@ -106,13 +106,39 @@ export default async function handler(req, res) {
 
   try {
     const lead = req.body || {};
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // 1. STRICT EXCLUSIONS (Career, Training, Academy must NOT go to Jira)
-    // ═══════════════════════════════════════════════════════════════════════════
+    const correlationId = 'req-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
     const formNameLower = String(lead.formName || lead.sheetName || '').toLowerCase();
     const pageLower = String(lead.pageUrl || lead.pageSource || lead.source || '').toLowerCase();
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 1. PRIMARY CLASSIFICATION: "Are you looking for a job?"
+    // ═══════════════════════════════════════════════════════════════════════════
+    const isJobQuestionYes =
+      String(lead.jobQuestion || lead["Are you looking for a job?"] || '').trim().toLowerCase() === 'yes' ||
+      lead.isJobSeeker === true ||
+      String(lead.leadType || '').toLowerCase().includes('career');
+
+    const leadType = isJobQuestionYes ? 'career' : 'sales';
+    const leadNumber = lead.leadNumber || lead.LeadNumber || lead.applicationNumber || `ISI-${String(++globalServerSequence).padStart(6, '0')}`;
+
+    if (leadType === 'career') {
+      console.log(`[CAREER APPLICATION ROUTED] Handled separately from Sales Leads: LeadNo/AppNo=${leadNumber}, formName=${lead.formName}, correlationId=${correlationId}`);
+      return res.status(200).json({
+        success: true,
+        status: 'submitted',
+        userStatus: 'Submitted',
+        message: 'Application Submitted',
+        applicationNumber: leadNumber,
+        leadNumber: leadNumber,
+        leadType: 'career',
+        ignored: true,
+        correlationId
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 2. STRICT EXCLUSIONS (Career, Training, Academy must NOT go to Jira)
+    // ═══════════════════════════════════════════════════════════════════════════
     const isCareer =
       formNameLower.includes('career') ||
       formNameLower.includes('job') ||
@@ -135,16 +161,23 @@ export default async function handler(req, res) {
       formNameLower.includes('behavior');
 
     if (isCareer || isTraining || isAcademy || isNonLead) {
-      console.log(`[JIRA IGNORED] Submission excluded from Jira: formName=${lead.formName}, page=${lead.pageUrl}`);
+      console.log(`[JIRA IGNORED] Submission excluded from Jira: formName=${lead.formName}, page=${lead.pageUrl}, correlationId=${correlationId}`);
       return res.status(200).json({
         success: true,
+        status: 'submitted',
+        userStatus: 'Submitted',
+        message: isCareer ? 'Application Submitted' : 'Submission Received',
+        applicationNumber: leadNumber,
+        leadNumber: leadNumber,
+        leadType: isCareer ? 'career' : 'other',
         ignored: true,
-        reason: 'Type excluded from Jira lead pipeline (Career/Training/Academy/NonLead). Handled by dedicated backend.'
+        reason: 'Type excluded from Jira lead pipeline (Career/Training/Academy/NonLead). Handled by dedicated backend.',
+        correlationId
       });
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // 2. JIRA CONFIGURATION & AUTH
+    // 3. JIRA CONFIGURATION & AUTH
     // ═══════════════════════════════════════════════════════════════════════════
     const JIRA_DOMAIN = process.env.JIRA_DOMAIN || 'praveenkumarraram.atlassian.net';
     const JIRA_EMAIL = process.env.JIRA_EMAIL || 'poojasri.aram@gmail.com';
@@ -157,9 +190,8 @@ export default async function handler(req, res) {
     const authString = Buffer.from(`${JIRA_EMAIL.trim()}:${JIRA_API_TOKEN.trim()}`).toString('base64');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // 3. LEAD NUMBER & ATTRIBUTION NORMALIZATION
+    // 4. LEAD NUMBER & ATTRIBUTION NORMALIZATION
     // ═══════════════════════════════════════════════════════════════════════════
-    const leadNumber = lead.leadNumber || lead.LeadNumber || `ISI-${String(++globalServerSequence).padStart(6, '0')}`;
     const normalizedSource = normalizeSource(
       lead.utm_source || lead.utmSource,
       lead.referrer,
@@ -381,18 +413,36 @@ export default async function handler(req, res) {
     const parentData = await parentResponse.json();
 
     if (!parentResponse.ok) {
-      console.error('Jira Parent Creation Error:', parentData);
-      return res.status(parentResponse.status).json({
-        success: false,
-        error: parentData.errorMessages?.join(', ') || parentData.errors || 'Failed to create Lead in Jira',
-        details: parentData,
-        leadNumber
+      // Internal logging for developers/admins - NEVER expose raw technical error to public frontend
+      console.error('[INTERNAL JIRA ERROR]', {
+        timestamp: new Date().toISOString(),
+        correlationId,
+        leadNumber,
+        leadType: 'sales',
+        formType: lead.formName || 'lead-form',
+        apiResponseStatus: parentResponse.status,
+        jiraResponseCode: parentResponse.status,
+        jiraIssueKey: null,
+        errorCategory: 'JIRA_PARENT_CREATION_FAILED',
+        errorMessage: parentData.errorMessages?.join(', ') || JSON.stringify(parentData.errors) || 'Jira Parent Issue Creation Failed',
+        details: parentData
+      });
+
+      return res.status(200).json({
+        success: true,
+        status: 'not_available',
+        userStatus: 'Not Available',
+        message: 'Submission received. Status confirmation is currently not available.',
+        leadNumber,
+        applicationNumber: leadNumber,
+        leadType: 'sales',
+        correlationId
       });
     }
 
     const parentKey = parentData.key;
     const parentId = parentData.id;
-    console.log(`[JIRA LEAD CREATED] Key: ${parentKey}, ID: ${parentId}, LeadNo: ${leadNumber}`);
+    console.log(`[JIRA LEAD CREATED] Key: ${parentKey}, ID: ${parentId}, LeadNo: ${leadNumber}, correlationId: ${correlationId}`);
 
     // ═══════════════════════════════════════════════════════════════════════════
     // 5. AUTOMATICALLY CREATE 7 SUBTASKS IN JIRA UNDER PARENT
@@ -477,39 +527,58 @@ export default async function handler(req, res) {
             priority: step.priority || 'Medium'
           });
         } else {
-          console.warn(`[SUBTASK WARNING] Failed to create subtask ${step.name}:`, subData);
+          console.warn(`[INTERNAL SUBTASK WARNING] Failed to create subtask ${step.name}:`, subData);
           subtaskResults.push({
             name: step.name,
-            status: 'Failed',
-            error: subData.errorMessages?.join(', ') || subData.errors
+            status: 'Not Available',
+            error: 'Subtask processing'
           });
         }
       } catch (subErr) {
-        console.warn(`[SUBTASK EXCEPTION] ${step.name}:`, subErr.message);
+        console.warn(`[INTERNAL SUBTASK EXCEPTION] ${step.name}:`, subErr.message);
         subtaskResults.push({
           name: step.name,
-          status: 'Failed',
-          error: subErr.message
+          status: 'Not Available',
+          error: 'Subtask processing'
         });
       }
     }
 
     return res.status(200).json({
       success: true,
+      status: 'submitted',
+      userStatus: 'Submitted',
+      message: 'Enquiry Submitted',
       leadNumber,
+      applicationNumber: leadNumber,
+      leadType: 'sales',
       normalizedSource,
       issueKey: parentKey,
       issueId: parentId,
       issueUrl: `https://${cleanDomain}/browse/${parentKey}`,
       dueDate: leadDueDate,
-      subtasks: subtaskResults
+      subtasks: subtaskResults,
+      correlationId
     });
 
   } catch (error) {
-    console.error('Jira Serverless Handler Exception:', error);
-    return res.status(500).json({
-      success: false,
-      error: error.message || 'Internal Server Error'
+    console.error('[INTERNAL JIRA HANDLER EXCEPTION]', {
+      timestamp: new Date().toISOString(),
+      leadNumber: req?.body?.leadNumber,
+      leadType: req?.body?.jobQuestion === 'Yes' ? 'career' : 'sales',
+      formType: req?.body?.formName,
+      errorCategory: 'UNHANDLED_EXCEPTION',
+      errorMessage: error.message,
+      stack: error.stack
+    });
+    return res.status(200).json({
+      success: true,
+      status: 'not_available',
+      userStatus: 'Not Available',
+      message: 'Submission received. Status confirmation is currently not available.',
+      leadNumber: req?.body?.leadNumber,
+      applicationNumber: req?.body?.leadNumber,
+      leadType: req?.body?.jobQuestion === 'Yes' ? 'career' : 'sales'
     });
   }
 }

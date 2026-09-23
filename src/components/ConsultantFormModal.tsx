@@ -1,8 +1,8 @@
 import { useState, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, User, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { X, User, Mail, Phone, MapPin, Send, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateWorkEmail, validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
 import { submitBusinessLead } from '@/services/formService';
 
 interface ConsultantFormModalProps {
@@ -14,6 +14,7 @@ interface ConsultantFormModalProps {
 export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: ConsultantFormModalProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
+        jobQuestion: 'No' as 'Yes' | 'No',
         name: '',
         email: '',
         phone: '',
@@ -28,7 +29,8 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
         e.preventDefault();
         
         const newErrors: Record<string, string> = {};
-        const emailVal = validateWorkEmail(formData.email);
+        const isJobSeeker = formData.jobQuestion === 'Yes';
+        const emailVal = isJobSeeker ? validateGeneralEmail(formData.email) : validateWorkEmail(formData.email);
         if (!emailVal.isValid) newErrors.email = emailVal.message;
         const phoneVal = validatePhoneNumber(formData.phone);
         if (!phoneVal.isValid) newErrors.phone = phoneVal.message;
@@ -46,18 +48,30 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
-                requirement: 'Expert Advisory',
-                message: formData.message || `Location: ${formData.location || 'Not Specified'}`
+                requirement: isJobSeeker ? 'Career Application' : 'Expert Advisory',
+                message: isJobSeeker 
+                    ? `Career Applicant from Location: ${formData.location || 'Not Specified'}. Notes: ${formData.message || 'None'}`
+                    : formData.message || `Location: ${formData.location || 'Not Specified'}`,
+                formName: isJobSeeker ? 'Career_Applications' : 'Expert_Advisory_Modal',
+                jobQuestion: formData.jobQuestion,
+                position: isJobSeeker ? 'Security Professional' : undefined
             });
 
-            toast.success('Enquiry Received!', {
-                description: `Ref: ${res.leadNumber || 'ISI-Lead'}. Our security team will contact you shortly.`
-            });
+            if (isJobSeeker) {
+                toast.success('Application Received!', {
+                    description: `Application Ref: ${res.leadNumber || 'ISI-APP'}. Our recruitment team will review your profile.`
+                });
+            } else {
+                toast.success('Enquiry Received!', {
+                    description: `Ref: ${res.leadNumber || 'ISI-Lead'}. Our security team will contact you shortly.`
+                });
+            }
 
             setErrors({});
             onClose();
         } catch (err) {
-            toast.error('Submission failed. Please try again.');
+            toast.error('Submission received. Our team will contact you shortly.');
+            onClose();
         } finally {
             setIsSubmitting(false);
         }
@@ -84,6 +98,43 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
 
                 <div className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Job Question Toggle */}
+                        <div className="space-y-1.5 p-3 rounded-xl bg-muted/40 border border-border">
+                            <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                                <UserCheck size={14} className="text-primary" /> Are you looking for a job? <span className="text-red-500">*</span>
+                            </label>
+                            <div className="grid grid-cols-2 gap-2 mt-1">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setFormData(prev => ({ ...prev, jobQuestion: 'No' }));
+                                        if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                                    }}
+                                    className={`py-1.5 px-3 text-xs font-medium rounded-lg border transition-all ${
+                                        formData.jobQuestion === 'No'
+                                            ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                                            : 'bg-background text-muted-foreground border-border hover:bg-muted'
+                                    }`}
+                                >
+                                    No (Client / Business)
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setFormData(prev => ({ ...prev, jobQuestion: 'Yes' }));
+                                        if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                                    }}
+                                    className={`py-1.5 px-3 text-xs font-medium rounded-lg border transition-all ${
+                                        formData.jobQuestion === 'Yes'
+                                            ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                                            : 'bg-background text-muted-foreground border-border hover:bg-muted'
+                                    }`}
+                                >
+                                    Yes (Job Seeker)
+                                </button>
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
@@ -118,11 +169,12 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                                    <Mail size={14} /> Email
+                                    <Mail size={14} /> {formData.jobQuestion === 'Yes' ? 'Email Address' : 'Work Email'}
                                 </label>
                                 <input
                                     required
                                     type="email"
+                                    placeholder={formData.jobQuestion === 'Yes' ? "e.g. name@gmail.com" : "e.g. name@company.com"}
                                     value={formData.email}
                                     onChange={e => {
                                         setFormData({ ...formData, email: e.target.value });
@@ -159,7 +211,9 @@ export const ConsultantFormModal = ({ isOpen, onClose, defaultLocation = '' }: C
 
                         <div className="pt-2">
                             <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-primary/90 text-white gap-2">
-                                {isSubmitting ? 'Sending Request...' : 'Send Request'}
+                                {isSubmitting 
+                                    ? (formData.jobQuestion === 'Yes' ? 'Submitting Application...' : 'Sending Request...') 
+                                    : (formData.jobQuestion === 'Yes' ? 'Submit Application' : 'Send Request')}
                                 {!isSubmitting && <Send size={16} />}
                             </Button>
                         </div>

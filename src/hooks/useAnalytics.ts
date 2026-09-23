@@ -658,25 +658,63 @@ export const useAnalytics = () => {
             if (sheetName === 'Career_Applications' || sheetName === 'CareerApps') counters.current.careerInquiries++;
             if (formData.email) localStorage.setItem('isi_user_email', formData.email);
 
-            const isBusinessLead = !sheetName.toLowerCase().includes('career') && 
-                                   !sheetName.toLowerCase().includes('job') && 
+            const utm = getUtmParams();
+            const isJobQuestionYes =
+                String(formData?.jobQuestion || formData?.["Are you looking for a job?"] || '').trim().toLowerCase() === 'yes' ||
+                formData?.isJobSeeker === true ||
+                String(formData?.leadType || '').toLowerCase().includes('career');
+
+            const isExplicitCareer = isJobQuestionYes || 
+                sheetName.toLowerCase().includes('career') || 
+                sheetName.toLowerCase().includes('job');
+
+            const isBusinessLead = !isExplicitCareer && 
                                    !sheetName.toLowerCase().includes('academy') && 
                                    !sheetName.toLowerCase().includes('training') && 
                                    !sheetName.toLowerCase().includes('newsletter') && 
                                    !sheetName.toLowerCase().includes('exit_intent');
-            const leadNumber = isBusinessLead ? generateLeadNumber() : undefined;
 
-            sendToGoogleSheets(sheetName, {
+            const actualSheetName = isExplicitCareer && !sheetName.toLowerCase().includes('career') 
+                ? 'Career_Applications' 
+                : sheetName;
+
+            const leadType = isExplicitCareer 
+                ? 'Career' 
+                : (isBusinessLead ? 'Sales' : (sheetName.toLowerCase().includes('academy') ? 'Academy' : (sheetName.toLowerCase().includes('partner') ? 'Partner' : 'Contact')));
+
+            const formType = isExplicitCareer 
+                ? 'Career Application' 
+                : (isBusinessLead ? 'Sales Lead' : sheetName);
+
+            const assignedNumber = generateLeadNumber();
+            const leadNumber = isBusinessLead ? (formData?.leadNumber || assignedNumber) : undefined;
+            const applicationNumber = isExplicitCareer ? (formData?.applicationNumber || formData?.leadNumber || assignedNumber) : undefined;
+
+            sendToGoogleSheets(actualSheetName, {
                 ...getBaseData(),
-                leadNumber: leadNumber || 'N/A',
-                "Lead Number": leadNumber || 'N/A',
+                leadNumber: isExplicitCareer ? 'N/A' : (leadNumber || 'N/A'),
+                "Lead Number": isExplicitCareer ? undefined : (leadNumber || 'N/A'),
+                applicationNumber: applicationNumber,
+                "Application Number": applicationNumber,
                 ...formData,
+                leadType,
+                "Lead Type": leadType,
+                formType,
+                "Form Type": formType,
+                source: utm.utmSource || getBaseData().trafficSource,
+                medium: utm.utmMedium || 'none',
+                campaign: utm.utmCampaign || 'none',
+                landingPage: window.location.pathname,
+                route: window.location.pathname,
+                routeName: typeof document !== 'undefined' ? document.title : '',
                 ipLocation: getBaseData().location,
+                submissionStatus: 'Submitted',
                 status: 'New'
             });
 
-            // Automatically create Lead Issue in Jira Cloud for business lead forms
-            if (isBusinessLead) {
+            // Automatically create Lead Issue in Jira Cloud ONLY for genuine business leads
+            // (Career applications are STRICTLY excluded from Jira Sales Lead workflow)
+            if (isBusinessLead && leadType === 'Sales') {
                 try {
                     const leadName = String(
                         formData.name || formData.Name || formData.fullName || 
@@ -712,11 +750,13 @@ export const useAnalytics = () => {
                             company: leadCompany,
                             serviceRequested: leadService,
                             message: leadMessage,
-                            formName: sheetName
-                        }).catch(jiraErr => console.warn('[JIRA CAPTURE ERROR]', jiraErr));
+                            formName: actualSheetName,
+                            jobQuestion: 'No',
+                            leadType: 'sales'
+                        }).catch(jiraErr => console.warn('[INTERNAL JIRA NOTICE]', jiraErr?.message || jiraErr));
                     }
                 } catch (jiraErr) {
-                    console.warn('[JIRA TRIGGER ERROR]', jiraErr);
+                    console.warn('[INTERNAL JIRA NOTICE]', jiraErr);
                 }
             }
         },

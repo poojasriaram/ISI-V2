@@ -30,7 +30,8 @@ export const AcademyPage = () => {
     email: "",
     phone: "",
     course: "",
-    message: ""
+    message: "",
+    enquiryType: "Academy Program"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -48,7 +49,8 @@ export const AcademyPage = () => {
       email: "",
       phone: "",
       course: "",
-      message: ""
+      message: "",
+      enquiryType: "Academy Program"
     });
   };
 
@@ -67,7 +69,8 @@ export const AcademyPage = () => {
         email: formData.email,
         phone: formData.phone,
         program: formData.course || enquiryCourseTitle,
-        message: formData.message || "No notes"
+        message: formData.message || "No notes",
+        enquiryType: formData.enquiryType
       });
 
       toast.success("Enquiry Submitted Successfully!", {
@@ -162,6 +165,23 @@ export const AcademyPage = () => {
                       />
                     </div>
                   </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-foreground mb-1 block">Purpose / Domain of Enquiry *</label>
+                  <select 
+                    required
+                    value={formData.enquiryType}
+                    onChange={(e) => setFormData({ ...formData, enquiryType: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-muted/30 border border-border text-sm text-foreground focus:outline-none focus:border-primary transition-all appearance-none"
+                  >
+                    <option value="Technology">Technology (AI, Cyber, IoT, Security Systems)</option>
+                    <option value="Facility Management">Facility Management (Hard & Soft FM, MEP)</option>
+                    <option value="Guarding Security">Guarding Security (Physical Guarding & Protection)</option>
+                    <option value="Academy Program">General Academy Program</option>
+                    <option value="Corporate Workforce Training">Corporate Workforce Training</option>
+                    <option value="Partnership / MoU">Institutional Partnership / MoU</option>
+                  </select>
                 </div>
 
                 <div>

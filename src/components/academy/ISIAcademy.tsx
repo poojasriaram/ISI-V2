@@ -47,7 +47,8 @@ import {
   School,
   FileSpreadsheet,
   Terminal,
-  Activity
+  Activity,
+  Laptop
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -70,13 +71,34 @@ interface ISIAcademyProps {
 
 export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
   const [selectedTierTab, setSelectedTierTab] = useState<string>("certificates");
+  const [activeTrack, setActiveTrack] = useState<"technology" | "facility-management" | "guarding-security">("technology");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [activeProgramModal, setActiveProgramModal] = useState<any | null>(null);
 
-  // Active slide index state for each of the 8 course sliders
+  // Active slide index state for course sliders
   const [carouselIndices, setCarouselIndices] = useState<{ [key: number]: number }>({
-    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0,
+    101: 0, 102: 0, 103: 0,
+    201: 0, 202: 0, 203: 0, 204: 0
   });
+
+  // Sync track with URL hash
+  React.useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash.includes("facility-management") || hash.includes("facility")) {
+        setActiveTrack("facility-management");
+      } else if (hash.includes("guarding-security") || hash.includes("guarding")) {
+        setActiveTrack("guarding-security");
+      } else if (hash.includes("technology") || hash.includes("course-sliders")) {
+        setActiveTrack("technology");
+      }
+    };
+
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, []);
 
   const nextSlide = (courseIdx: number, totalSlides: number) => {
     setCarouselIndices(prev => ({
@@ -105,8 +127,8 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
     }
   };
 
-  // 8 COURSES WITH INDIVIDUAL IMAGE CAROUSELS (Academy Material Aligned)
-  const eightCoursePortfolio = [
+  // 1. TECHNOLOGY COURSES (8 COURSES)
+  const technologyCoursePortfolio = [
     {
       id: 0,
       title: "AI & Advanced Computing",
@@ -194,6 +216,91 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       modules: ["TIA-942 Architecture", "CRAC/CRAH Chilled Water", "DCIM Energy Analytics", "Sub-1.2 PUE Design"],
       outcome: "Data Center Operations Manager / Critical Infra Engineer",
       labs: "Full-Scale Raised Floor Data Center Mock-up & DCIM Command Platform"
+    }
+  ];
+
+  // 2. FACILITY MANAGEMENT COURSES (3 COURSES)
+  const facilityManagementCoursePortfolio = [
+    {
+      id: 101,
+      title: "Hard FM & Technical MEP Engineering",
+      badge: "BMS & MEP Certified",
+      images: [academyHeroImg, smartCityImg, enterpriseImg],
+      captions: ["HVAC & Chiller Plant Control", "Substation & DG Operations", "Building Automation Console"],
+      desc: "Master high-voltage electrical distribution, HVAC chiller plant operations, diesel generators, plumbing telemetry, and predictive maintenance protocols.",
+      modules: ["HVAC & Chiller Plants", "Electrical Substations & DG", "MEP Automation & SCADA", "Predictive Maintenance"],
+      outcome: "Technical MEP Operations Specialist / Building Engineer",
+      labs: "Live Raised-Floor Facility & MEP Automation Testing Center"
+    },
+    {
+      id: 102,
+      title: "Soft FM, Mechanized Sanitation & ESG",
+      badge: "ISO 41001 Standard",
+      images: [smartCityImg, enterpriseImg, academyHeroImg],
+      captions: ["Mechanized Cleaning Fleet", "Chemical Dilution Matrix", "Bio-Waste Management Hub"],
+      desc: "Enterprise hygiene management, mechanized cleaning machinery operations, hospital-grade sanitation, chemical dilution matrices, and green building waste compliance.",
+      modules: ["Mechanized Scrubbers & Ops", "Chemical Safety & Hazmat", "Waste Segregation & ESG", "SLA Auditing & Metrics"],
+      outcome: "Soft FM Executive / Facility Hygiene Manager",
+      labs: "Mechanized Facility Simulation & Sanitation Standards Lab"
+    },
+    {
+      id: 103,
+      title: "Smart Building IoT & Energy Management",
+      badge: "BEE & Green Building Aligned",
+      images: [evLabImg, smartCityImg, cyberRangeImg],
+      captions: ["Smart Metering Dashboard", "BMS Central Console", "Sub-1.2 PUE Energy Desk"],
+      desc: "Deploy IoT telemetry across commercial real estate, smart energy metering, automated HVAC load scheduling, power quality analysis, and ESG sustainability reporting.",
+      modules: ["Smart Metering IoT", "BEE Energy Audit SOPs", "BMS System Integration", "Carbon Accounting"],
+      outcome: "Energy Manager / Smart Building IoT Specialist",
+      labs: "Smart Building Telemetry & Energy Automation Suite"
+    }
+  ];
+
+  // 3. GUARDING SECURITY COURSES (4 COURSES)
+  const guardingSecurityCoursePortfolio = [
+    {
+      id: 201,
+      title: "PSARA-Certified Guarding & Physical Operations",
+      badge: "PSARA 2005 Compliant",
+      images: [cyberRangeImg, enterpriseImg, academyHeroImg],
+      captions: ["Access Control Checkpoint", "Perimeter Patrol Drill", "Visitor Screening Post"],
+      desc: "Comprehensive physical security operations, strict access control, visitor screening, perimeter patrol choreography, gatehouse management, and statutory PSARA drills.",
+      modules: ["Access Control & Gatehouse", "Perimeter Patrol SOPs", "Visitor Management", "Statutory PSARA Drills"],
+      outcome: "Certified Security Officer / Field Patrol Supervisor",
+      labs: "High-Security Checkpoint & Tactical Gatehouse Mockup"
+    },
+    {
+      id: 202,
+      title: "Tactical Emergency Response & Fire Safety",
+      badge: "NBC 2016 Standards",
+      images: [evLabImg, cyberRangeImg, smartCityImg],
+      captions: ["Live Fire Suppression", "Evacuation Choreography", "Triage & First Aid Station"],
+      desc: "Rapid emergency response, automated fire alarm triggers, fire hydrant & extinguisher handling, high-rise evacuation protocols, and certified BLS (CPR/First Aid).",
+      modules: ["Fire Extinguisher & Hydrant Ops", "Evacuation Choreography", "First Aid & CPR Certification", "Crisis De-escalation"],
+      outcome: "Emergency Response Marshal / Safety Coordinator",
+      labs: "Live Fire Suppression Simulation & Emergency Triage Facility"
+    },
+    {
+      id: 203,
+      title: "Command Center (C4i) & CCTV Surveillance",
+      badge: "SOC & Electronic Guarding",
+      images: [cyberRangeImg, academyHeroImg, enterpriseImg],
+      captions: ["24/7 CCTV Video Wall", "PTZ Tracking Console", "Incident Dispatch Desk"],
+      desc: "Master 24/7 video wall monitoring, PTZ target tracking, AI analytics alert validation, radio dispatch choreography, and digital incident record management.",
+      modules: ["VMS Video Management", "AI Analytics Alert Triage", "Radio & Dispatch Protocol", "Incident Digital Logbook"],
+      outcome: "CCTV Control Room Operator / Command Center Controller",
+      labs: "24/7 Centralized Command & Control (C4i) Monitoring Deck"
+    },
+    {
+      id: 204,
+      title: "Executive Protection & VIP Escort Services",
+      badge: "Specialized Tactical Protection",
+      images: [enterpriseImg, cyberRangeImg, academyHeroImg],
+      captions: ["Close Protection Formation", "Convoy Defensive Escort", "Threat Route Recon"],
+      desc: "Close protection details, tactical convoy formations, route vulnerability reconnaissance, discrete VIP protection, and emergency extraction protocols.",
+      modules: ["Close Protection Tactics", "Route Recon & Threat Escort", "Convoy Security Formations", "VIP Etiquette & Protocols"],
+      outcome: "Executive Protection Officer / VIP Security Specialist",
+      labs: "Tactical Convoy Mockup & Close Protection Range"
     }
   ];
 
@@ -457,26 +564,137 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
 
 
       {/* ========================================================================= */}
-      {/* 3. 8 COURSE SLIDERS / CARDS SECTION (MOVED HIGHER)                       */}
+      {/* 3. 3 ACADEMY TRACKS & DOMAIN PORTFOLIOS (TECHNOLOGY, FM, GUARDING)         */}
       {/* ========================================================================= */}
       <section id="course-sliders" className="py-20 lg:py-28 bg-white border-b border-slate-200">
+        <div id="technology" className="-mt-24 pt-24" />
+        <div id="facility-management" className="-mt-24 pt-24" />
+        <div id="guarding-security" className="-mt-24 pt-24" />
+        
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
           
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="text-center max-w-3xl mx-auto mb-10 space-y-4">
             <Badge variant="outline" className="px-4 py-1.5 border-blue-200 text-blue-700 bg-blue-50 font-bold uppercase tracking-widest text-xs">
-              Domain Portfolio
+              Academy Domain Tracks
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
-              8 Core Technology Domain Portfolios
+              Explore Our 3 Core Academy Pillars
             </h2>
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              Explore our 8 specialized domain areas. Each portfolio features live multi-image lab carousels, target career outcomes, and industry-standard toolchains.
+              Choose from our specialized programs across Technology, Facility Management, and Guarding Security. Each domain features certified curricula, live laboratory simulations, and industry residencies.
             </p>
           </div>
 
-          {/* 8 Course Cards Grid */}
+          {/* 3 Interactive Track Switcher Tabs */}
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-14">
+            <button
+              onClick={() => {
+                setActiveTrack("technology");
+                scrollToSection("technology");
+              }}
+              className={cn(
+                "flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm transition-all border shadow-xs cursor-pointer",
+                activeTrack === "technology"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25 scale-105"
+                  : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+              )}
+            >
+              <div className={cn(
+                "w-8 h-8 rounded-xl flex items-center justify-center",
+                activeTrack === "technology" ? "bg-white/20 text-white" : "bg-blue-100 text-blue-600"
+              )}>
+                <Laptop className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-bold leading-tight">Technology</div>
+                <div className={cn("text-[11px] font-normal", activeTrack === "technology" ? "text-blue-100" : "text-slate-500")}>
+                  8 High-Tech Specializations
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTrack("facility-management");
+                scrollToSection("facility-management");
+              }}
+              className={cn(
+                "flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm transition-all border shadow-xs cursor-pointer",
+                activeTrack === "facility-management"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25 scale-105"
+                  : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+              )}
+            >
+              <div className={cn(
+                "w-8 h-8 rounded-xl flex items-center justify-center",
+                activeTrack === "facility-management" ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-600"
+              )}>
+                <Building2 className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-bold leading-tight">Facility Management</div>
+                <div className={cn("text-[11px] font-normal", activeTrack === "facility-management" ? "text-blue-100" : "text-slate-500")}>
+                  Hard & Soft FM, MEP, BMS
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTrack("guarding-security");
+                scrollToSection("guarding-security");
+              }}
+              className={cn(
+                "flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm transition-all border shadow-xs cursor-pointer",
+                activeTrack === "guarding-security"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25 scale-105"
+                  : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+              )}
+            >
+              <div className={cn(
+                "w-8 h-8 rounded-xl flex items-center justify-center",
+                activeTrack === "guarding-security" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-600"
+              )}>
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-bold leading-tight">Guarding Security</div>
+                <div className={cn("text-[11px] font-normal", activeTrack === "guarding-security" ? "text-blue-100" : "text-slate-500")}>
+                  PSARA Ops, C4i & VIP Escort
+                </div>
+              </div>
+            </button>
+          </div>
+
+          {/* Current Track Heading */}
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
+            <div>
+              <h3 className="text-2xl font-bold text-slate-900">
+                {activeTrack === "technology" && "Technology Programs & High-Tech Specializations"}
+                {activeTrack === "facility-management" && "Facility Management & Infrastructure Operations"}
+                {activeTrack === "guarding-security" && "Guarding Security, Tactical Defense & PSARA Certifications"}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                {activeTrack === "technology" && "Aligned with C-DAC, IEEE, and NIST cyber range standards with guaranteed lab simulation."}
+                {activeTrack === "facility-management" && "Aligned with ISO 41001, BEE energy codes, and enterprise MEP facility standards."}
+                {activeTrack === "guarding-security" && "PSARA 2005 compliant tactical training, NBC fire response, and 24/7 command center ops."}
+              </p>
+            </div>
+            <Badge className="bg-blue-50 text-blue-700 border border-blue-200 hidden sm:inline-flex">
+              {activeTrack === "technology" && "8 Courses"}
+              {activeTrack === "facility-management" && "3 Programs"}
+              {activeTrack === "guarding-security" && "4 Specializations"}
+            </Badge>
+          </div>
+
+          {/* Course Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {eightCoursePortfolio.map((course) => {
+            {(activeTrack === "facility-management"
+              ? facilityManagementCoursePortfolio
+              : activeTrack === "guarding-security"
+                ? guardingSecurityCoursePortfolio
+                : technologyCoursePortfolio
+            ).map((course) => {
               const currentSlide = carouselIndices[course.id] || 0;
               const totalSlides = course.images.length;
 
@@ -588,7 +806,7 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       {/* ========================================================================= */}
       {/* 4. LEARNING PATHWAYS (CAREER & ROLE PROGRESSION)                          */}
       {/* ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-slate-50 border-b border-slate-200">
+      <section id="career-pathways" className="py-20 lg:py-28 bg-slate-50 border-b border-slate-200">
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
           
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
@@ -660,7 +878,7 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       {/* ========================================================================= */}
       {/* 5. STRONGER INDUSTRY POSITIONING & MOU PLACEMENT PIPELINE                 */}
       {/* ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-white border-b border-slate-200">
+      <section id="mou-partners" className="py-20 lg:py-28 bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
           
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
@@ -772,7 +990,7 @@ export const ISIAcademy: React.FC<ISIAcademyProps> = ({ onEnquireClick }) => {
       {/* ========================================================================= */}
       {/* 6. REDESIGNED ACADEMIC PROGRAM TIERS (IMAGE-DRIVEN CARDS)                 */}
       {/* ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-slate-50 border-b border-slate-200">
+      <section id="program-tiers" className="py-20 lg:py-28 bg-slate-50 border-b border-slate-200">
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
           
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">

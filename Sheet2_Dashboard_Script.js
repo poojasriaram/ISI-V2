@@ -446,10 +446,10 @@ function buildAdPerformanceIntelligenceSheet(tData, db) {
     }
 
     var adStats = {
-        meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0, campaigns: {} },
-        youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0, campaigns: {} },
-        google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0, campaigns: {} },
-        affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0, campaigns: {} }
+        meta: { name: "Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0, campaigns: {} },
+        youtube: { name: "YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0, campaigns: {} },
+        google: { name: "Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0, campaigns: {} },
+        affiliate: { name: "Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0, campaigns: {} }
     };
 
     // Analyze traffic data
@@ -519,10 +519,10 @@ function buildAdPerformanceIntelligenceSheet(tData, db) {
     };
 
     var getStatus = function(clicks, leads) {
-        if (leads >= 5) return "🔥 High Performing";
-        if (clicks > 50) return "⚡ Steady Volume";
-        if (clicks > 0) return "🔍 Monitoring";
-        return "⚠️ Awaiting Traffic";
+        if (leads >= 5) return "High Performing";
+        if (clicks > 50) return "Steady Volume";
+        if (clicks > 0) return "Monitoring";
+        return "Awaiting Traffic";
     };
 
     var channels = [adStats.meta, adStats.youtube, adStats.google, adStats.affiliate];
@@ -777,7 +777,7 @@ function buildBrokenLinkSheet() {
         try { 
             var start = Date.now(); 
             var res = UrlFetchApp.fetch(url, {muteHttpExceptions:true}); 
-            st = res.getResponseCode() === 200 ? "✅ OK" : res.getResponseCode(); 
+            st = res.getResponseCode() === 200 ? "OK" : res.getResponseCode(); 
             t = Date.now()-start; 
         } catch(e) {
             st = "🔴 Failed: " + e.toString();
@@ -881,7 +881,7 @@ function buildLeadScoringEngine(tData, eData) {
     
     var printRows = Object.keys(leads).map(function(ip) {
         var l = leads[ip]; var score = 0; if (l.contact) score += 50; if (l.hits > 10) score += 20; if (l.time > 120) score += 30;
-        var badge = score >= 85 ? "🔥 HOT" : score >= 50 ? "⭐ Verified" : "Warm";
+        var badge = score >= 85 ? "HOT" : score >= 50 ? "Verified" : "Warm";
         return [ip, score, badge, l.hits, l.time+"s", l.contact?"YES":"NO"];
     }).sort(function(a,b){return b[1]-a[1]});
 
@@ -920,10 +920,10 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
     var adLeadsData = (adSheet && adSheet.getLastRow() > 0) ? adSheet.getDataRange().getValues() : [];
 
     var adStats = {
-        meta: { name: "📘 Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0 },
-        youtube: { name: "🎥 YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0 },
-        google: { name: "🔍 Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0 },
-        affiliate: { name: "🤝 Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0 }
+        meta: { name: "Meta Ad", type: "Social / Display (FB & IG)", clicks: 0, leads: 0 },
+        youtube: { name: "YouTube Ad", type: "Video / TrueView", clicks: 0, leads: 0 },
+        google: { name: "Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 0, leads: 0 },
+        affiliate: { name: "Affiliate Ad", type: "Partner Networks & Referrals", clicks: 0, leads: 0 }
     };
 
     var sCol = tData.length > 0 ? tData[0].indexOf("Traffic Source") : -1;
@@ -963,7 +963,6 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         "bv@trustflow.in",
         "v.varshith@isisecurity.in",
         "v.vishal@isisecurity.in",
-        "pooja@deeptrust.tech",
         "poojasri.aram@gmail.com"
     ];
 
@@ -978,9 +977,26 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         '</tr>'
     ];
 
+    var visualBarsHtml = [];
     [adStats.meta, adStats.youtube, adStats.google, adStats.affiliate].forEach(function(c, idx) {
         var rowBg = idx % 2 === 0 ? "#ffffff" : "#f8fafc";
         var cCvr = c.clicks > 0 ? (c.leads / c.clicks * 100).toFixed(2) + "%" : "0.00%";
+        var cPct = totalClicks > 0 ? Math.round(c.clicks / totalClicks * 100) : 0;
+        var barColors = ["#3b82f6", "#ef4444", "#0284c7", "#f59e0b"];
+        var barCol = barColors[idx % barColors.length];
+
+        visualBarsHtml.push(
+            '<div style="margin-bottom:8px;">' +
+            '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">' +
+            '<span style="font-weight:bold;color:#1e293b;">' + c.name + '</span>' +
+            '<span style="font-size:11px;color:#475569;font-weight:bold;">' + c.clicks + ' clicks (' + cPct + '%) &bull; <span style="color:#059669;">' + c.leads + ' leads</span></span>' +
+            '</div>' +
+            '<div style="background:#e2e8f0;border-radius:6px;height:8px;overflow:hidden;">' +
+            '<div style="background:' + barCol + ';width:' + Math.max(5, cPct) + '%;height:100%;border-radius:6px;"></div>' +
+            '</div>' +
+            '</div>'
+        );
+
         tableHtml.push(
             '<tr style="background:' + rowBg + ';border-bottom:1px solid #e2e8f0;">' +
             '<td style="padding:10px;font-weight:bold;color:#1e293b;">' + c.name + '</td>' +
@@ -994,7 +1010,15 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
     tableHtml.push('</table>');
 
     var emailHtml = [
-        '<!DOCTYPE html><html><body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
+        '<!DOCTYPE html>',
+        '<html>',
+        '<head>',
+        '<meta charset="UTF-8">',
+        '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+        '<title>ISI Ad Performance Intelligence Report</title>',
+        '</head>',
+        '<body style="font-family:\'Segoe UI\',Arial,sans-serif;background:#f1f5f9;padding:25px;">',
         '<div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">',
         '<div style="background:#003380;padding:25px;color:#ffffff;text-align:center;">',
         '<h2 style="margin:0;font-size:20px;">ISI Ad Performance Intelligence Report</h2>',
@@ -1015,6 +1039,10 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         '<div style="color:#064e3b;font-size:20px;font-weight:bold;margin-top:4px;">' + cvr + '</div>',
         '</div>',
         '</div>',
+        '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:20px;">',
+        '<div style="font-size:11px;font-weight:800;color:#003380;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Multi-Channel Visual Click &amp; Lead Share</div>',
+        visualBarsHtml.join(''),
+        '</div>',
         '<h3 style="color:#0f172a;font-size:14px;margin-bottom:8px;">Channel Performance Breakdown</h3>',
         tableHtml.join(''),
         '<div style="text-align:center;margin-top:25px;">',
@@ -1024,10 +1052,35 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         '</div></body></html>'
     ].join('');
 
+    var subject = "[ISI Ad Intelligence] Multi-Channel Performance Report";
+    var plainTextBody = htmlToPlainText(emailHtml);
+
+    // Requirement 10: Internal Debugging
+    Logger.log('Email Subject: ' + subject);
+    var hasReplacementChar = (emailHtml.indexOf('\uFFFD') !== -1);
+    Logger.log('HTML contains replacement character (pre-sanitize): ' + hasReplacementChar);
+
+    // ── Sanitize immediately before send ──────────────────────────────────────
+    // sanitizeEmailContent() is defined in AppsScript_Webhook.js and shared
+    // across the project scope.
+    var cleanSubject      = sanitizeEmailContent(subject);
+    var cleanHtmlBody     = sanitizeEmailContent(emailHtml);
+    var cleanPlainText    = sanitizeEmailContent(plainTextBody);
+
+    // Final validation: block send if corruption persists after sanitization
+    if (cleanSubject.indexOf('\uFFFD') !== -1 || cleanHtmlBody.indexOf('\uFFFD') !== -1) {
+        console.error('❌ Ad Performance mailer blocked: replacement character persisted after sanitization.');
+        if (ui) ui.alert('Email blocked: corrupted characters could not be removed. Check Logger for details.');
+        return;
+    }
+
     recipients.forEach(function(em) {
         try {
-            MailApp.sendEmail(em, "[ISI Ad Intelligence] Multi-Channel Performance Report", "", {
-                htmlBody: emailHtml,
+            MailApp.sendEmail({
+                to: em,
+                subject: cleanSubject,
+                body: cleanPlainText,
+                htmlBody: cleanHtmlBody,
                 name: "ISI Ad Performance Intelligence"
             });
         } catch(err) {
@@ -1035,7 +1088,42 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
         }
     });
 
-    if (ui) ui.alert("✅ ISI Ad Performance Intelligence report sent to:\n" + recipients.join("\n"));
+    if (ui) ui.alert("ISI Ad Performance Intelligence report sent to:\n" + recipients.join("\n"));
+}
+
+function escapeHtml(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function htmlToPlainText(html) {
+    if (!html) return '';
+    return String(html)
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<br\s*[\/]?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<\/tr>/gi, '\n')
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<\/li>/gi, '\n')
+        .replace(/<\/h[1-6]>/gi, '\n\n')
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&#39;/g, "'")
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
 }
 
 function BUILD_AD_PERFORMANCE_ONLY() {
@@ -1196,12 +1284,13 @@ function RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT() {
 
 function onOpen() {
     SpreadsheetApp.getUi()
-        .createMenu('🚀 ISI ANALYTICS')
-        .addItem('🔄 Refresh All 16 Dashboards', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
-        .addItem('🏷️ Rename Sheet 2 Dashboard Tabs to Database Format (_)', 'RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT')
-        .addItem('🏷️ Rename Sheet 1 Raw Data Tabs to Database Format (_)', 'RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT')
-        .addItem('🎯 Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
-        .addItem('📧 Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_MAILER')
-        .addItem('🧹 Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')
+        .createMenu('ISI ANALYTICS')
+        .addItem('Refresh All 16 Dashboards', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
+        .addItem('Rename Sheet 2 Dashboard Tabs to Database Format (_)', 'RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT')
+        .addItem('Rename Sheet 1 Raw Data Tabs to Database Format (_)', 'RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT')
+        .addItem('Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
+        .addItem('Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_MAILER')
+        .addItem('Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')
+        .addItem('Send ALL Test Emails to Pooja', 'SEND_ALL_TEST_EMAILS_TO_POOJA')
         .addToUi();
 }

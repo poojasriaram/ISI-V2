@@ -65,8 +65,13 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
         }
         if (!resume) {
             newErrors.resume = 'Resume is required';
-        } else if (resume.size > 10 * 1024 * 1024) {
-            newErrors.resume = 'Resume file size must be under 10MB';
+        } else if (resume.size > 5 * 1024 * 1024) {
+            newErrors.resume = 'Resume file size must be under 5MB';
+        } else {
+            const ext = resume.name.split('.').pop()?.toLowerCase();
+            if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
+                newErrors.resume = 'Resume must be a PDF, DOC, or DOCX file';
+            }
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -84,7 +89,7 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
                 reader.onload = () => {
                     const res = (reader.result as string) || '';
                     const base64String = res.includes(',') ? res.split(',')[1] : res;
-                    resolve(base64String);
+                    resolve(base64String.replace(/[\r\n\s]/g, ''));
                 };
                 reader.onerror = () => reject(new Error('Failed to read resume file'));
                 reader.readAsDataURL(resume);
@@ -148,7 +153,7 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
                     <DialogHeader>
                         <DialogTitle>Apply for {jobTitle}</DialogTitle>
                         <DialogDescription>
-                            Submit your application details below. We'll get back to you soon.
+                            Submit your application details below. Resume must be PDF, DOC, or DOCX (max 5MB).
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">

@@ -49,14 +49,12 @@ export const ISIAcademyChatbot: React.FC = () => {
   const initialMessage: Message = {
     id: '1',
     sender: 'bot',
-    text: "Welcome to ISI Academy. I'm your Academy AI Advisor. How can I help you today?",
+    text: "Welcome to ISI Academy. I'm your Academy AI Advisor. Which domain would you like to explore?",
     options: [
-      "Explore Programs",
-      "Find the Right Course",
-      "Certification Details",
+      "Technology Programs",
+      "Facility Management",
+      "Guarding Security",
       "Corporate Training",
-      "Security Training",
-      "Career Guidance",
       "Talk to an Academy Advisor"
     ],
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -161,9 +159,18 @@ export const ISIAcademyChatbot: React.FC = () => {
         options = ["Explore Programs", "Talk to an Academy Advisor", "Corporate Training"];
       } else {
         const q = query.toLowerCase();
-        if (q.includes('explore programs') || q.includes('programs') || q.includes('courses') || q.includes('find the right course')) {
-          botResponseText = "ISI Academy offers specialized learning programs across 7 key security domains:\n\n1. **Security Operations** (SOC Analysis, Control Room Ops)\n2. **Electronic & Integrated Security** (CCTV, Access Control, VMS)\n3. **Security Technology** (IoT Security, Sensor Systems, Edge Tech)\n4. **Risk & Compliance** (ISO 27001, PSARA, Site Audits)\n5. **Corporate Security** (Asset & Executive Protection, Loss Prevention)\n6. **Security Leadership** (Team Command, Crisis Management)\n7. **AI & Video Analytics** (Computer Vision, Automated Anomaly Detection)\n\nAll programs combine lab practice with our mandatory **3-Month Industry Residency**.";
-          options = ["Certification Details", "Corporate Training", "Career Guidance", "Talk to an Academy Advisor"];
+        if (q.includes('technology') || q.includes('cyber') || q.includes('ai') || q.includes('iot')) {
+          botResponseText = "### 💻 Technology Programs (8 Domains)\nISI Academy delivers advanced tech programs aligned with C-DAC, IEEE & NIST standards:\n\n1. **AI & Advanced Computing** (Full-Stack AI, Microservices)\n2. **Cyber Security & Digital Forensics** (Air-Gapped Cyber Range, SIEM)\n3. **IoT & Industrial Automation** (SCADA, Embedded C, FreeRTOS)\n4. **Automotive Cyber & EV Tech** (ISO 21434, BMS & CAN Bus)\n5. **Robotics, Drones & Aerial Analytics** (ROS 2, Pix4D Photogrammetry)\n6. **Smart City & Municipal IoT** (5G MEC, LoRaWAN Telemetry)\n7. **Quantum Computing & Cryptography** (Post-Quantum PQC, QKD)\n8. **Data Center & Critical Infrastructure** (TIA-942 Tier IV, DCIM)\n\nIncludes 3-Month Industry Residency & Live Lab Simulations.";
+          options = ["Facility Management", "Guarding Security", "Talk to an Academy Advisor"];
+        } else if (q.includes('facility') || q.includes('fm') || q.includes('mep') || q.includes('sanitation')) {
+          botResponseText = "### 🏢 Facility Management Programs (3 Domains)\nISI Academy provides specialized infrastructure operations certifications:\n\n1. **Hard FM & Technical MEP Engineering** (Substations, HVAC Chillers, BMS)\n2. **Soft FM, Mechanized Sanitation & ESG** (ISO 41001, Industrial Cleaning Fleet)\n3. **Smart Building IoT & Energy Management** (BEE Energy Auditing, Sub-1.2 PUE)\n\nPractical hands-on training with enterprise facility deployments.";
+          options = ["Technology Programs", "Guarding Security", "Talk to an Academy Advisor"];
+        } else if (q.includes('guard') || q.includes('security') || q.includes('psara') || q.includes('vip') || q.includes('patrol')) {
+          botResponseText = "### 🛡️ Guarding Security Programs (4 Domains)\nISI Academy trains elite physical security forces and command personnel:\n\n1. **PSARA-Certified Guarding & Operations** (Patrol SOPs, Gatehouse Security)\n2. **Tactical Emergency Response & Fire Safety** (NBC 2016 Standards, First Aid/CPR)\n3. **Command Center (C4i) & CCTV Surveillance** (24/7 Video Wall, PTZ Tracking)\n4. **Executive Protection & VIP Escort Services** (Convoy Formations, Close Protection)\n\nAll programs certified under statutory PSARA and national safety benchmarks.";
+          options = ["Technology Programs", "Facility Management", "Talk to an Academy Advisor"];
+        } else if (q.includes('explore programs') || q.includes('programs') || q.includes('courses') || q.includes('find the right course')) {
+          botResponseText = "ISI Academy offers specialized learning programs across 3 primary pillars:\n\n1. **Technology** (AI, Cyber Security, IoT, Drones, Quantum & Data Center)\n2. **Facility Management** (Hard FM, Soft FM, Smart Building IoT & MEP)\n3. **Guarding Security** (PSARA Guarding, Fire Safety, C4i Command Center, VIP Protection)\n\nAll programs combine practical lab execution with a mandatory **3-Month Industry Residency**.";
+          options = ["Technology Programs", "Facility Management", "Guarding Security", "Talk to an Academy Advisor"];
         } else if (q.includes('certif') || q.includes('accreditation')) {
           botResponseText = "ISI Academy certifications validate practical operational competency rather than just theoretical attendance. Programs feature:\n\n• Rigorous practical lab evaluation\n• CDAC & IEEE Blended Learning pathways where applicable\n• Real-world scenario testing in cyber ranges & physical labs\n• Verifiable industry workforce credentials";
           options = ["Explore Programs", "Career Guidance", "Talk to an Academy Advisor"];

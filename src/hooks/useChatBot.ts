@@ -406,6 +406,16 @@ export const useChatBot = () => {
             };
         }
 
+        // --- Check Job / Career Inquiries ---
+        if (lowerInput.includes('job') || lowerInput.includes('career') || lowerInput.includes('hiring') || lowerInput.includes('vacancy')) {
+            return {
+                text: "It looks like you're interested in career opportunities at ISI! Please visit our Careers page to view current openings or contact our HR department.",
+                actions: [
+                    { label: "Visit Careers Page", value: "/career", type: "link" }
+                ]
+            };
+        }
+
         // --- Check Company Facts ---
         if (lowerInput.includes('founded') || lowerInput.includes('history') || lowerInput.includes('who owns') || lowerInput.includes('founder')) {
             return {

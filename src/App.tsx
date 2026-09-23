@@ -21,7 +21,6 @@ const PartnersPage = lazy(() => import("./pages/PartnersPage"));
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { useAnalytics } from "./hooks/useAnalytics";
-import { ExitIntentPopup } from "./components/ExitIntentPopup";
 import { ChatBot } from "./components/ai/ChatBot";
 import { ISIAcademyChatbot } from "./components/ai/ISIAcademyChatbot";
 
@@ -212,10 +211,7 @@ const AppRouter = () => {
         isAcademy ? (
           <ISIAcademyChatbot />
         ) : (
-          <>
-            <ExitIntentPopup />
-            <ChatBot />
-          </>
+          <ChatBot />
         )
       )}
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center p-8"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>

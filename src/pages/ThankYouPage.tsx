@@ -5,29 +5,47 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 const ThankYouPage = () => {
-  const location = useLocation();
+  const isCareer = location.state?.leadType === 'career' || location.state?.formType === 'Career Application';
   const userName = location.state?.name || "there";
   const leadNumber = location.state?.leadNumber;
   const isFromIntegratedServices = location.state?.fromIntegratedServices || location.pathname === '/lp/facility-management/thank-you' || location.pathname === '/integratedservices/thank-you';
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Thank You - ISI Security";
-  }, []);
+    document.title = isCareer ? "Application Received - ISI Security" : "Thank You - ISI Security";
+  }, [isCareer]);
 
   return (
     <Layout>
       <div className="min-h-[60vh] flex items-center justify-center pt-[96px] bg-white">
         <div className="text-center max-w-2xl mx-auto px-4">
           <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">Thank You, {userName}!</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+            {isCareer ? `Application Received, ${userName}!` : `Thank You, ${userName}!`}
+          </h1>
           <p className="text-lg text-slate-600 mb-4">
-            Your inquiry has been successfully received. Our team will get back to you shortly.
+            {isCareer
+              ? "Your career application has been successfully registered with our HR team. We will review your profile and reach out if shortlisted."
+              : "Your inquiry has been successfully received. Our team will get back to you shortly."}
           </p>
           {leadNumber && (
-            <div className="mb-8 inline-block px-4 py-2 bg-slate-100 rounded-lg border border-slate-200">
-              <span className="text-xs text-slate-500 block font-medium">Lead Reference ID</span>
-              <span className="text-base font-bold font-mono text-primary">{leadNumber}</span>
+            <div className="mb-8 inline-block px-5 py-3 bg-slate-50 rounded-xl border border-slate-200 shadow-sm text-left">
+              <div className="flex items-center justify-between gap-6">
+                <div>
+                  <span className="text-xs text-slate-500 block font-medium">
+                    {isCareer ? "Application Reference ID" : "Enquiry Reference ID"}
+                  </span>
+                  <span className="text-base font-bold font-mono text-primary">{leadNumber}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-slate-500 block font-medium">
+                    {isCareer ? "Application Status" : "Submission Status"}
+                  </span>
+                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Submitted
+                  </span>
+                </div>
+              </div>
             </div>
           )}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

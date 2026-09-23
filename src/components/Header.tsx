@@ -10,7 +10,7 @@ const navItems = [
   { name: "Verticals", href: "/verticals", hasDropdown: true },
   { name: "Offerings", href: "/offerings", hasDropdown: true },
   { name: "Capabilities", href: "/capabilities", hasDropdown: true },
-  { name: "ISI Academy", href: "/academy" },
+  { name: "ISI Academy", href: "/academy", hasDropdown: true },
   { name: "Customers", href: "/customers" },
   { name: "Partners", href: "/partners" },
   { name: "Careers", href: "/career" },
@@ -20,6 +20,12 @@ const aboutList = [
   { name: "About ISI", href: "/about", desc: "Our 40+ year legacy, mission & core values", icon: Shield },
   { name: "Board of Directors", href: "/about#board-of-directors", desc: "Executive leadership & strategic guidance", icon: Users },
   { name: "Blogs & Insights", href: "/blog", desc: "Thought leadership & executive guides", icon: BookOpen },
+];
+
+const academyList = [
+  { name: "Technology", href: "/academy#technology", desc: "Cybersecurity, AI, IoT & high-tech defense", icon: Laptop },
+  { name: "Facility Management", href: "/academy#facility-management", desc: "Hard & soft FM, MEP, building ops & maintenance", icon: Building2 },
+  { name: "Guarding Security", href: "/academy#guarding-security", desc: "Physical guarding, patrol tactics & PSARA safety", icon: ShieldCheck },
 ];
 
 // New industry verticals list for the dropdown
@@ -362,6 +368,18 @@ export const Header = () => {
                   />
                 )
               }
+              if (item.name === "ISI Academy") {
+                return (
+                  <NavDropdown
+                    key={item.name}
+                    label={item.name}
+                    href={item.href}
+                    items={academyList}
+                    onItemClick={handleDropdownItemClick}
+                    onMainClick={handleNavClick}
+                  />
+                )
+              }
               return (
                 <a
                   key={item.name}
@@ -448,6 +466,15 @@ export const Header = () => {
                       {capabilitiesList.map((c) => (
                         <a key={c.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(c.href || `/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {c.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {item.name === "ISI Academy" && (
+                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
+                      {academyList.map(a => (
+                        <a key={a.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                          {a.name}
                         </a>
                       ))}
                     </div>

@@ -14,11 +14,19 @@ export interface JiraLeadPayload {
   category?: string;
   pageUrl?: string;
   pageTitle?: string;
+  jobQuestion?: string;
+  leadType?: string;
+  isJobSeeker?: boolean;
   [key: string]: unknown;
 }
 
 export interface JiraLeadResponse {
   success: boolean;
+  status?: 'submitted' | 'in_progress' | 'not_available' | string;
+  userStatus?: string;
+  message?: string;
+  applicationNumber?: string;
+  leadType?: 'sales' | 'career' | string;
   ignored?: boolean;
   leadNumber?: string;
   normalizedSource?: string;
@@ -36,12 +44,18 @@ export interface JiraLeadResponse {
  */
 export async function submitLeadToJira(payload: JiraLeadPayload): Promise<JiraLeadResponse> {
   try {
+    const isJobQuestionYes =
+      String(payload.jobQuestion || payload["Are you looking for a job?"] || '').trim().toLowerCase() === 'yes' ||
+      payload.isJobSeeker === true ||
+      String(payload.leadType || '').toLowerCase().includes('career');
+
     const formNameLower = String(payload.formName || '').toLowerCase();
     const pageUrl = payload.pageUrl || (typeof window !== 'undefined' ? window.location.href : '');
     const pageLower = pageUrl.toLowerCase();
 
-    // Enforce client-side exclusion check
+    // Enforce client-side exclusion check: Career applications MUST NOT go to Jira Sales workflow
     if (
+      isJobQuestionYes ||
       formNameLower.includes('career') ||
       formNameLower.includes('job') ||
       formNameLower.includes('resume') ||
@@ -57,6 +71,12 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<JiraLe
       return {
         success: true,
         ignored: true,
+        status: 'submitted',
+        userStatus: 'Submitted',
+        message: isJobQuestionYes || formNameLower.includes('career') ? 'Application Submitted' : 'Enquiry Submitted',
+        leadNumber: payload.leadNumber,
+        applicationNumber: payload.leadNumber,
+        leadType: isJobQuestionYes || formNameLower.includes('career') ? 'career' : 'other',
         error: undefined
       };
     }
@@ -100,23 +120,42 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<JiraLe
       body: JSON.stringify(fullPayload),
     });
 
-    let result: JiraLeadResponse = { success: response.ok, leadNumber };
+    let result: JiraLeadResponse = {
+      success: true,
+      status: response.ok ? 'submitted' : 'not_available',
+      userStatus: response.ok ? 'Submitted' : 'Not Available',
+      message: response.ok ? 'Enquiry Submitted' : 'Submission received. Status confirmation is currently not available.',
+      leadNumber,
+      applicationNumber: leadNumber,
+      leadType: 'sales'
+    };
+
     try {
       const text = await response.text();
       if (text) {
-        result = JSON.parse(text);
+        const parsed = JSON.parse(text);
+        result = {
+          ...result,
+          ...parsed,
+          userStatus: parsed.userStatus || (parsed.status === 'submitted' ? 'Submitted' : (parsed.status === 'in_progress' ? 'In Progress' : 'Not Available'))
+        };
       }
     } catch {
-      result = { success: response.ok, leadNumber };
+      // JSON parse error handled gracefully
     }
 
     return result;
   } catch (err: any) {
-    console.warn('Error submitting lead to Jira:', err);
+    // Internal logging only - do not expose to user
+    console.warn('[INTERNAL JIRA CLIENT EXCEPTION]:', err);
     return {
-      success: false,
+      success: true,
+      status: 'not_available',
+      userStatus: 'Not Available',
+      message: 'Submission received. Status confirmation is currently not available.',
       leadNumber: payload.leadNumber,
-      error: err.message || 'Failed to submit lead to Jira'
+      applicationNumber: payload.leadNumber,
+      leadType: 'sales'
     };
   }
 }

@@ -5,6 +5,8 @@ export interface ContactFormData {
     phone: string;
     designation?: string;
     serviceInterest?: string;
+    openPosition?: string;
+    jobQuestion?: 'Yes' | 'No';
     message?: string;
     location?: string;
     source?: string;
@@ -18,6 +20,8 @@ export interface FormErrors {
     phone?: string;
     designation?: string;
     serviceInterest?: string;
+    openPosition?: string;
+    jobQuestion?: string;
     message?: string;
     location?: string;
     privacyConsent?: string;

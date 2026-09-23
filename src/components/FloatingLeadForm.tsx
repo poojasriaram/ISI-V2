@@ -12,11 +12,12 @@ import {
   MessageSquare,
   ShieldCheck,
   Building2,
-  Sparkles
+  Sparkles,
+  UserCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateWorkEmail, validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
 import { submitBusinessLead } from '@/services/formService';
 import { getUtmParams } from '@/utils/utm';
 import { generateLeadNumber, normalizeLeadSource } from '@/utils/leadNumber';
@@ -38,6 +39,17 @@ const SERVICE_OPTIONS = [
   'Other Enterprise Requirement'
 ];
 
+const CAREER_OPTIONS = [
+  'Security Officer / Guard',
+  'CCTV & SOC Operator',
+  'Facility Supervisor / Executive',
+  'Fire & Safety Officer',
+  'Operations Executive / Area Officer',
+  'Executive Protection Specialist',
+  'Cash Logistics Officer / Custodian',
+  'Other Security / Corporate Role'
+];
+
 export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
   isOpen,
   onClose,
@@ -46,12 +58,15 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedLeadNumber, setSubmittedLeadNumber] = useState<string | null>(null);
+  const [submittedType, setSubmittedType] = useState<'sales' | 'career'>('sales');
 
   const [formData, setFormData] = useState({
+    jobQuestion: 'No' as 'Yes' | 'No',
     name: '',
     email: '',
     phone: '',
     requirement: defaultService,
+    openPosition: 'Security Officer / Guard',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -79,12 +94,16 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
     if (isSubmitting) return;
 
     const newErrors: Record<string, string> = {};
+    const isJobSeeker = formData.jobQuestion === 'Yes';
 
     if (!formData.name.trim()) {
       newErrors.name = 'Full name is required';
     }
 
-    const emailVal = validateWorkEmail(formData.email);
+    // Use general email validation for job applicants (Gmail/Yahoo allowed), work email validation for sales leads
+    const emailVal = isJobSeeker 
+      ? validateGeneralEmail(formData.email) 
+      : validateWorkEmail(formData.email);
     if (!emailVal.isValid) {
       newErrors.email = emailVal.message;
     }
@@ -104,34 +123,48 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
     setErrors({});
 
     try {
+      const selectedRole = isJobSeeker ? formData.openPosition : formData.requirement;
       const res = await submitBusinessLead({
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
-        requirement: formData.requirement,
-        message: `Inquiry for ${formData.requirement} from page: ${location.pathname}`,
-        formName: 'Global_Lead_Form'
+        requirement: isJobSeeker ? `Career: ${selectedRole}` : selectedRole,
+        message: isJobSeeker 
+          ? `Career Application for ${selectedRole} from page: ${location.pathname}`
+          : `Inquiry for ${selectedRole} from page: ${location.pathname}`,
+        formName: isJobSeeker ? 'Career_Applications' : 'Global_Lead_Form',
+        jobQuestion: formData.jobQuestion,
+        position: isJobSeeker ? selectedRole : undefined
       });
 
       const assignedNumber = res.leadNumber || generateLeadNumber();
       setSubmittedLeadNumber(assignedNumber);
+      setSubmittedType(isJobSeeker ? 'career' : 'sales');
 
-      toast.success('Enquiry Received!', {
-        description: `Lead Reference: ${assignedNumber}. Our team will contact you within 24 hours.`
-      });
+      if (isJobSeeker) {
+        toast.success('Application Received!', {
+          description: `Application Reference: ${assignedNumber}. Our recruitment team will review your profile.`
+        });
+      } else {
+        toast.success('Enquiry Received!', {
+          description: `Lead Reference: ${assignedNumber}. Our team will contact you within 24 hours.`
+        });
+      }
 
       // Clear form inputs
       setFormData({
+        jobQuestion: 'No',
         name: '',
         email: '',
         phone: '',
         requirement: defaultService,
+        openPosition: 'Security Officer / Guard',
       });
 
     } catch (err: any) {
       console.error('Lead submission error:', err);
-      toast.error('Submission encountered an issue', {
-        description: 'Your request was logged. Our team will contact you shortly.'
+      toast.error('Submission recorded', {
+        description: 'Your request was received. Our team will contact you shortly.'
       });
       onClose();
     } finally {
@@ -178,16 +211,36 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
                 <CheckCircle2 className="w-9 h-9" />
               </div>
               <div>
-                <h4 className="text-xl font-bold text-slate-900 dark:text-white">Thank You!</h4>
+                <h4 className="text-xl font-bold text-slate-900 dark:text-white">
+                  {submittedType === 'career' ? 'Application Received!' : 'Thank You!'}
+                </h4>
                 <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-sm mx-auto leading-relaxed">
-                  Your enquiry has been successfully registered.
+                  {submittedType === 'career' 
+                    ? 'Your career application has been successfully submitted to our recruitment team.'
+                    : 'Your enquiry has been successfully registered.'}
                 </p>
-                <div className="mt-4 p-3 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 max-w-xs mx-auto">
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">Lead Reference Number</span>
-                  <span className="text-base font-bold text-blue-600 dark:text-blue-400 font-mono tracking-wider">{submittedLeadNumber}</span>
+
+                <div className="mt-4 p-3 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 max-w-xs mx-auto space-y-2">
+                  <div>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
+                      {submittedType === 'career' ? 'Application Reference Number' : 'Lead Reference Number'}
+                    </span>
+                    <span className="text-base font-bold text-blue-600 dark:text-blue-400 font-mono tracking-wider">{submittedLeadNumber}</span>
+                  </div>
+                  <div className="pt-1.5 border-t border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between text-xs">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">
+                      {submittedType === 'career' ? 'Application Status:' : 'Submission Status:'}
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">
+                      <CheckCircle2 size={12} /> Submitted
+                    </span>
+                  </div>
                 </div>
+
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
-                  Our operational team will connect with you shortly.
+                  {submittedType === 'career' 
+                    ? 'Our HR & Recruitment division will review your profile and reach out if shortlisted.'
+                    : 'Our operational team will connect with you shortly.'}
                 </p>
               </div>
               <Button
@@ -200,6 +253,50 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
           ) : (
             /* Lead Form */
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Are you looking for a job? Segmented Toggle */}
+              <div className="space-y-1.5 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <UserCheck size={14} className="text-blue-600" /> Are you looking for a job? <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2 mt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, jobQuestion: 'No' }));
+                      if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                    }}
+                    className={cn(
+                      "py-2 px-3 text-xs font-semibold rounded-xl border transition-all flex items-center justify-center gap-1.5",
+                      formData.jobQuestion === 'No'
+                        ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750"
+                    )}
+                  >
+                    No (Business Enquiry)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, jobQuestion: 'Yes' }));
+                      if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                    }}
+                    className={cn(
+                      "py-2 px-3 text-xs font-semibold rounded-xl border transition-all flex items-center justify-center gap-1.5",
+                      formData.jobQuestion === 'Yes'
+                        ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750"
+                    )}
+                  >
+                    Yes (Job Application)
+                  </button>
+                </div>
+                {formData.jobQuestion === 'Yes' && (
+                  <p className="text-[11px] text-blue-600 dark:text-blue-400 font-medium pt-0.5">
+                    ✓ Your application will be routed directly to our ISI HR & Recruitment team.
+                  </p>
+                )}
+              </div>
+
               {/* Name Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
@@ -225,12 +322,12 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
               {/* Email Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <Mail size={13} className="text-blue-600" /> Work Email <span className="text-red-500">*</span>
+                  <Mail size={13} className="text-blue-600" /> {formData.jobQuestion === 'Yes' ? 'Email Address' : 'Work Email'} <span className="text-red-500">*</span>
                 </label>
                 <input
                   required
                   type="email"
-                  placeholder="e.g. rajesh@company.com"
+                  placeholder={formData.jobQuestion === 'Yes' ? "e.g. rajesh.kumar@gmail.com" : "e.g. rajesh@company.com"}
                   value={formData.email}
                   onChange={e => {
                     setFormData({ ...formData, email: e.target.value });
@@ -266,22 +363,36 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
                 {errors.phone && <p className="text-red-500 text-[11px] font-medium mt-0.5">{errors.phone}</p>}
               </div>
 
-              {/* Requirement Field */}
+              {/* Requirement / Position Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <Briefcase size={13} className="text-blue-600" /> Requirement / Service <span className="text-red-500">*</span>
+                  <Briefcase size={13} className="text-blue-600" /> {formData.jobQuestion === 'Yes' ? 'Position of Interest' : 'Requirement / Service'} <span className="text-red-500">*</span>
                 </label>
-                <select
-                  value={formData.requirement}
-                  onChange={e => setFormData({ ...formData, requirement: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-900 dark:text-white"
-                >
-                  {SERVICE_OPTIONS.map((opt, idx) => (
-                    <option key={idx} value={opt} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+                {formData.jobQuestion === 'Yes' ? (
+                  <select
+                    value={formData.openPosition}
+                    onChange={e => setFormData({ ...formData, openPosition: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-900 dark:text-white"
+                  >
+                    {CAREER_OPTIONS.map((opt, idx) => (
+                      <option key={idx} value={opt} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <select
+                    value={formData.requirement}
+                    onChange={e => setFormData({ ...formData, requirement: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-900 dark:text-white"
+                  >
+                    {SERVICE_OPTIONS.map((opt, idx) => (
+                      <option key={idx} value={opt} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div className="pt-2">
@@ -293,11 +404,11 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
                   {isSubmitting ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Registering Enquiry...
+                      {formData.jobQuestion === 'Yes' ? 'Submitting Application...' : 'Registering Enquiry...'}
                     </>
                   ) : (
                     <>
-                      <span>Submit Enquiry</span>
+                      <span>{formData.jobQuestion === 'Yes' ? 'Submit Career Application' : 'Submit Enquiry'}</span>
                       <Send size={15} />
                     </>
                   )}
@@ -314,3 +425,4 @@ export const FloatingLeadForm: React.FC<FloatingLeadFormProps> = ({
     </div>
   );
 };
+

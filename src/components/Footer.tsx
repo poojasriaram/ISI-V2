@@ -31,9 +31,9 @@ const footerLinks = {
   ],
   solutions: [
     { name: "ISI Academy", href: "/academy" },
-    { name: "Technology Courses", href: "/courses" },
-    { name: "Integrated Security", href: "/capabilities#solutions-comprehensive" },
-    { name: "Tailored Solutions", href: "/capabilities#tailored-solutions" },
+    { name: "Academy - Technology", href: "/academy#technology" },
+    { name: "Academy - Facility Management", href: "/academy#facility-management" },
+    { name: "Academy - Guarding Security", href: "/academy#guarding-security" },
     { name: "Integrated Services", href: "/lp/facility-management" },
   ],
   landingPages: [
