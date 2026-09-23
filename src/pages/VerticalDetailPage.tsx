@@ -21,12 +21,12 @@ export const VerticalDetailPage = () => {
     // Find the vertical data
     const vertical = verticalsDetailData.find(v => v.id === verticalId);
 
-    // If vertical not found, redirect to verticals page
+    // If vertical not found, redirect to verticals page anchor
     useEffect(() => {
         if (!vertical) {
-            navigate('/verticals');
+            navigate(verticalId ? `/verticals#${verticalId}` : '/verticals', { replace: true });
         }
-    }, [vertical, navigate]);
+    }, [vertical, verticalId, navigate]);
 
     if (!vertical) {
         return null;

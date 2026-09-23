@@ -39,11 +39,18 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     if (hash) {
-      // Wait for the page to render before scrolling to the hash
       setTimeout(() => {
-        const element = document.querySelector(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+        try {
+          const id = hash.replace(/^#/, '');
+          let element = document.getElementById(id);
+          if (!element && window.CSS && CSS.escape) {
+            element = document.querySelector(`#${CSS.escape(id)}`);
+          }
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        } catch (e) {
+          console.warn('ScrollToTop anchor lookup error:', e);
         }
       }, 100);
     } else {
@@ -104,18 +111,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 const AcademyPage = lazy(() => import("./pages/AcademyPage"));
 
-const StrictRedirect = ({ pattern }: { pattern: string }) => {
-  const params = useParams();
-  try {
-    const cleanParams = { ...params };
-    delete cleanParams["*"];
-    const redirectPath = generatePath(pattern, cleanParams as Record<string, string | undefined>);
-    return <Navigate to={redirectPath} replace />;
-  } catch (e) {
-    return <Navigate to="/" replace />;
-  }
-};
-
 const appRoutes = [
   { path: "/contact", element: <ContactPage /> },
   { path: "/courses", element: <CoursesPage /> },
@@ -158,16 +153,20 @@ const appRoutes = [
   { path: "/salesinquiry", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/sales-inquiry", element: <Navigate to="/lp/facility-management" replace /> },
   { path: "/services", element: <Navigate to="/services/security" replace /> },
+  { path: "/services/", element: <Navigate to="/services/security" replace /> },
   { path: "/services/security", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/security/" /> },
+  { path: "/services/security/", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/security/" /> },
   { path: "/services/integrated-facility-management", element: <ServiceCategoryPage categoryIdOverride="hard-fm" canonicalPathOverride="/services/integrated-facility-management/" /> },
+  { path: "/services/integrated-facility-management/", element: <ServiceCategoryPage categoryIdOverride="hard-fm" canonicalPathOverride="/services/integrated-facility-management/" /> },
   { path: "/services/skill-development-manpower", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/skill-development-manpower/" /> },
+  { path: "/services/skill-development-manpower/", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/skill-development-manpower/" /> },
   { path: "/mobile-security-services-chennai-crime-prevention", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/mobile-security-services-chennai-crime-prevention/" /> },
+  { path: "/mobile-security-services-chennai-crime-prevention/", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/mobile-security-services-chennai-crime-prevention/" /> },
   { path: "/need-protection-money-properties-vip-escort-services", element: <NotFound /> },
   { path: "/404", element: <NotFound /> },
-  { path: "/services/:type/:categoryId", element: <ServiceCategoryPage /> }
+  { path: "/services/:type/:categoryId", element: <ServiceCategoryPage /> },
+  { path: "/services/:type/:categoryId/", element: <ServiceCategoryPage /> }
 ];
-
-
 
 const AppRouter = () => {
   const location = useLocation();
@@ -204,7 +203,6 @@ const AppRouter = () => {
   useAnalytics();
   return (
     <ErrorBoundary>
-
       <ScrollToTop />
       <BackToTop />
       {showWidgets && !isIntegratedServices && (
@@ -219,9 +217,6 @@ const AppRouter = () => {
         <Route path="/" element={<Index />} />
         {appRoutes.map((route, idx) => (
           <Route key={`route-${idx}`} path={route.path} element={route.element} />
-        ))}
-        {appRoutes.map((route, idx) => (
-          <Route key={`redirect-${idx}`} path={`${route.path}/*`} element={<StrictRedirect pattern={route.path} />} />
         ))}
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
