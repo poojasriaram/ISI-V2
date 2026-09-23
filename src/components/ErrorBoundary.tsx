@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { errorHandler, handleReactError } from '@/utils/errorHandler';
+import { handleReactError } from '@/utils/errorHandler';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -22,33 +23,42 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Use centralized error handler instead of console.error
+    // Centralized error reporting
     handleReactError(error, { componentStack: errorInfo.componentStack || '' });
   }
 
   public render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md w-full text-center">
-            <h2 className="text-xl font-bold text-red-700 mb-2">Something went wrong</h2>
-            <p className="text-red-600 mb-4">
-              {import.meta.env.DEV && this.state.error?.message
-                ? this.state.error.message
-                : 'An unexpected error occurred. Please try again.'}
+        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+          <div className="bg-card border border-border shadow-2xl rounded-3xl p-8 max-w-lg w-full text-center relative overflow-hidden">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Something went wrong</h2>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              {this.state.error?.message || 'An unexpected error occurred while rendering this page.'}
             </p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                onClick={() => this.setState({ hasError: false, error: null })}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.reload();
+                }}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-xl hover:bg-primary/90 transition-all shadow-md"
               >
-                Try Again
+                <RefreshCw className="w-4 h-4" />
+                Reload Page
               </button>
               <button
-                onClick={() => window.location.href = '/'}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = '/';
+                }}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-muted text-foreground font-semibold text-sm rounded-xl hover:bg-muted/80 transition-all"
               >
-                Go Home
+                <Home className="w-4 h-4" />
+                Go to Homepage
               </button>
             </div>
           </div>
@@ -61,3 +71,4 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
+
