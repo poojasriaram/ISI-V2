@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key, Coins, BookOpen } from "lucide-react";
+import { Menu, X, Phone, ArrowRight, MessageCircle, Shield, Briefcase, Building2, UserCheck, ShieldCheck, HeartPulse, GraduationCap, Banknote, Plane, Truck, Zap, Laptop, Activity, Cog, Users, Search, Target, HeadphonesIcon, Network, ShieldAlert, Key, Coins, BookOpen, Bot, Cpu, Radio, Atom, Server } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import isiLogo from "@/assets/isi-logo.webp";
@@ -23,9 +23,27 @@ const aboutList = [
 ];
 
 const academyList = [
-  { name: "Technology", href: "/academy#technology", desc: "Cybersecurity, AI, IoT & high-tech defense", icon: Laptop },
-  { name: "Facility Management", href: "/academy#facility-management", desc: "Hard & soft FM, MEP, building ops & maintenance", icon: Building2 },
-  { name: "Guarding Security", href: "/academy#guarding-security", desc: "Physical guarding, patrol tactics & PSARA safety", icon: ShieldCheck },
+  // 1. Technology Category (8 Domains)
+  { name: "AI & Advanced Computing", href: "/academy#technology", category: "Technology", desc: "Full-Stack AI, Microservices & Deep Learning", icon: Bot },
+  { name: "Cyber Security & Forensics", href: "/academy#technology", category: "Technology", desc: "Air-Gapped Cyber Range & SIEM Ops", icon: ShieldCheck },
+  { name: "IoT & Industrial Automation", href: "/academy#technology", category: "Technology", desc: "SCADA, Embedded C & FreeRTOS", icon: Cpu },
+  { name: "Automotive Cyber & EV Tech", href: "/academy#technology", category: "Technology", desc: "CAN Bus, BMS & ISO 21434 Testing", icon: Zap },
+  { name: "Robotics & Drone Analytics", href: "/academy#technology", category: "Technology", desc: "Aerial Reconnaissance & Pix4D Analytics", icon: Radio },
+  { name: "Smart City & Utilities", href: "/academy#technology", category: "Technology", desc: "5G MEC, LoRaWAN & Critical Grid Ops", icon: Network },
+  { name: "Quantum Computing & Crypto", href: "/academy#technology", category: "Technology", desc: "Post-Quantum PQC & QKD Simulations", icon: Atom },
+  { name: "Data Center Infrastructure", href: "/academy#technology", category: "Technology", desc: "TIA-942 Tier IV & Mission-Critical MEP", icon: Server },
+
+  // 2. Facility Management Category (4 Domains)
+  { name: "Hard FM (Technical MEP)", href: "/academy#facility-management", category: "Facility Management", desc: "HVAC Chillers, Substations & BMS Ops", icon: Cog },
+  { name: "Soft FM & Sanitation Fleet", href: "/academy#facility-management", category: "Facility Management", desc: "Mechanized Housekeeping & ESG Protocols", icon: Briefcase },
+  { name: "Smart Building Energy IoT", href: "/academy#facility-management", category: "Facility Management", desc: "BEE Energy Audits & Sub-1.2 PUE Ops", icon: Zap },
+  { name: "Workplace Experience & ESG", href: "/academy#facility-management", category: "Facility Management", desc: "ISO 41001 Governance & Auditing", icon: Building2 },
+
+  // 3. Guarding Security Category (4 Domains)
+  { name: "PSARA Guarding & Patrols", href: "/academy#guarding-security", category: "Guarding Security", desc: "Statutory PSARA & Gatehouse Security", icon: ShieldCheck },
+  { name: "Command Center (C4i) & VMS", href: "/academy#guarding-security", category: "Guarding Security", desc: "24/7 CCTV Wall & Incident Triaging", icon: Activity },
+  { name: "Tactical Emergency & Fire", href: "/academy#guarding-security", category: "Guarding Security", desc: "NBC 2016 Standards, First Aid & Evacuation", icon: ShieldAlert },
+  { name: "Executive & VIP Escort", href: "/academy#guarding-security", category: "Guarding Security", desc: "Convoy Tactics & High-Risk Protection", icon: UserCheck },
 ];
 
 // New industry verticals list for the dropdown
@@ -141,7 +159,9 @@ const NavDropdown = ({ label, href, items, onItemClick, onMainClick }: NavDropdo
               <div className="w-1/3 bg-muted/20 border-r border-border/50 flex flex-col p-4 gap-1">
                 <div className="mb-4 px-3">
                   <h3 className="text-xl font-bold text-foreground">{label}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">Explore our capabilities</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {label === "ISI Academy" ? "15 Domains across 3 Tracks" : "Explore our capabilities"}
+                  </p>
                 </div>
                 {categories.map(category => (
                   <button
@@ -187,8 +207,16 @@ const NavDropdown = ({ label, href, items, onItemClick, onMainClick }: NavDropdo
                 
                 {/* Bottom CTA within items area */}
                 <div className="mt-6 p-4 bg-muted/30 rounded-xl flex items-center justify-between border border-border/50">
-                  <span className="text-sm text-muted-foreground">Need help choosing the right services?</span>
-                  <Button size="sm" onClick={() => onItemClick('/contact')} className="h-8 text-xs px-4">Contact Us</Button>
+                  <span className="text-sm text-muted-foreground">
+                    {label === "ISI Academy" ? "Need guidance on courses & 3-month residencies?" : "Need help choosing the right services?"}
+                  </span>
+                  <Button 
+                    size="sm" 
+                    onClick={() => onItemClick(label === "ISI Academy" ? '/academy#admissions' : '/contact')} 
+                    className="h-8 text-xs px-4"
+                  >
+                    {label === "ISI Academy" ? "Talk to Advisor" : "Contact Us"}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -471,11 +499,16 @@ export const Header = () => {
                     </div>
                   )}
                   {item.name === "ISI Academy" && (
-                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
-                      {academyList.map(a => (
-                        <a key={a.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
-                          {a.name}
-                        </a>
+                    <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1">
+                      {Array.from(new Set(academyList.map(a => a.category).filter(Boolean))).map(cat => (
+                        <div key={cat} className="mb-2 last:mb-0">
+                          <div className="px-3 py-1 text-[10px] font-bold text-primary/60 uppercase tracking-widest">{cat}</div>
+                          {academyList.filter(a => a.category === cat).map(a => (
+                            <a key={a.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                              {a.name}
+                            </a>
+                          ))}
+                        </div>
                       ))}
                     </div>
                   )}
