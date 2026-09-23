@@ -17,6 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { submitAcademyInquiry } from '@/services/formService';
+import { detectCareerIntent } from '@/utils/careerIntentDetector';
 import { toast } from 'sonner';
 
 interface Message {
@@ -117,6 +118,11 @@ export const ISIAcademyChatbot: React.FC = () => {
       setInput('');
     }
 
+    if (query === 'View Careers Page' || query === '/career') {
+      window.location.href = '/career';
+      return;
+    }
+
     const userMsg: Message = {
       id: Date.now().toString(),
       sender: 'user',
@@ -130,6 +136,24 @@ export const ISIAcademyChatbot: React.FC = () => {
     // If we are currently in progressive lead capture mode
     if (leadStep !== 'idle' && leadStep !== 'completed') {
       await processLeadStep(query);
+      return;
+    }
+
+    // Check Career Intent (100 Reserved Keywords, Scoring >= 70)
+    const careerEval = detectCareerIntent(query);
+    if (careerEval.intent === 'CAREER') {
+      setTimeout(() => {
+        const roleInfo = careerEval.roleDetected ? ` for **${careerEval.roleDetected}**` : '';
+        const botMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: 'bot',
+          text: `We have a dedicated **Careers & Talent Portal** for job openings, recruitment, and employment opportunities${roleInfo} at ISI India!\n\n• **Careers Portal**: [View Current Openings & Apply](/career)\n• **HR Direct Email**: hrms2026@isisecurity.in\n• **HR Hotline**: +91 77088 87878\n\nIf you are looking for student certification & professional workforce training, choose one of our Academy learning tracks below:`,
+          options: ["View Careers Page", "Technology Programs", "Facility Management", "Guarding Security", "Talk to an Academy Advisor"],
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages(prev => [...prev, botMsg]);
+        setIsTyping(false);
+      }, 600);
       return;
     }
 
@@ -177,7 +201,7 @@ export const ISIAcademyChatbot: React.FC = () => {
         } else if (q.includes('corporate') || q.includes('enterprise') || q.includes('workforce')) {
           botResponseText = "For Enterprise Organizations, ISI Academy delivers tailored workforce capability building:\n\n• **Workforce Assessment** — Evaluate current team baseline\n• **Customized Curriculum** — Targeted to your operational SOPs\n• **Hands-on Skill Development** — Live simulation & threat triaging\n• **Continuous Capability** — Benchmark & certify operational readiness";
           options = ["Talk to an Academy Advisor", "Explore Programs"];
-        } else if (q.includes('career') || q.includes('guidance') || q.includes('job') || q.includes('path')) {
+        } else if (q.includes('career') || q.includes('guidance') || q.includes('path')) {
           botResponseText = "ISI Academy structures clear progression pathways for:\n\n• **Security Professionals & Guards** — Upskill to technology operators\n• **Supervisors & Shift Leads** — Master incident management & VMS\n• **Security Managers** — Risk governance, crisis command & budgeting\n• **Tech Aspirants & Engineers** — Electronic security & AI surveillance integration";
           options = ["Explore Programs", "Talk to an Academy Advisor"];
         } else {

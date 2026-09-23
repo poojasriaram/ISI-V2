@@ -3,7 +3,13 @@ import { useLocation } from 'react-router-dom';
 import { ChatMessage, ChatAction, ChatAttachment } from '../types/chatbot';
 import { isiKnowledgeBase } from '../data/chatbot/knowledge-base';
 import { useAnalytics } from './useAnalytics';
-import { submitChatbotLead } from '../services/formService';
+import { submitChatbotLead, submitCareerApplication } from '../services/formService';
+import { 
+    detectCareerIntent, 
+    getCareerIntentResponse, 
+    getCareerClarificationResponse,
+    CURRENT_CAREER_OPPORTUNITIES 
+} from '../utils/careerIntentDetector';
 
 interface Greeting {
     text: string;
@@ -186,16 +192,18 @@ export const useChatBot = () => {
     const [isTyping, setIsTyping] = useState(false);
     const [hasUnread, setHasUnread] = useState(true);
 
-    // Context State for Lead Capture and Flow
+    // Context State for Lead Capture and Career Flow
     const [context, setContext] = useState<{
         topic: string | null;
-        stage: 'discovery' | 'pitch' | 'closing' | 'captured';
+        stage: 'discovery' | 'pitch' | 'closing' | 'captured' | 'career_capture' | 'career_captured';
         leadData: { name?: string; isExisting?: string; lookingFor?: string; phone?: string; email?: string };
+        careerData: { name?: string; phone?: string; email?: string; role?: string; experience?: string; qualification?: string };
         isReturnVisitor: boolean;
     }>({
         topic: null,
         stage: 'discovery',
         leadData: {},
+        careerData: {},
         isReturnVisitor: false
     });
 
@@ -300,7 +308,84 @@ export const useChatBot = () => {
     const findResponse = (input: string): { text: string; actions?: ChatAction[] } => {
         const lowerInput = input.toLowerCase();
 
-        // --- STAGE 1: LEAD CAPTURE ---
+        // =========================================================================
+        // --- STAGE: CAREER PROGRESSIVE APPLICATION CAPTURE ---
+        // (Strictly routes to Career_Applications. NEVER creates a Sales Lead or Jira issue)
+        // =========================================================================
+        if (context.stage === 'career_capture') {
+            if (!context.careerData.name) {
+                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, name: input } }));
+                return {
+                    text: `Nice to meet you, **${input}**! What is your **Mobile / WhatsApp Number** so our recruitment team can reach you?`,
+                    actions: []
+                };
+            } else if (!context.careerData.phone) {
+                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, phone: input } }));
+                return {
+                    text: `Got it. What is your **Email Address**?`,
+                    actions: []
+                };
+            } else if (!context.careerData.email) {
+                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, email: input } }));
+                return {
+                    text: `Thank you. Which **Position / Role** are you applying for?`,
+                    actions: CURRENT_CAREER_OPPORTUNITIES.map(c => ({
+                        label: c.title.split('/')[0].trim(),
+                        value: c.title,
+                        type: 'quickReply'
+                    }))
+                };
+            } else if (!context.careerData.role) {
+                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, role: input } }));
+                return {
+                    text: `Great. How many years of relevant **Experience** do you have in this field?`,
+                    actions: [
+                        { label: "Fresher / Entry-Level", value: "Fresher (0 Years)", type: "quickReply" },
+                        { label: "1 - 3 Years", value: "1 - 3 Years", type: "quickReply" },
+                        { label: "3 - 5 Years", value: "3 - 5 Years", type: "quickReply" },
+                        { label: "5+ Years", value: "5+ Years", type: "quickReply" }
+                    ]
+                };
+            } else if (!context.careerData.experience) {
+                const finalCareerData = {
+                    ...context.careerData,
+                    experience: input
+                };
+
+                setContext(prev => ({ 
+                    ...prev, 
+                    stage: 'career_captured', 
+                    careerData: finalCareerData 
+                }));
+
+                // STRICTLY submit as Career Application to Google Sheet (Career_Applications)
+                // NEVER creates a Sales Lead or calls Jira Sales backend
+                submitCareerApplication({
+                    Name: finalCareerData.name || 'Anonymous Applicant',
+                    Phone: finalCareerData.phone || 'N/A',
+                    Email: finalCareerData.email || 'N/A',
+                    Position: finalCareerData.role || 'General Application',
+                    Experience: input || 'N/A',
+                    "Source Channel": "Website Chatbot (Career Flow)",
+                    Status: "Application Received",
+                    "Lead Type": "career",
+                    isJobSeeker: true
+                }).catch(err => console.error("Career Application capture err:", err));
+
+                return {
+                    text: `🎉 **Application Successfully Registered!**\n\nThank you, **${finalCareerData.name}**! Your application for **${finalCareerData.role}** has been registered with the ISI Human Resources & Talent Acquisition team.\n\n• **HR Portal**: [View Careers Page](/career)\n• **HR Direct Email**: hrms2026@isisecurity.in\n• **Talent Hotline**: +91 77088 87878\n\nOur recruitment team will review your profile and reach out if shortlisted.`,
+                    actions: [
+                        { label: "Visit Careers Page", value: "/career", type: "link" },
+                        { label: "Explore Academy Training", value: "/academy", type: "link" },
+                        { label: "That's all for now", value: "close", type: "quickReply" }
+                    ]
+                };
+            }
+        }
+
+        // =========================================================================
+        // --- STAGE: SALES LEAD CAPTURE (Only for Commercial Inquiries) ---
+        // =========================================================================
         if (context.stage === 'closing') {
             if (!context.leadData.name) {
                 setContext(prev => ({ ...prev, leadData: { ...prev.leadData, name: input } }));
@@ -312,14 +397,9 @@ export const useChatBot = () => {
                     ]
                 };
             } else if (!context.leadData.isExisting) {
-                // Handle the existing customer answer, and then ask what they are looking for
                 const isExistingStr = lowerInput.includes('yes') ? 'Yes' : 'No';
-                
-                // If the context topic is already known via previous conversation, we might pre-fill. 
-                // However, to ensure accurate segregation as requested, we ask explicitly if we aren't absolutely sure.
                 setContext(prev => ({ ...prev, leadData: { ...prev.leadData, isExisting: isExistingStr } }));
                 
-                // Determine if we already know what they are looking for based on conversation topic
                 if (context.topic) {
                      setContext(prev => ({ ...prev, leadData: { ...prev.leadData, lookingFor: 'Services', isExisting: isExistingStr } }));
                      return {
@@ -332,14 +412,13 @@ export const useChatBot = () => {
                     text: `Got it. And what exactly are you looking for today?`,
                     actions: [
                         { label: "Looking for Services", value: "Services", type: "quickReply" },
-                        { label: "Interested in Job", value: "Job", type: "quickReply" },
+                        { label: "Interested in Job", value: "i am looking for a job", type: "quickReply" },
                         { label: "Business Leads", value: "Business Leads", type: "quickReply" }
                     ]
                 };
             } else if (!context.leadData.lookingFor) {
                 let category = 'Services';
-                if (lowerInput.includes('job') || lowerInput.includes('career')) category = 'Job';
-                else if (lowerInput.includes('business') || lowerInput.includes('lead')) category = 'Business Leads';
+                if (lowerInput.includes('business') || lowerInput.includes('lead')) category = 'Business Leads';
                 
                 setContext(prev => ({ ...prev, leadData: { ...prev.leadData, lookingFor: category } }));
                 return {
@@ -384,7 +463,39 @@ export const useChatBot = () => {
             }
         }
 
-        // --- STAGE 2: INTENT ANALYSIS (New Rule Engine) ---
+        // =========================================================================
+        // --- STAGE: CAREER INTENT DETECTOR (Keyword + Intent + Context Scoring) ---
+        // (100 Reserved Keywords, Spelling Normalization, Score >= 70 Priority Rule)
+        // =========================================================================
+        const careerEvaluation = detectCareerIntent(input);
+
+        if (careerEvaluation.intent === 'CAREER') {
+            // STOP Sales Lead flow immediately
+            setContext(prev => ({ 
+                ...prev, 
+                topic: 'Career Opportunity',
+                careerData: careerEvaluation.roleDetected ? { role: careerEvaluation.roleDetected } : {}
+            }));
+
+            // If user clicked or typed explicit apply command
+            if (lowerInput.includes('apply_career_chat') || lowerInput.includes('apply in chat') || lowerInput === 'apply now') {
+                setContext(prev => ({ ...prev, stage: 'career_capture', careerData: {} }));
+                return {
+                    text: "Let's get your career application registered for our HR team! First, what is your **Full Name**?",
+                    actions: []
+                };
+            }
+
+            return getCareerIntentResponse(careerEvaluation.roleDetected);
+        }
+
+        if (careerEvaluation.intent === 'CLARIFICATION') {
+            return getCareerClarificationResponse();
+        }
+
+        // =========================================================================
+        // --- STAGE: INTENT ANALYSIS (Domain Knowledge Base Rule Engine) ---
+        // =========================================================================
         const matchedRule = isiKnowledgeBase.rules.find(rule => 
             rule.triggers.some(trigger => lowerInput.includes(trigger))
         );
@@ -397,7 +508,9 @@ export const useChatBot = () => {
             };
         }
 
-        // --- STAGE 3: RULE-BASED FALLBACK (Original Logic) ---
+        // =========================================================================
+        // --- STAGE: RULE-BASED FALLBACK ---
+        // =========================================================================
         const objectionKey = Object.keys(isiKnowledgeBase.salesScripts.objectionHandlers).find(key => lowerInput.includes(key));
         if (objectionKey) {
             return {
@@ -406,17 +519,7 @@ export const useChatBot = () => {
             };
         }
 
-        // --- Check Job / Career Inquiries ---
-        if (lowerInput.includes('job') || lowerInput.includes('career') || lowerInput.includes('hiring') || lowerInput.includes('vacancy')) {
-            return {
-                text: "It looks like you're interested in career opportunities at ISI! Please visit our Careers page to view current openings or contact our HR department.",
-                actions: [
-                    { label: "Visit Careers Page", value: "/career", type: "link" }
-                ]
-            };
-        }
-
-        // --- Check Company Facts ---
+        // Check Company Facts
         if (lowerInput.includes('founded') || lowerInput.includes('history') || lowerInput.includes('who owns') || lowerInput.includes('founder')) {
             return {
                 text: `ISI India was founded in ${isiKnowledgeBase.company.founded} by ${isiKnowledgeBase.company.founder}. ${isiKnowledgeBase.company.mission}`,
@@ -424,7 +527,7 @@ export const useChatBot = () => {
             };
         }
 
-        // --- Check Verticals ---
+        // Check Verticals
         if (isiKnowledgeBase.verticals) {
             const matchedVertical = isiKnowledgeBase.verticals.find(v =>
                 lowerInput.includes(v.name.toLowerCase()) || lowerInput.includes(v.id.toLowerCase())
@@ -438,7 +541,7 @@ export const useChatBot = () => {
             }
         }
 
-        // --- Check Capabilities ---
+        // Check Capabilities
         if (isiKnowledgeBase.capabilities) {
             const matchedCapability = isiKnowledgeBase.capabilities.find(c =>
                 lowerInput.includes(c.name.toLowerCase())
@@ -482,7 +585,7 @@ export const useChatBot = () => {
 
         if (lowerInput.includes('academy program') || lowerInput.includes('academy courses') || lowerInput === 'academy programs') {
             return {
-                text: "ISI Academy features 7 comprehensive industry tracks:\n• Security Operations & SOC Analysis\n• Electronic & Integrated Systems (CCTV, VMS, Access Control)\n• Cyber-Physical Defense & IoT Security\n• AI Video Analytics & Surveillance\n• Executive Security Leadership & Risk Governance\n\nAll programs include practical lab simulations and a mandatory 3-Month Industry Residency across 6 TN campuses.",
+                text: "ISI Academy features 3 core tracks across 15 domains:\n• **Technology Programs** (AI, Cyber Security, IoT, Drones, Quantum & Data Center)\n• **Facility Management** (Hard FM, Soft FM, Smart Building IoT & MEP)\n• **Guarding Security** (PSARA Guarding, Fire Safety, C4i Command Center, VIP Protection)\n\nAll programs include practical lab simulations and a mandatory 3-Month Industry Residency across 6 TN campuses.",
                 actions: [
                     { label: "Talk to Advisor", value: "callback", type: "contact" },
                     { label: "Visit Academy Page", value: "/academy", type: "link" },
@@ -596,6 +699,28 @@ export const useChatBot = () => {
             } else if (action.value === 'details') {
                 setContext(prev => ({ ...prev, stage: 'closing', leadData: { name: undefined } }));
                 streamResponse("Great! Let's get you connected. What is your full name?");
+            } else if (action.value === 'apply_career_chat') {
+                setContext(prev => ({ ...prev, stage: 'career_capture', careerData: {} }));
+                streamResponse("Let's get your career application registered for our HR team! First, what is your **Full Name**?");
+            } else if (action.value === 'hr_contact_info') {
+                streamResponse(
+                    "You can reach the ISI Human Resources & Recruitment Department directly:\n\n• **Email**: hrms2026@isisecurity.in\n• **HR Helpline**: +91 77088 87878\n• **HQ Address**: ISI House, Chennai, Tamil Nadu\n• **Careers Portal**: [View Current Openings](/career)",
+                    [
+                        { label: "Apply in Chatbot", value: "apply_career_chat", type: "quickReply" },
+                        { label: "View Careers Page", value: "/career", type: "link" }
+                    ]
+                );
+            } else if (action.value === 'explore security services') {
+                setContext(prev => ({ ...prev, stage: 'discovery', topic: 'Services' }));
+                streamResponse(
+                    "We offer end-to-end security and infrastructure solutions across India:\n\n1. **Manned Guarding & PSARA Forces**\n2. **Electronic Security & AI Video Analytics**\n3. **Integrated Facility Management (Hard & Soft FM)**\n4. **24/7 Command Center (C4i) Monitoring**\n\nWhich service would you like to explore?",
+                    [
+                        { label: "Manned Guarding", value: "manned guarding", type: "quickReply" },
+                        { label: "Electronic Security", value: "electronic security", type: "quickReply" },
+                        { label: "Facility Management", value: "facility management", type: "quickReply" },
+                        { label: "Request Callback", value: "callback", type: "contact" }
+                    ]
+                );
             } else {
                 handleSendMessage(action.value);
             }
