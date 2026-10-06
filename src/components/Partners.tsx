@@ -9,6 +9,7 @@ import { PartnerFormData, PartnerFormErrors } from "@/types/partner";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
 import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
+import { submitBusinessLead } from '@/services/formService';
 
 const partnerTypes = [
   {
@@ -147,8 +148,18 @@ export const Partners = () => {
         message: formData.message.trim(),
       });
 
+      const res = await submitBusinessLead({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        requirement: `Partnership: ${formData.partnershipType} (${formData.company.trim()})`,
+        message: `Company: ${formData.company.trim()} | Designation: ${formData.designation.trim()} | Location: ${formData.location.trim()} | Note: ${formData.message.trim()}`,
+        formName: 'Partner_Applications',
+        jobQuestion: 'No'
+      });
+
       toast.success('Application submitted successfully!', {
-        description: 'Our partnership team has received your details and will contact you within 48 hours.',
+        description: `Lead Reference: ${res.leadNumber || 'ISI-Partner'}. Our partnership director will contact you within 24 hours.`,
         duration: 5000,
       });
 

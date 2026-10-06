@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { submitAcademyInquiry } from "@/services/formService";
 
 // Icon mapping helper
 const getCourseIcon = (iconName: string, className: string = "w-6 h-6") => {
@@ -111,7 +112,7 @@ export const CoursesPage = () => {
   };
 
   // Form Submit Handler
-  const handleEnquirySubmit = (e: React.FormEvent) => {
+  const handleEnquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.email) {
       toast.error("Please fill in all required fields.");
@@ -119,14 +120,28 @@ export const CoursesPage = () => {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await submitAcademyInquiry({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        program: formData.course || enquiryCourseTitle || "Technology Course Enquiry",
+        message: formData.message || "Enquiry from Courses page",
+        enquiryType: "Course Enquiry"
+      });
+
       setIsEnquiryOpen(false);
       setFormData({ name: "", email: "", phone: "", course: "", message: "" });
       toast.success("Enquiry Submitted Successfully!", {
         description: "Our CDAC-MEPZ admissions team will get in touch with you shortly."
       });
-    }, 800);
+    } catch (error) {
+      toast.error("Submission Error", {
+        description: "An unexpected error occurred. Please try again."
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const scrollToPortfolio = () => {

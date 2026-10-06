@@ -52,7 +52,7 @@ This report documents the baseline state (**Before Audit**) and post-optimizatio
   9. 🎯 Affiliate / Partner Ad Page (`AdCampaignLeads`)
   10. 🛡️ School Safety Audit Request (`SchoolSafetyLeads`)
 - **Jira Cloud Project Key:** `DLF` (Direct Lead Flow)
-- **Jira Board URL:** `https://praveenkumarraram.atlassian.net/jira/core/projects/DLF/board`
+- **Jira Board URL:** `https://isiwebadmin26.atlassian.net/jira/core/projects/DLF/board`
 - **CTA Validation Score:** `100% PASS`.
 
 ---

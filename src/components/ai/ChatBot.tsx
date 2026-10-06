@@ -74,7 +74,7 @@ export const ChatBot = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end pointer-events-none">
+        <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[100] flex flex-col items-end pointer-events-none">
 
             {/* Clean Professional Chat Window */}
             <div 

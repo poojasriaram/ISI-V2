@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 const ThankYouPage = () => {
+  const location = useLocation();
   const isCareer = location.state?.leadType === 'career' || location.state?.formType === 'Career Application';
   const userName = location.state?.name || "there";
   const leadNumber = location.state?.leadNumber;

@@ -144,8 +144,8 @@ export const Verticals = ({ isSidebar = false }: VerticalsProps) => {
                     <div className="flex flex-wrap justify-center gap-4">
                         <Button
                             size="lg"
-                            onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')}
-                            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold px-8 py-6 rounded-xl shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300"
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form'))}
+                            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold px-8 py-6 rounded-xl shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 cursor-pointer"
                         >
                             Speak with Industry Specialists
                             <ArrowRight className="w-5 h-5 ml-2" />
@@ -153,7 +153,8 @@ export const Verticals = ({ isSidebar = false }: VerticalsProps) => {
                         <Button
                             size="lg"
                             variant="outline"
-                            className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-6 rounded-xl transition-all duration-300"
+                            onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20request%20the%20ISI%20Corporate%20Brochure%20and%20vertical%20solutions%20overview.', '_blank')}
+                            className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-6 rounded-xl transition-all duration-300 cursor-pointer"
                         >
                             Download Brochure
                         </Button>

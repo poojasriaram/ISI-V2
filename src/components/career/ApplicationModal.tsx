@@ -115,7 +115,7 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
                 resumeBlob: resumeBase64
             });
 
-            trackFormSubmission('Career_Applications', true);
+            trackFormSubmission('Career_Applications', { analyticsOnly: true });
 
             toast.success('Application submitted successfully!', {
                 description: 'Our HR team has received your application with attached resume.',
@@ -136,7 +136,7 @@ export const ApplicationModal = ({ jobTitle, isOpen, onClose }: ApplicationModal
             setErrors({});
         } catch (error) {
             console.error('Career application error:', error);
-            trackFormSubmission('Career_Applications', false);
+            trackFormSubmission('Career_Applications', { analyticsOnly: true, failed: true });
             toast.error('Failed to submit application', {
                 description: 'Please check your connection and try again.',
                 duration: 7000,

@@ -89,13 +89,14 @@ export const Footer = () => {
       // Record subscription to Google Sheets and backend
       trackFormSubmission('Newsletter_Subscriptions', { email: newsletterEmail });
 
+      const apiUrl = import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api/subscribe` : '/api/subscribe';
       try {
-        await fetch('http://localhost:5000/api/subscribe', {
+        await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: newsletterEmail }),
         });
-      } catch { /* optional backend server */ }
+      } catch { /* optional backend server fallback */ }
 
       toast.success('Subscribed successfully!', {
         description: 'You will now receive our latest security updates directly in your inbox.',

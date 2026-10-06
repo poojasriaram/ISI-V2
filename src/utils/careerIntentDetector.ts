@@ -514,18 +514,15 @@ export function getCareerIntentResponse(roleDetected?: string): {
 } {
   const roleText = roleDetected ? ` for **${roleDetected}**` : '';
 
-  const text = `We have a dedicated **Careers & Talent Portal** for employment opportunities, job openings, and applications${roleText}!\n\n` +
-    `**Current Active Openings:**\n` +
-    CURRENT_CAREER_OPPORTUNITIES.map(job => `• **${job.title}** (${job.location})`).join('\n') +
-    `\n\nWould you like to submit an instant career application here in chat, or browse our full Careers portal?`;
+  const text = `Looking for career and job opportunities with ISI${roleText}? 🎯\n\n` +
+    `Redirecting you to our dedicated **Careers Section** where you can view all active job openings and submit your application!\n\n` +
+    `*If you are not redirected automatically, click the button below:*`;
 
   return {
     text,
     actions: [
-      { label: "Apply in Chatbot", value: "apply_career_chat", type: "quickReply" },
-      { label: "View Careers Page", value: "/career", type: "link" },
-      { label: "Submit CV / Resume", value: "apply_career_chat", type: "quickReply" },
-      { label: "HR Department", value: "hr_contact_info", type: "quickReply" }
+      { label: "Go to Careers Section ↗", value: "/career", type: "link" },
+      { label: "HR Department Helpline", value: "hr_contact_info", type: "quickReply" }
     ]
   };
 }
@@ -535,12 +532,12 @@ export function getCareerIntentResponse(roleDetected?: string): {
  */
 export function getCareerClarificationResponse(): {
   text: string;
-  actions: Array<{ label: string; value: string; type: 'quickReply' }>;
+  actions: Array<{ label: string; value: string; type: 'link' | 'quickReply' }>;
 } {
   return {
     text: "To make sure I guide you to the right department, could you please clarify your inquiry?\n\nAre you looking for **Career & Job Opportunities** to join ISI, or are you exploring our **Enterprise Security & Facility Services** for your organization?",
     actions: [
-      { label: "💼 Career & Job Opportunities", value: "i am looking for a job", type: "quickReply" },
+      { label: "💼 Go to Careers Section", value: "/career", type: "link" },
       { label: "🛡️ Enterprise Security Services", value: "explore security services", type: "quickReply" }
     ]
   };

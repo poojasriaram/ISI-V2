@@ -469,7 +469,7 @@ export const Header = () => {
                   {item.name === "About Us" && (
                     <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 flex flex-col gap-1">
                       {aboutList.map((a) => (
-                        <a key={a.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                        <a key={a.name} href={a.href} onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {a.name}
                         </a>
                       ))}
@@ -481,7 +481,7 @@ export const Header = () => {
                         <div key={cat} className="mb-2 last:mb-0">
                           <div className="px-3 py-1 text-[10px] font-bold text-primary/60 uppercase tracking-widest">{cat}</div>
                           {offeringsList.filter(off => off.category === cat).map(off => (
-                            <a key={off.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(off.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                            <a key={off.name} href={off.href} onClick={(e) => { e.preventDefault(); handleDropdownItemClick(off.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                               {off.name}
                             </a>
                           ))}
@@ -492,7 +492,7 @@ export const Header = () => {
                   {item.name === "Capabilities" && (
                     <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
                       {capabilitiesList.map((c) => (
-                        <a key={c.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(c.href || `/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                        <a key={c.name} href={c.href || `/capabilities#${c.id}`} onClick={(e) => { e.preventDefault(); handleDropdownItemClick(c.href || `/capabilities#${c.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {c.name}
                         </a>
                       ))}
@@ -504,7 +504,7 @@ export const Header = () => {
                         <div key={cat} className="mb-2 last:mb-0">
                           <div className="px-3 py-1 text-[10px] font-bold text-primary/60 uppercase tracking-widest">{cat}</div>
                           {academyList.filter(a => a.category === cat).map(a => (
-                            <a key={a.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                            <a key={a.name} href={a.href} onClick={(e) => { e.preventDefault(); handleDropdownItemClick(a.href); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                               {a.name}
                             </a>
                           ))}
@@ -515,7 +515,7 @@ export const Header = () => {
                   {item.name === "Verticals" && (
                     <div className="pl-4 sm:pl-6 bg-muted/20 border-l-2 border-primary/20 my-1 grid grid-cols-2 gap-0.5 sm:gap-1 max-h-60 overflow-y-auto">
                       {verticalsList.map(v => (
-                        <a key={v.name} href="#" onClick={(e) => { e.preventDefault(); handleDropdownItemClick(`/verticals#${v.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
+                        <a key={v.name} href={`/verticals#${v.id}`} onClick={(e) => { e.preventDefault(); handleDropdownItemClick(`/verticals#${v.id}`); }} className="block py-1.5 sm:py-2 px-3 sm:px-4 text-xs text-muted-foreground hover:text-primary transition-colors">
                           {v.name}
                         </a>
                       ))}

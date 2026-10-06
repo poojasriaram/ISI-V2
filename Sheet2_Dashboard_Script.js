@@ -71,14 +71,23 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
     var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
     var eSheet = db.getSheetByName("Engagement_Metrics") || db.getSheetByName("EngagementMetrics");
     var ubSheet = db.getSheetByName("User_Behavior_Library") || db.getSheetByName("UserBehaviorLibrary");
+    var sSheet = db.getSheetByName("Session_Intelligence") || db.getSheetByName("SessionIntelligence");
+    var ipSheet = db.getSheetByName("IP_Network_Intelligence") || db.getSheetByName("IPNetworkIntelligence");
+    var secSheet = db.getSheetByName("Security_Telemetry") || db.getSheetByName("SecurityTelemetry");
 
     var tDataRaw = (tSheet && tSheet.getLastRow() > 0) ? tSheet.getDataRange().getValues() : [];
     var eDataRaw = (eSheet && eSheet.getLastRow() > 0) ? eSheet.getDataRange().getValues() : [];
     var ubDataRaw = (ubSheet && ubSheet.getLastRow() > 0) ? ubSheet.getDataRange().getValues() : [];
+    var sDataRaw = (sSheet && sSheet.getLastRow() > 0) ? sSheet.getDataRange().getValues() : [];
+    var ipDataRaw = (ipSheet && ipSheet.getLastRow() > 0) ? ipSheet.getDataRange().getValues() : [];
+    var secDataRaw = (secSheet && secSheet.getLastRow() > 0) ? secSheet.getDataRange().getValues() : [];
 
     // ── LOCALHOST SANITIZATION ENGINE ──
     var tData = filterLocalhostData(tDataRaw);
     var ubData = filterLocalhostData(ubDataRaw);
+    var sData = filterLocalhostData(sDataRaw);
+    var ipData = filterLocalhostData(ipDataRaw);
+    var secData = filterLocalhostData(secDataRaw);
     
     // Cross-link filter Engagement by Session IDs from non-localhost traffic
     var validSessions = new Set();
@@ -98,7 +107,7 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
     var devRecordsPurged = (tDataRaw.length - tData.length) + (ubDataRaw.length - ubData.length);
     // ──────────────────────────────────
 
-    // Build all 16 tabs with standardized database names
+    // Build all 16 core tabs with standardized database names
     try { buildMissionControlCenter(tData, eData, ubData, db, devRecordsPurged); } catch (err) { console.error("Tab 1 Error: " + err.toString()); }
     try { buildExecutiveDashboard(tData, eData); } catch (err) { console.error("Tab 2 Error: " + err.toString()); }
     try { buildAdPerformanceIntelligenceSheet(tData, db); } catch (err) { console.error("Tab 3 Error: " + err.toString()); }
@@ -116,7 +125,14 @@ function PULL_DATA_AND_BUILD_ALL_DASHBOARDS() {
     try { buildFunnelDropOffSheet(tData, db); } catch (err) { console.error("Tab 15 Error: " + err.toString()); }
     try { buildLeadScoringEngine(tData, eData); } catch (err) { console.error("Tab 16 Error: " + err.toString()); }
 
-    if (ui) ui.alert("✅ SUCCESS! 16 Database-Formatted Analytics Tabs Built & Sanitized.\n\n" + devRecordsPurged + " localhost records were purged from this session.");
+    // ════ ISI ADVANCED WEBSITE INTELLIGENCE MODULES (TABS 17 - 21) ════
+    try { buildSessionIntelligenceSheet(sData, tData, ubData, db); } catch (err) { console.error("Tab 17 Error: " + err.toString()); }
+    try { buildTrafficIntelligenceSheet(sData, tData, db); } catch (err) { console.error("Tab 18 Error: " + err.toString()); }
+    try { buildGeoIntelligenceSheet(sData, tData, db); } catch (err) { console.error("Tab 19 Error: " + err.toString()); }
+    try { buildTimeZoneIntelligenceSheet(sData, tData); } catch (err) { console.error("Tab 20 Error: " + err.toString()); }
+    try { buildIpNetworkIntelligenceSheet(ipData, secData, tData, db); } catch (err) { console.error("Tab 21 Error: " + err.toString()); }
+
+    if (ui) ui.alert("✅ SUCCESS! All 21 Analytics & Intelligence Tabs Built & Sanitized.\n\n" + devRecordsPurged + " localhost records were purged from this session.");
 }
 
 /** 
@@ -890,12 +906,19 @@ function buildLeadScoringEngine(tData, eData) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLEANUP TRIGGERS & UI SETUP
+// CLEANUP TRIGGERS & UI SETUP (SHEET 2 NEVER MAINTAINS EMAIL TRIGGERS)
 // ══════════════════════════════════════════════════════════════════════════════
 function REMOVE_ALL_TRIGGERS() {
     var triggers = ScriptApp.getProjectTriggers();
+    var count = triggers.length;
     triggers.forEach(function(t) { ScriptApp.deleteTrigger(t); });
-    Browser.msgBox("✅ All automated email triggers removed! Duplicate emails from old triggers are disabled.");
+    var msg = "✅ Cleared " + count + " active triggers from Sheet 2.\n\nAll background email triggers on Sheet 2 are disabled. Automated reports are handled strictly by Sheet 1 (AppsScript_Webhook.js).";
+    console.log(msg);
+    try {
+        SpreadsheetApp.getUi().alert("✅ Triggers Cleared (Sheet 2)", msg, SpreadsheetApp.getUi().ButtonSet.OK);
+    } catch(e) {
+        try { Browser.msgBox(msg); } catch(bErr) {}
+    }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1126,6 +1149,694 @@ function htmlToPlainText(html) {
         .trim();
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// ════ ISI ADVANCED WEBSITE INTELLIGENCE MODULES (TABS 17 - 21) ═══════════════
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Tab 17: Session Intelligence ──────────────────────────────────────────────
+function buildSessionIntelligenceSheet(sData, tData, ubData, db) {
+    var sh = getOrCreateTab("Session_Intelligence");
+    styleTitle(sh, "SESSION INTELLIGENCE & ENGAGEMENT DASHBOARD", 10, C.pu);
+    sh.getRange("A1:Z120").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 200, 150, 150, 150, 150, 220, 160, 20]);
+
+    var sessions = [];
+    if (sData && sData.length > 1) {
+        var sHead = sData[0];
+        var sIdCol = sHead.indexOf("Session ID");
+        var vIdCol = sHead.indexOf("Visitor ID");
+        var durCol = sHead.indexOf("Duration (sec)");
+        var pvCol = sHead.indexOf("Page Views");
+        var entryCol = sHead.indexOf("Entry Page");
+        var exitCol = sHead.indexOf("Exit Page");
+        var srcCol = sHead.indexOf("Traffic Source");
+        var chanCol = sHead.indexOf("Traffic Channel");
+        var devCol = sHead.indexOf("Device");
+        var bounceCol = sHead.indexOf("Is Bounce");
+        var convCol = sHead.indexOf("Is Converted");
+        var cityCol = sHead.indexOf("City");
+        var leadTypeCol = sHead.indexOf("Lead Type");
+        var timeCol = sHead.indexOf("Timestamp");
+
+        for (var i = 1; i < sData.length; i++) {
+            var row = sData[i];
+            sessions.push({
+                sessionId: String(row[sIdCol] || ("SESS_" + i)),
+                visitorId: String(row[vIdCol] || ("VIS_" + i)),
+                duration: Number(row[durCol]) || 0,
+                pageViews: Number(row[pvCol]) || 1,
+                entryPage: String(row[entryCol] || "/"),
+                exitPage: String(row[exitCol] || "/"),
+                source: String(row[srcCol] || "Direct"),
+                channel: String(row[chanCol] || "Direct"),
+                device: String(row[devCol] || "Desktop"),
+                isBounce: String(row[bounceCol]) === "1" || String(row[bounceCol]).toLowerCase() === "true",
+                isConverted: String(row[convCol]) === "1" || String(row[convCol]).toLowerCase() === "true",
+                city: String(row[cityCol] || "Unknown"),
+                leadType: String(row[leadTypeCol] || ""),
+                timestamp: String(row[timeCol] || "")
+            });
+        }
+    } else if (tData && tData.length > 1) {
+        var tHead = tData[0];
+        var sIdCol = tHead.indexOf("Session ID");
+        var vIdCol = tHead.indexOf("Visitor ID");
+        var pathCol = tHead.indexOf("Page Path");
+        var srcCol = tHead.indexOf("Traffic Source");
+        var locCol = tHead.indexOf("IP Location");
+        var timeCol = tHead.indexOf("Timestamp");
+
+        var sessMap = {};
+        for (var i = 1; i < tData.length; i++) {
+            var row = tData[i];
+            var sid = String(row[sIdCol] || ("SESS_" + i));
+            if (!sessMap[sid]) {
+                sessMap[sid] = {
+                    sessionId: sid,
+                    visitorId: String(row[vIdCol] || ("VIS_" + i)),
+                    duration: 45,
+                    pageViews: 0,
+                    pages: [],
+                    source: String(row[srcCol] || "Direct"),
+                    channel: String(row[srcCol] || "").toLowerCase().includes("google") ? "Organic Search" : "Direct",
+                    device: "Desktop",
+                    isBounce: false,
+                    isConverted: false,
+                    city: String(row[locCol] || "Unknown").split(",")[0].trim(),
+                    leadType: "",
+                    timestamp: String(row[timeCol] || "")
+                };
+            }
+            sessMap[sid].pageViews++;
+            sessMap[sid].pages.push(String(row[pathCol] || "/"));
+        }
+        Object.keys(sessMap).forEach(function(sid) {
+            var item = sessMap[sid];
+            item.entryPage = item.pages[0] || "/";
+            item.exitPage = item.pages[item.pages.length - 1] || item.entryPage;
+            item.isBounce = item.pageViews <= 1;
+            sessions.push(item);
+        });
+    }
+
+    if (sessions.length === 0) {
+        sh.getRange(4, 2).setValue("Waiting for session intelligence data...").setFontColor(C.m);
+        return;
+    }
+
+    var totalSessions = sessions.length;
+    var uniqueVisSet = new Set();
+    var totalDuration = 0;
+    var bounces = 0;
+    var convertedCount = 0;
+    var entryPages = {};
+    var durationBuckets = { "< 30s": 0, "30s - 2m": 0, "2m - 5m": 0, "> 5m": 0 };
+    var devices = { Desktop: 0, Mobile: 0, Tablet: 0 };
+
+    sessions.forEach(function(s) {
+        uniqueVisSet.add(s.visitorId);
+        totalDuration += s.duration;
+        if (s.isBounce) bounces++;
+        if (s.isConverted) convertedCount++;
+
+        entryPages[s.entryPage] = (entryPages[s.entryPage] || 0) + 1;
+
+        if (s.duration < 30) durationBuckets["< 30s"]++;
+        else if (s.duration <= 120) durationBuckets["30s - 2m"]++;
+        else if (s.duration <= 300) durationBuckets["2m - 5m"]++;
+        else durationBuckets["> 5m"]++;
+
+        var dKey = s.device.toLowerCase();
+        if (dKey.includes("mobile") || dKey.includes("phone")) devices.Mobile++;
+        else if (dKey.includes("tablet") || dKey.includes("ipad")) devices.Tablet++;
+        else devices.Desktop++;
+    });
+
+    var avgSecs = Math.round(totalDuration / totalSessions);
+    var avgDurationFormatted = Math.floor(avgSecs / 60) + "m " + (avgSecs % 60) + "s";
+    var bounceRate = Math.round((bounces / totalSessions) * 100) + "%";
+    var conversionRate = Math.round((convertedCount / totalSessions) * 100) + "%";
+
+    var drawIntelStat = function(row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(20);
+    };
+
+    drawIntelStat(4, 2, "TOTAL SESSIONS", totalSessions.toLocaleString(), 1, C.pu);
+    drawIntelStat(4, 3, "UNIQUE VISITORS", uniqueVisSet.size.toLocaleString(), 1, C.c);
+    drawIntelStat(4, 4, "AVG DURATION", avgDurationFormatted, 1, C.g);
+    drawIntelStat(4, 5, "BOUNCE RATE", bounceRate, 1, C.o);
+    drawIntelStat(4, 6, "CONVERSIONS", convertedCount + " (" + conversionRate + ")", 1, "#10b981");
+
+    var entryArr = Object.keys(entryPages).map(function(p) {
+        var cnt = entryPages[p];
+        var pct = Math.round((cnt / totalSessions) * 100) + "%";
+        return [p, cnt, pct];
+    }).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 7);
+
+    sh.getRange(8, 2, 1, 3).merge().setValue("🏆 Top Landing / Entry Pages").setBackground(C.pu).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 2, 1, 3).setValues([["Entry Path", "Sessions", "Share %"]]).setBackground(C.p).setFontWeight("bold");
+    if (entryArr.length > 0) {
+        sh.getRange(10, 2, entryArr.length, 3).setValues(entryArr).setBackground(C.r1);
+        for (var r = 0; r < entryArr.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, 3).setBackground(C.r2); }
+    }
+
+    var durArr = Object.keys(durationBuckets).map(function(k) {
+        return [k, durationBuckets[k]];
+    });
+    sh.getRange(8, 5, 1, 2).merge().setValue("⏱ Session Duration Buckets").setBackground(C.t).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 5, 1, 2).setValues([["Duration Range", "Sessions"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 5, durArr.length, 2).setValues(durArr).setBackground(C.r1);
+
+    var devArr = Object.keys(devices).map(function(k) {
+        return [k, devices[k]];
+    });
+    sh.getRange(15, 5, 1, 2).merge().setValue("📱 Device Category").setBackground(C.c).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(16, 5, 1, 2).setValues([["Device", "Sessions"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(17, 5, devArr.length, 2).setValues(devArr).setBackground(C.r1);
+
+    try {
+        var c1 = sh.newChart().setChartType(Charts.ChartType.BAR)
+            .addRange(sh.getRange(9, 2, entryArr.length + 1, 2))
+            .setPosition(8, 7, 0, 0)
+            .setOption("title", "Top Entry Pages")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 380).setOption("height", 240).build();
+        sh.insertChart(c1);
+    } catch(e) { console.error("Chart Session1: " + e.toString()); }
+
+    try {
+        var c2 = sh.newChart().setChartType(Charts.ChartType.PIE)
+            .addRange(sh.getRange(16, 5, devArr.length + 1, 2))
+            .setPosition(19, 7, 0, 0)
+            .setOption("title", "Device Share")
+            .setOption("pieHole", 0.4)
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 380).setOption("height", 220).build();
+        sh.insertChart(c2);
+    } catch(e) { console.error("Chart Session2: " + e.toString()); }
+
+    sh.getRange(25, 2, 1, 7).merge().setValue("🎯 High-Intent & Converted Sessions Telemetry").setBackground(C.t).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(26, 2, 1, 7).setValues([["Session ID", "Visitor ID", "Entry Page", "Source", "Duration", "City", "Converted"]]).setBackground(C.p).setFontWeight("bold");
+    var recentRows = sessions.slice(-15).reverse().map(function(s) {
+        return [s.sessionId.substring(0, 18), s.visitorId.substring(0, 18), s.entryPage, s.source, s.duration + "s", s.city, s.isConverted ? "YES (Lead)" : "Browsing"];
+    });
+    if (recentRows.length > 0) {
+        sh.getRange(27, 2, recentRows.length, 7).setValues(recentRows).setBackground(C.r1);
+        for (var r = 0; r < recentRows.length; r++) { if (r % 2 !== 0) sh.getRange(27 + r, 2, 1, 7).setBackground(C.r2); }
+    }
+}
+
+// ── Tab 18: Traffic Intelligence ──────────────────────────────────────────────
+function buildTrafficIntelligenceSheet(sData, tData, db) {
+    var sh = getOrCreateTab("Traffic_Intelligence");
+    styleTitle(sh, "TRAFFIC INTELLIGENCE & ACQUISITION ATTRIBUTION", 10, "#003380");
+    sh.getRange("A1:Z120").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 200, 140, 130, 130, 130, 220, 160, 20]);
+
+    if (!tData || tData.length < 2) {
+        sh.getRange(4, 2).setValue("Waiting for traffic analytics data...").setFontColor(C.m);
+        return;
+    }
+
+    var tHead = tData[0];
+    var pathCol = tHead.indexOf("Page Path");
+    var srcCol = tHead.indexOf("Traffic Source");
+    var utmSrcCol = tHead.indexOf("UTM Source");
+    var utmCampCol = tHead.indexOf("UTM Campaign");
+    var utmMedCol = tHead.indexOf("UTM Medium");
+
+    var totalVisits = tData.length - 1;
+    var channels = {
+        "Direct": { pageviews: 0 },
+        "Organic Search": { pageviews: 0 },
+        "Google Ads / Paid": { pageviews: 0 },
+        "Social Media": { pageviews: 0 },
+        "Referral": { pageviews: 0 },
+        "Campaign / Other": { pageviews: 0 }
+    };
+
+    var campaigns = {};
+    var serviceVisits = {
+        "Physical Security Guarding": 0,
+        "Executive Protection / VIP": 0,
+        "Electronic Security & CCTV": 0,
+        "Event Security Management": 0,
+        "Security Risk Audit": 0,
+        "Academy / Guard Training": 0,
+        "Contact / Consultation": 0
+    };
+
+    for (var i = 1; i < tData.length; i++) {
+        var row = tData[i];
+        var path = String(row[pathCol] || "").toLowerCase();
+        var src = String(row[srcCol] || "").toLowerCase();
+        var utmSrc = String(utmSrcCol > -1 ? row[utmSrcCol] : "").toLowerCase();
+        var utmCamp = String(utmCampCol > -1 ? row[utmCampCol] : "");
+
+        var chan = "Direct";
+        if (utmSrc.includes("google") && (utmSrc.includes("cpc") || utmSrc.includes("ads") || String(row[utmMedCol]).includes("cpc"))) {
+            chan = "Google Ads / Paid";
+        } else if (src.includes("google") || src.includes("bing") || src.includes("yahoo") || utmSrc.includes("organic")) {
+            chan = "Organic Search";
+        } else if (src.includes("facebook") || src.includes("instagram") || src.includes("linkedin") || src.includes("twitter") || src.includes("youtube")) {
+            chan = "Social Media";
+        } else if (src.includes("referral") || (src && !src.includes("direct") && src.includes("."))) {
+            chan = "Referral";
+        } else if (utmCamp) {
+            chan = "Campaign / Other";
+        }
+        channels[chan].pageviews++;
+
+        if (utmCamp) {
+            campaigns[utmCamp] = (campaigns[utmCamp] || 0) + 1;
+        }
+
+        if (path.includes("guard") || path.includes("manned") || path.includes("physical")) serviceVisits["Physical Security Guarding"]++;
+        else if (path.includes("executive") || path.includes("vip") || path.includes("bodyguard") || path.includes("armed")) serviceVisits["Executive Protection / VIP"]++;
+        else if (path.includes("electronic") || path.includes("cctv") || path.includes("surveillance") || path.includes("ai")) serviceVisits["Electronic Security & CCTV"]++;
+        else if (path.includes("event")) serviceVisits["Event Security Management"]++;
+        else if (path.includes("audit") || path.includes("consult")) serviceVisits["Security Risk Audit"]++;
+        else if (path.includes("academy") || path.includes("training")) serviceVisits["Academy / Guard Training"]++;
+        else if (path.includes("contact") || path.includes("lead")) serviceVisits["Contact / Consultation"]++;
+    }
+
+    var drawIntelStat = function(row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(20);
+    };
+
+    var directCount = channels["Direct"].pageviews;
+    var directPct = Math.round((directCount / totalVisits) * 100) + "%";
+    var paidCount = channels["Google Ads / Paid"].pageviews;
+    var organicCount = channels["Organic Search"].pageviews;
+
+    drawIntelStat(4, 2, "TOTAL PAGEVIEWS", totalVisits.toLocaleString(), 1, "#003380");
+    drawIntelStat(4, 3, "DIRECT TRAFFIC", directCount + " (" + directPct + ")", 1, C.pu);
+    drawIntelStat(4, 4, "ORGANIC SEARCH", organicCount.toLocaleString(), 1, C.g);
+    drawIntelStat(4, 5, "PAID / ADS", paidCount.toLocaleString(), 1, C.o);
+    drawIntelStat(4, 6, "ACTIVE CAMPAIGNS", Object.keys(campaigns).length.toLocaleString(), 1, C.c);
+
+    var chanRows = Object.keys(channels).map(function(k) {
+        var pv = channels[k].pageviews;
+        var share = totalVisits > 0 ? Math.round((pv / totalVisits) * 100) + "%" : "0%";
+        return [k, pv, share];
+    }).sort(function(a, b) { return b[1] - a[1]; });
+
+    sh.getRange(8, 2, 1, 3).merge().setValue("🚦 Acquisition Channel Breakdown").setBackground("#003380").setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 2, 1, 3).setValues([["Channel", "Pageviews", "Traffic Share"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 2, chanRows.length, 3).setValues(chanRows).setBackground(C.r1);
+    for (var r = 0; r < chanRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, 3).setBackground(C.r2); }
+
+    var servRows = Object.keys(serviceVisits).map(function(k) {
+        return [k, serviceVisits[k]];
+    }).sort(function(a, b) { return b[1] - a[1]; });
+
+    sh.getRange(8, 5, 1, 2).merge().setValue("🛡 High-Intent Service Views").setBackground(C.pu).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 5, 1, 2).setValues([["Security Service", "Views"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 5, servRows.length, 2).setValues(servRows).setBackground(C.r1);
+    for (var r = 0; r < servRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 5, 1, 2).setBackground(C.r2); }
+
+    try {
+        var c1 = sh.newChart().setChartType(Charts.ChartType.COLUMN)
+            .addRange(sh.getRange(9, 2, chanRows.length + 1, 2))
+            .setPosition(8, 7, 0, 0)
+            .setOption("title", "Channel Volume")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 380).setOption("height", 240).build();
+        sh.insertChart(c1);
+    } catch(e) { console.error("Chart Traffic1: " + e.toString()); }
+
+    try {
+        var c2 = sh.newChart().setChartType(Charts.ChartType.BAR)
+            .addRange(sh.getRange(9, 5, servRows.length + 1, 2))
+            .setPosition(19, 7, 0, 0)
+            .setOption("title", "Services Interest Radar")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 380).setOption("height", 240).build();
+        sh.insertChart(c2);
+    } catch(e) { console.error("Chart Traffic2: " + e.toString()); }
+}
+
+// ── Tab 19: Geo Intelligence ──────────────────────────────────────────────────
+function buildGeoIntelligenceSheet(sData, tData, db) {
+    var sh = getOrCreateTab("Geo_Intelligence");
+    styleTitle(sh, "GEO INTELLIGENCE & REGIONAL FOOTPRINT", 10, "#0d9488");
+    sh.getRange("A1:Z120").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 200, 150, 140, 140, 140, 220, 160, 20]);
+
+    if (!tData || tData.length < 2) {
+        sh.getRange(4, 2).setValue("Waiting for geographical traffic data...").setFontColor(C.m);
+        return;
+    }
+
+    var tHead = tData[0];
+    var locCol = tHead.indexOf("IP Location");
+    if (locCol === -1) locCol = tHead.indexOf("Location");
+
+    var countries = {};
+    var states = {
+        "Telangana (Hyderabad Focus)": 0,
+        "Andhra Pradesh": 0,
+        "Karnataka (Bengaluru)": 0,
+        "Maharashtra (Mumbai/Pune)": 0,
+        "Delhi NCR": 0,
+        "Tamil Nadu (Chennai)": 0,
+        "Other States / International": 0
+    };
+    var cities = {};
+
+    var totalRecords = tData.length - 1;
+    var indiaCount = 0;
+
+    for (var i = 1; i < tData.length; i++) {
+        var rawLoc = String(tData[i][locCol] || "India").trim();
+        var parts = rawLoc.split(",").map(function(s) { return s.trim(); });
+        var city = parts[0] || "Unknown";
+        var country = parts.length > 1 ? parts[parts.length - 1] : "India";
+        if (country.toLowerCase() === "in" || country.toLowerCase() === "india") {
+            country = "India";
+            indiaCount++;
+        }
+
+        countries[country] = (countries[country] || 0) + 1;
+        cities[city] = (cities[city] || 0) + 1;
+
+        var locLower = rawLoc.toLowerCase();
+        if (locLower.includes("hyderabad") || locLower.includes("telangana") || locLower.includes("secunderabad") || locLower.includes("cyberabad")) {
+            states["Telangana (Hyderabad Focus)"]++;
+        } else if (locLower.includes("andhra") || locLower.includes("visakhapatnam") || locLower.includes("vijayawada") || locLower.includes("guntur")) {
+            states["Andhra Pradesh"]++;
+        } else if (locLower.includes("bengaluru") || locLower.includes("bangalore") || locLower.includes("karnataka")) {
+            states["Karnataka (Bengaluru)"]++;
+        } else if (locLower.includes("mumbai") || locLower.includes("pune") || locLower.includes("maharashtra")) {
+            states["Maharashtra (Mumbai/Pune)"]++;
+        } else if (locLower.includes("delhi") || locLower.includes("noida") || locLower.includes("gurugram") || locLower.includes("gurgaon")) {
+            states["Delhi NCR"]++;
+        } else if (locLower.includes("chennai") || locLower.includes("tamil")) {
+            states["Tamil Nadu (Chennai)"]++;
+        } else {
+            states["Other States / International"]++;
+        }
+    }
+
+    var drawIntelStat = function(row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(20);
+    };
+
+    var domesticPct = Math.round((indiaCount / totalRecords) * 100) + "%";
+    var telanganaCount = states["Telangana (Hyderabad Focus)"];
+    var telanganaPct = Math.round((telanganaCount / totalRecords) * 100) + "%";
+
+    drawIntelStat(4, 2, "DOMESTIC TRAFFIC", indiaCount + " (" + domesticPct + ")", 1, "#0d9488");
+    drawIntelStat(4, 3, "TELANGANA / HYD", telanganaCount + " (" + telanganaPct + ")", 1, C.pu);
+    drawIntelStat(4, 4, "COUNTRIES SERVED", Object.keys(countries).length.toLocaleString(), 1, C.c);
+    drawIntelStat(4, 5, "DISTINCT CITIES", Object.keys(cities).length.toLocaleString(), 1, C.g);
+    drawIntelStat(4, 6, "INTERNATIONAL", (totalRecords - indiaCount).toLocaleString(), 1, C.o);
+
+    var stateRows = Object.keys(states).map(function(k) {
+        var cnt = states[k];
+        var pct = Math.round((cnt / totalRecords) * 100) + "%";
+        return [k, cnt, pct];
+    }).sort(function(a, b) { return b[1] - a[1]; });
+
+    sh.getRange(8, 2, 1, 3).merge().setValue("📍 Key Indian Operating Hubs").setBackground("#0d9488").setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 2, 1, 3).setValues([["Region / Hub", "Visits", "Share %"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 2, stateRows.length, 3).setValues(stateRows).setBackground(C.r1);
+    for (var r = 0; r < stateRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, 3).setBackground(C.r2); }
+
+    var cityRows = Object.keys(cities).map(function(k) {
+        var cnt = cities[k];
+        var pct = Math.round((cnt / totalRecords) * 100) + "%";
+        return [k, cnt, pct];
+    }).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 10);
+
+    sh.getRange(8, 5, 1, 3).merge().setValue("🏙 Top Metropolitan Inquiries").setBackground(C.pu).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 5, 1, 3).setValues([["City / Metro", "Visits", "Share %"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 5, cityRows.length, 3).setValues(cityRows).setBackground(C.r1);
+    for (var r = 0; r < cityRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 5, 1, 3).setBackground(C.r2); }
+
+    try {
+        var c1 = sh.newChart().setChartType(Charts.ChartType.COLUMN)
+            .addRange(sh.getRange(9, 2, stateRows.length + 1, 2))
+            .setPosition(19, 2, 0, 0)
+            .setOption("title", "Regional Distribution (India)")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 420).setOption("height", 240).build();
+        sh.insertChart(c1);
+    } catch(e) { console.error("Chart Geo1: " + e.toString()); }
+
+    try {
+        var c2 = sh.newChart().setChartType(Charts.ChartType.BAR)
+            .addRange(sh.getRange(9, 5, Math.min(8, cityRows.length + 1), 2))
+            .setPosition(19, 5, 0, 0)
+            .setOption("title", "Top Metro Hubs")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 420).setOption("height", 240).build();
+        sh.insertChart(c2);
+    } catch(e) { console.error("Chart Geo2: " + e.toString()); }
+}
+
+// ── Tab 20: Timezone Intelligence ─────────────────────────────────────────────
+function buildTimeZoneIntelligenceSheet(sData, tData) {
+    var sh = getOrCreateTab("Timezone_Intelligence");
+    styleTitle(sh, "TIMEZONE & TEMPORAL TRAFFIC INTELLIGENCE", 10, "#4f46e5");
+    sh.getRange("A1:Z120").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 180, 140, 130, 130, 130, 220, 160, 20]);
+
+    var data = (tData && tData.length > 1) ? tData : sData;
+    if (!data || data.length < 2) {
+        sh.getRange(4, 2).setValue("Waiting for temporal traffic data...").setFontColor(C.m);
+        return;
+    }
+
+    var timeCol = data[0].indexOf("Timestamp");
+    if (timeCol === -1) timeCol = data[0].indexOf("Started UTC");
+
+    var hours = new Array(24).fill(0);
+    var days = { "Monday": 0, "Tuesday": 0, "Wednesday": 0, "Thursday": 0, "Friday": 0, "Saturday": 0, "Sunday": 0 };
+    var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var businessHoursTraffic = 0;
+    var eveningTraffic = 0;
+    var nightTraffic = 0;
+    var totalRecords = data.length - 1;
+
+    for (var i = 1; i < data.length; i++) {
+        var rawTime = data[i][timeCol];
+        var d = rawTime ? new Date(rawTime) : new Date();
+        var hr = d.getHours();
+        if (isNaN(hr)) hr = 12;
+
+        hours[hr]++;
+        var dayName = dayNames[d.getDay()] || "Wednesday";
+        days[dayName]++;
+
+        if (hr >= 9 && hr < 18) businessHoursTraffic++;
+        else if (hr >= 18 && hr < 24) eveningTraffic++;
+        else nightTraffic++;
+    }
+
+    var drawIntelStat = function(row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(20);
+    };
+
+    var peakHourIdx = 0, peakHourVal = 0;
+    for (var h = 0; h < 24; h++) {
+        if (hours[h] > peakHourVal) {
+            peakHourVal = hours[h];
+            peakHourIdx = h;
+        }
+    }
+    var peakHourStr = String(peakHourIdx).padStart(2, "0") + ":00 - " + String((peakHourIdx + 1) % 24).padStart(2, "0") + ":00 IST";
+    var bizPct = Math.round((businessHoursTraffic / totalRecords) * 100) + "%";
+
+    drawIntelStat(4, 2, "PRIMARY TIMEZONE", "Asia/Kolkata (IST)", 1, "#4f46e5");
+    drawIntelStat(4, 3, "PEAK TRAFFIC HOUR", peakHourStr, 1, C.o);
+    drawIntelStat(4, 4, "BUSINESS HOURS (9-18)", businessHoursTraffic + " (" + bizPct + ")", 1, C.g);
+    drawIntelStat(4, 5, "EVENING (18-24)", eveningTraffic.toLocaleString(), 1, C.c);
+    drawIntelStat(4, 6, "NIGHT / OFF-PEAK", nightTraffic.toLocaleString(), 1, C.t);
+
+    var hourRows = [];
+    for (var h = 0; h < 24; h++) {
+        var label = String(h).padStart(2, "0") + ":00";
+        var count = hours[h];
+        var pct = totalRecords > 0 ? Math.round((count / totalRecords) * 100) + "%" : "0%";
+        hourRows.push([label, count, pct]);
+    }
+
+    sh.getRange(8, 2, 1, 3).merge().setValue("🕒 24-Hour Traffic Distribution (IST)").setBackground("#4f46e5").setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 2, 1, 3).setValues([["Hour (IST)", "Sessions", "Share %"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 2, hourRows.length, 3).setValues(hourRows).setBackground(C.r1);
+    for (var r = 0; r < hourRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, 3).setBackground(C.r2); }
+
+    var dayRows = Object.keys(days).map(function(k) {
+        var cnt = days[k];
+        var pct = totalRecords > 0 ? Math.round((cnt / totalRecords) * 100) + "%" : "0%";
+        return [k, cnt, pct];
+    });
+
+    sh.getRange(8, 5, 1, 3).merge().setValue("📅 Day-of-Week Velocity").setBackground(C.t).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 5, 1, 3).setValues([["Day of Week", "Visits", "Share %"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 5, dayRows.length, 3).setValues(dayRows).setBackground(C.r1);
+    for (var r = 0; r < dayRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 5, 1, 3).setBackground(C.r2); }
+
+    try {
+        var c1 = sh.newChart().setChartType(Charts.ChartType.COLUMN)
+            .addRange(sh.getRange(9, 2, hourRows.length + 1, 2))
+            .setPosition(18, 5, 0, 0)
+            .setOption("title", "24-Hour Traffic Curve (IST)")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 420).setOption("height", 240).build();
+        sh.insertChart(c1);
+    } catch(e) { console.error("Chart Timezone1: " + e.toString()); }
+}
+
+// ── Tab 21: IP & Network Intelligence ─────────────────────────────────────────
+function buildIpNetworkIntelligenceSheet(ipData, secData, tData, db) {
+    var sh = getOrCreateTab("IP_Network_Intelligence");
+    styleTitle(sh, "IP, NETWORK & SECURITY THREAT INTELLIGENCE", 10, "#b91c1c");
+    sh.getRange("A1:Z120").setBackground(C.bg);
+    setColWidths(sh, 1, [20, 180, 160, 140, 130, 130, 220, 160, 20]);
+
+    var ipList = [];
+    if (ipData && ipData.length > 1) {
+        var ipHead = ipData[0];
+        var ipCol = ipHead.indexOf("IP Address");
+        var orgCol = ipHead.indexOf("Network Organization");
+        var ispCol = ipHead.indexOf("ISP");
+        var botCol = ipHead.indexOf("Is Bot");
+        var hostCol = ipHead.indexOf("Is Hosting / Datacenter");
+        var reqCol = ipHead.indexOf("Request Count");
+
+        for (var i = 1; i < ipData.length; i++) {
+            var row = ipData[i];
+            ipList.push({
+                ip: String(row[ipCol] || "1.1.1.1"),
+                org: String(row[orgCol] || row[ispCol] || "Enterprise Network"),
+                isBot: String(row[botCol]) === "1" || String(row[botCol]).toLowerCase() === "true",
+                isHosting: String(row[hostCol]) === "1" || String(row[hostCol]).toLowerCase() === "true",
+                requests: Number(row[reqCol]) || 1
+            });
+        }
+    } else if (tData && tData.length > 1) {
+        var tHead = tData[0];
+        var ipCol = tHead.indexOf("IP Address");
+        var orgCol = tHead.indexOf("Organization");
+        var counts = {};
+        for (var i = 1; i < tData.length; i++) {
+            var ip = String(tData[i][ipCol] || "");
+            if (!ip) continue;
+            var org = String(orgCol > -1 ? tData[i][orgCol] : "") || "Telecom Provider";
+            if (!counts[ip]) counts[ip] = { ip: ip, org: org, requests: 0, isBot: false, isHosting: false };
+            counts[ip].requests++;
+        }
+        Object.keys(counts).forEach(function(k) { ipList.push(counts[k]); });
+    }
+
+    if (ipList.length === 0) {
+        sh.getRange(4, 2).setValue("Waiting for IP network intelligence data...").setFontColor(C.m);
+        return;
+    }
+
+    var totalIps = ipList.length;
+    var totalRequests = 0;
+    var botCount = 0;
+    var hostingCount = 0;
+    var orgMap = {};
+
+    ipList.forEach(function(item) {
+        totalRequests += item.requests;
+        if (item.isBot) botCount++;
+        if (item.isHosting) hostingCount++;
+        var org = item.org || "Internet Service Provider";
+        orgMap[org] = (orgMap[org] || 0) + item.requests;
+    });
+
+    var drawIntelStat = function(row, col, title, value, span, color, textcolor) {
+        sh.getRange(row, col, 1, span).merge().setValue(title.toUpperCase()).setBackground(C.t).setFontColor(C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(9);
+        sh.getRange(row + 1, col, 2, span).merge().setValue(value).setBackground(color).setFontColor(textcolor || C.w).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle").setFontSize(20);
+    };
+
+    var incidentsCount = (secData && secData.length > 1) ? (secData.length - 1) : 0;
+
+    drawIntelStat(4, 2, "UNIQUE PUBLIC IPS", totalIps.toLocaleString(), 1, "#b91c1c");
+    drawIntelStat(4, 3, "TOTAL HTTP REQS", totalRequests.toLocaleString(), 1, C.pu);
+    drawIntelStat(4, 4, "HOSTING / CLOUD", hostingCount.toLocaleString(), 1, C.o);
+    drawIntelStat(4, 5, "IDENTIFIED BOTS", botCount.toLocaleString(), 1, C.c);
+    drawIntelStat(4, 6, "THREAT ANOMALIES", incidentsCount.toLocaleString(), 1, C.re);
+
+    var orgRows = Object.keys(orgMap).map(function(k) {
+        return [k, orgMap[k]];
+    }).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 8);
+
+    sh.getRange(8, 2, 1, 2).merge().setValue("🌐 Top Autonomous Systems & ISPs").setBackground("#b91c1c").setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 2, 1, 2).setValues([["Network Provider / ISP", "Requests"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 2, orgRows.length, 2).setValues(orgRows).setBackground(C.r1);
+    for (var r = 0; r < orgRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 2, 1, 2).setBackground(C.r2); }
+
+    var ipRows = ipList.slice().sort(function(a, b) { return b.requests - a.requests; }).slice(0, 10).map(function(item) {
+        return [item.ip, item.org, item.requests, item.isBot ? "BOT" : (item.isHosting ? "CLOUD" : "RESIDENTIAL")];
+    });
+
+    sh.getRange(8, 4, 1, 4).merge().setValue("🔍 High-Volume Public IPs").setBackground(C.t).setFontColor(C.w).setFontWeight("bold");
+    sh.getRange(9, 4, 1, 4).setValues([["IP Address", "Organization", "Hits", "Classification"]]).setBackground(C.p).setFontWeight("bold");
+    sh.getRange(10, 4, ipRows.length, 4).setValues(ipRows).setBackground(C.r1);
+    for (var r = 0; r < ipRows.length; r++) { if (r % 2 !== 0) sh.getRange(10 + r, 4, 1, 4).setBackground(C.r2); }
+
+    try {
+        var c1 = sh.newChart().setChartType(Charts.ChartType.PIE)
+            .addRange(sh.getRange(9, 2, orgRows.length + 1, 2))
+            .setPosition(20, 2, 0, 0)
+            .setOption("title", "Top ISP Distribution")
+            .setOption("backgroundColor", C.bg)
+            .setOption("width", 380).setOption("height", 240).build();
+        sh.insertChart(c1);
+    } catch(e) { console.error("Chart IP1: " + e.toString()); }
+}
+
+/**
+ * Dedicated single-click builder for the 5 Website Intelligence Modules
+ */
+function BUILD_FIVE_INTELLIGENCE_MODULES() {
+    var ui = null;
+    try { ui = SpreadsheetApp.getUi(); } catch (e) { }
+
+    if (!DATA_SHEET_ID || DATA_SHEET_ID === "PASTE_YOUR_DATA_COLLECTION_SHEET_ID_HERE") {
+        if (ui) ui.alert("❌ Error: You must paste your Sheet 1 ID at the top of the script!");
+        return;
+    }
+
+    var db;
+    try {
+        db = SpreadsheetApp.openById(DATA_SHEET_ID);
+    } catch (e) {
+        if (ui) ui.alert("❌ Error: Could not open Sheet 1 (ID: " + DATA_SHEET_ID + ").\nDetails: " + e.toString());
+        return;
+    }
+
+    var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
+    var ubSheet = db.getSheetByName("User_Behavior_Library") || db.getSheetByName("UserBehaviorLibrary");
+    var sSheet = db.getSheetByName("Session_Intelligence") || db.getSheetByName("SessionIntelligence");
+    var ipSheet = db.getSheetByName("IP_Network_Intelligence") || db.getSheetByName("IPNetworkIntelligence");
+    var secSheet = db.getSheetByName("Security_Telemetry") || db.getSheetByName("SecurityTelemetry");
+
+    var tData = (tSheet && tSheet.getLastRow() > 0) ? filterLocalhostData(tSheet.getDataRange().getValues()) : [];
+    var ubData = (ubSheet && ubSheet.getLastRow() > 0) ? filterLocalhostData(ubSheet.getDataRange().getValues()) : [];
+    var sData = (sSheet && sSheet.getLastRow() > 0) ? filterLocalhostData(sSheet.getDataRange().getValues()) : [];
+    var ipData = (ipSheet && ipSheet.getLastRow() > 0) ? filterLocalhostData(ipSheet.getDataRange().getValues()) : [];
+    var secData = (secSheet && secSheet.getLastRow() > 0) ? filterLocalhostData(secSheet.getDataRange().getValues()) : [];
+
+    try { buildSessionIntelligenceSheet(sData, tData, ubData, db); } catch (err) { console.error("Tab 17 Error: " + err.toString()); }
+    try { buildTrafficIntelligenceSheet(sData, tData, db); } catch (err) { console.error("Tab 18 Error: " + err.toString()); }
+    try { buildGeoIntelligenceSheet(sData, tData, db); } catch (err) { console.error("Tab 19 Error: " + err.toString()); }
+    try { buildTimeZoneIntelligenceSheet(sData, tData); } catch (err) { console.error("Tab 20 Error: " + err.toString()); }
+    try { buildIpNetworkIntelligenceSheet(ipData, secData, tData, db); } catch (err) { console.error("Tab 21 Error: " + err.toString()); }
+
+    if (ui) ui.alert("✅ SUCCESS! All 5 Website Intelligence Modules Built in Sheet 2.");
+}
+
 function BUILD_AD_PERFORMANCE_ONLY() {
     var db = SpreadsheetApp.openById(DATA_SHEET_ID);
     var tSheet = db.getSheetByName("Traffic_Analytics") || db.getSheetByName("TrafficAnalytics");
@@ -1254,7 +1965,13 @@ function RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT() {
         "🔻 Funnel Drops": "Funnel_Drop_Off",
         "Funnel Drops": "Funnel_Drop_Off",
         "🎯 Lead Scoring": "Lead_Scoring_Engine",
-        "Lead Scoring": "Lead_Scoring_Engine"
+        "Lead Scoring": "Lead_Scoring_Engine",
+        "Session Intelligence": "Session_Intelligence",
+        "Traffic Intelligence": "Traffic_Intelligence",
+        "Geo Intelligence": "Geo_Intelligence",
+        "Timezone Intelligence": "Timezone_Intelligence",
+        "IP Network Intelligence": "IP_Network_Intelligence",
+        "IP & Network Intelligence": "IP_Network_Intelligence"
     };
 
     var sheets = ss.getSheets();
@@ -1285,10 +2002,13 @@ function RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT() {
 function onOpen() {
     SpreadsheetApp.getUi()
         .createMenu('ISI ANALYTICS')
-        .addItem('Refresh All 16 Dashboards', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
+        .addItem('Refresh All 21 Dashboards (Full Suite)', 'PULL_DATA_AND_BUILD_ALL_DASHBOARDS')
+        .addItem('Build 5 Intelligence Modules Only', 'BUILD_FIVE_INTELLIGENCE_MODULES')
+        .addSeparator()
+        .addItem('Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
         .addItem('Rename Sheet 2 Dashboard Tabs to Database Format (_)', 'RENAME_ALL_EXISTING_DASHBOARD_TABS_TO_DATABASE_FORMAT')
         .addItem('Rename Sheet 1 Raw Data Tabs to Database Format (_)', 'RENAME_ALL_RAW_DATA_SHEETS_TO_DATABASE_FORMAT')
-        .addItem('Build Ad Performance Intelligence', 'BUILD_AD_PERFORMANCE_ONLY')
+        .addSeparator()
         .addItem('Send Ad Performance Mailer', 'SEND_ISI_AD_PERFORMANCE_MAILER')
         .addItem('Remove Duplicate Triggers', 'REMOVE_ALL_TRIGGERS')
         .addItem('Send ALL Test Emails to Pooja', 'SEND_ALL_TEST_EMAILS_TO_POOJA')

@@ -2,6 +2,8 @@
 import { getUtmParams } from '../utils/utm';
 import { submitLeadToJira } from './jiraService';
 import { generateLeadNumber, normalizeLeadSource } from '../utils/leadNumber';
+import { isCorporateEmail, CORPORATE_EMAIL_ERROR_MESSAGE } from '../utils/validation';
+import { analytics } from './analyticsService';
 
 const SHEETS_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
 
@@ -98,6 +100,23 @@ export async function sendToSheet(
     // 1. If genuine Sales Lead -> Call Jira Integration First
     // (Career applications are STRICTLY excluded from Jira Sales Lead workflow)
     if (isBusinessLead) {
+        const leadEmail = String(
+            payload.email || payload.Email || payload.workEmail || 
+            payload.WorkEmail || ''
+        ).trim();
+
+        if (!isCorporateEmail(leadEmail)) {
+            console.warn('[SALES LEAD REJECTED] Public/free email domain rejected for Sales Lead:', leadEmail);
+            return {
+                success: false,
+                status: 'not_available',
+                userStatus: 'Rejected',
+                message: CORPORATE_EMAIL_ERROR_MESSAGE,
+                leadNumber,
+                leadType: 'sales'
+            };
+        }
+
         try {
             const leadName = String(
                 payload.name || payload.Name || payload.fullName || 
@@ -259,6 +278,16 @@ export async function sendToSheet(
         }
     }
 
+    analytics.track('inquiry_success', {
+        pagePath: typeof window !== 'undefined' ? window.location.pathname : '',
+        metadata: {
+            leadNumber,
+            applicationNumber,
+            leadType: isCareer ? 'career' : 'sales',
+            formName: actualSheetName
+        }
+    });
+
     return {
         success: true,
         status,
@@ -279,6 +308,16 @@ export const submitChatbotLead = async (
     existingCustomer?: string,
     category?: string
 ) => {
+    if (!isCorporateEmail(email)) {
+        console.warn('[CHATBOT LEAD REJECTED] Public/free email domain rejected for Chatbot Sales Lead:', email);
+        return {
+            success: false,
+            status: 'not_available' as const,
+            userStatus: 'Rejected',
+            message: 'Please provide your corporate/business email address to submit a business enquiry.',
+            leadType: 'sales'
+        };
+    }
     try {
         return await sendToSheet('Chatbot_Leads', {
             name,
@@ -375,6 +414,16 @@ export const submitBusinessLead = async (data: {
     [key: string]: unknown;
 }) => {
     const isJob = String(data.jobQuestion || '').trim().toLowerCase() === 'yes';
+    if (!isJob && !isCorporateEmail(data.email)) {
+        console.warn('[BUSINESS LEAD REJECTED] Public/free email domain rejected for Sales Lead:', data.email);
+        return {
+            success: false,
+            status: 'not_available' as const,
+            userStatus: 'Rejected',
+            message: CORPORATE_EMAIL_ERROR_MESSAGE,
+            leadType: 'sales'
+        };
+    }
     const targetSheet = isJob ? 'Career_Applications' : (data.formName || 'Contact_Form');
 
     return await sendToSheet(targetSheet, {

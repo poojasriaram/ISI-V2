@@ -30,7 +30,7 @@ const AD_CONFIG = {
     name: "ISI Security Campaign Engine",
     website: "https://www.isisecurity.in",
     replyTo: "info@isisecurity.in",
-    
+
     // Team members who receive instant Ad Campaign lead notifications
     salesRecipients: [
       "v.varshith@isisecurity.in",
@@ -38,7 +38,7 @@ const AD_CONFIG = {
       "bv@trustflow.in",
       "poojasri.aram@gmail.com"
     ],
-    
+
     // Leadership team who receive weekly Ad Campaign performance reports
     weeklyReportRecipients: [
       "v.varshith@isisecurity.in",
@@ -47,6 +47,61 @@ const AD_CONFIG = {
     ]
   }
 };
+
+// =========================================================================================
+// 1.5. CORPORATE EMAIL VALIDATION CONFIGURATION FOR AD CAMPAIGN SALES LEADS
+// =========================================================================================
+
+var BLOCKED_DOMAINS = [
+  // Global Freemail
+  'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.in', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de', 'yahoo.es', 'yahoo.it', 'yahoo.ca', 'yahoo.com.au', 'ymail.com', 'rocketmail.com',
+  'hotmail.com', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de', 'hotmail.it', 'hotmail.es', 'outlook.com', 'outlook.in', 'outlook.co.uk', 'outlook.fr', 'outlook.de', 'outlook.es',
+  'live.com', 'live.in', 'live.co.uk', 'live.fr', 'msn.com', 'passport.com',
+
+  // Legacy Providers
+  'aol.com', 'aol.co.uk', 'aim.com', 'icloud.com', 'me.com', 'mac.com', 'comcast.net', 'sbcglobal.net', 'att.net', 'bellsouth.net',
+
+  // European Freemail
+  'mail.com', 'gmx.com', 'gmx.de', 'gmx.net', 'gmx.at', 'gmx.ch', 'web.de', 'orange.fr', 'wanadoo.fr', 'libero.it', 't-online.de', 'freenet.de', 'virgilio.it',
+
+  // Russian / Eastern European
+  'mail.ru', 'inbox.ru', 'list.ru', 'bk.ru', 'yandex.com', 'yandex.ru', 'ya.ru', 'rambler.ru',
+
+  // Asian Freemail
+  '126.com', '163.com', 'qq.com', 'rediffmail.com', 'indiatimes.com', 'sina.com', 'sohu.com', 'daum.net', 'hanmail.net', 'naver.com',
+
+  // Disposable / Temporary
+  '10minutemail.com', '10minutemail.net', 'guerrillamail.com', 'guerrillamailblock.com', 'sharklasers.com', 'grr.la', 'guerrillamail.biz', 'guerrillamail.de', 'guerrillamail.net', 'guerrillamail.org',
+  'yopmail.com', 'yopmail.fr', 'yopmail.net', 'tempmail.com', 'temp-mail.org', 'tempmailo.com', 'mailinator.com', 'trashmail.com', 'dispostable.com', 'getairmail.com', 'throwawaymail.com',
+
+  // Privacy / Personal Webmail
+  'protonmail.com', 'proton.me', 'zoho.com'
+];
+
+var CORPORATE_EMAIL_ERROR_MESSAGE = "Please use your official corporate/business email address. Public email providers such as Gmail, Yahoo, Hotmail, and Outlook are not accepted for Sales enquiries.";
+
+function isCorporateEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  var trimmed = email.trim();
+  if (!trimmed) return false;
+
+  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmed)) return false;
+
+  var atIndex = trimmed.lastIndexOf('@');
+  if (atIndex === -1) return false;
+  var domain = trimmed.substring(atIndex + 1).toLowerCase().trim();
+  if (!domain) return false;
+
+  for (var i = 0; i < BLOCKED_DOMAINS.length; i++) {
+    var blocked = BLOCKED_DOMAINS[i];
+    if (domain === blocked || domain.indexOf('.' + blocked) === (domain.length - (blocked.length + 1))) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 /**
  * Robust Spreadsheet Resolver for Standalone or Bound Apps Script Deployments
@@ -94,7 +149,7 @@ function doGet(e) {
   var ss = getAdSpreadsheet();
   var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME) || ss.getSheetByName("Google_Ad_Leads") || ss.getSheetByName("AdCampaignLeads");
   var totalLeads = sheet ? Math.max(sheet.getLastRow() - 1, 0) : 0;
-  
+
   var html = [
     '<!DOCTYPE html><html><head><meta charset="utf-8"><title>ISI Ad Campaign Webhook Status</title>',
     '<style>',
@@ -156,6 +211,19 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Invalid JSON payload" })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    // Strict corporate email validation for Ad Campaign sales leads
+    var isJob = String(data.jobQuestion || "").trim().toLowerCase() === "yes" || data.isJobSeeker === true;
+    var candidateEmail = String(data.workEmail || data["Work Email"] || data.email || data.Email || "").trim();
+    if (!isJob && !isCorporateEmail(candidateEmail)) {
+      console.warn("⛔ [AD CAMPAIGN REJECTED] Public email domain rejected: " + candidateEmail);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        error: CORPORATE_EMAIL_ERROR_MESSAGE,
+        message: CORPORATE_EMAIL_ERROR_MESSAGE,
+        rejected: true
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var ss = getAdSpreadsheet();
     var sheet = ss.getSheetByName(AD_CONFIG.TAB_NAME) || ss.getSheetByName("Google_Ad_Leads") || ss.getSheetByName("AdCampaignLeads");
 
@@ -168,13 +236,13 @@ function doPost(e) {
     var firstCell = sheet.getRange(1, 1).getValue();
     if (sheet.getLastRow() === 0 || !firstCell || firstCell.toString().trim() === "") {
       sheet.getRange(1, 1, 1, AD_HEADERS.length)
-           .setValues([AD_HEADERS])
-           .setFontWeight("bold")
-           .setBackground("#003380")
-           .setFontColor("#ffffff")
-           .setHorizontalAlignment("center");
+        .setValues([AD_HEADERS])
+        .setFontWeight("bold")
+        .setBackground("#003380")
+        .setFontColor("#ffffff")
+        .setHorizontalAlignment("center");
       sheet.setFrozenRows(1);
-      
+
       // Auto-fit columns
       for (var col = 1; col <= AD_HEADERS.length; col++) {
         sheet.setColumnWidth(col, 160);
@@ -182,7 +250,7 @@ function doPost(e) {
     }
 
     // Map incoming lead fields directly using AD_HEADERS to guarantee columns match
-    var newRow = AD_HEADERS.map(function(header) {
+    var newRow = AD_HEADERS.map(function (header) {
       return resolveAdField(header, data);
     });
 
@@ -215,22 +283,22 @@ function doPost(e) {
 
 function resolveAdField(header, data) {
   var map = {
-    "Full Name":      data.fullName || data["Full Name"] || data.name || data.Name || "Valued Prospect",
-    "Phone Number":   data.phoneNumber || data["Phone Number"] || data.phone || data.Phone || "",
-    "Work Email":     data.workEmail || data["Work Email"] || data.email || data.Email || "",
-    "Company Name":   data.companyName || data["Company Name"] || data.company || data.Company || "Direct Business Lead",
-    "UTM Source":     data.utmSource || data.utm_source || data["UTM Source"] || "Direct / Organic",
-    "UTM Medium":     data.utmMedium || data.utm_medium || data["UTM Medium"] || "N/A",
-    "UTM Campaign":   data.utmCampaign || data.utm_campaign || data["UTM Campaign"] || "General Campaign",
-    "UTM Term":       data.utmTerm || data.utm_term || data["UTM Term"] || "",
-    "UTM Content":    data.utmContent || data.utm_content || data["UTM Content"] || "",
-    "Status":         data.status || "🔥 New Lead",
-    "Lead Priority":  determinePriority(data),
-    "IP Location":    data.location || data.ipLocation || data["IP Location"] || "India",
-    "IP Address":     data.ipAddress || data.ip_address || data["IP Address"] || "",
-    "Organization":   data.organization || data.org || data["Organization"] || "",
-    "Variant":        data.variant || "original",
-    "Timestamp":      normalizeAdTimestamp(data.timestamp || data.Timestamp)
+    "Full Name": data.fullName || data["Full Name"] || data.name || data.Name || "Valued Prospect",
+    "Phone Number": data.phoneNumber || data["Phone Number"] || data.phone || data.Phone || "",
+    "Work Email": data.workEmail || data["Work Email"] || data.email || data.Email || "",
+    "Company Name": data.companyName || data["Company Name"] || data.company || data.Company || "Direct Business Lead",
+    "UTM Source": data.utmSource || data.utm_source || data["UTM Source"] || "Direct / Organic",
+    "UTM Medium": data.utmMedium || data.utm_medium || data["UTM Medium"] || "N/A",
+    "UTM Campaign": data.utmCampaign || data.utm_campaign || data["UTM Campaign"] || "General Campaign",
+    "UTM Term": data.utmTerm || data.utm_term || data["UTM Term"] || "",
+    "UTM Content": data.utmContent || data.utm_content || data["UTM Content"] || "",
+    "Status": data.status || "🔥 New Lead",
+    "Lead Priority": determinePriority(data),
+    "IP Location": data.location || data.ipLocation || data["IP Location"] || "India",
+    "IP Address": data.ipAddress || data.ip_address || data["IP Address"] || "",
+    "Organization": data.organization || data.org || data["Organization"] || "",
+    "Variant": data.variant || "original",
+    "Timestamp": normalizeAdTimestamp(data.timestamp || data.Timestamp)
   };
 
   if (map.hasOwnProperty(header)) return map[header];
@@ -259,11 +327,11 @@ function normalizeAdTimestamp(ts) {
   var istOffset = 5.5 * 60 * 60 * 1000;
   var ist = new Date(ms + istOffset);
   var yyyy = ist.getUTCFullYear();
-  var mm   = String(ist.getUTCMonth() + 1).padStart(2, '0');
-  var dd   = String(ist.getUTCDate()).padStart(2, '0');
-  var hh   = String(ist.getUTCHours()).padStart(2, '0');
-  var min  = String(ist.getUTCMinutes()).padStart(2, '0');
-  var ss   = String(ist.getUTCSeconds()).padStart(2, '0');
+  var mm = String(ist.getUTCMonth() + 1).padStart(2, '0');
+  var dd = String(ist.getUTCDate()).padStart(2, '0');
+  var hh = String(ist.getUTCHours()).padStart(2, '0');
+  var min = String(ist.getUTCMinutes()).padStart(2, '0');
+  var ss = String(ist.getUTCSeconds()).padStart(2, '0');
   return yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min + ':' + ss + ' IST';
 }
 
@@ -289,8 +357,8 @@ function sendAdLeadNotifications(data, sheetUrl) {
     Logger.log('HTML contains replacement character (pre-sanitize): ' + hasUserRepl);
 
     // Sanitize before send
-    var cleanUserSubj  = sanitizeEmailContent(userSubj);
-    var cleanUserHtml  = sanitizeEmailContent(userHtml);
+    var cleanUserSubj = sanitizeEmailContent(userSubj);
+    var cleanUserHtml = sanitizeEmailContent(userHtml);
     var cleanUserPlain = sanitizeEmailContent(userPlain);
 
     if (cleanUserSubj.indexOf('\uFFFD') === -1 && cleanUserHtml.indexOf('\uFFFD') === -1) {
@@ -322,8 +390,8 @@ function sendAdLeadNotifications(data, sheetUrl) {
 
   // Sanitize before send
   var cleanInternalSubject = sanitizeEmailContent(internalSubject);
-  var cleanInternalHtml    = sanitizeEmailContent(internalHtml);
-  var cleanInternalPlain   = sanitizeEmailContent(internalPlain);
+  var cleanInternalHtml = sanitizeEmailContent(internalHtml);
+  var cleanInternalPlain = sanitizeEmailContent(internalPlain);
 
   if (cleanInternalSubject.indexOf('\uFFFD') !== -1 || cleanInternalHtml.indexOf('\uFFFD') !== -1) {
     console.error('❌ Internal ad lead alert blocked: replacement character persisted after sanitization.');
@@ -331,7 +399,7 @@ function sendAdLeadNotifications(data, sheetUrl) {
   }
 
   try {
-    AD_CONFIG.EMAIL.salesRecipients.forEach(function(recipient) {
+    AD_CONFIG.EMAIL.salesRecipients.forEach(function (recipient) {
       MailApp.sendEmail({
         to: recipient,
         subject: cleanInternalSubject,
@@ -351,16 +419,16 @@ function sendAdLeadNotifications(data, sheetUrl) {
 // =========================================================================================
 
 function buildExecutiveAdLeadHtml(data, sheetUrl) {
-  var name      = data.fullName || data["Full Name"] || data.name || "Prospective Client";
-  var phone     = data.phoneNumber || data["Phone Number"] || data.phone || "";
-  var email     = data.workEmail || data["Work Email"] || data.email || "";
-  var company   = data.companyName || data["Company Name"] || data.company || "Direct Business Lead";
-  var location  = data.location || data.ipLocation || data["IP Location"] || "India";
-  var source    = data.utmSource || data.utm_source || "Google Ads / Paid Media";
-  var campaign  = data.utmCampaign || data.utm_campaign || "Security Consultation";
-  var medium    = data.utmMedium || data.utm_medium || "CPC / Search";
-  var term      = data.utmTerm || data.utm_term || "N/A";
-  var content   = data.utmContent || data.utm_content || "Ad Creative 1";
+  var name = data.fullName || data["Full Name"] || data.name || "Prospective Client";
+  var phone = data.phoneNumber || data["Phone Number"] || data.phone || "";
+  var email = data.workEmail || data["Work Email"] || data.email || "";
+  var company = data.companyName || data["Company Name"] || data.company || "Direct Business Lead";
+  var location = data.location || data.ipLocation || data["IP Location"] || "India";
+  var source = data.utmSource || data.utm_source || "Google Ads / Paid Media";
+  var campaign = data.utmCampaign || data.utm_campaign || "Security Consultation";
+  var medium = data.utmMedium || data.utm_medium || "CPC / Search";
+  var term = data.utmTerm || data.utm_term || "N/A";
+  var content = data.utmContent || data.utm_content || "Ad Creative 1";
   var timestamp = normalizeAdTimestamp(data.timestamp || data.Timestamp);
 
   return [
@@ -498,55 +566,55 @@ function buildAdCampaignDashboard() {
   var ss = getAdSpreadsheet();
   var DASH_NAME = "📈 Ad Campaign Analytics";
   var dash = ss.getSheetByName(DASH_NAME);
-  
+
   if (dash) {
     dash.clearContents();
     dash.clearFormats();
-    dash.getCharts().forEach(function(c) { dash.removeChart(c); });
+    dash.getCharts().forEach(function (c) { dash.removeChart(c); });
   } else {
     dash = ss.insertSheet(DASH_NAME);
     ss.setActiveSheet(dash);
     ss.moveActiveSheet(1);
   }
 
-  var DARK_BG   = "#0f172a";
-  var ACCENT    = "#f59e0b";
-  var BLUE      = "#003380";
-  var WHITE     = "#ffffff";
+  var DARK_BG = "#0f172a";
+  var ACCENT = "#f59e0b";
+  var BLUE = "#003380";
+  var WHITE = "#ffffff";
 
-  [240, 140, 140, 40, 240, 140, 140].forEach(function(w, i) {
+  [240, 140, 140, 40, 240, 140, 140].forEach(function (w, i) {
     dash.setColumnWidth(i + 1, w);
   });
 
   // Title Banner
   dash.setRowHeight(1, 48);
   dash.getRange("A1:G1").merge()
-      .setValue("🎯  ISI Security — Paid Ad Campaign Performance Dashboard")
-      .setBackground(DARK_BG).setFontColor(WHITE).setFontWeight("bold").setFontSize(16)
-      .setHorizontalAlignment("center").setVerticalAlignment("middle");
+    .setValue("🎯  ISI Security — Paid Ad Campaign Performance Dashboard")
+    .setBackground(DARK_BG).setFontColor(WHITE).setFontWeight("bold").setFontSize(16)
+    .setHorizontalAlignment("center").setVerticalAlignment("middle");
 
   dash.setRowHeight(2, 24);
   dash.getRange("A2:G2").merge()
-      .setFormula('="Last Refreshed: "&TEXT(NOW(),"dd-mmm-yyyy hh:mm:ss")&" IST"')
-      .setBackground("#1e293b").setFontColor("#94a3b8").setFontSize(9).setHorizontalAlignment("center");
+    .setFormula('="Last Refreshed: "&TEXT(NOW(),"dd-mmm-yyyy hh:mm:ss")&" IST"')
+    .setBackground("#1e293b").setFontColor("#94a3b8").setFontSize(9).setHorizontalAlignment("center");
 
   // KPI Summary Metric Bar
   dash.setRowHeight(3, 38);
   dash.getRange("A3").setFormula('=IFERROR("🔥 Total Ad Leads: "&COUNTA(Google_Ad_Leads!A:A)-1,0)')
-      .setBackground("#1e293b").setFontColor(ACCENT).setFontSize(10).setFontWeight("bold");
+    .setBackground("#1e293b").setFontColor(ACCENT).setFontSize(10).setFontWeight("bold");
   dash.getRange("B3").setFormula('=IFERROR("🏢 Unique Companies: "&COUNTUNIQUE(Google_Ad_Leads!D:D)-1,0)')
-      .setBackground("#1e293b").setFontColor("#38bdf8").setFontSize(10).setFontWeight("bold");
+    .setBackground("#1e293b").setFontColor("#38bdf8").setFontSize(10).setFontWeight("bold");
   dash.getRange("C3").setFormula('=IFERROR("⚡ Enterprise Leads: "&COUNTIF(Google_Ad_Leads!K:K,"*Enterprise*"),0)')
-      .setBackground("#1e293b").setFontColor("#4ade80").setFontSize(10).setFontWeight("bold");
+    .setBackground("#1e293b").setFontColor("#4ade80").setFontSize(10).setFontWeight("bold");
   dash.setFrozenRows(3);
 
   // Section 1: Leads by Campaign
   var S1 = 5;
   dash.getRange(S1, 1, 1, 3).merge()
-      .setValue("📊  Leads by Campaign (UTM Campaign)")
-      .setBackground(BLUE).setFontColor(WHITE).setFontWeight("bold").setFontSize(11);
+    .setValue("📊  Leads by Campaign (UTM Campaign)")
+    .setBackground(BLUE).setFontColor(WHITE).setFontWeight("bold").setFontSize(11);
   dash.setRowHeight(S1, 30);
-  ["Campaign Name", "Total Leads", "% Share"].forEach(function(h, i) {
+  ["Campaign Name", "Total Leads", "% Share"].forEach(function (h, i) {
     dash.getRange(S1 + 1, i + 1).setValue(h).setBackground("#002255").setFontColor(WHITE).setFontWeight("bold").setFontSize(10);
   });
 
@@ -557,7 +625,7 @@ function buildAdCampaignDashboard() {
 
   for (var r = 1; r <= 10; r++) {
     var row = S1 + 1 + r;
-    dash.getRange(row, 3).setFormula('=IFERROR(B' + row + '/SUM($B$' + (S1+2) + ':$B$' + (S1+11) + '),"")').setNumberFormat("0.0%");
+    dash.getRange(row, 3).setFormula('=IFERROR(B' + row + '/SUM($B$' + (S1 + 2) + ':$B$' + (S1 + 11) + '),"")').setNumberFormat("0.0%");
     dash.getRange(row, 1, 1, 3).setBackground(r % 2 === 0 ? "#1e293b" : "#263148").setFontColor(WHITE).setFontSize(10);
   }
 
@@ -581,10 +649,10 @@ function buildAdCampaignDashboard() {
   // Section 2: Leads by Source
   var S2 = 18;
   dash.getRange(S2, 1, 1, 3).merge()
-      .setValue("🌐  Leads by Traffic Source (UTM Source)")
-      .setBackground("#059669").setFontColor(WHITE).setFontWeight("bold").setFontSize(11);
+    .setValue("🌐  Leads by Traffic Source (UTM Source)")
+    .setBackground("#059669").setFontColor(WHITE).setFontWeight("bold").setFontSize(11);
   dash.setRowHeight(S2, 30);
-  ["Source", "Total Leads", "% Share"].forEach(function(h, i) {
+  ["Source", "Total Leads", "% Share"].forEach(function (h, i) {
     dash.getRange(S2 + 1, i + 1).setValue(h).setBackground("#064e3b").setFontColor(WHITE).setFontWeight("bold").setFontSize(10);
   });
 
@@ -595,7 +663,7 @@ function buildAdCampaignDashboard() {
 
   for (var r = 1; r <= 10; r++) {
     var row = S2 + 1 + r;
-    dash.getRange(row, 3).setFormula('=IFERROR(B' + row + '/SUM($B$' + (S2+2) + ':$B$' + (S2+11) + '),"")').setNumberFormat("0.0%");
+    dash.getRange(row, 3).setFormula('=IFERROR(B' + row + '/SUM($B$' + (S2 + 2) + ':$B$' + (S2 + 11) + '),"")').setNumberFormat("0.0%");
     dash.getRange(row, 1, 1, 3).setBackground(r % 2 === 0 ? "#1e293b" : "#263148").setFontColor(WHITE).setFontSize(10);
   }
 
@@ -690,10 +758,10 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     }
   }
 
-  var getTop = function(obj) {
+  var getTop = function (obj) {
     var keys = Object.keys(obj);
     if (keys.length === 0) return "Direct Campaign";
-    return keys.sort(function(a,b){ return obj[b] - obj[a]; })[0];
+    return keys.sort(function (a, b) { return obj[b] - obj[a]; })[0];
   };
 
   channelStats.meta.topCampaign = getTop(metaCamps);
@@ -703,7 +771,7 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
 
   var channelList = [channelStats.meta, channelStats.youtube, channelStats.google, channelStats.affiliate];
 
-  var visualChannelShareBarsHtml = channelList.map(function(ch) {
+  var visualChannelShareBarsHtml = channelList.map(function (ch) {
     var pctVal = totalLeads > 0 ? Math.round(ch.leads / totalLeads * 100) : 0;
     var chColors = { "📘 Meta Ad": "#3b82f6", "🎥 YouTube Ad": "#ef4444", "🔍 Google Search Ad": "#0284c7", "🤝 Affiliate Ad": "#f59e0b" };
     var barColor = chColors[ch.name] || "#003380";
@@ -720,7 +788,7 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     ].join('');
   }).join('');
 
-  var tableRowsHtml = channelList.map(function(ch, idx) {
+  var tableRowsHtml = channelList.map(function (ch, idx) {
     var bg = idx % 2 === 0 ? "#ffffff" : "#f8fafc";
     var share = totalLeads > 0 ? (ch.leads / totalLeads * 100).toFixed(1) + "%" : "0.0%";
     var pctVal = totalLeads > 0 ? Math.round(ch.leads / totalLeads * 100) : 0;
@@ -759,7 +827,7 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     '<p style="margin:6px 0 0 0;color:#93c5fd;font-size:13px;">Executive Multi-Channel Attribution Digest (Meta, YouTube, Google, Affiliate)</p>',
     '</div>',
     '<div style="padding:25px;">',
-    
+
     // KPI Cards
     '<div style="display:flex;gap:12px;margin-bottom:24px;">',
     '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px;flex:1;text-align:center;">',
@@ -772,7 +840,7 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     '</div>',
     '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px;flex:1;text-align:center;">',
     '<div style="color:#047857;font-size:11px;font-weight:bold;letter-spacing:0.5px;">TOP CHANNEL</div>',
-    '<div style="color:#064e3b;font-size:15px;font-weight:bold;margin-top:8px;">' + channelList.sort(function(a,b){return b.leads-a.leads;})[0].name + '</div>',
+    '<div style="color:#064e3b;font-size:15px;font-weight:bold;margin-top:8px;">' + channelList.sort(function (a, b) { return b.leads - a.leads; })[0].name + '</div>',
     '</div>',
     '</div>',
 
@@ -812,8 +880,8 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
   // ── Sanitize immediately before send ─────────────────────────────────────
   // sanitizeEmailContent() is defined in AppsScript_Webhook.js and available
   // across the shared Apps Script project scope.
-  var cleanSubject   = sanitizeEmailContent(subject);
-  var cleanHtml      = sanitizeEmailContent(html);
+  var cleanSubject = sanitizeEmailContent(subject);
+  var cleanHtml = sanitizeEmailContent(html);
   var cleanPlainText = sanitizeEmailContent(plainTextBody);
 
   // Final pre-send validation
@@ -822,7 +890,7 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
     return;
   }
 
-  AD_CONFIG.EMAIL.weeklyReportRecipients.forEach(function(email) {
+  AD_CONFIG.EMAIL.weeklyReportRecipients.forEach(function (email) {
     try {
       MailApp.sendEmail({
         to: email,
@@ -831,7 +899,7 @@ function SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER() {
         htmlBody: cleanHtml,
         name: "ISI Ad Intelligence Engine"
       });
-    } catch(e) {
+    } catch (e) {
       console.error("Failed to send ad intelligence digest to " + email + ": " + e.toString());
     }
   });
@@ -871,13 +939,8 @@ function checkEmailQuota() {
  * Sets up weekly scheduled digest trigger for Ad Campaign
  */
 function setupAdCampaignWeeklyTrigger() {
-  // Clear existing triggers for this function
-  var triggers = ScriptApp.getProjectTriggers();
-  triggers.forEach(function(t) {
-    if (t.getHandlerFunction() === "weeklyAdCampaignDigest") {
-      ScriptApp.deleteTrigger(t);
-    }
-  });
+  // Clear any existing triggers for this function to prevent duplicate emails
+  clearAdCampaignTriggers();
 
   // Every Friday at 8:30 AM IST
   ScriptApp.newTrigger("weeklyAdCampaignDigest")
@@ -888,7 +951,23 @@ function setupAdCampaignWeeklyTrigger() {
     .nearMinute(30)
     .create();
 
-  console.log("✅ Weekly Ad Campaign Performance Digest trigger scheduled for Fridays 8:30 AM IST.");
+  console.log("✅ Weekly Ad Campaign Performance Digest trigger scheduled for Fridays 8:30 AM IST (1 single instance).");
+}
+
+/**
+ * Removes any active Ad Campaign weekly digest triggers to prevent duplicate emails.
+ */
+function clearAdCampaignTriggers() {
+  var triggers = ScriptApp.getProjectTriggers();
+  var count = 0;
+  triggers.forEach(function (t) {
+    if (t.getHandlerFunction() === "weeklyAdCampaignDigest" || t.getHandlerFunction() === "SEND_ISI_AD_PERFORMANCE_INTELLIGENCE_MAILER") {
+      ScriptApp.deleteTrigger(t);
+      count++;
+    }
+  });
+  console.log("✅ Cleared " + count + " existing Ad Campaign weekly digest trigger(s).");
+  return count;
 }
 
 /**
@@ -903,12 +982,12 @@ function formatAndResetAdSheet() {
 
   // Set headers in Row 1
   sheet.getRange(1, 1, 1, AD_HEADERS.length)
-       .setValues([AD_HEADERS])
-       .setFontWeight("bold")
-       .setBackground("#003380")
-       .setFontColor("#ffffff")
-       .setHorizontalAlignment("center")
-       .setVerticalAlignment("middle");
+    .setValues([AD_HEADERS])
+    .setFontWeight("bold")
+    .setBackground("#003380")
+    .setFontColor("#ffffff")
+    .setHorizontalAlignment("center")
+    .setVerticalAlignment("middle");
   sheet.setRowHeight(1, 38);
   sheet.setFrozenRows(1);
 
@@ -944,7 +1023,7 @@ function onOpen() {
 function SEND_AD_CAMPAIGN_TEST_EMAIL_TO_POOJA() {
   var TEST_EMAIL = "poojasri.aram@gmail.com";
   var ui = null;
-  try { ui = SpreadsheetApp.getUi(); } catch(e) {}
+  try { ui = SpreadsheetApp.getUi(); } catch (e) { }
 
   console.log("=== AD CAMPAIGN TEST MAILER ===");
   console.log("Target: " + TEST_EMAIL);
@@ -953,25 +1032,25 @@ function SEND_AD_CAMPAIGN_TEST_EMAIL_TO_POOJA() {
   var db = null;
   try {
     db = SpreadsheetApp.openById(DATA_SHEET_ID);
-  } catch(e) {
+  } catch (e) {
     console.error("Could not open Data Sheet: " + e.toString());
     if (ui) ui.alert("Could not open Data Sheet: " + e.toString());
     return;
   }
 
   var tSheet = db.getSheetByName("LEADS") || db.getSheets()[0];
-  var tData  = tSheet ? tSheet.getDataRange().getValues() : [];
+  var tData = tSheet ? tSheet.getDataRange().getValues() : [];
 
   var adStats = {
-    meta:      { name: "Meta Ad",          type: "Social / Display (FB & IG)", clicks: 42, leads: 7 },
-    youtube:   { name: "YouTube Ad",       type: "Video / TrueView",           clicks: 28, leads: 4 },
-    google:    { name: "Google Search Ad", type: "Search Engine (SEM / CPC)",  clicks: 91, leads: 15 },
-    affiliate: { name: "Affiliate Ad",     type: "Partner Networks & Referrals", clicks: 10, leads: 2 }
+    meta: { name: "Meta Ad", type: "Social / Display (FB & IG)", clicks: 42, leads: 7 },
+    youtube: { name: "YouTube Ad", type: "Video / TrueView", clicks: 28, leads: 4 },
+    google: { name: "Google Search Ad", type: "Search Engine (SEM / CPC)", clicks: 91, leads: 15 },
+    affiliate: { name: "Affiliate Ad", type: "Partner Networks & Referrals", clicks: 10, leads: 2 }
   };
 
   var totalClicks = 171, totalLeads = 28;
   var cvr = totalClicks > 0 ? ((totalLeads / totalClicks) * 100).toFixed(1) + "%" : "0%";
-  var visualBarsHtml = Object.keys(adStats).map(function(k) {
+  var visualBarsHtml = Object.keys(adStats).map(function (k) {
     var c = adStats[k];
     var pct = totalClicks > 0 ? Math.round((c.clicks / totalClicks) * 100) : 0;
     return '<div style="margin-bottom:8px;">' +
@@ -1006,8 +1085,8 @@ function SEND_AD_CAMPAIGN_TEST_EMAIL_TO_POOJA() {
   ].join('');
 
   var cleanSubject = sanitizeEmailContent("[TEST] ISI Ad Performance Intelligence — Multi-Channel Report");
-  var cleanHtml    = sanitizeEmailContent(testHtml);
-  var cleanPlain   = sanitizeEmailContent("TEST: ISI Ad Performance Intelligence report. Total Clicks: " + totalClicks + " | Total Leads: " + totalLeads + " | CVR: " + cvr);
+  var cleanHtml = sanitizeEmailContent(testHtml);
+  var cleanPlain = sanitizeEmailContent("TEST: ISI Ad Performance Intelligence report. Total Clicks: " + totalClicks + " | Total Leads: " + totalLeads + " | CVR: " + cvr);
 
   var r = null;
   try {
@@ -1017,7 +1096,7 @@ function SEND_AD_CAMPAIGN_TEST_EMAIL_TO_POOJA() {
       name: "ISI Ad Intelligence Test"
     });
     r = "SENT via MailApp";
-  } catch(e) {
+  } catch (e) {
     r = "FAILED: " + e.toString();
   }
 

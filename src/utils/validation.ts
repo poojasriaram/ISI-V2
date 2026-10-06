@@ -2,29 +2,27 @@
  * Centralized Form Validation Utilities
  */
 
-export const BLOCKED_DOMAINS = [
-  'gmail.com',
-  'googlemail.com',
-  'yahoo.com',
-  'yahoo.co.in',
-  'hotmail.com',
-  'hotmail.co.uk',
-  'outlook.com',
-  'live.com',
-  'msn.com',
-  'icloud.com',
-  'me.com',
-  'aol.com',
-  'protonmail.com',
-  'proton.me',
-  'zoho.com'
-];
+import {
+  BLOCKED_DOMAINS,
+  isCorporateEmail,
+  extractEmailDomain,
+  CORPORATE_EMAIL_ERROR_MESSAGE,
+  CHATBOT_CORPORATE_EMAIL_MESSAGE
+} from './corporateEmail';
+
+export {
+  BLOCKED_DOMAINS,
+  isCorporateEmail,
+  extractEmailDomain,
+  CORPORATE_EMAIL_ERROR_MESSAGE,
+  CHATBOT_CORPORATE_EMAIL_MESSAGE
+};
 
 /**
- * Validate work email format and block personal email domains
+ * Validate work/corporate email format and block public/free email domains for Sales Leads.
  */
 export const validateWorkEmail = (email: string): { isValid: boolean; message: string } => {
-  const trimmed = email.trim();
+  const trimmed = (email || '').trim();
   if (!trimmed) {
     return { isValid: false, message: "Work email is required." };
   }
@@ -34,21 +32,26 @@ export const validateWorkEmail = (email: string): { isValid: boolean; message: s
     return { isValid: false, message: "Please enter a valid email address." };
   }
 
-  const parts = trimmed.split('@');
-  const domain = parts[parts.length - 1].toLowerCase();
-
-  if (BLOCKED_DOMAINS.includes(domain)) {
-    return { isValid: false, message: "Please enter your work email address. Personal email addresses are not accepted." };
+  if (!isCorporateEmail(trimmed)) {
+    return {
+      isValid: false,
+      message: CORPORATE_EMAIL_ERROR_MESSAGE
+    };
   }
 
   return { isValid: true, message: "" };
 };
 
 /**
+ * Alias for validateWorkEmail
+ */
+export const validateCorporateEmail = validateWorkEmail;
+
+/**
  * Validate phone number format and ensure length >= 10 digits
  */
 export const validatePhoneNumber = (phone: string): { isValid: boolean; message: string } => {
-  const normalized = phone.replace(/[+\-()\s]/g, '');
+  const normalized = (phone || '').replace(/[+\-()\s]/g, '');
   const digits = normalized.replace(/\D/g, '');
   const hasInvalidChars = /[^0-9]/.test(normalized);
 
@@ -63,7 +66,7 @@ export const validatePhoneNumber = (phone: string): { isValid: boolean; message:
  * Validate standard email format (allows personal domains, e.g. for careers or newsletters)
  */
 export const validateGeneralEmail = (email: string): { isValid: boolean; message: string } => {
-  const trimmed = email.trim();
+  const trimmed = (email || '').trim();
   if (!trimmed) {
     return { isValid: false, message: "Email is required." };
   }

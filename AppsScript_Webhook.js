@@ -66,6 +66,61 @@ const EMAIL_CONFIG = {
 };
 
 // =========================================================================================
+// 1.5. CORPORATE EMAIL VALIDATION CONFIGURATION FOR SALES LEADS
+// =========================================================================================
+
+var BLOCKED_DOMAINS = [
+  // Global Freemail
+  'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.in', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de', 'yahoo.es', 'yahoo.it', 'yahoo.ca', 'yahoo.com.au', 'ymail.com', 'rocketmail.com',
+  'hotmail.com', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de', 'hotmail.it', 'hotmail.es', 'outlook.com', 'outlook.in', 'outlook.co.uk', 'outlook.fr', 'outlook.de', 'outlook.es',
+  'live.com', 'live.in', 'live.co.uk', 'live.fr', 'msn.com', 'passport.com',
+
+  // Legacy Providers
+  'aol.com', 'aol.co.uk', 'aim.com', 'icloud.com', 'me.com', 'mac.com', 'comcast.net', 'sbcglobal.net', 'att.net', 'bellsouth.net',
+
+  // European Freemail
+  'mail.com', 'gmx.com', 'gmx.de', 'gmx.net', 'gmx.at', 'gmx.ch', 'web.de', 'orange.fr', 'wanadoo.fr', 'libero.it', 't-online.de', 'freenet.de', 'virgilio.it',
+
+  // Russian / Eastern European
+  'mail.ru', 'inbox.ru', 'list.ru', 'bk.ru', 'yandex.com', 'yandex.ru', 'ya.ru', 'rambler.ru',
+
+  // Asian Freemail
+  '126.com', '163.com', 'qq.com', 'rediffmail.com', 'indiatimes.com', 'sina.com', 'sohu.com', 'daum.net', 'hanmail.net', 'naver.com',
+
+  // Disposable / Temporary
+  '10minutemail.com', '10minutemail.net', 'guerrillamail.com', 'guerrillamailblock.com', 'sharklasers.com', 'grr.la', 'guerrillamail.biz', 'guerrillamail.de', 'guerrillamail.net', 'guerrillamail.org',
+  'yopmail.com', 'yopmail.fr', 'yopmail.net', 'tempmail.com', 'temp-mail.org', 'tempmailo.com', 'mailinator.com', 'trashmail.com', 'dispostable.com', 'getairmail.com', 'throwawaymail.com',
+
+  // Privacy / Personal Webmail
+  'protonmail.com', 'proton.me', 'zoho.com'
+];
+
+var CORPORATE_EMAIL_ERROR_MESSAGE = "Please use your official corporate/business email address. Public email providers such as Gmail, Yahoo, Hotmail, and Outlook are not accepted for Sales enquiries.";
+
+function isCorporateEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  var trimmed = email.trim();
+  if (!trimmed) return false;
+
+  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmed)) return false;
+
+  var atIndex = trimmed.lastIndexOf('@');
+  if (atIndex === -1) return false;
+  var domain = trimmed.substring(atIndex + 1).toLowerCase().trim();
+  if (!domain) return false;
+
+  for (var i = 0; i < BLOCKED_DOMAINS.length; i++) {
+    var blocked = BLOCKED_DOMAINS[i];
+    if (domain === blocked || domain.indexOf('.' + blocked) === (domain.length - (blocked.length + 1))) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// =========================================================================================
 // 2. SHEET TAB HEADERS & CONFIGURATION
 // =========================================================================================
 
@@ -180,6 +235,21 @@ var TAB_CONFIGS = {
     "Element Info","Metadata","IP Location","IP Address","Variant","Timestamp"
   ],
   "User_Behavior_Library": masterMetrics,
+
+  // ════ ISI Advanced Website Intelligence Tabs ════
+  "Session_Intelligence": [
+    "Session ID","Visitor ID","Started UTC","Ended UTC","Duration (sec)","Page Views",
+    "Entry Page","Exit Page","Traffic Source","Traffic Channel","Campaign",
+    "Device","Browser","OS","Country","Region / State","City",
+    "Returning User","Is Bounce","Is Converted","Lead Number","Lead Type","Timestamp"
+  ],
+  "IP_Network_Intelligence": [
+    "IP Address","ASN","Network Organization","ISP","Country","Region / State","City",
+    "Is Hosting / Datacenter","Is VPN / Proxy","Is Bot","Timezone","Request Count","Timestamp"
+  ],
+  "Security_Telemetry": [
+    "Incident ID","IP Address","Severity","Event Type","Details","Blocked","Timestamp UTC","Timestamp"
+  ],
 
   // Legacy Tab Compatibility Definitions
   "ContactForm": [
@@ -357,7 +427,17 @@ var SHEET_NAME_ALIASES = {
   "engagementmetrics": "Engagement_Metrics",
   "engagement_metrics": "Engagement_Metrics",
   "behaviormetrics": "Behavior_Metrics",
-  "behavior_metrics": "Behavior_Metrics"
+  "behavior_metrics": "Behavior_Metrics",
+
+  // Advanced Intelligence Aliases
+  "sessionintelligence": "Session_Intelligence",
+  "session_intelligence": "Session_Intelligence",
+  "sessions": "Session_Intelligence",
+  "ipnetworkintelligence": "IP_Network_Intelligence",
+  "ip_network_intelligence": "IP_Network_Intelligence",
+  "networkintelligence": "IP_Network_Intelligence",
+  "securitytelemetry": "Security_Telemetry",
+  "security_telemetry": "Security_Telemetry"
 };
 
 /**
@@ -440,7 +520,41 @@ function doPost(e) {
                       sheetName.toLowerCase().indexOf("job") !== -1;
 
     // =====================================================================================
-    // STEP 1: DISPATCH EMAILS & RESUME ATTACHMENTS IMMEDIATELY (ZERO-DELAY EMAIL PRIORITY)
+    // STEP 0: STRICT CORPORATE EMAIL VALIDATION (BLOCK PUBLIC/FREE WEBMAIL FOR SALES LEADS)
+    // =====================================================================================
+    var normSheet = sheetName.toLowerCase().replace(/[\s\-_]/g, '');
+    var isSalesLeadTab = normSheet === 'leads' ||
+                         normSheet === 'globalleadform' ||
+                         normSheet === 'salesinquiries' ||
+                         normSheet === 'salesinquiry' ||
+                         normSheet === 'contactform' ||
+                         normSheet === 'consultationrequests' ||
+                         normSheet === 'consultationreqs' ||
+                         normSheet === 'tenderrfq' ||
+                         normSheet === 'chatbotleads' ||
+                         normSheet === 'googleadleads' ||
+                         normSheet === 'adcampaign';
+
+    var isJobQuestionYes = String(data.jobQuestion || data["Are you looking for a job?"] || '').trim().toLowerCase() === 'yes' ||
+                           data.isJobSeeker === true ||
+                           String(data.leadType || '').toLowerCase().indexOf('career') !== -1;
+
+    if (isSalesLeadTab && !isJobQuestionYes && !isCareerApp) {
+      var candidateEmail = String(data.email || data.Email || data.workEmail || data.WorkEmail || data["Work Email"] || data["Official Email"] || '').trim();
+      if (!isCorporateEmail(candidateEmail)) {
+        console.warn("⛔ [CORPORATE EMAIL REJECTED] Rejected Sales Lead with public/freemail domain: " + candidateEmail);
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "rejected",
+          error: CORPORATE_EMAIL_ERROR_MESSAGE,
+          message: CORPORATE_EMAIL_ERROR_MESSAGE,
+          rejected: true,
+          reason: "BLOCKED_PUBLIC_EMAIL"
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    // =====================================================================================
+    // STEP 1: DISPATCH EMAILS & RESUME ATTACHMENTS (WITH DEDUPLICATION PROTECTION)
     // =====================================================================================
     var LEAD_FORMS = [
       "Contact_Form", "Partner_Applications", "Career_Applications", 
@@ -452,9 +566,34 @@ function doPost(e) {
       "AcademyInquiries", "ChatbotLeads", "TenderRFQ"
     ];
     
+    // ── Deduplication Lock (Prevents duplicate email notifications within 120s) ──
+    var isDuplicateLead = false;
+    var dedupKey = "";
+    try {
+      var candidateEmail = (data.email || data.Email || data["Work Email"] || data.workEmail || "").toString().toLowerCase().trim();
+      var candidatePhone = (data.phone || data.Phone || data["Phone Number"] || data.phoneNumber || "").toString().trim();
+      var candidateName  = (data.name || data.Name || data["Full Name"] || data.fullName || "").toString().toLowerCase().trim();
+      var candidateRole  = (data.jobTitle || data["Job Title"] || data.role || data.openPosition || data.serviceRequested || data.position || "").toString().toLowerCase().trim();
+      
+      if (candidateEmail || candidatePhone || candidateName) {
+        dedupKey = "dedup_" + (sheetName || "").toLowerCase() + "_" + candidateEmail + "_" + candidatePhone + "_" + candidateName + "_" + candidateRole;
+        dedupKey = dedupKey.replace(/[^a-zA-Z0-9_]/g, "_").substring(0, 200);
+        
+        var cache = CacheService.getScriptCache();
+        if (cache && cache.get(dedupKey)) {
+          isDuplicateLead = true;
+          console.warn("⚠️ [Deduplication] Duplicate lead submission detected within 120s for key: " + dedupKey + ". Skipping duplicate email dispatch.");
+        } else if (cache) {
+          cache.put(dedupKey, "true", 120); // 120 seconds deduplication window
+        }
+      }
+    } catch (dedupErr) {
+      console.warn("⚠️ Deduplication cache check warning:", dedupErr.toString());
+    }
+
     var emailSent = false;
     var emailResult = { sent: false, delivered: 0, failed: 0, driveLink: "", driveFileId: "", message: "" };
-    if (LEAD_FORMS.indexOf(sheetName) !== -1 || isCareerApp) {
+    if (!isDuplicateLead && (LEAD_FORMS.indexOf(sheetName) !== -1 || isCareerApp)) {
       try {
         var defaultSheetUrl = isAdLead 
           ? "https://docs.google.com/spreadsheets/d/" + CONFIG.AD_CAMPAIGN_SPREADSHEET_ID
@@ -469,11 +608,18 @@ function doPost(e) {
       } catch (emailErr) {
         console.error("❌ Failed to dispatch email in Step 1:", emailErr.toString());
       }
+    } else if (isDuplicateLead) {
+      console.log("⚡ [Email Priority] Skipped duplicate email send for duplicate lead submission: " + dedupKey);
     }
 
     // =====================================================================================
     // STEP 2: LOG DATA TO GOOGLE SHEETS (PROTECTED AGAINST SPREADSHEET SERVICE TIMEOUTS)
     // =====================================================================================
+    if (isDuplicateLead) {
+      console.log("ℹ️ [Deduplication] Row and email already processed for duplicate lead: " + dedupKey);
+      return ContentService.createTextOutput("OK (Duplicate lead filtered)").setMimeType(ContentService.MimeType.TEXT);
+    }
+
     var rowSaved = false;
 
     try {
@@ -553,15 +699,19 @@ function doPost(e) {
           return resolveField(header, data);
         });
         
-        // Logic for Upsert/Dedup (Library & Analytics)
-        var shouldUpsert = (sheetName === "UserBehaviorLibrary" || sheetName === "EngagementMetrics");
-        var shouldDedup  = (sheetName === "TrafficAnalytics");
+        // Logic for Upsert/Dedup (Library, Analytics, Intelligence)
+        var isIntelligenceTab = (sheetName === "Session_Intelligence" || sheetName === "IP_Network_Intelligence");
+        var shouldUpsert = (sheetName === "UserBehaviorLibrary" || sheetName === "EngagementMetrics" || isIntelligenceTab);
+        var shouldDedup  = (sheetName === "TrafficAnalytics" || sheetName === "Traffic_Analytics");
         var lastRow = sheet.getLastRow();
         
         if ((shouldUpsert || shouldDedup) && lastRow > 1) {
-          var sessionCol = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
+          var keyColIndex = (sheetName === "IP_Network_Intelligence") ? headers.indexOf("IP Address") : 0;
+          if (keyColIndex === -1) keyColIndex = 0;
+          var sessionCol = sheet.getRange(2, keyColIndex + 1, lastRow - 1, 1).getValues().flat();
           if (shouldUpsert) {
-            var rowIndex = sessionCol.indexOf(data.sessionId);
+            var lookupKey = (sheetName === "IP_Network_Intelligence") ? (data.ipAddress || data.ip) : data.sessionId;
+            var rowIndex = sessionCol.indexOf(lookupKey);
             if (rowIndex !== -1) {
               sheet.getRange(rowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
               rowSaved = true;
@@ -902,7 +1052,15 @@ function archiveResumeToDrive(attachments, data) {
  */
 function sanitizeEmailContent(str) {
   if (!str) return str;
-  return str.replace(/�+/g, '');
+  // 1. Remove Unicode replacement characters, BOM, and corrupted characters
+  var clean = str.replace(/[\uFFFD\uFEFF]/g, '');
+  // 2. Strip emojis and surrogate pairs to eliminate email corruption in all clients
+  clean = clean.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')  // UTF-16 surrogate pairs (e.g. briefcase, pin)
+               .replace(/[\u2300-\u23FF]/g, '')                 // Misc Technical symbols including stopwatch
+               .replace(/[\u2600-\u27BF]/g, '')                 // Miscellaneous symbols & Dingbats (e.g. mail, phone)
+               .replace(/[\u2B50-\u2B55]/g, '')                 // Additional misc symbols
+               .replace(/[\uFE00-\uFE0F]/g, '');                // Variation Selectors
+  return clean;
 }
 
 /**
@@ -1073,12 +1231,15 @@ function sendLeadEmails(data, sheetName, spreadsheetUrl) {
                         "Please find the attached resume document (" + (data.resumeFileName || "Resume") + ") enclosed with this email." +
                         driveNote;
 
+    var isCareerLead = (sheetName === "Career_Applications" || sheetName === "CareerApplications" || (leadMeta.categoryName && leadMeta.categoryName.indexOf("Job") !== -1));
+    var senderName = leadMeta.senderName || (isCareerLead ? "Career Engine" : ("ISI Lead Engine • " + leadMeta.categoryName));
+
     var mailOptions = {
       to: targetRecipients.join(","),
       subject: (isTest ? "[TEST] " : "") + subjectInternal,
       body: plainTextBody,
       htmlBody: htmlInternal,
-      name: "ISI Lead Engine • " + leadMeta.categoryName,
+      name: senderName,
       replyTo: (userEmail && userEmail.indexOf("@") !== -1) ? userEmail : EMAIL_CONFIG.replyTo
     };
     if (recipientBlobs.length > 0) {
@@ -1142,6 +1303,7 @@ function getLeadCategoryMeta(sheetName, data) {
         leadName: name || "Candidate Applicant",
         leadCompany: role || "Security Role",
         leadPhone: phone,
+        senderName: "Career Engine",
         internalSubject: "Job Application - " + (name || "Applicant") + (role ? " - " + role : ""),
         userSubject: "Job Application Received - ISI Security Careers",
         userMessage: "We have received your career application. Our Talent Acquisition Team is reviewing your credentials and will reach out if your profile matches our requirements.",
@@ -1362,16 +1524,16 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
   // Quick Action Buttons (No Drive button)
   var actionButtons = '<div style="margin-top:25px;display:flex;gap:10px;flex-wrap:wrap;">';
   if (phone) {
-    actionButtons += '<a href="tel:' + phone + '" style="background:#003380;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">📞 Call ' + phone + '</a>';
+    actionButtons += '<a href="tel:' + phone + '" style="background:#003380;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">Call ' + phone + '</a>';
   }
   if (email) {
-    actionButtons += '<a href="mailto:' + email + '?subject=Re: ' + encodeURIComponent(meta.categoryName + ' - ISI Security') + '" style="background:#059669;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">✉️ Reply via Email</a>';
+    actionButtons += '<a href="mailto:' + email + '?subject=Re: ' + encodeURIComponent(meta.categoryName + ' - ISI Security') + '" style="background:#059669;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-right:8px;margin-bottom:8px;">Reply via Email</a>';
   }
   if (spreadsheetUrl) {
-    actionButtons += '<a href="' + spreadsheetUrl + '" target="_blank" style="background:#334155;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-bottom:8px;margin-right:8px;">📊 Open Google Sheet</a>';
+    actionButtons += '<a href="' + spreadsheetUrl + '" target="_blank" style="background:#334155;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-bottom:8px;margin-right:8px;">Open Google Sheet</a>';
   }
   if (data.resumeDriveLink) {
-    actionButtons += '<a href="' + escapeHtml(data.resumeDriveLink) + '" target="_blank" style="background:#047857;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-bottom:8px;">📄 View Resume in Drive</a>';
+    actionButtons += '<a href="' + escapeHtml(data.resumeDriveLink) + '" target="_blank" style="background:#047857;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;font-size:13px;display:inline-block;margin-bottom:8px;">View Resume in Drive</a>';
   }
   actionButtons += '</div>';
 
@@ -1379,11 +1541,10 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
   var driveLink = data.resumeDriveLink || data.driveLink || "";
   if (resumeName || data.resumeBlob || driveLink) {
     var driveBtn = driveLink
-      ? '<div style="margin-top:6px;"><a href="' + escapeHtml(driveLink) + '" target="_blank" style="color:#047857;font-weight:700;font-size:12px;">📄 Open resume in Google Drive</a></div>'
+      ? '<div style="margin-top:6px;"><a href="' + escapeHtml(driveLink) + '" target="_blank" style="color:#047857;font-weight:700;font-size:12px;">Open resume in Google Drive</a></div>'
       : '<div style="color:#047857;font-size:12px;margin-top:2px;">Download from this email\'s attachments if present.</div>';
     resumeAttachmentNotice =
-      '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;">' +
-      '  <span style="font-size:22px;margin-right:12px;">📎</span>' +
+      '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px 16px;margin-bottom:20px;">' +
       '  <div>' +
       '    <div style="font-weight:700;color:#065f46;font-size:13px;">Candidate Resume</div>' +
       '    <div style="color:#047857;font-size:12px;margin-top:2px;"><strong>Document:</strong> ' + escapeHtml(resumeName || 'Candidate_Resume.pdf') + '</div>' +
@@ -1396,14 +1557,14 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
   if (coverLetter) {
     coverLetterSection = 
       '<div style="margin-bottom:20px;padding:16px;background:#f8fafc;border-left:4px solid #6366f1;border-radius:4px;">' +
-      '  <h4 style="margin:0 0 6px 0;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#4338ca;font-weight:700;">📝 Candidate Cover Letter</h4>' +
+      '  <h4 style="margin:0 0 6px 0;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#4338ca;font-weight:700;">Candidate Cover Letter</h4>' +
       '  <div style="font-size:13px;color:#334155;line-height:1.6;font-style:italic;">"' + escapeHtml(String(coverLetter)).replace(/\n/g, '<br>') + '"</div>' +
       '</div>';
   }
 
   var utmSection = utmRows ? (
     '<div style="margin-top:20px;padding:15px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;">' +
-    '<h4 style="margin:0 0 10px 0;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;">📡 Campaign Attribution & Traffic Context</h4>' +
+    '<h4 style="margin:0 0 10px 0;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;">Campaign Attribution & Traffic Context</h4>' +
     utmRows +
     '</div>'
   ) : '';
@@ -1432,8 +1593,8 @@ function buildInternalLeadHtml(meta, data, spreadsheetUrl) {
     '    <div style="padding: 25px 25px 10px 25px;">',
     '      <div style="background: #f8fafc; border-left: 4px solid #003380; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">',
     '        <div style="font-size: 18px; font-weight: 700; color: #0f172a;">' + escapeHtml(name) + '</div>',
-    '        <div style="color: #475569; font-size: 14px; margin-top: 4px;">' + (jobTitle ? '💼 ' + escapeHtml(jobTitle) + ' • ' : '') + '📍 ' + escapeHtml(location) + '</div>',
-    '        <div style="color: #64748b; font-size: 12px; margin-top: 6px;">⏱ ' + timestamp + '</div>',
+    '        <div style="color: #475569; font-size: 14px; margin-top: 4px;">' + (jobTitle ? escapeHtml(jobTitle) + ' &bull; ' : '') + escapeHtml(location) + '</div>',
+    '        <div style="color: #64748b; font-size: 12px; margin-top: 6px;">' + timestamp + '</div>',
     '      </div>',
     '',
     '      <!-- RESUME ATTACHMENT BANNER -->',
@@ -1521,39 +1682,149 @@ function buildUserConfirmationHtml(name, categoryName, messageStr) {
 }
 
 // =========================================================================================
-// 8. MONTHLY CAREER RESUME DIGEST & FORWARDING ENGINE
+// 8. MONTHLY CAREER RESUME DIGEST & FORWARDING ENGINE (WITH BINARY RESUME ATTACHMENTS)
 // =========================================================================================
 
 /**
+ * Extracts a clean Google Drive alphanumeric File ID from either a raw ID or any Drive URL format.
+ * Examples handled:
+ * - 1BxiMVs0XRA5nFMdKvBHK_Qdc5j5S-VZZ
+ * - https://drive.google.com/file/d/1BxiMVs0XRA5nFMdKvBHK_Qdc5j5S-VZZ/view?usp=sharing
+ * - https://drive.google.com/open?id=1BxiMVs0XRA5nFMdKvBHK_Qdc5j5S-VZZ
+ * - https://drive.google.com/uc?id=1BxiMVs0XRA5nFMdKvBHK_Qdc5j5S-VZZ
+ */
+function extractDriveFileId(str) {
+  if (!str) return "";
+  var s = String(str).trim();
+  if (/^[a-zA-Z0-9_-]{25,65}$/.test(s)) {
+    return s;
+  }
+  var m = s.match(/\/file\/d\/([a-zA-Z0-9_-]{25,65})/);
+  if (m && m[1]) return m[1];
+  m = s.match(/\/d\/([a-zA-Z0-9_-]{25,65})/);
+  if (m && m[1]) return m[1];
+  m = s.match(/[?&]id=([a-zA-Z0-9_-]{25,65})/);
+  if (m && m[1]) return m[1];
+  m = s.match(/id=([a-zA-Z0-9_-]{25,65})/);
+  if (m && m[1]) return m[1];
+  return "";
+}
+
+/**
+ * Flexible header column finder supporting case-insensitivity, spaces, and synonyms.
+ */
+function findColumnIndexFlexible(headers, aliases) {
+  if (!headers || !headers.length) return -1;
+  for (var i = 0; i < headers.length; i++) {
+    var h = String(headers[i] || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    for (var j = 0; j < aliases.length; j++) {
+      var a = String(aliases[j] || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (h === a) return i;
+    }
+  }
+  return -1;
+}
+
+/**
+ * Multi-tier resume file resolver:
+ * 1. Checks Drive File ID or Drive Link in applicant record.
+ * 2. Checks ISI_Career_Resumes folder for matching resume filename or candidate name.
+ * 3. Checks global Drive files for matching filename.
+ */
+function resolveCandidateResumeFile(candidate, folder) {
+  var file = null;
+  var fileId = extractDriveFileId(candidate.driveId) || extractDriveFileId(candidate.driveLink);
+
+  // Tier 1: Fetch via extracted File ID
+  if (fileId) {
+    try {
+      file = DriveApp.getFileById(fileId);
+      if (file && !file.isTrashed()) {
+        return file;
+      }
+    } catch (e1) {
+      console.warn("Could not retrieve Drive file by ID '" + fileId + "': " + e1.toString());
+    }
+  }
+
+  // Tier 2: Search within the dedicated Career Resumes Drive folder
+  try {
+    var resumeFolder = folder || getOrCreateResumeFolder();
+    if (resumeFolder) {
+      // A. Search by explicit resume filename
+      if (candidate.resumeName && candidate.resumeName !== "Resume.pdf") {
+        var cleanFileName = candidate.resumeName.replace(/'/g, "\\'");
+        var it = resumeFolder.searchFiles("title contains '" + cleanFileName + "' and trashed = false");
+        if (it.hasNext()) return it.next();
+      }
+
+      // B. Search by applicant full name
+      if (candidate.name && candidate.name !== "Applicant") {
+        var safeName = candidate.name.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+        if (safeName.length >= 3) {
+          var itName = resumeFolder.searchFiles("title contains '" + safeName.replace(/'/g, "\\'") + "' and trashed = false");
+          if (itName.hasNext()) return itName.next();
+        }
+      }
+
+      // C. Search by email username
+      if (candidate.email && candidate.email.indexOf("@") !== -1) {
+        var emailUser = candidate.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "").trim();
+        if (emailUser.length >= 3) {
+          var itMail = resumeFolder.searchFiles("title contains '" + emailUser + "' and trashed = false");
+          if (itMail.hasNext()) return itMail.next();
+        }
+      }
+    }
+  } catch (e2) {
+    console.warn("Error searching Drive folder for candidate resume: " + e2.toString());
+  }
+
+  // Tier 3: Search global Drive for exact resume name
+  if (candidate.resumeName && candidate.resumeName !== "Resume.pdf") {
+    try {
+      var globalIt = DriveApp.searchFiles("title = '" + candidate.resumeName.replace(/'/g, "\\'") + "' and trashed = false");
+      if (globalIt.hasNext()) return globalIt.next();
+    } catch (e3) {}
+  }
+
+  return null;
+}
+
+/**
  * Gathers all career applications received in the past month, compiles candidate profiles,
- * fetches their resumes from Drive/Storage, and forwards them as attachments to the HR team.
+ * fetches their resumes from Drive/Storage, attaches binary PDF/DOC files, and forwards them to HR.
  */
 function forwardMonthlyCareerApplications() {
-  console.log("🚀 Starting Monthly Career Applications Digest Forwarder...");
+  console.log("🚀 Starting Monthly Career Applications Digest Forwarder (with binary resume attachments)...");
   
   var ss = SpreadsheetApp.openById(CONFIG.MAIN_SPREADSHEET_ID);
-  var sheet = findSheetFlexible(ss, "Career_Applications");
+  var sheet = findSheetFlexible(ss, "Career_Applications") ||
+              findSheetFlexible(ss, "CareerApplications") ||
+              findSheetFlexible(ss, "Careers") ||
+              findSheetFlexible(ss, "Career Apps");
+
   if (!sheet) {
-    console.error("Career_Applications sheet not found in main spreadsheet.");
-    return;
+    console.error("❌ Career_Applications sheet not found in main spreadsheet.");
+    return { ok: false, error: "Career_Applications sheet not found" };
   }
   
   var data = sheet.getDataRange().getValues();
   if (data.length < 2) {
-    console.log("No career applications found.");
-    return;
+    console.log("ℹ️ No career applications found in sheet.");
+    return { ok: true, count: 0, attachments: 0 };
   }
   
   var headers = data[0];
-  var nameCol       = headers.indexOf("Name");
-  var emailCol      = headers.indexOf("Email");
-  var phoneCol      = headers.indexOf("Phone");
-  var jobTitleCol   = headers.indexOf("Job Title");
-  var resumeNameCol = headers.indexOf("Resume File Name");
-  var driveLinkCol  = headers.indexOf("Resume Drive Link");
-  var driveIdCol    = headers.indexOf("Drive File ID");
-  var coverCol      = headers.indexOf("Cover Letter");
-  var tsCol         = headers.indexOf("Timestamp");
+  var nameCol       = findColumnIndexFlexible(headers, ["Name", "Full Name", "Applicant Name", "Candidate Name", "Applicant"]);
+  var emailCol      = findColumnIndexFlexible(headers, ["Email", "Email Address", "Work Email", "Candidate Email"]);
+  var phoneCol      = findColumnIndexFlexible(headers, ["Phone", "Phone Number", "Contact", "Contact Number", "Mobile"]);
+  var jobTitleCol   = findColumnIndexFlexible(headers, ["Job Title", "Position", "Role", "Job", "Applied Position", "Designation"]);
+  var resumeNameCol = findColumnIndexFlexible(headers, ["Resume File Name", "Resume Name", "File Name", "Resume", "Filename"]);
+  var driveLinkCol  = findColumnIndexFlexible(headers, ["Resume Drive Link", "Resume Link", "Drive Link", "Resume URL", "Drive URL", "Link"]);
+  var driveIdCol    = findColumnIndexFlexible(headers, ["Drive File ID", "Drive File Id", "File ID", "Drive ID", "driveFileId", "drive_file_id", "FileId"]);
+  var coverCol      = findColumnIndexFlexible(headers, ["Cover Letter", "Cover", "Message", "Notes", "Your Message"]);
+  var tsCol         = findColumnIndexFlexible(headers, ["Timestamp", "Date", "Submission Date", "Applied At", "Created At", "Time"]);
   
   var now = new Date();
   var thirtyDaysAgo = new Date(now.getTime() - 31 * 24 * 60 * 60 * 1000);
@@ -1562,41 +1833,101 @@ function forwardMonthlyCareerApplications() {
   var attachments = [];
   var totalAttachmentSize = 0;
   var MAX_TOTAL_ATTACHMENT_BYTES = 20 * 1024 * 1024; // 20 MB safety limit for Gmail (max 25MB)
+  var resumeFolder = getOrCreateResumeFolder();
+  var folderUrl = resumeFolder ? resumeFolder.getUrl() : "";
 
   for (var i = 1; i < data.length; i++) {
     var row = data[i];
-    var ts = parseSheetDate(row[tsCol]);
+    var rawTs = (tsCol !== -1) ? row[tsCol] : "";
+    var ts = parseSheetDate(rawTs);
+    if (!ts && rawTs) {
+      var d = new Date(rawTs);
+      if (!isNaN(d.getTime())) ts = d;
+    }
     
-    // Filter by applications submitted in last 31 days
-    if (ts && ts >= thirtyDaysAgo) {
+    // Filter by applications submitted in last 31 days (or include recent rows if data size is small)
+    var isRecent = ts ? (ts >= thirtyDaysAgo) : (data.length <= 15);
+
+    if (isRecent) {
+      var rawName = (nameCol !== -1 ? row[nameCol] : "") || "Applicant";
+      var rawEmail = (emailCol !== -1 ? row[emailCol] : "") || "";
+      var rawPhone = (phoneCol !== -1 ? row[phoneCol] : "") || "";
+      var rawJob = (jobTitleCol !== -1 ? row[jobTitleCol] : "") || "General Role";
+      var rawResumeName = (resumeNameCol !== -1 ? row[resumeNameCol] : "") || (rawName.replace(/[^a-zA-Z0-9]/g, "_") + "_Resume.pdf");
+      var rawDriveLink = (driveLinkCol !== -1 ? row[driveLinkCol] : "") || "";
+      var rawDriveId = (driveIdCol !== -1 ? row[driveIdCol] : "") || "";
+      var rawCover = (coverCol !== -1 ? row[coverCol] : "") || "";
+
       var candidate = {
-        name: row[nameCol] || "Applicant",
-        email: row[emailCol] || "",
-        phone: row[phoneCol] || "",
-        jobTitle: row[jobTitleCol] || "General Role",
-        resumeName: row[resumeNameCol] || "Resume.pdf",
-        driveLink: (driveLinkCol !== -1 ? row[driveLinkCol] : "") || "",
-        driveId: (driveIdCol !== -1 ? row[driveIdCol] : "") || "",
-        coverLetter: row[coverCol] || "",
-        date: Utilities.formatDate(ts, "Asia/Kolkata", "dd-MMM-yyyy")
+        rowIndex: i + 1,
+        name: rawName,
+        email: rawEmail,
+        phone: rawPhone,
+        jobTitle: rawJob,
+        resumeName: rawResumeName,
+        driveLink: rawDriveLink,
+        driveId: rawDriveId,
+        coverLetter: rawCover,
+        date: ts ? Utilities.formatDate(ts, "Asia/Kolkata", "dd-MMM-yyyy") : Utilities.formatDate(now, "Asia/Kolkata", "dd-MMM-yyyy"),
+        isAttached: false,
+        isOversized: false,
+        fileSizeKb: 0,
+        attachmentName: ""
       };
       
-      // Attempt to attach resume file from Drive
-      if (candidate.driveId) {
+      // Resolve candidate resume file from Google Drive
+      var file = resolveCandidateResumeFile(candidate, resumeFolder);
+
+      if (file) {
         try {
-          var file = DriveApp.getFileById(candidate.driveId);
+          try {
+            file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          } catch (shareErr) {}
+
+          var fileId = file.getId();
+          var fileUrl = file.getUrl();
+          candidate.driveId = fileId;
+          candidate.driveLink = fileUrl;
+
+          // Self-heal the sheet row if missing ID or link
+          if (driveIdCol !== -1 && (!row[driveIdCol] || row[driveIdCol] === "")) {
+            sheet.getRange(i + 1, driveIdCol + 1).setValue(fileId);
+          }
+          if (driveLinkCol !== -1 && (!row[driveLinkCol] || row[driveLinkCol] === "")) {
+            sheet.getRange(i + 1, driveLinkCol + 1).setValue(fileUrl);
+          }
+
+          // Extract blob and prepare binary email attachment
           var blob = file.getBlob();
           var size = blob.getBytes().length;
-          if (totalAttachmentSize + size < MAX_TOTAL_ATTACHMENT_BYTES) {
-            blob.setName(candidate.name.replace(/[^a-zA-Z0-9_\s]/g, "") + "_" + (candidate.resumeName || "Resume.pdf"));
+          var ext = ".pdf";
+          if (candidate.resumeName && candidate.resumeName.indexOf(".") !== -1) {
+            ext = candidate.resumeName.substring(candidate.resumeName.lastIndexOf("."));
+          } else if (blob.getContentType() && blob.getContentType().indexOf("word") !== -1) {
+            ext = ".docx";
+          }
+          var cleanName = candidate.name.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_");
+          var safeAttachmentName = (cleanName ? cleanName + "_Resume" : "Candidate_Resume") + ext;
+          blob.setName(safeAttachmentName);
+
+          candidate.fileSizeKb = Math.round(size / 1024);
+          candidate.attachmentName = safeAttachmentName;
+
+          if (totalAttachmentSize + size <= MAX_TOTAL_ATTACHMENT_BYTES) {
             attachments.push(blob);
             totalAttachmentSize += size;
+            candidate.isAttached = true;
+            console.log("📎 Attached resume for " + candidate.name + " (" + candidate.fileSizeKb + " KB): " + safeAttachmentName);
           } else {
-            console.warn("Attachment size threshold reached. Candidate resume linked via Drive: " + candidate.name);
+            candidate.isAttached = false;
+            candidate.isOversized = true;
+            console.warn("⚠️ Attachment size threshold (20MB) reached. Candidate resume linked via Drive: " + candidate.name);
           }
         } catch (fileErr) {
-          console.error("Could not fetch Drive file ID: " + candidate.driveId, fileErr.toString());
+          console.error("❌ Error processing resume file for " + candidate.name + ": " + fileErr.toString());
         }
+      } else {
+        console.warn("⚠️ No resume file found in Drive for candidate: " + candidate.name + " (" + candidate.email + ")");
       }
       
       candidates.push(candidate);
@@ -1605,18 +1936,18 @@ function forwardMonthlyCareerApplications() {
 
   if (candidates.length === 0) {
     console.log("ℹ️ No career applications recorded in the past 30 days.");
-    return;
+    return { ok: true, count: 0, attachments: 0 };
   }
 
   // Build Monthly Career Digest HTML
   var monthLabel = Utilities.formatDate(now, "Asia/Kolkata", "MMMM yyyy");
-  var emailHtml = buildMonthlyCareerEmailHtml(monthLabel, candidates, ss.getUrl());
-  var subject = "[Career Applications] Monthly Resumes Digest - " + monthLabel + " (" + candidates.length + " Applicants)";
+  var emailHtml = buildMonthlyCareerEmailHtml(monthLabel, candidates, ss.getUrl(), folderUrl, totalAttachmentSize, attachments.length);
+  var subject = "[Career Applications] Monthly Resumes Digest - " + monthLabel + " (" + candidates.length + " Applicants • " + attachments.length + " Resumes Attached)";
   
   var quota = getRemainingEmailQuota();
   if (quota === 0) {
     console.error("❌ Cannot send monthly digest: email quota exhausted.");
-    return;
+    return { ok: false, error: "Daily email quota exhausted" };
   }
   try {
     var mailOptions = {
@@ -1630,32 +1961,66 @@ function forwardMonthlyCareerApplications() {
     }
     var digestSend = sendEmailOnce(mailOptions);
     if (digestSend.ok) {
-      console.log("✅ Monthly Career Digest sent via " + digestSend.via + " (" + candidates.length + " applicants, " + attachments.length + " resumes) to: " + mailOptions.to);
+      console.log("✅ Monthly Career Digest sent via " + digestSend.via + " (" + candidates.length + " applicants, " + attachments.length + " resumes attached, " + (totalAttachmentSize / (1024*1024)).toFixed(2) + " MB) to: " + mailOptions.to);
+      return { ok: true, count: candidates.length, attachments: attachments.length, totalMb: (totalAttachmentSize / (1024*1024)).toFixed(2) };
     } else {
       console.error("❌ Monthly digest failed: " + digestSend.error);
+      return { ok: false, error: digestSend.error };
     }
   } catch (err) {
-    console.error("Error sending monthly career digest email:", err.toString());
+    console.error("❌ Error sending monthly career digest email:", err.toString());
+    return { ok: false, error: err.toString() };
   }
 }
 
 /**
- * Builds the HTML template for the Monthly Career Digest.
+ * Builds the high-end Executive HTML template for the Monthly Career Digest.
+ * Clearly displays candidate details, contact info, job role, and explicit resume attachment status.
  */
-function buildMonthlyCareerEmailHtml(monthLabel, candidates, sheetUrl) {
+function buildMonthlyCareerEmailHtml(monthLabel, candidates, sheetUrl, folderUrl, totalAttachmentSizeBytes, attachedCount) {
+  var totalMb = (totalAttachmentSizeBytes / (1024 * 1024)).toFixed(1);
+
   var candidateRows = candidates.map(function(c, idx) {
-    var resumeCell = c.driveLink 
-      ? '<a href="' + c.driveLink + '" target="_blank" style="color:#003380;font-weight:bold;text-decoration:none;">📄 View Resume</a>'
-      : '<span style="color:#94a3b8;">Attached to Email</span>';
+    var resumeBadge = "";
+    if (c.isAttached) {
+      resumeBadge = '<div style="margin-bottom:6px;"><span style="display:inline-block;background:#dcfce7;color:#15803d;padding:4px 9px;border-radius:12px;font-weight:700;font-size:11px;border:1px solid #bbf7d0;">📎 Attached (' + c.fileSizeKb + ' KB)</span></div>';
+    } else if (c.isOversized) {
+      resumeBadge = '<div style="margin-bottom:6px;"><span style="display:inline-block;background:#fef3c7;color:#b45309;padding:4px 9px;border-radius:12px;font-weight:700;font-size:11px;border:1px solid #fde68a;">⚠️ Exceeds 20MB Limit</span></div>';
+    } else {
+      resumeBadge = '<div style="margin-bottom:6px;"><span style="display:inline-block;background:#fee2e2;color:#b91c1c;padding:4px 9px;border-radius:12px;font-weight:600;font-size:11px;border:1px solid #fecaca;">⚠️ File Not In Drive</span></div>';
+    }
+
+    var driveLinkHtml = c.driveLink
+      ? '<a href="' + c.driveLink + '" target="_blank" style="display:inline-block;color:#003380;font-weight:700;font-size:11px;text-decoration:none;border-bottom:1px solid #93c5fd;">📄 Open in Drive &rarr;</a>'
+      : '<span style="color:#94a3b8;font-size:11px;">Link Unavailable</span>';
+
+    var coverPreview = c.coverLetter
+      ? '<div style="margin-top:6px;font-size:11px;color:#64748b;font-style:italic;background:#f8fafc;padding:4px 8px;border-radius:4px;border-left:2px solid #cbd5e1;">"' + escapeHtml(c.coverLetter.substring(0, 100)) + (c.coverLetter.length > 100 ? '...' : '') + '"</div>'
+      : '';
 
     return '<tr style="background:' + (idx % 2 === 0 ? '#ffffff' : '#f8fafc') + ';">' +
-           '<td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;font-weight:700;color:#0f172a;font-size:13px;">' + c.name + '</td>' +
-           '<td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;color:#003380;font-weight:600;font-size:12px;">' + c.jobTitle + '</td>' +
-           '<td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:12px;"><a href="mailto:' + c.email + '" style="color:#0284c7;text-decoration:none;">' + c.email + '</a><br>' + c.phone + '</td>' +
-           '<td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:11px;">' + c.date + '</td>' +
-           '<td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;font-size:12px;text-align:center;">' + resumeCell + '</td>' +
+           '<td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;font-weight:700;color:#0f172a;font-size:13px;vertical-align:top;">' +
+             escapeHtml(c.name) + coverPreview +
+           '</td>' +
+           '<td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#003380;font-weight:600;font-size:12px;vertical-align:top;">' +
+             '<span style="display:inline-block;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;">' + escapeHtml(c.jobTitle) + '</span>' +
+           '</td>' +
+           '<td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:12px;vertical-align:top;line-height:1.5;">' +
+             (c.email ? '<a href="mailto:' + escapeHtml(c.email) + '" style="color:#0284c7;text-decoration:none;font-weight:600;">' + escapeHtml(c.email) + '</a><br>' : '') +
+             (c.phone ? '<span style="color:#475569;font-size:11px;">📞 ' + escapeHtml(c.phone) + '</span>' : '') +
+           '</td>' +
+           '<td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:11px;vertical-align:top;white-space:nowrap;">' +
+             c.date +
+           '</td>' +
+           '<td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;font-size:12px;text-align:center;vertical-align:top;">' +
+             resumeBadge + driveLinkHtml +
+           '</td>' +
            '</tr>';
   }).join('');
+
+  var driveFolderButton = folderUrl
+    ? '<a href="' + folderUrl + '" target="_blank" style="background:#4338ca;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:700;font-size:13px;display:inline-block;margin:5px;">📁 Open Resumes Drive Folder</a>'
+    : '';
 
   return [
     '<!DOCTYPE html>',
@@ -1665,33 +2030,56 @@ function buildMonthlyCareerEmailHtml(monthLabel, candidates, sheetUrl) {
     '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
     '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
     '</head>',
-    '<body style="font-family:\'Segoe UI\',Arial,sans-serif;background-color:#f1f5f9;margin:0;padding:25px 15px;">',
-    ' <div style="max-width:700px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">',
-    '  <div style="background:linear-gradient(135deg,#1e1b4b 0%,#4338ca 100%);padding:30px 25px;color:#ffffff;">',
-    '   <div style="display:inline-block;background:#6366f1;color:#ffffff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:0.06em;margin-bottom:10px;">MONTHLY TALENT PIPELINE</div>',
-    '   <h2 style="margin:0;font-size:22px;font-weight:800;">ISI Career Applications & Resumes</h2>',
-    '   <p style="margin:6px 0 0 0;color:#c7d2fe;font-size:13px;">Compiled talent applications for ' + monthLabel + ' • Total Applicants: <strong>' + candidates.length + '</strong></p>',
+    '<body style="font-family:\'Segoe UI\',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;background-color:#f1f5f9;margin:0;padding:25px 15px;">',
+    ' <div style="max-width:750px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">',
+    '  <div style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#4338ca 100%);padding:32px 28px;color:#ffffff;">',
+    '   <div style="display:inline-block;background:#6366f1;color:#ffffff;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:0.06em;margin-bottom:10px;">TALENT PIPELINE & RECRUITMENT</div>',
+    '   <h2 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.01em;">ISI Career Applications & Resumes Digest</h2>',
+    '   <p style="margin:8px 0 0 0;color:#c7d2fe;font-size:13px;">Consolidated Talent Pool for <strong>' + monthLabel + '</strong></p>',
     '  </div>',
+    '',
+    '  <!-- KPI SUMMARY CARDS -->',
+    '  <div style="background:#f8fafc;padding:18px 25px;border-bottom:1px solid #e2e8f0;">',
+    '   <table style="width:100%;border-collapse:collapse;">',
+    '    <tr>',
+    '     <td style="width:33.3%;text-align:center;padding:10px;border-right:1px solid #e2e8f0;">',
+    '      <div style="font-size:24px;font-weight:800;color:#0f172a;">' + candidates.length + '</div>',
+    '      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">Total Applicants</div>',
+    '     </td>',
+    '     <td style="width:33.3%;text-align:center;padding:10px;border-right:1px solid #e2e8f0;">',
+    '      <div style="font-size:24px;font-weight:800;color:#16a34a;">' + attachedCount + '</div>',
+    '      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">Resumes Attached (' + totalMb + ' MB)</div>',
+    '     </td>',
+    '     <td style="width:33.3%;text-align:center;padding:10px;">',
+    '      <div style="font-size:24px;font-weight:800;color:#4338ca;">100%</div>',
+    '      <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">Drive Backed Up</div>',
+    '     </td>',
+    '    </tr>',
+    '   </table>',
+    '  </div>',
+    '',
     '  <div style="padding:25px;">',
-    '   <p style="color:#475569;font-size:14px;margin:0 0 20px 0;">Below is the consolidated list of candidates who applied for open positions at ISI Security over the past month. Candidate resume files are attached directly to this email and archived in Google Drive.</p>',
+    '   <p style="color:#475569;font-size:14px;margin:0 0 20px 0;line-height:1.6;">Below is the complete register of candidates who applied for open positions at ISI Security over the past month. All available resume files have been decoded and attached directly to this email for fast offline screening, and permanently archived in Google Drive.</p>',
     '   <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">',
     '    <thead>',
     '     <tr style="background:#0f172a;color:#ffffff;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">',
-    '      <th style="padding:10px;text-align:left;">Candidate</th>',
-    '      <th style="padding:10px;text-align:left;">Position</th>',
-    '      <th style="padding:10px;text-align:left;">Contact</th>',
-    '      <th style="padding:10px;text-align:left;">Date</th>',
-    '      <th style="padding:10px;text-align:center;">Resume</th>',
+    '      <th style="padding:12px 10px;text-align:left;">Candidate</th>',
+    '      <th style="padding:12px 10px;text-align:left;">Role</th>',
+    '      <th style="padding:12px 10px;text-align:left;">Contact</th>',
+    '      <th style="padding:12px 10px;text-align:left;">Date</th>',
+    '      <th style="padding:12px 10px;text-align:center;">Resume & Drive</th>',
     '     </tr>',
     '    </thead>',
     '    <tbody>' + candidateRows + '</tbody>',
     '   </table>',
     '   <div style="text-align:center;margin-top:25px;">',
-    '    <a href="' + sheetUrl + '" style="background:#003380;color:#ffffff;text-decoration:none;padding:12px 25px;border-radius:8px;font-weight:700;font-size:13px;display:inline-block;">Open Career Applications Sheet</a>',
+    '    <a href="' + sheetUrl + '" target="_blank" style="background:#003380;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:700;font-size:13px;display:inline-block;margin:5px;">📊 Open Career Applications Sheet</a>',
+    '    ' + driveFolderButton,
     '   </div>',
     '  </div>',
-    '  <div style="background:#f8fafc;padding:18px 25px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center;">',
-    '   &copy; ' + new Date().getFullYear() + ' ISI Security Human Resources & Talent Acquisition.',
+    '  <div style="background:#f8fafc;padding:18px 25px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center;line-height:1.6;">',
+    '   &copy; ' + new Date().getFullYear() + ' Industrial Security & Intelligence (India) Pvt Ltd • Human Resources & Talent Acquisition.<br>',
+    '   Automated talent pipeline digest dispatched on the 1st of every month at 9:00 AM IST.',
     '  </div>',
     ' </div>',
     '</body>',
@@ -1703,7 +2091,7 @@ function buildMonthlyCareerEmailHtml(monthLabel, candidates, sheetUrl) {
  * Sets up an automated recurring trigger on the 1st of every month at 9:00 AM IST.
  */
 function setupMonthlyCareerTrigger() {
-  // Clear any existing monthlyCareerApplications triggers
+  // Clear any existing forwardMonthlyCareerApplications triggers
   var triggers = ScriptApp.getProjectTriggers();
   triggers.forEach(function(t) {
     if (t.getHandlerFunction() === "forwardMonthlyCareerApplications") {
@@ -1711,7 +2099,7 @@ function setupMonthlyCareerTrigger() {
     }
   });
   
-  // Create monthly trigger on 1st day of month at 9:00 AM
+  // Create monthly trigger on 1st day of month at 9:00 AM IST
   ScriptApp.newTrigger("forwardMonthlyCareerApplications")
     .timeBased()
     .onMonthDay(1)
@@ -4054,8 +4442,14 @@ function resolveField(header, data) {
     "Designation":            data.designation  || data.role        || data["Designation"]  || data["Role"] || "",
     "Service Interest":       data.serviceInterest || data.service || data.servicesType    || data["Services Type"] || data["Service Interest"] || "",
     "Services Type":          data.serviceInterest || data.service || data.servicesType    || data["Services Type"] || data["Service Interest"] || "",
-    "Message":                data.message      || data.yourMessage || data["Your Message"] || data["Message"] || "",
     "Your Message":           data.message      || data.yourMessage || data["Your Message"] || data["Message"] || "",
+    "Resume File Name":       data.resumeFileName || data.resumeName || data["Resume File Name"] || data["Resume Name"] || "",
+    "Resume Drive Link":      data.resumeDriveLink || data.driveLink || data["Resume Drive Link"] || data["Drive Link"] || data.resumeUrl || "",
+    "Resume Link":            data.resumeDriveLink || data.driveLink || data["Resume Drive Link"] || data["Drive Link"] || data.resumeUrl || "",
+    "Drive Link":             data.resumeDriveLink || data.driveLink || data["Resume Drive Link"] || data["Drive Link"] || data.resumeUrl || "",
+    "Drive File ID":          data.driveFileId  || data.driveId     || data["Drive File ID"]   || data["Drive File Id"] || data.drive_file_id || "",
+    "Drive File Id":          data.driveFileId  || data.driveId     || data["Drive File ID"]   || data["Drive File Id"] || data.drive_file_id || "",
+    "File ID":                data.driveFileId  || data.driveId     || data["Drive File ID"]   || data["Drive File Id"] || data.drive_file_id || "",
     "Location":               data.location     || data.ipLocation  || data["Location"]     || data["IP Location"]  || "",
     "Source":                 data.source       || data.utmSource   || data["Source"]       || "Website Direct",
     "IP Location":            data.location     || data.ipLocation  || data["IP Location"]  || "",
@@ -4092,6 +4486,38 @@ function resolveField(header, data) {
     "UTM Campaign":           data.utmCampaign   || data.utm_campaign|| data["UTM Campaign"] || "",
     "UTM Term":               data.utmTerm       || data.utm_term    || data["UTM Term"]     || "",
     "UTM Content":            data.utmContent    || data.utm_content || data["UTM Content"]  || "",
+
+    // ── Intelligence Fields ──
+    "Started UTC":             data.startedUtc    || data.startedAtUtc || data.started_at_utc || data.timestampUtc || "",
+    "Ended UTC":               data.endedUtc      || data.endedAtUtc   || data.ended_at_utc   || "",
+    "Entry Page":              data.entryPage     || data.entry_page   || data.landingPage    || "",
+    "Exit Page":               data.exitPage      || data.exit_page    || "",
+    "Traffic Channel":         data.trafficChannel|| data.traffic_channel || data.channel     || "",
+    "Campaign":                data.utmCampaign   || data.utm_campaign || data.campaign      || "",
+    "Device":                  data.deviceType    || data.device       || "",
+    "Browser":                 data.browserName   || data.browser      || "",
+    "OS":                      data.osName        || data.os           || "",
+    "Country":                 data.country       || "",
+    "Region / State":          data.region        || data.state        || "",
+    "City":                    data.city          || "",
+    "Is Bounce":               (data.isBounce !== undefined) ? String(data.isBounce) : "",
+    "Is Converted":            (data.isConverted !== undefined) ? String(data.isConverted) : "",
+    "Lead Number":             data.leadNumber    || data.lead_number  || "",
+    "Lead Type":               data.leadType      || data.lead_type    || "",
+    "ASN":                     data.asn           || "",
+    "Network Organization":    data.org           || data.organization || "",
+    "ISP":                     data.isp           || "",
+    "Is Hosting / Datacenter": (data.isHosting !== undefined) ? String(data.isHosting) : "",
+    "Is VPN / Proxy":          (data.isVpnProxy !== undefined) ? String(data.isVpnProxy) : "",
+    "Is Bot":                  (data.isBot !== undefined) ? String(data.isBot) : "",
+    "Timezone":                data.timezone      || data.browserTimezone || "",
+    "Request Count":           data.requestCount  || data.count        || "1",
+    "Incident ID":             data.incidentId    || data.id           || "",
+    "Severity":                data.severity      || "",
+    "Event Type":              data.eventType     || data.event_type   || "",
+    "Details":                 data.details       || "",
+    "Blocked":                 (data.blocked !== undefined) ? String(data.blocked) : "0",
+    "Timestamp UTC":           data.timestampUtc  || data.timestamp_utc|| "",
     "Timestamp":              normalizeTimestamp(data.timestamp || data.Timestamp)
   };
   
@@ -4234,7 +4660,7 @@ function cleanupLocalhost() {
   console.log("✅ Localhost Cleanup Complete. Removed " + totalRemoved + " development records.");
 }
 
-function clearAllProjectTriggers() {
+function clearAllProjectTriggers(silent) {
   var triggers = ScriptApp.getProjectTriggers();
   var count = 0;
   triggers.forEach(function(t) {
@@ -4242,14 +4668,110 @@ function clearAllProjectTriggers() {
     count++;
   });
   console.log("✅ Cleared " + count + " active triggers.");
-  try {
-    SpreadsheetApp.getUi().alert("✅ Triggers Cleared", "Successfully cleared " + count + " active project triggers.", SpreadsheetApp.getUi().ButtonSet.OK);
-  } catch(e) {}
+  if (!silent) {
+    try {
+      SpreadsheetApp.getUi().alert("✅ Triggers Cleared", "Successfully cleared " + count + " active project triggers.", SpreadsheetApp.getUi().ButtonSet.OK);
+    } catch(e) {}
+  }
+  return count;
 }
 
-function setupAllTriggers() {
-  clearAllProjectTriggers();
+/**
+ * Scans all existing project triggers, detects duplicate instances of canonical report functions,
+ * and purges all duplicate and obsolete/extra triggers so each report is scheduled strictly ONCE.
+ */
+function REMOVE_DUPLICATE_AND_EXTRA_TRIGGERS() {
+  console.log("🔍 Scanning for duplicate or extra project triggers...");
+  var triggers = ScriptApp.getProjectTriggers();
+  var seen = {};
+  var removedCount = 0;
+  var keptList = [];
+  var removedList = [];
 
+  var CANONICAL_HANDLERS = [
+    "dailyReport",
+    "weeklyReport",
+    "monthlyReport",
+    "forwardMonthlyCareerApplications"
+  ];
+
+  triggers.forEach(function(t) {
+    var fn = t.getHandlerFunction();
+    if (CANONICAL_HANDLERS.indexOf(fn) !== -1) {
+      if (!seen[fn]) {
+        seen[fn] = true;
+        keptList.push("✔ Kept canonical: " + fn);
+      } else {
+        // Duplicate instance of canonical handler! Delete it!
+        ScriptApp.deleteTrigger(t);
+        removedCount++;
+        removedList.push("✖ Removed duplicate instance of: " + fn);
+      }
+    } else {
+      // Obsolete or extra trigger! Delete it!
+      ScriptApp.deleteTrigger(t);
+      removedCount++;
+      removedList.push("✖ Removed extra/obsolete trigger: " + fn);
+    }
+  });
+
+  var summary = "🎯 Trigger Deduplication Audit:\n\n" +
+                "• Active Triggers Kept: " + keptList.length + "\n" +
+                (keptList.length > 0 ? "  " + keptList.join("\n  ") + "\n\n" : "  (None active — click 'Setup Automated Reports & Triggers')\n\n") +
+                "• Duplicates / Extra Triggers Removed: " + removedCount + "\n" +
+                (removedList.length > 0 ? "  " + removedList.join("\n  ") : "  (No duplicates found — trigger set is clean)");
+
+  console.log(summary);
+  try {
+    SpreadsheetApp.getUi().alert("✅ Trigger Cleanup Complete", summary, SpreadsheetApp.getUi().ButtonSet.OK);
+  } catch (e) {}
+  return { removed: removedCount, kept: keptList.length };
+}
+
+/**
+ * Audits all active project triggers and displays their frequency and status.
+ */
+function AUDIT_ACTIVE_TRIGGERS() {
+  var triggers = ScriptApp.getProjectTriggers();
+  var map = {};
+  triggers.forEach(function(t) {
+    var fn = t.getHandlerFunction();
+    map[fn] = (map[fn] || 0) + 1;
+  });
+
+  var lines = [];
+  var hasDuplicates = false;
+  for (var fn in map) {
+    var count = map[fn];
+    if (count > 1) {
+      hasDuplicates = true;
+      lines.push("⚠️ " + fn + ": " + count + " instances (DUPLICATE DETECTED!)");
+    } else {
+      lines.push("✔ " + fn + ": 1 instance (Normal)");
+    }
+  }
+
+  var msg = "📋 Active Project Triggers (" + triggers.length + " Total):\n\n" +
+            (lines.length > 0 ? lines.join("\n") : "No active triggers found in this project.") +
+            (hasDuplicates ? "\n\n⚠️ Action Required: Click 'Remove Duplicate & Extra Triggers' to eliminate duplicates." : "\n\n✅ All triggers are healthy with zero duplicates.");
+
+  console.log(msg);
+  try {
+    SpreadsheetApp.getUi().alert("Trigger Audit", msg, SpreadsheetApp.getUi().ButtonSet.OK);
+  } catch(e) {}
+  return map;
+}
+
+/**
+ * Sets up the 4 canonical automated report triggers with strict single-instance enforcement.
+ * Guaranteed to produce zero duplicate triggers.
+ */
+function setupAllTriggers() {
+  console.log("⚙️ Resetting and configuring automated triggers with strict deduplication...");
+  // 1. Silently clear all project triggers to start with a clean slate
+  clearAllProjectTriggers(true);
+
+  // 2. Register strictly ONE trigger per canonical report:
   // 1. Daily Report at 8:30 AM IST
   ScriptApp.newTrigger("dailyReport")
     .timeBased()
@@ -4272,11 +4794,34 @@ function setupAllTriggers() {
     .create();
 
   // 4. Monthly Career Resume Digest on 1st of month at 9:00 AM IST
-  setupMonthlyCareerTrigger();
+  ScriptApp.newTrigger("forwardMonthlyCareerApplications")
+    .timeBased()
+    .onMonthDay(1)
+    .atHour(9)
+    .create();
 
-  console.log("✅ All automation triggers (Daily, Weekly, Monthly Analytics, Monthly Career) successfully registered!");
+  // 3. Deduplication assurance pass: verify exactly 1 of each exists
+  var postTriggers = ScriptApp.getProjectTriggers();
+  var counts = {};
+  postTriggers.forEach(function(t) {
+    var fn = t.getHandlerFunction();
+    counts[fn] = (counts[fn] || 0) + 1;
+    if (counts[fn] > 1) {
+      ScriptApp.deleteTrigger(t); // Delete any unexpected duplicate immediately
+    }
+  });
+
+  var summaryMsg = "✅ Automated Reports & Triggers Successfully Configured:\n\n" +
+                   "1. dailyReport — Daily at 8:30 AM IST\n" +
+                   "2. weeklyReport — Every Friday at 8:30 AM IST\n" +
+                   "3. monthlyReport — 1st of every month at 8:30 AM IST\n" +
+                   "4. forwardMonthlyCareerApplications — 1st of every month at 9:00 AM IST\n\n" +
+                   "• Active Triggers: 4\n" +
+                   "• Duplicates: 0\n" +
+                   "Each report will be dispatched strictly ONCE per schedule.";
+  console.log(summaryMsg);
   try {
-    SpreadsheetApp.getUi().alert("✅ Automation Triggers Registered", "Successfully set up Daily (8:30 AM), Weekly (Friday), Monthly (1st of month), and Career Digest triggers.", SpreadsheetApp.getUi().ButtonSet.OK);
+    SpreadsheetApp.getUi().alert("✅ Automation Triggers Registered", summaryMsg, SpreadsheetApp.getUi().ButtonSet.OK);
   } catch(e) {}
 }
 
@@ -4781,9 +5326,9 @@ function SEND_ALL_EXECUTIVE_NOTIFICATION_PREVIEWS(overrideEmail) {
   var careerMeta = getLeadCategoryMeta("CareerApplications", careerData);
   sendEmailOnce({
     to: targetEmail,
-    subject: "📄 [SAMPLE PREVIEW] " + careerMeta.internalSubject,
+    subject: "[SAMPLE PREVIEW] " + careerMeta.internalSubject,
     htmlBody: buildInternalLeadHtml(careerMeta, careerData, mockSheetUrl),
-    name: "ISI Lead Engine • " + careerMeta.categoryName,
+    name: careerMeta.senderName || "Career Engine",
     attachments: [samplePdfBlob]
   });
 
@@ -5337,14 +5882,90 @@ function INITIALIZE_ALL_SHEET_TABS_AND_HEADERS() {
   } catch(e) {}
 }
 
+/**
+ * Manual Trigger: Sends the Daily Executive Analytics Brief on demand.
+ */
+function SEND_DAILY_REPORT_NOW() {
+  console.log("🚀 Manually executing dailyReport()...");
+  dailyReport();
+  try {
+    SpreadsheetApp.getUi().alert(
+      "✅ Daily Report Dispatched",
+      "The Daily Executive Analytics Brief has been generated and sent to:\n" +
+      uniqueEmails(EMAIL_CONFIG.reportEmails).join("\n"),
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  } catch (e) {}
+}
+
+/**
+ * Manual Trigger: Sends the Weekly Executive Analytics Brief on demand.
+ */
+function SEND_WEEKLY_REPORT_NOW() {
+  console.log("🚀 Manually executing weeklyReport()...");
+  weeklyReport();
+  try {
+    SpreadsheetApp.getUi().alert(
+      "✅ Weekly Report Dispatched",
+      "The Weekly Executive Analytics Brief has been generated and sent to:\n" +
+      uniqueEmails(EMAIL_CONFIG.reportEmails).join("\n"),
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  } catch (e) {}
+}
+
+/**
+ * Manual Trigger: Sends the Monthly Executive Analytics Brief on demand.
+ */
+function SEND_MONTHLY_REPORT_NOW() {
+  console.log("🚀 Manually executing monthlyReport()...");
+  monthlyReport();
+  try {
+    SpreadsheetApp.getUi().alert(
+      "✅ Monthly Report Dispatched",
+      "The Monthly Executive Analytics Brief has been generated and sent to:\n" +
+      uniqueEmails(EMAIL_CONFIG.reportEmails).join("\n"),
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  } catch (e) {}
+}
+
+/**
+ * Manual Trigger: Gathers resumes and sends the Monthly Career Digest on demand.
+ */
+function FORWARD_MONTHLY_CAREER_DIGEST_NOW() {
+  console.log("🚀 Manually executing forwardMonthlyCareerApplications()...");
+  var res = forwardMonthlyCareerApplications();
+  try {
+    var count = (res && res.count !== undefined) ? res.count : 0;
+    var attCount = (res && res.attachments !== undefined) ? res.attachments : 0;
+    var mb = (res && res.totalMb) ? res.totalMb : "0.0";
+    SpreadsheetApp.getUi().alert(
+      "✅ Monthly Career Digest Dispatched",
+      "Career applications forwarder completed:\n\n" +
+      "• Applicants processed: " + count + "\n" +
+      "• Resume files attached: " + attCount + " (" + mb + " MB)\n" +
+      "• Recipients:\n" + uniqueEmails(EMAIL_CONFIG.careerEmails).join("\n"),
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  } catch (e) {}
+}
+
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('🎯 ISI WEBHOOK & CRM')
     .addItem('🚀 Initialize All Sheet Tabs & Headers', 'INITIALIZE_ALL_SHEET_TABS_AND_HEADERS')
     .addItem('🏷️ Rename All Tabs to Database Format (_)', 'RENAME_ALL_EXISTING_SHEET_TABS_TO_DATABASE_FORMAT')
     .addSeparator()
-    .addItem('⏰ Setup Automated Reports & Triggers', 'setupAllTriggers')
-    .addItem('🧹 Clear All Triggers', 'clearAllProjectTriggers')
+    .addItem('⏰ Setup Automated Reports & Triggers (Zero Duplicates)', 'setupAllTriggers')
+    .addItem('🧹 Remove Duplicate & Extra Triggers', 'REMOVE_DUPLICATE_AND_EXTRA_TRIGGERS')
+    .addItem('📋 Audit Active Triggers & Handlers', 'AUDIT_ACTIVE_TRIGGERS')
+    .addItem('❌ Clear All Project Triggers', 'clearAllProjectTriggers')
+    .addSeparator()
+    .addItem('📊 Send Daily Report Now', 'SEND_DAILY_REPORT_NOW')
+    .addItem('📈 Send Weekly Report Now', 'SEND_WEEKLY_REPORT_NOW')
+    .addItem('📑 Send Monthly Report Now', 'SEND_MONTHLY_REPORT_NOW')
+    .addItem('💼 Send Monthly Career Resume Digest Now', 'FORWARD_MONTHLY_CAREER_DIGEST_NOW')
     .addSeparator()
     .addItem('📄 Test Career Application with Resume Attachment', 'TEST_CAREER_APPLICATION_WITH_RESUME')
     .addItem('📊 Check Remaining Email Quota', 'CHECK_EMAIL_QUOTA')

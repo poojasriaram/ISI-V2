@@ -42,7 +42,8 @@ export const SolutionsCTA = () => {
         setSubmitting(true);
         trackFormSubmission('Sales_Inquiries', {
             ...form,
-            source: 'Solutions Page Landing'
+            source: 'Solutions Page Landing',
+            analyticsOnly: true
         });
         
         const data = {

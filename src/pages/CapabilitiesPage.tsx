@@ -115,16 +115,12 @@ const CapabilitiesPage = () => {
                                     {capabilitiesHero.subtitle}
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                                    <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
-                                        <Button size="lg" className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20">
-                                            Explore Solutions <ArrowRight className="w-5 h-5" />
-                                        </Button>
-                                    </Link>
-                                    <Link to="#physical-ops">
-                                        <Button variant="outline" size="lg" className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                                            Our Pillars
-                                        </Button>
-                                    </Link>
+                                    <Button size="lg" onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form'))} className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/20 cursor-pointer">
+                                        Explore Solutions <ArrowRight className="w-5 h-5" />
+                                    </Button>
+                                    <Button variant="outline" size="lg" onClick={() => document.getElementById('physical-ops')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 text-base px-8 py-6 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary hover:text-primary-foreground transition-all duration-300 cursor-pointer">
+                                        Our Pillars
+                                    </Button>
                                 </div>
                             </div>
                         </div>

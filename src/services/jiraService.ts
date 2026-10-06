@@ -1,6 +1,7 @@
 // src/services/jiraService.ts
 import { getUtmParams } from '../utils/utm';
 import { generateLeadNumber, normalizeLeadSource } from '../utils/leadNumber';
+import { isCorporateEmail, CORPORATE_EMAIL_ERROR_MESSAGE } from '../utils/validation';
 
 export interface JiraLeadPayload {
   leadNumber?: string;
@@ -78,6 +79,22 @@ export async function submitLeadToJira(payload: JiraLeadPayload): Promise<JiraLe
         applicationNumber: payload.leadNumber,
         leadType: isJobQuestionYes || formNameLower.includes('career') ? 'career' : 'other',
         error: undefined
+      };
+    }
+
+    // Validate corporate email domain for Sales Leads
+    const leadEmail = String(payload.email || '').trim();
+    if (!isCorporateEmail(leadEmail)) {
+      console.warn('[JIRA SALES REJECTED] Public email domain blocked for Sales Lead:', leadEmail);
+      return {
+        success: false,
+        status: 'not_available',
+        userStatus: 'Rejected',
+        message: CORPORATE_EMAIL_ERROR_MESSAGE,
+        leadNumber: payload.leadNumber,
+        applicationNumber: payload.leadNumber,
+        leadType: 'sales',
+        error: CORPORATE_EMAIL_ERROR_MESSAGE
       };
     }
 

@@ -11,6 +11,8 @@ import {
 import { getUtmParams, captureUtmParams } from '@/utils/utm';
 import { submitLeadToJira } from '@/services/jiraService';
 import { generateLeadNumber } from '@/utils/leadNumber';
+import { isCorporateEmail } from '@/utils/validation';
+import { analytics } from '@/services/analyticsService';
 
 const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
 
@@ -361,8 +363,26 @@ export const useAnalytics = () => {
         };
 
         sendToGoogleSheets('Traffic_Analytics', data);
-         
-    }, [location]); // ← ONLY re-fire when location changes, NOT when IP loads
+
+        // Track in Advanced ISI Analytics Engine
+        const isService = location.pathname.startsWith('/services') || 
+                          location.pathname.startsWith('/verticals') || 
+                          location.pathname.startsWith('/solutions') ||
+                          location.pathname.startsWith('/capabilities') ||
+                          location.pathname.startsWith('/offerings') ||
+                          ['/schoolsafety', '/campussafety', '/modernliving', '/cashlogistics', '/securevaluelogistics', '/commandcenter', '/smartcity', '/masstransportation', '/traveltourism', '/gccitparks', '/eventmanagement'].includes(location.pathname);
+
+        const isContact = location.pathname.includes('contact') || location.pathname.startsWith('/lp/');
+
+        analytics.track(isService ? 'service_page_view' : (isContact ? 'contact_page_view' : 'page_view'), {
+            pagePath: location.pathname,
+            pageTitle: document.title,
+            metadata: {
+                category: isService ? 'Service' : (isContact ? 'Contact/Inquiry' : 'General'),
+                variant
+            }
+        });
+    }, [location]);
 
     // --- Main Behavioral Collector ---
     useEffect(() => {
@@ -593,6 +613,10 @@ export const useAnalytics = () => {
                 const formId = form?.id || form?.getAttribute('data-name') || 'unknown';
                 if (!formInteractions.current[formId]) {
                     formInteractions.current[formId] = { started: true, lastField: target.id || target.name, submitted: false };
+                    analytics.track('contact_form_start', {
+                        pagePath: window.location.pathname,
+                        metadata: { formId, firstField: target.id || target.name }
+                    });
                     sendToGoogleSheets('Behavior_Metrics', {
                         ...getBaseData(),
                         pageUrl: window.location.href,
@@ -655,10 +679,13 @@ export const useAnalytics = () => {
             navigationPath.current.push({ path: `Action: Form Submitted [${sheetName}]`, timestamp: Date.now() });
             if (formInteractions.current[sheetName]) formInteractions.current[sheetName].submitted = true;
             if (sheetName === 'Partner_Applications' || sheetName === 'PartnerApps') counters.current.partnerInquiries++;
-            if (sheetName === 'Career_Applications' || sheetName === 'CareerApps') counters.current.careerInquiries++;
-            if (formData.email) localStorage.setItem('isi_user_email', formData.email);
+            if (formData && typeof formData === 'object' && formData.email) localStorage.setItem('isi_user_email', formData.email);
 
-            const utm = getUtmParams();
+            // If formData is not a payload object (e.g. boolean flag) or is explicitly marked analyticsOnly,
+            // strictly record navigation and counters without dispatching a duplicate POST to Google Sheets
+            if (!formData || typeof formData !== 'object' || formData.analyticsOnly) {
+                return;
+            }
             const isJobQuestionYes =
                 String(formData?.jobQuestion || formData?.["Are you looking for a job?"] || '').trim().toLowerCase() === 'yes' ||
                 formData?.isJobSeeker === true ||
@@ -689,6 +716,25 @@ export const useAnalytics = () => {
             const assignedNumber = generateLeadNumber();
             const leadNumber = isBusinessLead ? (formData?.leadNumber || assignedNumber) : undefined;
             const applicationNumber = isExplicitCareer ? (formData?.applicationNumber || formData?.leadNumber || assignedNumber) : undefined;
+
+            // Reject public/free webmail domains for Sales Leads
+            const emailToCheck = String(formData?.email || formData?.Email || formData?.workEmail || formData?.WorkEmail || '').trim();
+            if (isBusinessLead && leadType === 'Sales' && !isCorporateEmail(emailToCheck)) {
+                console.warn('[ANALYTICS] Public/free email domain rejected for Sales Lead:', emailToCheck);
+                return;
+            }
+
+            const utm = getUtmParams();
+
+            // Track form submit in Advanced ISI Analytics Engine
+            analytics.track('contact_form_submit', {
+                pagePath: window.location.pathname,
+                metadata: {
+                    formName: actualSheetName,
+                    leadNumber: isExplicitCareer ? undefined : leadNumber,
+                    leadType
+                }
+            });
 
             sendToGoogleSheets(actualSheetName, {
                 ...getBaseData(),

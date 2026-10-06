@@ -23,6 +23,9 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { useAnalytics } from "./hooks/useAnalytics";
 import { ChatBot } from "./components/ai/ChatBot";
 import { ISIAcademyChatbot } from "./components/ai/ISIAcademyChatbot";
+import { CookieConsentBanner } from "./components/analytics/CookieConsentBanner";
+
+const IntelligenceDashboard = lazy(() => import("./pages/admin/IntelligenceDashboard"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -112,6 +115,9 @@ const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 const AcademyPage = lazy(() => import("./pages/AcademyPage"));
 
 const appRoutes = [
+  { path: "/admin", element: <IntelligenceDashboard /> },
+  { path: "/admin/intelligence", element: <IntelligenceDashboard /> },
+  { path: "/analytics", element: <IntelligenceDashboard /> },
   { path: "/contact", element: <ContactPage /> },
   { path: "/courses", element: <CoursesPage /> },
   { path: "/academy", element: <AcademyPage /> },
@@ -161,8 +167,8 @@ const appRoutes = [
   { path: "/services/skill-development-manpower", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/skill-development-manpower/" /> },
   { path: "/services/skill-development-manpower/", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/services/skill-development-manpower/" /> },
   { path: "/mobile-security-services-chennai-crime-prevention", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/mobile-security-services-chennai-crime-prevention/" /> },
-  { path: "/mobile-security-services-chennai-crime-prevention/", element: <ServiceCategoryPage categoryIdOverride="manned-guarding" canonicalPathOverride="/mobile-security-services-chennai-crime-prevention/" /> },
-  { path: "/need-protection-money-properties-vip-escort-services", element: <NotFound /> },
+  { path: "/need-protection-money-properties-vip-escort-services", element: <ServiceCategoryPage categoryIdOverride="specialized-protection" canonicalPathOverride="/need-protection-money-properties-vip-escort-services/" /> },
+  { path: "/need-protection-money-properties-vip-escort-services/", element: <ServiceCategoryPage categoryIdOverride="specialized-protection" canonicalPathOverride="/need-protection-money-properties-vip-escort-services/" /> },
   { path: "/404", element: <NotFound /> },
   { path: "/services/:type/:categoryId", element: <ServiceCategoryPage /> },
   { path: "/services/:type/:categoryId/", element: <ServiceCategoryPage /> }
@@ -205,6 +211,7 @@ const AppRouter = () => {
     <ErrorBoundary>
       <ScrollToTop />
       <BackToTop />
+      <CookieConsentBanner />
       {showWidgets && !isIntegratedServices && (
         isAcademy ? (
           <ISIAcademyChatbot />

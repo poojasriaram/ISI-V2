@@ -153,12 +153,12 @@ export const VerticalDetailPage = () => {
 
                         {/* CTA */}
                         <div className="mt-12 text-center">
-                            <Link
-                                to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}
-                                className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold transition-colors shadow-lg"
+                            <Button
+                                onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form'))}
+                                className="inline-flex items-center gap-2 px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold transition-colors shadow-lg text-base cursor-pointer"
                             >
                                 Get Started with {vertical.title}
-                            </Link>
+                            </Button>
                         </div>
                     </div>
                 </div>

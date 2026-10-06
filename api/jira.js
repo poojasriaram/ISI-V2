@@ -1,4 +1,5 @@
 // api/jira.js - Vercel Serverless API Route for Jira Cloud Integration & Subtask Workflow
+import { isCorporateEmail, CORPORATE_EMAIL_ERROR_MESSAGE } from './corporateEmail.js';
 
 // Standard Lead Subtask Workflow Configuration (Imperative Task Format)
 const LEAD_WORKFLOW = [
@@ -177,14 +178,32 @@ export default async function handler(req, res) {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
+    // 2.5. STRICT CORPORATE EMAIL VALIDATION FOR SALES LEADS
+    // ═══════════════════════════════════════════════════════════════════════════
+    const candidateEmail = String(lead.email || lead.workEmail || lead.WorkEmail || '').trim();
+    if (!isCorporateEmail(candidateEmail)) {
+      console.warn(`[JIRA REJECTED] Public/free email domain rejected for Sales Lead: email="${candidateEmail}", correlationId=${correlationId}`);
+      return res.status(400).json({
+        success: false,
+        status: 'rejected',
+        userStatus: 'Rejected',
+        error: CORPORATE_EMAIL_ERROR_MESSAGE,
+        message: CORPORATE_EMAIL_ERROR_MESSAGE,
+        rejected: true,
+        reason: 'BLOCKED_PUBLIC_EMAIL',
+        correlationId
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
     // 3. JIRA CONFIGURATION & AUTH
     // ═══════════════════════════════════════════════════════════════════════════
-    const JIRA_DOMAIN = process.env.JIRA_DOMAIN || 'praveenkumarraram.atlassian.net';
-    const JIRA_EMAIL = process.env.JIRA_EMAIL || 'poojasri.aram@gmail.com';
-    const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || 'ATATT3xFfGF0HB1UotLKd9u7BPre5gFXU-TOc7VugV_s8MLvu_bF_ux-0SyrE3RvZsztwclrd2jFOiBIuOu0Zg7FeeNdWlnLh4Si_exXZNSSlQNqhx8DHewkNPBoRkegQh5cDq-ZGJctIZhwDqUrQBdSBVO0HfIS0P3nyf27WRnBPT2zYLy7bxE=C3BDAF04';
+    const JIRA_DOMAIN = process.env.JIRA_DOMAIN || 'isiwebadmin26.atlassian.net';
+    const JIRA_EMAIL = process.env.JIRA_EMAIL || 'isiwebadmin26@gmail.com';
+    const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || 'ATATT3xFfGF0otuT6NaBOLUbC3N82v9T3sasNAVBJTbn2gNeDADIrmsyBqgwaSGLlFLLiZScEk1o0WSvs5EXGPGn7xAFLzCa78uqGv8PBNKjnEWxe-qo-bcgygTWO6FQ4HSPQp7ZWM_MPHwGOk1Fq698Kd41tPAjn192xAJZsGSN27QqDbIvFko=9A1EAAFA';
     const JIRA_PROJECT_KEY = process.env.JIRA_PROJECT_KEY || 'DLF';
     const JIRA_ISSUE_TYPE = process.env.JIRA_ISSUE_TYPE || 'Lead';
-    const JIRA_ASSIGNEE_ID = process.env.JIRA_ASSIGNEE_ID || '712020:337de21e-1eb1-4e2a-aace-dbf10d3bf264'; // Pooja
+    const JIRA_ASSIGNEE_ID = process.env.JIRA_ASSIGNEE_ID || '712020:6dedc500-fbd4-4005-86ad-4420830ee6af'; // Pooja (isiwebadmin26)
 
     const cleanDomain = JIRA_DOMAIN.replace(/^https?:\/\//, '').replace(/\/+$/, '');
     const authString = Buffer.from(`${JIRA_EMAIL.trim()}:${JIRA_API_TOKEN.trim()}`).toString('base64');
@@ -462,7 +481,7 @@ export default async function handler(req, res) {
             },
             summary: `${step.name} - [${leadNumber}]`,
             issuetype: {
-              name: 'Task' // Child issue type under Lead in Direct_Lead_Flow project
+              name: 'Sub-task' // Sub-task issue type under Lead in isiwebadmin26 DLF project
             },
             duedate: subtaskDueDate,
             priority: {
@@ -501,9 +520,9 @@ export default async function handler(req, res) {
 
         let subData = await subResponse.json();
 
-        // If 'Task' issue type fails, try fallback name 'Sub-task' or 'Subtask'
-        if (!subResponse.ok && JSON.stringify(subData).includes('issuetype')) {
-          subtaskPayload.fields.issuetype.name = 'Sub-task';
+        // If 'Sub-task' fails, try fallback name 'Task'
+        if (!subResponse.ok) {
+          subtaskPayload.fields.issuetype.name = 'Task';
           subResponse = await fetch(`https://${cleanDomain}/rest/api/3/issue`, {
             method: 'POST',
             headers: {

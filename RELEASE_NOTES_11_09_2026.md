@@ -15,7 +15,7 @@ This release delivers major infrastructure, lead generation, analytics, and acad
 ## 🌟 Major Highlights & New Features
 
 ### 1. 🎫 Direct Jira Cloud Lead Flow Integration
-- **Zero Latency Ticketing:** Connected all web forms and chatbot inquiries directly to Jira Cloud REST API (`praveenkumarraram.atlassian.net`) in the `DLF` (Direct Lead Flow) project space.
+- **Zero Latency Ticketing:** Connected all web forms and chatbot inquiries directly to Jira Cloud REST API (`isiwebadmin26.atlassian.net`) in the `DLF` (Direct Lead Flow) project space.
 - **Dual-Logging Architecture:** Every submission simultaneously creates a Jira `Lead` ticket and logs to the respective Google Sheet tab.
 - **Rich Lead Metadata:** Tickets automatically include:
   - Full Contact Info (Name, Email, Phone, Company)

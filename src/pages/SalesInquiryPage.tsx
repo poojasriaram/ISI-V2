@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { validateWorkEmail, validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateWorkEmail, validatePhoneNumber, isCorporateEmail, CORPORATE_EMAIL_ERROR_MESSAGE } from '@/utils/validation';
 import { useContentProtection } from "@/hooks/useContentProtection";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ export const SalesInquiryPage = () => {
   const utmTerm = utmObj.utmTerm;
   const utmContent = utmObj.utmContent;
 
-  const [jobQuestion, setJobQuestion] = useState<'No' | 'Yes'>('No');
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [workEmail, setWorkEmail] = useState('');
@@ -58,7 +57,7 @@ export const SalesInquiryPage = () => {
   };
 
   const validateEmail = (value: string): boolean => {
-    const res = jobQuestion === 'Yes' ? validateGeneralEmail(value) : validateWorkEmail(value);
+    const res = validateWorkEmail(value);
     setEmailError(res.message);
     return res.isValid;
   };
@@ -90,10 +89,9 @@ export const SalesInquiryPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    const isJobSeeker = jobQuestion === 'Yes';
-    if (!fullName || !phoneNumber || !workEmail || (!isJobSeeker && !companyName)) {
+    if (!fullName || !phoneNumber || !workEmail || !companyName) {
       toast.error("Validation Failed", {
-        description: isJobSeeker ? "Please provide your name, phone, and email." : "All fields are required.",
+        description: "All fields are required.",
       });
       return;
     }
@@ -108,19 +106,26 @@ export const SalesInquiryPage = () => {
       return;
     }
 
+    if (!isCorporateEmail(workEmail)) {
+      setEmailError(CORPORATE_EMAIL_ERROR_MESSAGE);
+      toast.error("Validation Failed", {
+        description: CORPORATE_EMAIL_ERROR_MESSAGE,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     const leadNumber = generateLeadNumber();
     
     const data = {
-      sheetName: isJobSeeker ? "Career_Applications" : "Google_Ad_Leads",
+      sheetName: "Google_Ad_Leads",
       leadNumber,
       "Lead Number": leadNumber,
       "Full Name": fullName,
       "Phone Number": phoneNumber,
       "Email": workEmail,
       "Work Email": workEmail,
-      "Company Name": companyName || (isJobSeeker ? "Applicant" : "N/A"),
-      "Position": isJobSeeker ? "Facility Management & Security Applicant" : undefined,
+      "Company Name": companyName,
       "utm_source": utmSource,
       "utm_medium": utmMedium,
       "utm_campaign": utmCampaign,
@@ -139,34 +144,26 @@ export const SalesInquiryPage = () => {
         body: JSON.stringify(data),
       });
 
-      // Strictly only capture business leads in Jira Cloud. Career applicants are never pushed to DLF sales project!
-      if (!isJobSeeker) {
-        submitLeadToJira({
-          leadNumber,
-          name: fullName,
-          email: workEmail,
-          phone: phoneNumber,
-          company: companyName,
-          serviceRequested: 'Facility Management & Integrated Solutions',
-          message: 'Sales inquiry from Integrated Services landing page',
-          formName: 'Google_Ad_Leads',
-          utmSource,
-          utmMedium,
-          utmCampaign,
-          utmTerm,
-          utmContent
-        }).catch(err => console.warn('[JIRA SALES CAPTURE ERROR]', err));
-      }
+      // Capture business leads in Jira Cloud
+      submitLeadToJira({
+        leadNumber,
+        name: fullName,
+        email: workEmail,
+        phone: phoneNumber,
+        company: companyName,
+        serviceRequested: 'Facility Management & Integrated Solutions',
+        message: 'Sales inquiry from Integrated Services landing page',
+        formName: 'Google_Ad_Leads',
+        utmSource,
+        utmMedium,
+        utmCampaign,
+        utmTerm,
+        utmContent
+      }).catch(err => console.warn('[JIRA SALES CAPTURE ERROR]', err));
 
-      if (isJobSeeker) {
-        toast.success("Application Submitted Successfully!", {
-          description: `Application Reference: ${leadNumber}. Our recruitment team will review your profile.`,
-        });
-      } else {
-        toast.success("Inquiry Submitted Successfully!", {
-          description: `Lead Reference: ${leadNumber}. Our sales team will get back to you within 24 hours.`,
-        });
-      }
+      toast.success("Inquiry Submitted Successfully!", {
+        description: `Lead Reference: ${leadNumber}. Our sales team will get back to you within 24 hours.`,
+      });
       
       const submittedName = fullName;
       
@@ -176,14 +173,13 @@ export const SalesInquiryPage = () => {
       setCompanyName('');
       setPhoneError('');
       setEmailError('');
-      setJobQuestion('No');
       
       navigate('/lp/facility-management/thank-you', { 
         state: { 
           name: submittedName, 
           leadNumber, 
           fromIntegratedServices: true,
-          leadType: isJobSeeker ? 'career' : 'sales'
+          leadType: 'sales'
         } 
       });
     } catch (error) {
@@ -232,45 +228,8 @@ export const SalesInquiryPage = () => {
                 />
               </div>
               <h2 className="text-xl font-semibold text-slate-900 mb-4 text-center">
-                {jobQuestion === 'Yes' ? 'Submit Career Application' : 'Request an Enterprise Quote'}
+                Request an Enterprise Quote
               </h2>
-              
-              {/* Job Question Toggle */}
-              <div className="mb-4 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                <label className="text-xs font-semibold text-slate-700 block mb-1.5">
-                  Are you looking for a job? <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setJobQuestion('No');
-                      if (emailError) setEmailError('');
-                    }}
-                    className={`py-1.5 px-2 text-xs font-medium rounded border transition-all ${
-                      jobQuestion === 'No'
-                        ? 'bg-[#1a56db] text-white border-[#1a56db] shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    No (Quote)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setJobQuestion('Yes');
-                      if (emailError) setEmailError('');
-                    }}
-                    className={`py-1.5 px-2 text-xs font-medium rounded border transition-all ${
-                      jobQuestion === 'Yes'
-                        ? 'bg-[#1a56db] text-white border-[#1a56db] shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    Yes (Job)
-                  </button>
-                </div>
-              </div>
 
               <form onSubmit={handleSubmit} className="space-y-3.5">
                 <input type="hidden" name="utm_source" value={utmSource} />
@@ -308,7 +267,7 @@ export const SalesInquiryPage = () => {
                     name="workEmail" 
                     type="email" 
                     className={`w-full px-4 py-2.5 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${emailError ? 'border-red-500' : 'border-slate-200'}`} 
-                    placeholder={jobQuestion === 'Yes' ? "Email Address (e.g. name@gmail.com)" : "Work / Corporate Email"} 
+                    placeholder="Work / Corporate Email" 
                     value={workEmail}
                     onChange={handleEmailChange}
                     onBlur={handleEmailBlur}
@@ -317,11 +276,11 @@ export const SalesInquiryPage = () => {
                 </div>
                 <div>
                   <input 
-                    required={jobQuestion === 'No'} 
+                    required 
                     name="companyName" 
                     type="text" 
                     className="w-full px-4 py-2.5 border border-slate-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400" 
-                    placeholder={jobQuestion === 'Yes' ? "Current Organization / Role (Optional)" : "Company Name"} 
+                    placeholder="Company Name" 
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                   />
@@ -332,9 +291,7 @@ export const SalesInquiryPage = () => {
                   disabled={isSubmitting}
                   className="w-full py-5 mt-2 text-sm rounded-md shadow-md bg-[#1a56db] hover:bg-[#1e40af] text-white transition-all font-medium flex items-center justify-center gap-2"
                 >
-                  {isSubmitting 
-                    ? (jobQuestion === 'Yes' ? "Submitting Application..." : "Submitting...") 
-                    : (jobQuestion === 'Yes' ? "Submit Career Application" : "Get a Free Quote")} 
+                  {isSubmitting ? "Submitting..." : "Get a Free Quote"} 
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
                 </Button>
               </form>
@@ -352,45 +309,8 @@ export const SalesInquiryPage = () => {
             />
           </div>
           <h2 className="text-xl font-semibold text-slate-900 mb-4 text-center">
-            {jobQuestion === 'Yes' ? 'Submit Career Application' : 'Request an Enterprise Quote'}
+            Request an Enterprise Quote
           </h2>
-
-          {/* Job Question Toggle Mobile */}
-          <div className="mb-4 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-            <label className="text-xs font-semibold text-slate-700 block mb-1.5">
-              Are you looking for a job? <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setJobQuestion('No');
-                  if (emailError) setEmailError('');
-                }}
-                className={`py-1.5 px-2 text-xs font-medium rounded border transition-all ${
-                  jobQuestion === 'No'
-                    ? 'bg-[#1a56db] text-white border-[#1a56db] shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                No (Quote)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setJobQuestion('Yes');
-                  if (emailError) setEmailError('');
-                }}
-                className={`py-1.5 px-2 text-xs font-medium rounded border transition-all ${
-                  jobQuestion === 'Yes'
-                    ? 'bg-[#1a56db] text-white border-[#1a56db] shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                Yes (Job)
-              </button>
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <input type="hidden" name="utm_source" value={utmSource} />
@@ -428,7 +348,7 @@ export const SalesInquiryPage = () => {
                 name="workEmail" 
                 type="email" 
                 className={`w-full px-4 py-3 border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400 ${emailError ? 'border-red-500' : 'border-slate-200'}`} 
-                placeholder={jobQuestion === 'Yes' ? "Email Address (e.g. name@gmail.com)" : "Work / Corporate Email"} 
+                placeholder="Work / Corporate Email" 
                 value={workEmail}
                 onChange={handleEmailChange}
                 onBlur={handleEmailBlur}
@@ -437,19 +357,17 @@ export const SalesInquiryPage = () => {
             </div>
             <div>
               <input 
-                required={jobQuestion === 'No'} 
+                required 
                 name="companyName" 
                 type="text" 
                 className="w-full px-4 py-3 border border-slate-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm placeholder:text-slate-400" 
-                placeholder={jobQuestion === 'Yes' ? "Current Organization / Role (Optional)" : "Company Name"} 
+                placeholder="Company Name" 
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
               />
             </div>
             <Button type="submit" disabled={isSubmitting} className="w-full py-6 mt-2 text-base rounded-md shadow-md bg-[#1a56db] hover:bg-[#1e40af] text-white transition-all font-medium flex items-center justify-center gap-2">
-              {isSubmitting 
-                ? (jobQuestion === 'Yes' ? "Submitting Application..." : "Submitting...") 
-                : (jobQuestion === 'Yes' ? "Submit Career Application" : "Get a Free Quote")}
+              {isSubmitting ? "Submitting..." : "Get a Free Quote"}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
             </Button>
           </form>

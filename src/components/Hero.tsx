@@ -44,8 +44,8 @@ const heroSlides = [
   },
 ];
 
-const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  if (!isOpen) return null;
+const VideoModal = ({ isOpen, onClose, videoId }: { isOpen: boolean; onClose: () => void; videoId?: string }) => {
+  if (!isOpen || !videoId || videoId === 'your-video-id') return null;
 
   return (
     <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -60,7 +60,7 @@ const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
         <iframe
           width="100%"
           height="100%"
-          src="https://www.youtube.com/embed/your-video-id?autoplay=1"
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
           title="AI Driven Security Solutions Overview"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -251,24 +251,22 @@ export const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6 sm:mb-8">
-              <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }} className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="w-full gap-2 text-base h-14 px-8 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full bg-primary text-white group"
-                >
-                  Get an Instant Security Quote
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-              <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }} className="w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary/10 hover:text-primary transition-all duration-300 rounded-full group"
-                >
-                  Talk to Our Security Experts
-                </Button>
-              </Link>
+              <Button
+                size="lg"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form'))}
+                className="w-full sm:w-auto gap-2 text-base h-14 px-8 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform rounded-full bg-primary text-white group cursor-pointer"
+              >
+                Get an Instant Security Quote
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank")}
+                className="w-full sm:w-auto gap-2 text-base h-14 px-8 bg-card/40 backdrop-blur-md border border-white/20 hover:bg-primary/10 hover:text-primary transition-all duration-300 rounded-full group cursor-pointer"
+              >
+                Talk to Our Security Experts
+              </Button>
             </div>
 
             {/* Trust Indicators & Slide Indicators */}

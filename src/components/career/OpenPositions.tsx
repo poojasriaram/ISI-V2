@@ -53,7 +53,7 @@ export const OpenPositions = () => {
     const activeFiltersCount = [location, department, experience].filter(f => f !== "all").length;
 
     return (
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
+        <div id="openings" className="grid lg:grid-cols-12 gap-8 items-start scroll-mt-24">
             {/* Left Column: Map (2/5 = 40% roughly, using col-span-5) */}
             <div className="lg:col-span-5 h-[500px] lg:h-[700px] bg-card border border-border/50 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 sticky top-28 transition-all duration-500 hover:shadow-primary/5">
                 <div className="absolute top-6 left-6 z-20 p-5 bg-white/95 backdrop-blur-md border border-primary/10 rounded-2xl shadow-xl max-w-[220px] pointer-events-none transition-all duration-300 group-hover:scale-[1.03]">

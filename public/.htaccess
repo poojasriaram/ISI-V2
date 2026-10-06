@@ -8,6 +8,15 @@ DirectoryIndex index.html
 # Set default content-type & charset for HTML pages to avoid Accept header negotiation failures (406)
 AddDefaultCharset UTF-8
 
+# Disable ModSecurity engine if permitted in .htaccess to prevent 406 Not Acceptable on legitimate crawlers
+<IfModule mod_security2.c>
+  SecRuleEngine Off
+</IfModule>
+<IfModule mod_security.c>
+  SecFilterEngine Off
+  SecFilterScanPOST Off
+</IfModule>
+
 <IfModule mod_negotiation.c>
   Options -MultiViews
 </IfModule>
@@ -15,10 +24,6 @@ AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-
-  # 2. Handle Known Spam/Unwanted URLs with 410 Gone Status (DO NOT redirect to homepage)
-  RewriteCond %{REQUEST_URI} ^/need-protection-money-properties-vip-escort-services/?$ [NC]
-  RewriteRule ^ - [R=410,L]
 
   # 3. Canonical Host & HTTPS Redirection (301 Permanent Redirect)
   # Redirect HTTP to HTTPS and non-www (isisecurity.in) to www.isisecurity.in

@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { ContactFormData, FormErrors } from '@/types/contact';
 import { homeLocations } from "@/data/locations-data";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import { validateWorkEmail, validateGeneralEmail, validatePhoneNumber } from '@/utils/validation';
+import { validateWorkEmail, validatePhoneNumber } from '@/utils/validation';
 import { sendToSheet } from '@/services/formService';
 import { generateLeadNumber } from '@/utils/leadNumber';
 
@@ -35,8 +35,6 @@ export const Contact = () => {
     phone: '',
     designation: '',
     serviceInterest: '',
-    openPosition: 'Security Officer / Guard',
-    jobQuestion: 'No',
     message: '',
     privacyConsent: false,
   });
@@ -46,16 +44,6 @@ export const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedReference, setSubmittedReference] = useState<string | null>(null);
   const [submittedStatus, setSubmittedStatus] = useState<string>('Submitted');
-  const [submittedLeadType, setSubmittedLeadType] = useState<'sales' | 'career'>('sales');
-
-  // Handle job question change
-  const handleJobQuestionChange = (val: 'Yes' | 'No') => {
-    setFormData(prev => ({ ...prev, jobQuestion: val }));
-    // Clear email error if switching
-    if (errors.email) {
-      setErrors(prev => ({ ...prev, email: undefined }));
-    }
-  };
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -86,7 +74,6 @@ export const Contact = () => {
   // Validate form
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    const isJobSeeker = formData.jobQuestion === 'Yes';
 
     // Full Name: Required
     if (!formData.name.trim()) {
@@ -95,20 +82,18 @@ export const Contact = () => {
       newErrors.name = 'Name must be at least 2 characters';
     }
 
-    // Email validation: General email for job seekers; Work email for business enquiries
+    // Email validation: Work email for business enquiries
     if (!formData.email.trim()) {
-      newErrors.email = isJobSeeker ? 'Email is required' : 'Work email is required';
+      newErrors.email = 'Work email is required';
     } else {
-      const emailVal = isJobSeeker 
-        ? validateGeneralEmail(formData.email) 
-        : validateWorkEmail(formData.email);
+      const emailVal = validateWorkEmail(formData.email);
       if (!emailVal.isValid) {
         newErrors.email = emailVal.message;
       }
     }
 
-    // Company Name: Required only for business leads, optional for job applicants
-    if (!isJobSeeker && !formData.company.trim()) {
+    // Company Name: Required
+    if (!formData.company.trim()) {
       newErrors.company = 'Company name is required';
     }
 
@@ -141,69 +126,35 @@ export const Contact = () => {
     }
 
     setIsSubmitting(true);
-    const isJobSeeker = formData.jobQuestion === 'Yes';
     const submittedName = formData.name.trim();
 
     try {
-      if (isJobSeeker) {
-        // ─── Career Application Workflow ───
-        // Route strictly as Career Application, bypass Jira Sales CRM
-        const careerPayload = {
-          name: submittedName,
-          email: formData.email.trim(),
-          phone: formData.phone.trim(),
-          company: formData.company.trim() || 'Job Applicant',
-          role: formData.openPosition || 'Security Officer / Guard',
-          jobTitle: formData.openPosition || 'Security Officer / Guard',
-          serviceRequested: formData.openPosition || 'Career Application',
-          message: formData.message?.trim() || `Career Application for ${formData.openPosition || 'Open Position'}`,
-          jobQuestion: 'Yes',
-          leadType: 'Career',
-          formType: 'Career Application',
-        };
+      // ─── Commercial Sales Lead Workflow ───
+      const salesPayload = {
+        name: submittedName,
+        email: formData.email.trim(),
+        company: formData.company.trim(),
+        phone: formData.phone.trim(),
+        designation: formData.designation?.trim() || 'Not specified',
+        serviceInterest: formData.serviceInterest || 'General Inquiry',
+        message: formData.message?.trim() || 'No additional message provided',
+        jobQuestion: 'No',
+        leadType: 'Sales',
+        formType: 'Sales Lead',
+      };
 
-        trackFormSubmission('Career_Applications', careerPayload);
-        const res = await sendToSheet('Career_Applications', careerPayload);
+      trackFormSubmission('Contact_Form', { ...salesPayload, analyticsOnly: true });
+      const res = await sendToSheet('Contact_Form', salesPayload);
 
-        const refNumber = res.applicationNumber || res.leadNumber || generateLeadNumber();
-        setSubmittedReference(refNumber);
-        setSubmittedStatus(res.userStatus || 'Submitted');
-        setSubmittedLeadType('career');
-        setIsSubmitted(true);
+      const refNumber = res.leadNumber || generateLeadNumber();
+      setSubmittedReference(refNumber);
+      setSubmittedStatus(res.userStatus || 'Submitted');
+      setIsSubmitted(true);
 
-        toast.success('Application Submitted Successfully!', {
-          description: `Application Reference: ${refNumber}. Our HR team has received your details.`,
-          duration: 6000,
-        });
-      } else {
-        // ─── Commercial Sales Lead Workflow ───
-        const salesPayload = {
-          name: submittedName,
-          email: formData.email.trim(),
-          company: formData.company.trim(),
-          phone: formData.phone.trim(),
-          designation: formData.designation?.trim() || 'Not specified',
-          serviceInterest: formData.serviceInterest || 'General Inquiry',
-          message: formData.message?.trim() || 'No additional message provided',
-          jobQuestion: 'No',
-          leadType: 'Sales',
-          formType: 'Sales Lead',
-        };
-
-        trackFormSubmission('Contact_Form', salesPayload);
-        const res = await sendToSheet('Contact_Form', salesPayload);
-
-        const refNumber = res.leadNumber || generateLeadNumber();
-        setSubmittedReference(refNumber);
-        setSubmittedStatus(res.userStatus || 'Submitted');
-        setSubmittedLeadType('sales');
-        setIsSubmitted(true);
-
-        toast.success('Thank you for reaching out to ISI Security!', {
-          description: `Enquiry Reference: ${refNumber}. Our enterprise security consulting team will connect within 24 hours.`,
-          duration: 6000,
-        });
-      }
+      toast.success('Thank you for reaching out to ISI Security!', {
+        description: `Enquiry Reference: ${refNumber}. Our enterprise security consulting team will connect within 24 hours.`,
+        duration: 6000,
+      });
 
       // Reset form fields
       setFormData({
@@ -213,8 +164,6 @@ export const Contact = () => {
         phone: '',
         designation: '',
         serviceInterest: '',
-        openPosition: 'Security Officer / Guard',
-        jobQuestion: 'No',
         message: '',
         privacyConsent: false,
       });
@@ -330,7 +279,7 @@ export const Contact = () => {
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-muted-foreground font-medium">
-                        {submittedLeadType === 'career' ? 'Application Status:' : 'Submission Status:'}
+                        Submission Status:
                       </span>
                       <span className="font-semibold px-2.5 py-0.5 rounded text-[11px] bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                         {submittedStatus}
@@ -347,48 +296,17 @@ export const Contact = () => {
                       variant="outline"
                       className="rounded-xl"
                     >
-                      {submittedLeadType === 'career' ? 'Submit Another Application' : 'Send Another Message'}
+                      Send Another Message
                     </Button>
                   </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5" noValidate>
 
-                  {/* Question: Are you looking for a job? */}
-                  <div className="space-y-1.5 p-3.5 bg-muted/40 rounded-xl border border-border/70">
-                    <label className="text-xs font-semibold text-foreground flex items-center justify-between">
-                      <span>Are you looking for a job? <span className="text-red-500">*</span></span>
-                    </label>
-                    <div className="grid grid-cols-2 gap-2 mt-1">
-                      <button
-                        type="button"
-                        onClick={() => handleJobQuestionChange('No')}
-                        className={`py-2.5 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
-                          formData.jobQuestion === 'No'
-                            ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                            : 'bg-background hover:bg-muted text-muted-foreground border-border'
-                        }`}
-                      >
-                        <span>No (Business Enquiry)</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleJobQuestionChange('Yes')}
-                        className={`py-2.5 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
-                          formData.jobQuestion === 'Yes'
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                            : 'bg-background hover:bg-muted text-muted-foreground border-border'
-                        }`}
-                      >
-                        <span>Yes (Job Application)</span>
-                      </button>
-                    </div>
-                  </div>
-                  
                   {/* Field 1: Full Name */}
                   <div className="space-y-1.5">
                     <label htmlFor="name" className="text-sm font-semibold text-foreground block">
-                      {formData.jobQuestion === 'Yes' ? 'Applicant Name' : 'Full Name'} <span className="text-red-500">*</span>
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -399,20 +317,16 @@ export const Contact = () => {
                       className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
                         errors.name ? 'border-red-500 bg-red-500/5' : 'border-border'
                       }`}
-                      placeholder={formData.jobQuestion === 'Yes' ? 'e.g. Priya Kumar' : 'e.g. Rajesh Sharma'}
+                      placeholder="e.g. Rajesh Sharma"
                       autoComplete="name"
                     />
                     {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                   </div>
 
-                  {/* Field 2: Email (Personal allowed for Career; Corporate strictly for Business) */}
+                  {/* Field 2: Work Email */}
                   <div className="space-y-1.5">
                     <label htmlFor="email" className="text-sm font-semibold text-foreground block">
-                      {formData.jobQuestion === 'Yes' ? (
-                        <>Email Address <span className="text-red-500">*</span></>
-                      ) : (
-                        <>Work Email <span className="text-xs font-normal text-muted-foreground">(Corporate / Business Email)</span> <span className="text-red-500">*</span></>
-                      )}
+                      Work Email <span className="text-xs font-normal text-muted-foreground">(Corporate / Business Email)</span> <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -423,20 +337,16 @@ export const Contact = () => {
                       className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
                         errors.email ? 'border-red-500 bg-red-500/5' : 'border-border'
                       }`}
-                      placeholder={formData.jobQuestion === 'Yes' ? 'name@gmail.com or personal email' : 'name@company.com'}
+                      placeholder="name@company.com"
                       autoComplete="email"
                     />
                     {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                   </div>
 
-                  {/* Field 3: Company Name (Required for Business, Optional for Career) */}
+                  {/* Field 3: Company Name */}
                   <div className="space-y-1.5">
                     <label htmlFor="company" className="text-sm font-semibold text-foreground block">
-                      {formData.jobQuestion === 'Yes' ? (
-                        <>Current / Previous Organization <span className="text-xs font-normal text-muted-foreground">( Optional )</span></>
-                      ) : (
-                        <>Company Name <span className="text-red-500">*</span></>
-                      )}
+                      Company Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -447,7 +357,7 @@ export const Contact = () => {
                       className={`w-full px-4 py-3 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${
                         errors.company ? 'border-red-500 bg-red-500/5' : 'border-border'
                       }`}
-                      placeholder={formData.jobQuestion === 'Yes' ? 'e.g. Previous Employer (or Fresher)' : 'Your Company Name'}
+                      placeholder="Your Company Name"
                       autoComplete="organization"
                     />
                     {errors.company && <p className="text-xs text-red-500">{errors.company}</p>}
@@ -473,89 +383,56 @@ export const Contact = () => {
                     {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                   </div>
 
-                  {/* Field 5: Position / Designation */}
-                  {formData.jobQuestion === 'Yes' ? (
-                    <div className="space-y-1.5">
-                      <label htmlFor="openPosition" className="text-sm font-semibold text-foreground block">
-                        Position / Role Applying For <span className="text-red-500">*</span>
-                      </label>
-                      <Select 
-                        value={formData.openPosition} 
-                        onValueChange={(value) => handleSelectChange('openPosition', value)} 
-                        disabled={isSubmitting}
+                  {/* Field 5: Designation ( Optional ) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="designation" className="text-sm font-semibold text-foreground block">
+                      Designation <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="designation"
+                      value={formData.designation}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
+                      placeholder="e.g. Security Director, Facilities Manager, COO"
+                      autoComplete="organization-title"
+                    />
+                  </div>
+
+                  {/* Field 6: Services Type ( Optional ) */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="serviceInterest" className="text-sm font-semibold text-foreground block">
+                      Services Type <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
+                    </label>
+                    <Select 
+                      value={formData.serviceInterest} 
+                      onValueChange={(value) => handleSelectChange('serviceInterest', value)} 
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger 
+                        id="serviceInterest" 
+                        className="w-full h-12 bg-background border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
                       >
-                        <SelectTrigger 
-                          id="openPosition" 
-                          className="w-full h-12 bg-background border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
-                        >
-                          <SelectValue placeholder="Select Open Position" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border border-border">
-                          <SelectItem value="Security Officer / Guard">Security Officer / Guard</SelectItem>
-                          <SelectItem value="CCTV & SOC Operator">CCTV & SOC Operator</SelectItem>
-                          <SelectItem value="Facility Supervisor / Executive">Facility Supervisor / Executive</SelectItem>
-                          <SelectItem value="Fire & Safety Officer">Fire & Safety Officer</SelectItem>
-                          <SelectItem value="Operations Executive / Area Officer">Operations Executive / Area Officer</SelectItem>
-                          <SelectItem value="Executive Protection Specialist">Executive Protection Specialist</SelectItem>
-                          <SelectItem value="Cash Logistics Officer / Custodian">Cash Logistics Officer / Custodian</SelectItem>
-                          <SelectItem value="Other Security / Corporate Role">Other Security / Corporate Role</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Field 5: Designation ( Optional ) */}
-                      <div className="space-y-1.5">
-                        <label htmlFor="designation" className="text-sm font-semibold text-foreground block">
-                          Designation <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="designation"
-                          value={formData.designation}
-                          onChange={handleInputChange}
-                          disabled={isSubmitting}
-                          className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
-                          placeholder="e.g. Security Director, Facilities Manager, COO"
-                          autoComplete="organization-title"
-                        />
-                      </div>
+                        <SelectValue placeholder="Select Service Type" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border border-border">
+                        <SelectItem value="Manned Guarding">Manned Guarding</SelectItem>
+                        <SelectItem value="Electronic Security & CCTV">Electronic Security & CCTV</SelectItem>
+                        <SelectItem value="Cash Logistics">Cash Logistics</SelectItem>
+                        <SelectItem value="Facility Management">Facility Management</SelectItem>
+                        <SelectItem value="Drone Services">Drone Services</SelectItem>
+                        <SelectItem value="Command Centers (SOC)">Command Centers (SOC)</SelectItem>
+                        <SelectItem value="Executive Protection">Executive Protection</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                      {/* Field 6: Services Type ( Optional ) */}
-                      <div className="space-y-1.5">
-                        <label htmlFor="serviceInterest" className="text-sm font-semibold text-foreground block">
-                          Services Type <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
-                        </label>
-                        <Select 
-                          value={formData.serviceInterest} 
-                          onValueChange={(value) => handleSelectChange('serviceInterest', value)} 
-                          disabled={isSubmitting}
-                        >
-                          <SelectTrigger 
-                            id="serviceInterest" 
-                            className="w-full h-12 bg-background border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
-                          >
-                            <SelectValue placeholder="Select Service Type" />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-xl border border-border">
-                            <SelectItem value="Manned Guarding">Manned Guarding</SelectItem>
-                            <SelectItem value="Electronic Security & CCTV">Electronic Security & CCTV</SelectItem>
-                            <SelectItem value="Cash Logistics">Cash Logistics</SelectItem>
-                            <SelectItem value="Facility Management">Facility Management</SelectItem>
-                            <SelectItem value="Drone Services">Drone Services</SelectItem>
-                            <SelectItem value="Command Centers (SOC)">Command Centers (SOC)</SelectItem>
-                            <SelectItem value="Executive Protection">Executive Protection</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Field 7: Message / Experience Details */}
+                  {/* Field 7: Message */}
                   <div className="space-y-1.5">
                     <label htmlFor="message" className="text-sm font-semibold text-foreground block">
-                      {formData.jobQuestion === 'Yes' ? 'Experience & Qualifications ( Optional )' : 'Your Message ( Optional )'}
+                      Your Message <span className="text-xs font-normal text-muted-foreground">( Optional )</span>
                     </label>
                     <textarea
                       id="message"
@@ -564,7 +441,7 @@ export const Contact = () => {
                       onChange={handleInputChange}
                       disabled={isSubmitting}
                       className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none text-foreground placeholder:text-muted-foreground/60"
-                      placeholder={formData.jobQuestion === 'Yes' ? 'Briefly mention your security experience, physical fitness, or certifications...' : 'Share your security or facility requirements...'}
+                      placeholder="Share your security or facility requirements..."
                     ></textarea>
                   </div>
 
@@ -594,11 +471,14 @@ export const Contact = () => {
                       type="submit"
                       size="lg"
                       disabled={isSubmitting}
-                      className="w-full h-12 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md flex items-center justify-center gap-2"
+                      className="w-full h-12 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      {isSubmitting ? 'Processing...' : (formData.jobQuestion === 'Yes' ? 'Submit Career Application' : 'Send Message')}
+                      {isSubmitting ? 'Submitting Request...' : 'Request Enterprise Proposal'}
                       <Send className="w-4 h-4" />
                     </Button>
+                    <p className="text-[11px] text-muted-foreground text-center mt-2 font-medium">
+                      🔒 Guaranteed response from our security solutions director within 24 hours.
+                    </p>
                   </div>
 
                 </form>

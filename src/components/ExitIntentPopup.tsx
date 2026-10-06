@@ -143,7 +143,7 @@ export const ExitIntentPopup = () => {
                                                 url: window.location.href,
                                                 timestamp: new Date().toISOString()
                                             });
-                                            window.open('https://wa.me/917708886868', '_blank');
+                                            window.open('https://wa.me/917708887878', '_blank');
                                         }}
                                         className="w-full h-14 text-white font-bold rounded-2xl bg-[#25D366] hover:bg-[#128C7E] transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-green-500/20 flex items-center justify-center gap-2"
                                     >

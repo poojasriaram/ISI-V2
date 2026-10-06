@@ -57,8 +57,8 @@ const heroSlides = [
     },
 ];
 
-const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-    if (!isOpen) return null;
+const VideoModal = ({ isOpen, onClose, videoId }: { isOpen: boolean; onClose: () => void; videoId?: string }) => {
+    if (!isOpen || !videoId || videoId === 'your-video-id') return null;
 
     return (
         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -73,8 +73,8 @@ const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
                 <iframe
                     width="100%"
                     height="100%"
-                    src="https://www.youtube.com/embed/your-video-id?autoplay=1"
-                    title="School Safety Solutions Overview"
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                    title="Campus Safety Solutions Overview"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     className="w-full h-full"

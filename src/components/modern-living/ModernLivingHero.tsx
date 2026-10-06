@@ -91,17 +91,22 @@ export const ModernLivingHero = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-5">
-                                <Link to="#" onClick={(e) => { e.preventDefault(); window.open("https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.", "_blank"); }}>
-                                    <Button size="lg" className="h-16 px-10 text-lg gap-3 shadow-2xl shadow-primary/30 group">
-                                        Request a Private Demo
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </Button>
-                                </Link>
-                                <Link to="#features">
-                                    <Button variant="outline" size="lg" className="h-16 px-10 text-lg gap-3 bg-background/50 backdrop-blur-md hover:bg-primary/5 border-primary/20">
-                                        Secure Your Space Today
-                                    </Button>
-                                </Link>
+                                <Button 
+                                    size="lg" 
+                                    onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form'))}
+                                    className="h-16 px-10 text-lg gap-3 shadow-2xl shadow-primary/30 group cursor-pointer"
+                                >
+                                    Request a Private Demo
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                                <Button 
+                                    variant="outline" 
+                                    size="lg" 
+                                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                                    className="h-16 px-10 text-lg gap-3 bg-background/50 backdrop-blur-md hover:bg-primary/5 border-primary/20 cursor-pointer"
+                                >
+                                    Secure Your Space Today
+                                </Button>
                             </div>
                         </motion.div>
                     </AnimatePresence>

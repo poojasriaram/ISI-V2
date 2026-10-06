@@ -4,6 +4,7 @@ import { ChatMessage, ChatAction, ChatAttachment } from '../types/chatbot';
 import { isiKnowledgeBase } from '../data/chatbot/knowledge-base';
 import { useAnalytics } from './useAnalytics';
 import { submitChatbotLead, submitCareerApplication } from '../services/formService';
+import { isCorporateEmail, CHATBOT_CORPORATE_EMAIL_MESSAGE } from '../utils/validation';
 import { 
     detectCareerIntent, 
     getCareerIntentResponse, 
@@ -309,78 +310,27 @@ export const useChatBot = () => {
         const lowerInput = input.toLowerCase();
 
         // =========================================================================
-        // --- STAGE: CAREER PROGRESSIVE APPLICATION CAPTURE ---
-        // (Strictly routes to Career_Applications. NEVER creates a Sales Lead or Jira issue)
+        // --- STAGE: CAREER INQUIRIES & APPLICATIONS ---
+        // Redirect directly to Careers Section
         // =========================================================================
         if (context.stage === 'career_capture') {
-            if (!context.careerData.name) {
-                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, name: input } }));
-                return {
-                    text: `Nice to meet you, **${input}**! What is your **Mobile / WhatsApp Number** so our recruitment team can reach you?`,
-                    actions: []
-                };
-            } else if (!context.careerData.phone) {
-                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, phone: input } }));
-                return {
-                    text: `Got it. What is your **Email Address**?`,
-                    actions: []
-                };
-            } else if (!context.careerData.email) {
-                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, email: input } }));
-                return {
-                    text: `Thank you. Which **Position / Role** are you applying for?`,
-                    actions: CURRENT_CAREER_OPPORTUNITIES.map(c => ({
-                        label: c.title.split('/')[0].trim(),
-                        value: c.title,
-                        type: 'quickReply'
-                    }))
-                };
-            } else if (!context.careerData.role) {
-                setContext(prev => ({ ...prev, careerData: { ...prev.careerData, role: input } }));
-                return {
-                    text: `Great. How many years of relevant **Experience** do you have in this field?`,
-                    actions: [
-                        { label: "Fresher / Entry-Level", value: "Fresher (0 Years)", type: "quickReply" },
-                        { label: "1 - 3 Years", value: "1 - 3 Years", type: "quickReply" },
-                        { label: "3 - 5 Years", value: "3 - 5 Years", type: "quickReply" },
-                        { label: "5+ Years", value: "5+ Years", type: "quickReply" }
-                    ]
-                };
-            } else if (!context.careerData.experience) {
-                const finalCareerData = {
-                    ...context.careerData,
-                    experience: input
-                };
-
-                setContext(prev => ({ 
-                    ...prev, 
-                    stage: 'career_captured', 
-                    careerData: finalCareerData 
-                }));
-
-                // STRICTLY submit as Career Application to Google Sheet (Career_Applications)
-                // NEVER creates a Sales Lead or calls Jira Sales backend
-                submitCareerApplication({
-                    Name: finalCareerData.name || 'Anonymous Applicant',
-                    Phone: finalCareerData.phone || 'N/A',
-                    Email: finalCareerData.email || 'N/A',
-                    Position: finalCareerData.role || 'General Application',
-                    Experience: input || 'N/A',
-                    "Source Channel": "Website Chatbot (Career Flow)",
-                    Status: "Application Received",
-                    "Lead Type": "career",
-                    isJobSeeker: true
-                }).catch(err => console.error("Career Application capture err:", err));
-
-                return {
-                    text: `🎉 **Application Successfully Registered!**\n\nThank you, **${finalCareerData.name}**! Your application for **${finalCareerData.role}** has been registered with the ISI Human Resources & Talent Acquisition team.\n\n• **HR Portal**: [View Careers Page](/career)\n• **HR Direct Email**: hrms2026@isisecurity.in\n• **Talent Hotline**: +91 77088 87878\n\nOur recruitment team will review your profile and reach out if shortlisted.`,
-                    actions: [
-                        { label: "Visit Careers Page", value: "/career", type: "link" },
-                        { label: "Explore Academy Training", value: "/academy", type: "link" },
-                        { label: "That's all for now", value: "close", type: "quickReply" }
-                    ]
-                };
+            if (typeof window !== 'undefined') {
+                if (window.location.pathname === '/career') {
+                    const el = document.getElementById('openings') || document.getElementById('career');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    setTimeout(() => {
+                        window.location.href = '/career';
+                    }, 1000);
+                }
             }
+
+            return {
+                text: "Redirecting you to our dedicated **Careers Section** where you can view all active job openings and submit your application online.\n\n*If you are not redirected automatically, click below:*",
+                actions: [
+                    { label: "Go to Careers Section ↗", value: "/career", type: "link" }
+                ]
+            };
         }
 
         // =========================================================================
@@ -411,9 +361,9 @@ export const useChatBot = () => {
                 return {
                     text: `Got it. And what exactly are you looking for today?`,
                     actions: [
-                        { label: "Looking for Services", value: "Services", type: "quickReply" },
-                        { label: "Interested in Job", value: "i am looking for a job", type: "quickReply" },
-                        { label: "Business Leads", value: "Business Leads", type: "quickReply" }
+                        { label: "Enterprise Services", value: "Services", type: "quickReply" },
+                        { label: "Careers & Jobs ↗", value: "/career", type: "link" },
+                        { label: "Business Partnerships", value: "Business Leads", type: "quickReply" }
                     ]
                 };
             } else if (!context.leadData.lookingFor) {
@@ -432,7 +382,15 @@ export const useChatBot = () => {
                     actions: []
                 };
             } else if (!context.leadData.email) {
-                setContext(prev => ({ ...prev, stage: 'captured', leadData: { ...prev.leadData, email: input } }));
+                const cleanedEmail = input.trim();
+                if (!isCorporateEmail(cleanedEmail)) {
+                    return {
+                        text: CHATBOT_CORPORATE_EMAIL_MESSAGE,
+                        actions: []
+                    };
+                }
+
+                setContext(prev => ({ ...prev, stage: 'captured', leadData: { ...prev.leadData, email: cleanedEmail } }));
 
                 // Send Lead via Node.js Server
                 fetch('http://localhost:5000/api/chatbot-leads', {
@@ -441,7 +399,7 @@ export const useChatBot = () => {
                     body: JSON.stringify({
                         name: context.leadData.name || 'Anonymous',
                         phone: context.leadData.phone || 'No Phone',
-                        email: input,
+                        email: cleanedEmail,
                         message: `Existing Customer: ${context.leadData.isExisting || 'N/A'}\nCategory: ${context.leadData.lookingFor || 'N/A'}\nTopic: ${context.topic || 'General Inquiry'}`
                     })
                 }).catch(err => console.error("Chatbot lead capture err:", err));
@@ -450,7 +408,7 @@ export const useChatBot = () => {
                 submitChatbotLead(
                     context.leadData.name || 'Anonymous',
                     context.leadData.phone || 'No Phone',
-                    input,
+                    cleanedEmail,
                     context.topic || 'General Inquiry',
                     context.leadData.isExisting,
                     context.leadData.lookingFor
@@ -477,13 +435,16 @@ export const useChatBot = () => {
                 careerData: careerEvaluation.roleDetected ? { role: careerEvaluation.roleDetected } : {}
             }));
 
-            // If user clicked or typed explicit apply command
-            if (lowerInput.includes('apply_career_chat') || lowerInput.includes('apply in chat') || lowerInput === 'apply now') {
-                setContext(prev => ({ ...prev, stage: 'career_capture', careerData: {} }));
-                return {
-                    text: "Let's get your career application registered for our HR team! First, what is your **Full Name**?",
-                    actions: []
-                };
+            // In chat alone if they look for job redirect to career section
+            if (typeof window !== 'undefined') {
+                if (window.location.pathname === '/career') {
+                    const el = document.getElementById('openings') || document.getElementById('career');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    setTimeout(() => {
+                        window.location.href = '/career#openings';
+                    }, 1200);
+                }
             }
 
             return getCareerIntentResponse(careerEvaluation.roleDetected);
@@ -699,15 +660,20 @@ export const useChatBot = () => {
             } else if (action.value === 'details') {
                 setContext(prev => ({ ...prev, stage: 'closing', leadData: { name: undefined } }));
                 streamResponse("Great! Let's get you connected. What is your full name?");
-            } else if (action.value === 'apply_career_chat') {
-                setContext(prev => ({ ...prev, stage: 'career_capture', careerData: {} }));
-                streamResponse("Let's get your career application registered for our HR team! First, what is your **Full Name**?");
+            } else if (action.value === 'apply_career_chat' || action.value === 'view_career_portal') {
+                if (typeof window !== 'undefined') {
+                    if (window.location.pathname === '/career') {
+                        const el = document.getElementById('openings') || document.getElementById('career');
+                        el?.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        window.location.href = '/career#openings';
+                    }
+                }
             } else if (action.value === 'hr_contact_info') {
                 streamResponse(
-                    "You can reach the ISI Human Resources & Recruitment Department directly:\n\n• **Email**: hrms2026@isisecurity.in\n• **HR Helpline**: +91 77088 87878\n• **HQ Address**: ISI House, Chennai, Tamil Nadu\n• **Careers Portal**: [View Current Openings](/career)",
+                    "You can reach the ISI Human Resources & Recruitment Department directly:\n\n• **Email**: hrms2026@isisecurity.in\n• **HR Helpline**: +91 77088 87878\n• **HQ Address**: ISI House, Chennai, Tamil Nadu\n\nRedirecting to our active openings...",
                     [
-                        { label: "Apply in Chatbot", value: "apply_career_chat", type: "quickReply" },
-                        { label: "View Careers Page", value: "/career", type: "link" }
+                        { label: "Go to Careers Section ↗", value: "/career#openings", type: "link" }
                     ]
                 );
             } else if (action.value === 'explore security services') {
@@ -725,7 +691,13 @@ export const useChatBot = () => {
                 handleSendMessage(action.value);
             }
         } else if (action.type === 'link') {
-            if (action.value.startsWith('/')) {
+            if (action.value.startsWith('#')) {
+                const el = document.querySelector(action.value);
+                el?.scrollIntoView({ behavior: 'smooth' });
+            } else if (action.value.startsWith('/career') && typeof window !== 'undefined' && window.location.pathname === '/career') {
+                const el = document.getElementById('openings') || document.getElementById('career');
+                el?.scrollIntoView({ behavior: 'smooth' });
+            } else if (action.value.startsWith('/')) {
                 window.location.href = action.value;
             } else {
                 window.open(action.value, '_blank');

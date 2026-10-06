@@ -1,6 +1,7 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { Button } from "@/components/ui/button";
 
 interface HeroSlide {
     badge: string;
@@ -141,6 +142,26 @@ export const PageHero = ({ slides, autoplayDelay = 5000 }: PageHeroProps) => {
                         >
                             {slides[selectedIndex].description}
                         </p>
+
+                        {/* Above-the-fold Hero CTAs */}
+                        <div className="flex flex-wrap items-center gap-4 animate-fade-in mb-4">
+                            <Button
+                                size="lg"
+                                onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form'))}
+                                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full shadow-lg shadow-primary/25 px-6 h-12 text-sm sm:text-base cursor-pointer"
+                            >
+                                Get Enterprise Quote
+                                <ArrowRight className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                onClick={() => window.open('https://wa.me/917708887878?text=Hello!%20I%20would%20like%20to%20know%20more%20about%20your%20security%20solutions.', '_blank')}
+                                className="gap-2 bg-card/60 backdrop-blur-md border-white/20 hover:bg-primary/10 hover:text-primary rounded-full px-6 h-12 text-sm sm:text-base cursor-pointer"
+                            >
+                                Speak to an Expert
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -241,20 +241,14 @@ export const GoldOfferings = () => {
                             {cta.description}
                         </p>
 
-                        <a
-                            href={cta.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block"
+                        <Button
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-lead-form', { detail: { type: 'consultation', title: 'Gold & Jewellery Security' } }))}
+                            size="lg"
+                            className="bg-background text-foreground hover:bg-background/90 font-bold px-8 py-6 rounded-full text-base shadow-xl gap-3 group"
                         >
-                            <Button
-                                size="lg"
-                                className="bg-background text-foreground hover:bg-background/90 font-bold px-8 py-6 rounded-full text-base shadow-xl gap-3 group"
-                            >
-                                {cta.buttonText}
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform text-primary" />
-                            </Button>
-                        </a>
+                            {cta.buttonText}
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform text-primary" />
+                        </Button>
                     </div>
                 </motion.div>
             </div>
