@@ -23,7 +23,6 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { useAnalytics } from "./hooks/useAnalytics";
 import { ChatBot } from "./components/ai/ChatBot";
 import { ISIAcademyChatbot } from "./components/ai/ISIAcademyChatbot";
-import { CookieConsentBanner } from "./components/analytics/CookieConsentBanner";
 
 const IntelligenceDashboard = lazy(() => import("./pages/admin/IntelligenceDashboard"));
 
@@ -211,7 +210,6 @@ const AppRouter = () => {
     <ErrorBoundary>
       <ScrollToTop />
       <BackToTop />
-      <CookieConsentBanner />
       {showWidgets && !isIntegratedServices && (
         isAcademy ? (
           <ISIAcademyChatbot />
