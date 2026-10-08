@@ -37,4 +37,5 @@ __pycache__/
 scratch/
 *.db
 *.sqlite
-data/*.db
+*.db*
+data/
