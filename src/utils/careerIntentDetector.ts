@@ -200,7 +200,7 @@ export function normalizeCareerMessage(rawMessage: string): string {
   let normalized = rawMessage
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s\+]/g, ' ') // Replace punctuation with space
+    .replace(/[^\w\s+]/g, ' ') // Replace punctuation with space
     .replace(/\s+/g, ' ');
 
   // Collapse 2 or more repeated trailing letters (e.g. "jobsss" -> "jobs", "plsss" -> "pls", "careeeer" -> "career")
@@ -424,8 +424,8 @@ export function detectCareerIntent(rawMessage: string): CareerIntentResult {
   // Extract Mentioned Role if any
   let roleDetected: string | undefined;
   const rolePatterns = [
-    /(?:openings?|jobs?|position|role|vacancy|vacancies|hiring)\s+(?:for|as)?\s+([a-z0-9\s\-]+?)(?:\?|$|\.|\band\b)/i,
-    /(?:apply\s+(?:for|as))\s+([a-z0-9\s\-]+?)(?:\?|$|\.|\band\b)/i
+    /(?:openings?|jobs?|position|role|vacancy|vacancies|hiring)\s+(?:for|as)?\s+([a-z0-9\s-]+?)(?:\?|$|\.|\band\b)/i,
+    /(?:apply\s+(?:for|as))\s+([a-z0-9\s-]+?)(?:\?|$|\.|\band\b)/i
   ];
 
   for (const pattern of rolePatterns) {

@@ -1084,8 +1084,16 @@ function SEND_ISI_AD_PERFORMANCE_MAILER() {
     Logger.log('HTML contains replacement character (pre-sanitize): ' + hasReplacementChar);
 
     // ── Sanitize immediately before send ──────────────────────────────────────
-    // sanitizeEmailContent() is defined in AppsScript_Webhook.js and shared
-    // across the project scope.
+    function sanitizeEmailContent(str) {
+      if (!str) return str;
+      var clean = str.replace(/[\uFFFD\uFEFF]/g, '');
+      clean = clean.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
+                   .replace(/[\u2300-\u23FF]/g, '')
+                   .replace(/[\u2600-\u27BF]/g, '')
+                   .replace(/[\u2B50-\u2B55]/g, '')
+                   .replace(/[\uFE00-\uFE0F]/g, '');
+      return clean;
+    }
     var cleanSubject      = sanitizeEmailContent(subject);
     var cleanHtmlBody     = sanitizeEmailContent(emailHtml);
     var cleanPlainText    = sanitizeEmailContent(plainTextBody);
